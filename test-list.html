@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test - Maç Listesi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="utils/sortUtils.js"></script>
+  </head>
+  <body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-3xl font-bold mb-8 text-center">Bugünün Maçları - Liste Görünümü</h1>
+
+      <div id="matches" class="space-y-4">
+        <!-- Test data will be loaded here -->
+      </div>
+    </div>
+
+    <script>
+      // Test matches data
+      const testMatches = [
+        {
+          id: '1',
+          homeTeam: { name: 'Kawasaki Frontale' },
+          awayTeam: { name: 'Albirex Niigata' },
+          league: { name: 'Japan J1 League' },
+          date: '2025-06-25T10:00:00.000Z',
+          status: 'scheduled',
+          venue: 'Uvance Todoroki Stadium',
+        },
+        {
+          id: '2',
+          homeTeam: { name: 'Yokohama F. Marinos' },
+          awayTeam: { name: 'Tokyo' },
+          league: { name: 'Japan J1 League' },
+          date: '2025-06-25T10:30:00.000Z',
+          status: 'scheduled',
+          venue: 'Nissan Stadium',
+        },
+        {
+          id: '3',
+          homeTeam: { name: 'Columbus Crew' },
+          awayTeam: { name: 'Atlanta United FC' },
+          league: { name: 'USA MLS' },
+          date: '2025-06-25T23:30:00.000Z',
+          status: 'scheduled',
+          venue: 'Lower.com Field',
+        },
+      ];
+
+      function createMatchListItem(match) {
+        const matchTime = SortUtils.formatMatchTime(match.date);
+        const statusClass = 'bg-blue-500'; // scheduled
+
+        return `
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between">
+                            <!-- Time and League -->
+                            <div class="flex-shrink-0 text-center">
+                                <div class="text-2xl font-bold text-blue-600 mb-1">${matchTime}</div>
+                                <div class="${statusClass} px-3 py-1 rounded-full text-xs font-bold text-white mb-2">
+                                    YAKIN
+                                </div>
+                                <div class="text-xs text-gray-500 font-medium">${match.league.name}</div>
+                            </div>
+                            
+                            <!-- Teams -->
+                            <div class="flex-1 mx-8">
+                                <div class="flex items-center justify-between">
+                                    <div class="text-right flex-1">
+                                        <div class="font-bold text-lg text-gray-800">${match.homeTeam.name}</div>
+                                    </div>
+                                    
+                                    <div class="mx-6 text-center">
+                                        <div class="text-2xl font-bold text-gray-400">VS</div>
+                                    </div>
+                                    
+                                    <div class="text-left flex-1">
+                                        <div class="font-bold text-lg text-gray-800">${match.awayTeam.name}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center text-sm text-gray-500 mt-3">🏟️ ${match.venue}</div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex-shrink-0 flex gap-2">
+                                <button class="bg-gradient-to-r from-green-500 to-green-600 text-white py-2 px-4 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 font-semibold text-sm shadow-lg">
+                                    📊 Analiz
+                                </button>
+                                <button class="bg-gradient-to-r from-purple-500 to-purple-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-300 font-semibold text-sm shadow-lg">
+                                    🎯 Tahmin
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+      }
+
+      // Load and display matches
+      document.addEventListener('DOMContentLoaded', () => {
+        const sortedMatches = SortUtils.sortMatchesByTime([...testMatches]);
+        document.getElementById('matches').innerHTML = sortedMatches.map(createMatchListItem).join('');
+      });
+    </script>
+  </body>
+</html>

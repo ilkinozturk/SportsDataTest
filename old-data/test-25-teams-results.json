@@ -1,0 +1,622 @@
+{
+  "testDate": "2025-06-27T06:18:33.136Z",
+  "summary": {
+    "totalTested": 25,
+    "successful": 25,
+    "failed": 0,
+    "withMappings": 0,
+    "withErrors": 3,
+    "duration": 92.562
+  },
+  "errorTypes": {
+    "No matches played data": 3
+  },
+  "results": [
+    {
+      "teamId": 7,
+      "teamName": "Chicago Fire",
+      "country": "USA",
+      "league": "USA MLS",
+      "expectedSeasonId": 13973,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Chicago Fire",
+        "country": "USA",
+        "competitionId": 13973,
+        "leagueId": 13973,
+        "leagueName": "USA USA MLS",
+        "season": "2025",
+        "position": "17/30",
+        "stats": {
+          "matches": 18,
+          "wins": 7,
+          "draws": 4,
+          "losses": 7
+        }
+      }
+    },
+    {
+      "teamId": 13401,
+      "teamName": "DC United",
+      "country": "USA",
+      "league": "USA MLS",
+      "expectedSeasonId": 13973,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "DC United",
+        "country": "USA",
+        "competitionId": 13973,
+        "leagueId": 13973,
+        "leagueName": "USA USA MLS",
+        "season": "2025",
+        "position": "25/30",
+        "stats": {
+          "matches": 19,
+          "wins": 4,
+          "draws": 6,
+          "losses": 9
+        }
+      }
+    },
+    {
+      "teamId": 1016,
+      "teamName": "Atlanta United FC",
+      "country": "USA",
+      "league": "USA MLS",
+      "expectedSeasonId": 13973,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Atlanta United FC",
+        "country": "USA",
+        "competitionId": 13973,
+        "leagueId": 13973,
+        "leagueName": "USA USA MLS",
+        "season": "2025",
+        "position": "26/30",
+        "stats": {
+          "matches": 19,
+          "wins": 4,
+          "draws": 5,
+          "losses": 10
+        }
+      }
+    },
+    {
+      "teamId": 72,
+      "teamName": "Rosenborg BK",
+      "country": "Norway",
+      "league": "Norway Eliteserien",
+      "expectedSeasonId": 13987,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Rosenborg",
+        "country": "Norway",
+        "competitionId": 13987,
+        "leagueId": 13987,
+        "leagueName": "Norway Norway Eliteserien",
+        "season": "2025",
+        "position": "3/16",
+        "stats": {
+          "matches": 12,
+          "wins": 6,
+          "draws": 4,
+          "losses": 2
+        }
+      }
+    },
+    {
+      "teamId": 1477,
+      "teamName": "Bryne FK",
+      "country": "Norway",
+      "league": "Norway Eliteserien",
+      "expectedSeasonId": 13987,
+      "success": true,
+      "errors": [
+        "No matches played data"
+      ],
+      "actualData": {
+        "name": "Bryne",
+        "country": "Norway",
+        "competitionId": 13898,
+        "leagueId": 13987,
+        "leagueName": "Norway Norway Eliteserien",
+        "season": "2025",
+        "position": "11/16",
+        "stats": {
+          "matches": 0,
+          "wins": 0,
+          "draws": 0,
+          "losses": 0
+        }
+      }
+    },
+    {
+      "teamId": 1471,
+      "teamName": "Fredrikstad FK",
+      "country": "Norway",
+      "league": "Norway Eliteserien",
+      "expectedSeasonId": 13987,
+      "success": true,
+      "errors": [
+        "No matches played data"
+      ],
+      "actualData": {
+        "name": "Fredrikstad",
+        "country": "Norway",
+        "competitionId": 13898,
+        "leagueId": 13987,
+        "leagueName": "Norway Norway Eliteserien",
+        "season": "2025",
+        "position": "7/16",
+        "stats": {
+          "matches": 0,
+          "wins": 0,
+          "draws": 0,
+          "losses": 0
+        }
+      }
+    },
+    {
+      "teamId": 426,
+      "teamName": "Kotkan Työväen Palloilijat",
+      "country": "Finland",
+      "league": "Finland Veikkausliiga",
+      "expectedSeasonId": 14089,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "KTP",
+        "country": "Finland",
+        "competitionId": 14051,
+        "leagueId": 14089,
+        "leagueName": "Finland Finland Veikkausliiga",
+        "season": "2025",
+        "position": "11/12",
+        "stats": {
+          "matches": 5,
+          "wins": 1,
+          "draws": 0,
+          "losses": 4
+        }
+      }
+    },
+    {
+      "teamId": 408,
+      "teamName": "Vaasan Palloseura",
+      "country": "Finland",
+      "league": "Finland Veikkausliiga",
+      "expectedSeasonId": 14089,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "VPS",
+        "country": "Finland",
+        "competitionId": 12278,
+        "leagueId": 14089,
+        "leagueName": "Finland Finland Veikkausliiga",
+        "season": "2025",
+        "position": "6/12",
+        "stats": {
+          "matches": 2,
+          "wins": 0,
+          "draws": 0,
+          "losses": 2
+        }
+      }
+    },
+    {
+      "teamId": 406,
+      "teamName": "FC Inter Turku",
+      "country": "Finland",
+      "league": "Finland Veikkausliiga",
+      "expectedSeasonId": 14089,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Inter Turku",
+        "country": "Finland",
+        "competitionId": 14051,
+        "leagueId": 14089,
+        "leagueName": "Finland Finland Veikkausliiga",
+        "season": "2025",
+        "position": "1/12",
+        "stats": {
+          "matches": 7,
+          "wins": 5,
+          "draws": 1,
+          "losses": 1
+        }
+      }
+    },
+    {
+      "teamId": 617,
+      "teamName": "Fluminense FC",
+      "country": "Brazil",
+      "league": "Brazil Serie A",
+      "expectedSeasonId": 14231,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Fluminense",
+        "country": "Brazil",
+        "competitionId": 13803,
+        "leagueId": 14231,
+        "leagueName": "Brazil Brazil Serie A",
+        "season": "2025",
+        "position": "7/20",
+        "stats": {
+          "matches": 15,
+          "wins": 6,
+          "draws": 6,
+          "losses": 3
+        }
+      }
+    },
+    {
+      "teamId": 612,
+      "teamName": "CR Flamengo",
+      "country": "Brazil",
+      "league": "Brazil Serie A",
+      "expectedSeasonId": 14231,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Flamengo",
+        "country": "Brazil",
+        "competitionId": 13803,
+        "leagueId": 14231,
+        "leagueName": "Brazil Brazil Serie A",
+        "season": "2025",
+        "position": "1/20",
+        "stats": {
+          "matches": 15,
+          "wins": 10,
+          "draws": 3,
+          "losses": 2
+        }
+      }
+    },
+    {
+      "teamId": 1053,
+      "teamName": "EC Juventude",
+      "country": "Brazil",
+      "league": "Brazil Serie A",
+      "expectedSeasonId": 14231,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Juventude",
+        "country": "Brazil",
+        "competitionId": 13939,
+        "leagueId": 14231,
+        "leagueName": "Brazil Brazil Serie A",
+        "season": "2025",
+        "position": "19/20",
+        "stats": {
+          "matches": 10,
+          "wins": 7,
+          "draws": 1,
+          "losses": 2
+        }
+      }
+    },
+    {
+      "teamId": 655,
+      "teamName": "Hammarby IF",
+      "country": "Sweden",
+      "league": "Sweden Allsvenskan",
+      "expectedSeasonId": 13963,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Hammarby",
+        "country": "Sweden",
+        "competitionId": 12123,
+        "leagueId": 13963,
+        "leagueName": "Sweden Sweden Allsvenskan",
+        "season": "2025",
+        "position": "2/16",
+        "stats": {
+          "matches": 5,
+          "wins": 3,
+          "draws": 1,
+          "losses": 1
+        }
+      }
+    },
+    {
+      "teamId": 664,
+      "teamName": "BK Häcken",
+      "country": "Sweden",
+      "league": "Sweden Allsvenskan",
+      "expectedSeasonId": 13963,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Häcken",
+        "country": "Sweden",
+        "competitionId": 12123,
+        "leagueId": 13963,
+        "leagueName": "Sweden Sweden Allsvenskan",
+        "season": "2025",
+        "position": "8/16",
+        "stats": {
+          "matches": 7,
+          "wins": 5,
+          "draws": 1,
+          "losses": 1
+        }
+      }
+    },
+    {
+      "teamId": 663,
+      "teamName": "IF Elfsborg",
+      "country": "Sweden",
+      "league": "Sweden Allsvenskan",
+      "expectedSeasonId": 13963,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Elfsborg",
+        "country": "Sweden",
+        "competitionId": 12123,
+        "leagueId": 13963,
+        "leagueName": "Sweden Sweden Allsvenskan",
+        "season": "2025",
+        "position": "4/16",
+        "stats": {
+          "matches": 5,
+          "wins": 3,
+          "draws": 1,
+          "losses": 1
+        }
+      }
+    },
+    {
+      "teamId": 840,
+      "teamName": "Beijing Guoan FC",
+      "country": "China",
+      "league": "China Chinese Super League",
+      "expectedSeasonId": 14153,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Beijing Guoan",
+        "country": "China",
+        "competitionId": 14153,
+        "leagueId": 14153,
+        "leagueName": "China China Chinese Super League",
+        "season": "2025",
+        "position": "1/16",
+        "stats": {
+          "matches": 15,
+          "wins": 10,
+          "draws": 5,
+          "losses": 0
+        }
+      }
+    },
+    {
+      "teamId": 846,
+      "teamName": "Shanghai Shenhua FC",
+      "country": "China",
+      "league": "China Chinese Super League",
+      "expectedSeasonId": 14153,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Shanghai Shenhua",
+        "country": "China",
+        "competitionId": 13356,
+        "leagueId": 14153,
+        "leagueName": "China China Chinese Super League",
+        "season": "2025",
+        "position": "2/16",
+        "stats": {
+          "matches": 10,
+          "wins": 4,
+          "draws": 1,
+          "losses": 5
+        }
+      }
+    },
+    {
+      "teamId": 672291,
+      "teamName": "Chengdu Better City FC",
+      "country": "China",
+      "league": "China Chinese Super League",
+      "expectedSeasonId": 14153,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Chengdu Better City FC",
+        "country": "China",
+        "competitionId": 14153,
+        "leagueId": 14153,
+        "leagueName": "China China Chinese Super League",
+        "season": "2025",
+        "position": "3/16",
+        "stats": {
+          "matches": 15,
+          "wins": 10,
+          "draws": 3,
+          "losses": 2
+        }
+      }
+    },
+    {
+      "teamId": 871,
+      "teamName": "Renofa Yamaguchi",
+      "country": "Japan",
+      "league": "Japan J2 League",
+      "expectedSeasonId": 13961,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Renofa Yamaguchi",
+        "country": "Japan",
+        "competitionId": 13961,
+        "leagueId": 13961,
+        "leagueName": "Japan Japan J2 League",
+        "season": "2025",
+        "position": "18/20",
+        "stats": {
+          "matches": 20,
+          "wins": 3,
+          "draws": 8,
+          "losses": 9
+        }
+      }
+    },
+    {
+      "teamId": 8118,
+      "teamName": "FC Imabari",
+      "country": "Japan",
+      "league": "Japan J2 League",
+      "expectedSeasonId": 13961,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Imabari",
+        "country": "Japan",
+        "competitionId": 13961,
+        "leagueId": 13961,
+        "leagueName": "Japan Japan J2 League",
+        "season": "2025",
+        "position": "8/20",
+        "stats": {
+          "matches": 20,
+          "wins": 7,
+          "draws": 8,
+          "losses": 5
+        }
+      }
+    },
+    {
+      "teamId": 853,
+      "teamName": "Tokushima Vortis",
+      "country": "Japan",
+      "league": "Japan J2 League",
+      "expectedSeasonId": 13961,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Tokushima Vortis",
+        "country": "Japan",
+        "competitionId": 13961,
+        "leagueId": 13961,
+        "leagueName": "Japan Japan J2 League",
+        "season": "2025",
+        "position": "5/20",
+        "stats": {
+          "matches": 20,
+          "wins": 10,
+          "draws": 6,
+          "losses": 4
+        }
+      }
+    },
+    {
+      "teamId": 7050,
+      "teamName": "Grobinas Sporta Centrs",
+      "country": "Latvia",
+      "league": "Latvia Virsliga",
+      "expectedSeasonId": 14275,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Grobiņa",
+        "country": "Latvia",
+        "competitionId": 14275,
+        "leagueId": 14275,
+        "leagueName": "Latvia Latvia Virsliga",
+        "season": "2025",
+        "position": "7/10",
+        "stats": {
+          "matches": 20,
+          "wins": 5,
+          "draws": 4,
+          "losses": 11
+        }
+      }
+    },
+    {
+      "teamId": 63,
+      "teamName": "FK Liepāja",
+      "country": "Latvia",
+      "league": "Latvia Virsliga",
+      "expectedSeasonId": 14275,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "Liepāja",
+        "country": "Latvia",
+        "competitionId": 12278,
+        "leagueId": 14275,
+        "leagueName": "Latvia Latvia Virsliga",
+        "season": "2025",
+        "position": "3/10",
+        "stats": {
+          "matches": 2,
+          "wins": 0,
+          "draws": 1,
+          "losses": 1
+        }
+      }
+    },
+    {
+      "teamId": 722608,
+      "teamName": "FS Jelgava",
+      "country": "Latvia",
+      "league": "Latvia Virsliga",
+      "expectedSeasonId": 14275,
+      "success": true,
+      "errors": [],
+      "actualData": {
+        "name": "FS Jelgava",
+        "country": "Latvia",
+        "competitionId": 14275,
+        "leagueId": 14275,
+        "leagueName": "Latvia Latvia Virsliga",
+        "season": "2025",
+        "position": "6/10",
+        "stats": {
+          "matches": 20,
+          "wins": 6,
+          "draws": 6,
+          "losses": 8
+        }
+      }
+    },
+    {
+      "teamId": 1638,
+      "teamName": "JK Narva Trans",
+      "country": "Estonia",
+      "league": "Estonia Meistriliiga",
+      "expectedSeasonId": 14165,
+      "success": true,
+      "errors": [
+        "No matches played data"
+      ],
+      "actualData": {
+        "name": "Trans",
+        "country": "Estonia",
+        "competitionId": 14785,
+        "leagueId": 14165,
+        "leagueName": "Estonia Estonia Meistriliiga",
+        "season": "2025",
+        "position": "5/10",
+        "stats": {
+          "matches": 0,
+          "wins": 0,
+          "draws": 0,
+          "losses": 0
+        }
+      }
+    }
+  ]
+}

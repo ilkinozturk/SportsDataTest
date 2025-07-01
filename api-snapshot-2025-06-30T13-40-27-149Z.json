@@ -1,0 +1,5162 @@
+{
+  "836": {
+    "success": true,
+    "data": {
+      "teamInfo": {
+        "id": 836,
+        "name": "Shanghai SIPG FC",
+        "fullName": "Shanghai SIPG FC",
+        "englishName": "Shanghai SIPG FC",
+        "image": "https://cdn.footystats.org/img/teams/china-shanghai-sipg-fc.png",
+        "country": "China",
+        "founded": "2005",
+        "season": "2025",
+        "competition_id": 14153,
+        "risk": 67,
+        "performance_rank": 4
+      },
+      "league": {
+        "id": 14153,
+        "name": "China Chinese Super League",
+        "country": "China",
+        "season": "2025",
+        "fullName": "China China Chinese Super League",
+        "shortName": "China Chinese Super League",
+        "originalCompetitionId": 14153,
+        "confidence": 0.95,
+        "resolutionMethod": "universal_mapping"
+      },
+      "statistics": {
+        "totalMatches": 15,
+        "completedMatches": 15,
+        "wins": 9,
+        "draws": 4,
+        "losses": 2,
+        "points": 31,
+        "pointsPerGame": 2.07,
+        "goalsFor": 34,
+        "goalsAgainst": 19,
+        "goalDifference": 15,
+        "averageGoalsFor": 2.27,
+        "averageGoalsAgainst": 1.27,
+        "goalsForPerMatch": 2.27,
+        "goalsAgainstPerMatch": 1.27,
+        "seasonConcededAVG_overall": 1.27,
+        "seasonConcededAVG_home": 1.11,
+        "seasonConcededAVG_away": 1.5,
+        "avgMatchGoals": 3.53,
+        "seasonScoredAVG_overall": 2.27,
+        "scored_2hg_avg_overall": 0.93,
+        "scored_2hg_avg_home": 0.89,
+        "scored_2hg_avg_away": 1,
+        "scored_2hg_overall": 14,
+        "scored_2hg_home": 8,
+        "scored_2hg_away": 6,
+        "homeMatches": 9,
+        "homeWins": 5,
+        "homeDraws": 2,
+        "homeLosses": 2,
+        "homeGoalsFor": 17,
+        "homeGoalsAgainst": 10,
+        "homePointsPerGame": 1.89,
+        "homeGoalDifference": 7,
+        "awayMatches": 6,
+        "awayWins": 4,
+        "awayDraws": 2,
+        "awayLosses": 0,
+        "awayGoalsFor": 17,
+        "awayGoalsAgainst": 9,
+        "awayPointsPerGame": 2.33,
+        "awayGoalDifference": 8,
+        "winPercentage": 60,
+        "drawPercentage": 27,
+        "lossPercentage": 13,
+        "homeWinPercentage": 56,
+        "awayWinPercentage": 67,
+        "cleanSheets": 3,
+        "failedToScore": 0,
+        "cleanSheetPercentage": 20,
+        "failedToScorePercentage": 0,
+        "homeCleanSheets": 2,
+        "awayCleanSheets": 1,
+        "homeFailedToScore": 0,
+        "awayFailedToScore": 0,
+        "homeCleanSheetPercentage": 22,
+        "awayCleanSheetPercentage": 17,
+        "homeFailedToScorePercentage": 0,
+        "awayFailedToScorePercentage": 0,
+        "over15GoalsPercentage": 100,
+        "over25GoalsPercentage": 73,
+        "over35GoalsPercentage": 53,
+        "over45GoalsPercentage": 20,
+        "bothTeamsScoredPercentage": 80,
+        "bttsAndWinPercentage": 40,
+        "bttsAndDrawPercentage": 27,
+        "bttsAndLosePercentage": 13,
+        "homeOver15GoalsPercentage": 100,
+        "homeOver25GoalsPercentage": 67,
+        "homeOver35GoalsPercentage": 33,
+        "homeOver45GoalsPercentage": 0,
+        "homeBothTeamsScoredPercentage": 78,
+        "homeBttsAndWinPercentage": 33,
+        "homeBttsAndDrawPercentage": 22,
+        "homeBttsAndLosePercentage": 22,
+        "awayOver15GoalsPercentage": 100,
+        "awayOver25GoalsPercentage": 83,
+        "awayOver35GoalsPercentage": 83,
+        "awayOver45GoalsPercentage": 50,
+        "awayBothTeamsScoredPercentage": 83,
+        "awayBttsAndWinPercentage": 50,
+        "awayBttsAndDrawPercentage": 33,
+        "awayBttsAndLosePercentage": 0,
+        "xgFor": 1.87,
+        "xgAgainst": 1.65,
+        "xgForPerMatch": 1.87,
+        "xgAgainstPerMatch": 1.65,
+        "xgDifferencePerMatch": 0.2200000000000002,
+        "homeXgFor": 2,
+        "homeXgAgainst": 1.6,
+        "homeXgForPerMatch": 2,
+        "homeXgAgainstPerMatch": 1.6,
+        "awayXgFor": 1.67,
+        "awayXgAgainst": 1.73,
+        "awayXgForPerMatch": 1.67,
+        "awayXgAgainstPerMatch": 1.73,
+        "homeGoalsForPerMatch": 1.89,
+        "awayGoalsForPerMatch": 2.83,
+        "homeGoalsAgainstPerMatch": 1.11,
+        "awayGoalsAgainstPerMatch": 1.5,
+        "cornersAVG": 4.6,
+        "cornersAgainstAVG": 5.07,
+        "cornersTotalAVG": 9.67,
+        "cornersEarnedPerMatch": 4.6,
+        "cornersAgainstPerMatch": 5.07,
+        "totalCornersPerMatch": 9.67,
+        "homeCornersAVG": 5.22,
+        "homeCornersAgainstAVG": 4.89,
+        "homeCornersTotalAVG": 10.11,
+        "awayCornersAVG": 3.67,
+        "awayCornersAgainstAVG": 5.33,
+        "awayCornersTotalAVG": 9,
+        "cornersOver65": 80,
+        "cornersOver75": 80,
+        "cornersOver85": 73,
+        "over95Corners": 67,
+        "over105Corners": 27,
+        "cornersOver115": 7,
+        "cornersOver125": 7,
+        "cornersOver135": 7,
+        "over25CornersForPercentage_overall": 80,
+        "over35CornersForPercentage_overall": 73,
+        "over45CornersForPercentage_overall": 53,
+        "over55CornersForPercentage_overall": 27,
+        "over65CornersForPercentage_overall": 27,
+        "over75CornersForPercentage_overall": 13,
+        "over85CornersForPercentage_overall": 0,
+        "over25CornersForPercentage_home": 89,
+        "over35CornersForPercentage_home": 89,
+        "over45CornersForPercentage_home": 67,
+        "over55CornersForPercentage_home": 33,
+        "over65CornersForPercentage_home": 33,
+        "over75CornersForPercentage_home": 11,
+        "over85CornersForPercentage_home": 0,
+        "over25CornersForPercentage_away": 67,
+        "over35CornersForPercentage_away": 50,
+        "over45CornersForPercentage_away": 33,
+        "over55CornersForPercentage_away": 17,
+        "over65CornersForPercentage_away": 17,
+        "over75CornersForPercentage_away": 17,
+        "over85CornersForPercentage_away": 0,
+        "over25CornersAgainstPercentage_overall": 87,
+        "over35CornersAgainstPercentage_overall": 73,
+        "over45CornersAgainstPercentage_overall": 53,
+        "over55CornersAgainstPercentage_overall": 47,
+        "over65CornersAgainstPercentage_overall": 20,
+        "over75CornersAgainstPercentage_overall": 13,
+        "over85CornersAgainstPercentage_overall": 13,
+        "over25CornersAgainstPercentage_home": 89,
+        "over35CornersAgainstPercentage_home": 67,
+        "over45CornersAgainstPercentage_home": 44,
+        "over55CornersAgainstPercentage_home": 44,
+        "over65CornersAgainstPercentage_home": 11,
+        "over75CornersAgainstPercentage_home": 11,
+        "over85CornersAgainstPercentage_home": 11,
+        "over25CornersAgainstPercentage_away": 83,
+        "over35CornersAgainstPercentage_away": 83,
+        "over45CornersAgainstPercentage_away": 67,
+        "over55CornersAgainstPercentage_away": 50,
+        "over65CornersAgainstPercentage_away": 33,
+        "over75CornersAgainstPercentage_away": 17,
+        "over85CornersAgainstPercentage_away": 17,
+        "over65CornersPercentage_overall": 80,
+        "over75CornersPercentage_overall": 80,
+        "over85CornersPercentage_overall": 73,
+        "over95CornersPercentage_overall": 67,
+        "over105CornersPercentage_overall": 27,
+        "over115CornersPercentage_overall": 7,
+        "over125CornersPercentage_overall": 7,
+        "over135CornersPercentage_overall": 7,
+        "over65CornersPercentage_home": 78,
+        "over75CornersPercentage_home": 78,
+        "over85CornersPercentage_home": 67,
+        "over95CornersPercentage_home": 67,
+        "over105CornersPercentage_home": 44,
+        "over115CornersPercentage_home": 11,
+        "over125CornersPercentage_home": 11,
+        "over135CornersPercentage_home": 11,
+        "over65CornersPercentage_away": 83,
+        "over75CornersPercentage_away": 83,
+        "over85CornersPercentage_away": 83,
+        "over95CornersPercentage_away": 67,
+        "over105CornersPercentage_away": 0,
+        "over115CornersPercentage_away": 0,
+        "over125CornersPercentage_away": 0,
+        "over135CornersPercentage_away": 0,
+        "corners1H_AVG_overall": 0,
+        "corners2H_AVG_overall": 0,
+        "corners1H_AVG_home": 0,
+        "corners2H_AVG_home": 0,
+        "corners1H_AVG_away": 0,
+        "corners2H_AVG_away": 0,
+        "cornerDrawPercentage_overall": 0,
+        "cornerDrawPercentage_home": 0,
+        "cornerDrawPercentage_away": 0,
+        "winMostCornersPercentage_overall": 33,
+        "winMostCornersPercentage_home": 44,
+        "winMostCornersPercentage_away": 17,
+        "loseMostCornersPercentage_overall": 0,
+        "loseMostCornersPercentage_home": 0,
+        "loseMostCornersPercentage_away": 0,
+        "corners04Percentage_overall": 0,
+        "corners04Percentage_home": 0,
+        "corners04Percentage_away": 0,
+        "corners56Percentage_overall": 0,
+        "corners56Percentage_home": 0,
+        "corners56Percentage_away": 0,
+        "corners78Percentage_overall": 0,
+        "corners78Percentage_home": 0,
+        "corners78Percentage_away": 0,
+        "corners910Percentage_overall": 0,
+        "corners910Percentage_home": 0,
+        "corners910Percentage_away": 0,
+        "corners11PlusPercentage_overall": 0,
+        "corners11PlusPercentage_home": 0,
+        "corners11PlusPercentage_away": 0,
+        "totalCards": 34,
+        "cardsPerMatch": 2.27,
+        "homeCards": 22,
+        "awayCards": 12,
+        "homeCardsPerMatch": 2.44,
+        "awayCardsPerMatch": 2,
+        "cardsHighest": 5,
+        "cardsLowest": 0,
+        "cardsFor": 34,
+        "cardsAgainst": 27,
+        "cardsForPerMatch": 2.27,
+        "cardsAgainstPerMatch": 1.8,
+        "homeCardsFor": 22,
+        "homeCardsAgainst": 20,
+        "awayCardsFor": 12,
+        "awayCardsAgainst": 7,
+        "over05CardsForPercentage": 93,
+        "over15CardsForPercentage": 0,
+        "over25CardsForPercentage": 0,
+        "over35CardsForPercentage": 0,
+        "over45CardsForPercentage": 0,
+        "over55CardsForPercentage": 0,
+        "over65CardsForPercentage": 0,
+        "over05CardsAgainstPercentage": 0,
+        "over15CardsAgainstPercentage": 0,
+        "over25CardsAgainstPercentage": 0,
+        "over35CardsAgainstPercentage": 0,
+        "over45CardsAgainstPercentage": 0,
+        "over55CardsAgainstPercentage": 0,
+        "over65CardsAgainstPercentage": 0,
+        "homeOver05CardsForPercentage": 89,
+        "homeOver15CardsForPercentage": 0,
+        "homeOver25CardsForPercentage": 0,
+        "homeOver35CardsForPercentage": 0,
+        "homeOver45CardsForPercentage": 0,
+        "homeOver55CardsForPercentage": 0,
+        "homeOver65CardsForPercentage": 0,
+        "homeOver05CardsAgainstPercentage": 0,
+        "homeOver15CardsAgainstPercentage": 0,
+        "homeOver25CardsAgainstPercentage": 0,
+        "homeOver35CardsAgainstPercentage": 0,
+        "awayOver05CardsForPercentage": 100,
+        "awayOver15CardsForPercentage": 0,
+        "awayOver25CardsForPercentage": 0,
+        "awayOver35CardsForPercentage": 0,
+        "awayOver45CardsForPercentage": 0,
+        "awayOver55CardsForPercentage": 0,
+        "awayOver65CardsForPercentage": 0,
+        "awayOver05CardsAgainstPercentage": 0,
+        "awayOver15CardsAgainstPercentage": 0,
+        "awayOver25CardsAgainstPercentage": 0,
+        "awayOver35CardsAgainstPercentage": 0,
+        "cardsOver05": 93,
+        "cardsOver15": 87,
+        "cardsOver25": 80,
+        "cardsOver35": 67,
+        "cardsOver45": 40,
+        "cardsOver55": 27,
+        "homeCardsOver05": 89,
+        "homeCardsOver15": 89,
+        "homeCardsOver25": 89,
+        "homeCardsOver35": 78,
+        "homeCardsOver45": 56,
+        "homeCardsOver55": 44,
+        "awayCardsOver05": 100,
+        "awayCardsOver15": 83,
+        "awayCardsOver25": 67,
+        "awayCardsOver35": 50,
+        "awayCardsOver45": 17,
+        "awayCardsOver55": 0,
+        "cards1H_AVG_overall": 0,
+        "cards1H_AVG_home": 0,
+        "cards1H_AVG_away": 0,
+        "cards2H_AVG_overall": 0,
+        "cards2H_AVG_home": 0,
+        "cards2H_AVG_away": 0,
+        "cards1H_under2_percentage_overall": 56,
+        "cards1H_2to3_percentage_overall": 43,
+        "cards1H_over3_percentage_overall": 0,
+        "cards1H_under2_percentage_home": 38,
+        "cards1H_2to3_percentage_home": 63,
+        "cards1H_over3_percentage_home": 0,
+        "cards1H_under2_percentage_away": 83,
+        "cards1H_2to3_percentage_away": 17,
+        "cards1H_over3_percentage_away": 0,
+        "cards2H_under2_percentage_overall": 14,
+        "cards2H_2to3_percentage_overall": 43,
+        "cards2H_over3_percentage_overall": 43,
+        "cards2H_under2_percentage_home": 13,
+        "cards2H_2to3_percentage_home": 25,
+        "cards2H_over3_percentage_home": 63,
+        "cards2H_under2_percentage_away": 17,
+        "cards2H_2to3_percentage_away": 67,
+        "cards2H_over3_percentage_away": 17,
+        "cardsHighest1H_overall": 0,
+        "cardsHighest1H_home": 0,
+        "cardsHighest1H_away": 0,
+        "cardsHighest2H_overall": 0,
+        "cardsHighest2H_home": 0,
+        "cardsHighest2H_away": 0,
+        "cardsLowest_home": 0,
+        "cardsLowest_away": 0,
+        "cardsVsOpponents": 0,
+        "cleanGames": 0,
+        "multipleCardsGames": 0,
+        "earlyCards": 0,
+        "lateCards": 0,
+        "cardsInWins": 0,
+        "cardsInLosses": 0,
+        "possessionPercentage": 59,
+        "homePossessionPercentage": 58,
+        "awayPossessionPercentage": 60,
+        "penaltiesWon": 2,
+        "penaltiesConceded": 2,
+        "homePenaltiesWon": 2,
+        "awayPenaltiesWon": 0,
+        "homePenaltiesConceded": 1,
+        "awayPenaltiesConceded": 1,
+        "penalty_in_a_match_percentage_overall": 28,
+        "penalty_in_a_match_percentage_home": 38,
+        "penalty_in_a_match_percentage_away": 17,
+        "recentForm": "wwdwdwlwlwwddww",
+        "homeForm": "wwwdllwdw",
+        "awayForm": "dwwwdw",
+        "predictionRisk": 67,
+        "homeAdvantagePercentage": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "leadingAtHT_overall": 9,
+        "leadingAtHT_home": 4,
+        "leadingAtHT_away": 5,
+        "leadingAtHTPercentage_overall": 60,
+        "leadingAtHTPercentage_home": 44,
+        "leadingAtHTPercentage_away": 83,
+        "drawingAtHT_overall": 4,
+        "drawingAtHT_home": 4,
+        "drawingAtHT_away": 0,
+        "drawingAtHTPercentage_overall": 27,
+        "drawingAtHTPercentage_home": 44,
+        "drawingAtHTPercentage_away": 0,
+        "trailingAtHT_overall": 2,
+        "trailingAtHT_home": 1,
+        "trailingAtHT_away": 1,
+        "trailingAtHTPercentage_overall": 13,
+        "trailingAtHTPercentage_home": 11,
+        "trailingAtHTPercentage_away": 17,
+        "scoredGoalsHT_overall": 20,
+        "scoredGoalsHT_home": 9,
+        "scoredGoalsHT_away": 11,
+        "concededGoalsHT_overall": 7,
+        "concededGoalsHT_home": 4,
+        "concededGoalsHT_away": 3,
+        "scoredAVGHT_overall": 1.33,
+        "scoredAVGHT_home": 1,
+        "scoredAVGHT_away": 1.83,
+        "concededAVGHT_overall": 0.47,
+        "concededAVGHT_home": 0.44,
+        "concededAVGHT_away": 0.5,
+        "seasonCSHT_overall": 11,
+        "seasonCSHT_home": 6,
+        "seasonCSHT_away": 5,
+        "seasonCSPercentageHT_overall": 73,
+        "seasonCSPercentageHT_home": 67,
+        "seasonCSPercentageHT_away": 83,
+        "cs_2hg_percentage_overall": 33,
+        "cs_2hg_percentage_home": 33,
+        "cs_2hg_percentage_away": 33,
+        "seasonFTSHT_overall": 2,
+        "seasonFTSHT_home": 2,
+        "seasonFTSHT_away": 0,
+        "seasonFTSPercentageHT_overall": 13,
+        "seasonFTSPercentageHT_home": 22,
+        "seasonFTSPercentageHT_away": 0,
+        "fts_2hg_percentage_overall": 40,
+        "fts_2hg_percentage_home": 44,
+        "fts_2hg_percentage_away": 33,
+        "seasonBTTSHT_overall": 4,
+        "seasonBTTSHT_home": 3,
+        "seasonBTTSHT_away": 1,
+        "seasonBTTSPercentageHT_overall": 27,
+        "seasonBTTSPercentageHT_home": 33,
+        "seasonBTTSPercentageHT_away": 17,
+        "seasonOver05PercentageHT_overall": 87,
+        "seasonOver05PercentageHT_home": 78,
+        "seasonOver05PercentageHT_away": 100,
+        "seasonOver15PercentageHT_overall": 60,
+        "seasonOver15PercentageHT_home": 56,
+        "seasonOver15PercentageHT_away": 67,
+        "seasonOver25PercentageHT_overall": 27,
+        "seasonOver25PercentageHT_home": 11,
+        "seasonOver25PercentageHT_away": 50,
+        "over05_2hg_percentage_overall": 93,
+        "over05_2hg_percentage_home": 100,
+        "over05_2hg_percentage_away": 83,
+        "over15_2hg_percentage_overall": 53,
+        "over15_2hg_percentage_home": 44,
+        "over15_2hg_percentage_away": 67,
+        "over25_2hg_percentage_overall": 20,
+        "over25_2hg_percentage_home": 11,
+        "over25_2hg_percentage_away": 33,
+        "goals0_15": 5,
+        "goals16_30": 4,
+        "goals31_45": 9,
+        "goals46_60": 5,
+        "goals61_75": 3,
+        "goals76_90": 5,
+        "goalsConc0_15": 3,
+        "goalsConc16_30": 2,
+        "goalsConc31_45": 2,
+        "goalsConc46_60": 2,
+        "goalsConc61_75": 3,
+        "goalsConc76_90": 6,
+        "homeGoals0_15": 4,
+        "homeGoals16_30": 1,
+        "homeGoals31_45": 3,
+        "homeGoals46_60": 2,
+        "homeGoals61_75": 1,
+        "homeGoals76_90": 4,
+        "homeGoalsConc0_15": 2,
+        "homeGoalsConc16_30": 1,
+        "homeGoalsConc31_45": 1,
+        "homeGoalsConc46_60": 2,
+        "homeGoalsConc61_75": 1,
+        "homeGoalsConc76_90": 3,
+        "awayGoals0_15": 1,
+        "awayGoals16_30": 3,
+        "awayGoals31_45": 6,
+        "awayGoals46_60": 3,
+        "awayGoals61_75": 2,
+        "awayGoals76_90": 1,
+        "awayGoalsConc0_15": 1,
+        "awayGoalsConc16_30": 1,
+        "awayGoalsConc31_45": 1,
+        "awayGoalsConc46_60": 0,
+        "awayGoalsConc61_75": 2,
+        "awayGoalsConc76_90": 3,
+        "seasonScoredOver05Percentage_overall": 100,
+        "seasonScoredOver05Percentage_home": 100,
+        "seasonScoredOver05Percentage_away": 100,
+        "seasonScoredOver15Percentage_overall": 73,
+        "seasonScoredOver15Percentage_home": 56,
+        "seasonScoredOver15Percentage_away": 100,
+        "seasonScoredOver25Percentage_overall": 47,
+        "seasonScoredOver25Percentage_home": 33,
+        "seasonScoredOver25Percentage_away": 67,
+        "scoredBothHalvesPercentage_overall": 47,
+        "scoredBothHalvesPercentage_home": 33,
+        "scoredBothHalvesPercentage_away": 67,
+        "firstGoalScoredPercentage_overall": 73,
+        "firstGoalScoredPercentage_home": 67,
+        "firstGoalScoredPercentage_away": 83,
+        "seasonHighestScored_overall": 4,
+        "seasonHighestScored_home": 3,
+        "seasonHighestScored_away": 4,
+        "highestScored": 4,
+        "scoredPercentageHT_overall": 0,
+        "scoredPercentageHT_home": 0,
+        "scoredPercentageHT_away": 0,
+        "scoredPercentage2H_overall": 0,
+        "scoredPercentage2H_home": 0,
+        "scoredPercentage2H_away": 0,
+        "scored1HG_overall": 0,
+        "scored1HG_home": 0,
+        "scored1HG_away": 0,
+        "scored2HG_overall": 0,
+        "scored2HG_home": 0,
+        "scored2HG_away": 0,
+        "seasonConcededOver05Percentage_overall": 80,
+        "seasonConcededOver05Percentage_home": 78,
+        "seasonConcededOver05Percentage_away": 83,
+        "seasonConcededOver15Percentage_overall": 33,
+        "seasonConcededOver15Percentage_home": 22,
+        "seasonConcededOver15Percentage_away": 50,
+        "seasonConcededOver25Percentage_overall": 13,
+        "seasonConcededOver25Percentage_home": 11,
+        "seasonConcededOver25Percentage_away": 17,
+        "cleanSheetPercentage_overall": 0,
+        "cleanSheetPercentage_home": 0,
+        "cleanSheetPercentage_away": 0,
+        "seasonHighestConceded_overall": 3,
+        "seasonHighestConceded_home": 3,
+        "seasonHighestConceded_away": 3,
+        "concededPercentageHT_overall": 0,
+        "concededPercentageHT_home": 0,
+        "concededPercentageHT_away": 0,
+        "conceded_2hg_percentage_overall": 0,
+        "conceded_2hg_percentage_home": 0,
+        "conceded_2hg_percentage_away": 0,
+        "concededBothHalvesPercentage_overall": 0,
+        "concededBothHalvesPercentage_home": 0,
+        "concededBothHalvesPercentage_away": 0,
+        "conceded1HG_overall": 0,
+        "conceded1HG_home": 0,
+        "conceded1HG_away": 0,
+        "conceded2HG_overall": 0,
+        "conceded2HG_home": 0,
+        "conceded2HG_away": 0,
+        "conceded_2hg_avg_overall": 0.8,
+        "conceded_2hg_avg_home": 0.67,
+        "conceded_2hg_avg_away": 1,
+        "conceded_2hg_overall": 12,
+        "conceded_2hg_home": 6,
+        "conceded_2hg_away": 6,
+        "over25_and_btts_percentage_overall": 67,
+        "over25_and_btts_percentage_home": 56,
+        "over25_and_btts_percentage_away": 83,
+        "btts_1h2h_yes_yes_percentage_overall": 0,
+        "btts_1h2h_yes_yes_percentage_home": 0,
+        "btts_1h2h_yes_yes_percentage_away": 0,
+        "btts_1h2h_yes_no_percentage_overall": 27,
+        "btts_1h2h_yes_no_percentage_home": 33,
+        "btts_1h2h_yes_no_percentage_away": 17,
+        "btts_1h2h_no_yes_percentage_overall": 33,
+        "btts_1h2h_no_yes_percentage_home": 22,
+        "btts_1h2h_no_yes_percentage_away": 50,
+        "btts_1h2h_no_no_percentage_overall": 40,
+        "btts_1h2h_no_no_percentage_home": 44,
+        "btts_1h2h_no_no_percentage_away": 33,
+        "btts_2hg_percentage_overall": 33,
+        "btts_2hg_percentage_home": 22,
+        "btts_2hg_percentage_away": 50,
+        "shotsAVG": 16.07,
+        "homeShotsAVG": 17.56,
+        "awayShotsAVG": 13.83,
+        "shotsOnTargetAVG": 6.33,
+        "homeShotsOnTargetAVG": 6.44,
+        "awayShotsOnTargetAVG": 6.17,
+        "shotsOffTargetAVG": 9.73,
+        "homeShotsOffTargetAVG": 11.11,
+        "awayShotsOffTargetAVG": 7.67,
+        "shotsConversionRate": 14,
+        "homeShotsConversionRate": 11,
+        "awayShotsConversionRate": 20,
+        "shotsPerGoal": 7.1,
+        "homeShotsPerGoal": 9.3,
+        "awayShotsPerGoal": 4.9,
+        "shotsOnTargetPerGoal": 2.8,
+        "homeShotsOnTargetPerGoal": 3.4,
+        "awayShotsOnTargetPerGoal": 2.2,
+        "shotsOver10_5": 87,
+        "homeShotsOver10_5": 89,
+        "awayShotsOver10_5": 83,
+        "shotsOver11_5": 60,
+        "homeShotsOver11_5": 56,
+        "awayShotsOver11_5": 67,
+        "shotsOver12_5": 60,
+        "homeShotsOver12_5": 56,
+        "awayShotsOver12_5": 67,
+        "shotsOver13_5": 60,
+        "homeShotsOver13_5": 56,
+        "awayShotsOver13_5": 67,
+        "shotsOver14_5": 60,
+        "homeShotsOver14_5": 56,
+        "awayShotsOver14_5": 67,
+        "shotsOver15_5": 53,
+        "homeShotsOver15_5": 56,
+        "awayShotsOver15_5": 67,
+        "shotsOnTargetOver3_5": 87,
+        "homeShotsOnTargetOver3_5": 78,
+        "awayShotsOnTargetOver3_5": 100,
+        "shotsOnTargetOver4_5": 67,
+        "homeShotsOnTargetOver4_5": 67,
+        "awayShotsOnTargetOver4_5": 67,
+        "shotsOnTargetOver5_5": 67,
+        "homeShotsOnTargetOver5_5": 67,
+        "awayShotsOnTargetOver5_5": 67,
+        "shotsOnTargetOver6_5": 60,
+        "homeShotsOnTargetOver6_5": 67,
+        "awayShotsOnTargetOver6_5": 50,
+        "matchShotsOver23_5": 87,
+        "homeMatchShotsOver23_5": 89,
+        "awayMatchShotsOver23_5": 83,
+        "matchShotsOver24_5": 87,
+        "homeMatchShotsOver24_5": 89,
+        "awayMatchShotsOver24_5": 83,
+        "matchShotsOver25_5": 80,
+        "homeMatchShotsOver25_5": 89,
+        "awayMatchShotsOver25_5": 67,
+        "matchShotsOver26_5": 80,
+        "homeMatchShotsOver26_5": 89,
+        "awayMatchShotsOver26_5": 67,
+        "matchShotsOnTargetOver7_5": 87,
+        "homeMatchShotsOnTargetOver7_5": 78,
+        "awayMatchShotsOnTargetOver7_5": 100,
+        "matchShotsOnTargetOver8_5": 80,
+        "homeMatchShotsOnTargetOver8_5": 67,
+        "awayMatchShotsOnTargetOver8_5": 100,
+        "matchShotsOnTargetOver9_5": 73,
+        "homeMatchShotsOnTargetOver9_5": 67,
+        "awayMatchShotsOnTargetOver9_5": 83,
+        "offsidesAvg": 1.73,
+        "homeOffsidesAvg": 1.78,
+        "awayOffsidesAvg": 1.67,
+        "matchOffsidesAvg": 4.4,
+        "homeMatchOffsidesAvg": 4.67,
+        "awayMatchOffsidesAvg": 4,
+        "offsidesOver0_5": 93,
+        "homeOffsidesOver0_5": 89,
+        "awayOffsidesOver0_5": 100,
+        "offsidesOver1_5": 60,
+        "homeOffsidesOver1_5": 67,
+        "awayOffsidesOver1_5": 50,
+        "offsidesOver2_5": 20,
+        "homeOffsidesOver2_5": 22,
+        "awayOffsidesOver2_5": 17,
+        "halfWithMostGoalsIs1HPercentage_overall": 53,
+        "halfWithMostGoalsIs2HPercentage_overall": 33,
+        "halfWithMostGoalsIsBothPercentage_overall": 0,
+        "matchOffsidesOver0_5": 100,
+        "homeMatchOffsidesOver0_5": 100,
+        "awayMatchOffsidesOver0_5": 100,
+        "matchOffsidesOver1_5": 87,
+        "homeMatchOffsidesOver1_5": 89,
+        "awayMatchOffsidesOver1_5": 83,
+        "matchOffsidesOver2_5": 80,
+        "homeMatchOffsidesOver2_5": 89,
+        "awayMatchOffsidesOver2_5": 67,
+        "matchOffsidesOver3_5": 47,
+        "homeMatchOffsidesOver3_5": 56,
+        "awayMatchOffsidesOver3_5": 33
+      },
+      "leaguePosition": {
+        "position": 4,
+        "totalTeams": 16,
+        "positionText": "4/16",
+        "isReliable": true,
+        "note": null
+      },
+      "allMatches": [
+        {
+          "id": 7825431,
+          "date": "2025-11-22T07:30:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 979057,
+            "name": "Dalian Zhixing FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 30,
+          "stadium": "Dalian Suoyuwan Football Stadium (Dalian)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825416,
+          "date": "2025-10-31T10:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 839,
+            "name": "Zhejiang Professional FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 29,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825412,
+          "date": "2025-10-26T07:30:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 844,
+            "name": "Shandong Luneng Taishan FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 28,
+          "stadium": "Jinan Olympic Sports Center (Jinan)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825400,
+          "date": "2025-10-17T10:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 952,
+            "name": "Qingdao Jonoon FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 27,
+          "stadium": "Qingdao Youth Football Stadium (Qingdao)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825395,
+          "date": "2025-09-26T12:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 672253,
+            "name": "Wuhan Three Towns FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 26,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825389,
+          "date": "2025-09-21T10:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 840,
+            "name": "Beijing Guoan FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 25,
+          "stadium": "Workers' Stadium (Beijing)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825376,
+          "date": "2025-09-12T10:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 979059,
+            "name": "Yunnan Yukun FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 24,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825371,
+          "date": "2025-08-30T11:35:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 672291,
+            "name": "Chengdu Better City FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 23,
+          "stadium": "Wuliangye Sports Center Stadium (Chengdu)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825360,
+          "date": "2025-08-23T11:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 847,
+            "name": "Tianjin Teda FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 22,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825352,
+          "date": "2025-08-15T11:35:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 837,
+            "name": "Henan Jianye FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 21,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825347,
+          "date": "2025-08-09T11:35:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 846,
+            "name": "Shanghai Shenhua FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 20,
+          "stadium": "Shanghai Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825339,
+          "date": "2025-08-02T12:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 943,
+            "name": "Meizhou Hakka FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 19,
+          "stadium": "Wuhua Olympic Sports Center Huitang Stadium (Wuhua)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825328,
+          "date": "2025-07-26T11:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 703937,
+            "name": "Qingdao Youth Island FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 18,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825321,
+          "date": "2025-07-18T08:30:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 843,
+            "name": "Changchun Yatai FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 17,
+          "stadium": "Changchun Sports Center Stadium (Changchun)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825319,
+          "date": "2025-06-30T12:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 672294,
+            "name": "Sichuan Jiuniu FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 16,
+          "stadium": "Shenzhen Stadium (Shenzhen)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825310,
+          "date": "2025-06-26T11:35:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 979057,
+            "name": "Dalian Zhixing FC"
+          },
+          "homeScore": 3,
+          "awayScore": 0,
+          "round": 15,
+          "stadium": "",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 7,
+              "away": 3
+            },
+            "cards": {
+              "home": 0,
+              "away": 0
+            },
+            "possession": {
+              "home": 65,
+              "away": 35
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825236,
+          "date": "2025-06-18T11:35:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 837,
+            "name": "Henan Jianye FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 1,
+          "awayScore": 3,
+          "round": 6,
+          "stadium": "",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 6,
+              "away": 4
+            },
+            "cards": {
+              "home": 1,
+              "away": 3
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825298,
+          "date": "2025-06-14T07:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 839,
+            "name": "Zhejiang Professional FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 2,
+          "awayScore": 2,
+          "round": 14,
+          "stadium": "",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 5,
+              "away": 5
+            },
+            "cards": {
+              "home": 2,
+              "away": 2
+            },
+            "possession": {
+              "home": 42,
+              "away": 58
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825295,
+          "date": "2025-05-17T12:00:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 844,
+            "name": "Shandong Luneng Taishan FC"
+          },
+          "homeScore": 1,
+          "awayScore": 1,
+          "round": 13,
+          "stadium": "",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 4,
+              "away": 6
+            },
+            "cards": {
+              "home": 1,
+              "away": 3
+            },
+            "possession": {
+              "home": 61,
+              "away": 39
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825280,
+          "date": "2025-05-09T11:35:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 952,
+            "name": "Qingdao Jonoon FC"
+          },
+          "homeScore": 3,
+          "awayScore": 1,
+          "round": 12,
+          "stadium": "",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 7,
+              "away": 4
+            },
+            "cards": {
+              "home": 2,
+              "away": 2
+            },
+            "possession": {
+              "home": 64,
+              "away": 36
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825274,
+          "date": "2025-05-05T11:00:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 672253,
+            "name": "Wuhan Three Towns FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 2,
+          "round": 11,
+          "stadium": "",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 7,
+              "away": 3
+            },
+            "cards": {
+              "home": 1,
+              "away": 1
+            },
+            "possession": {
+              "home": 40,
+              "away": 60
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825269,
+          "date": "2025-05-01T11:35:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 840,
+            "name": "Beijing Guoan FC"
+          },
+          "homeScore": 1,
+          "awayScore": 2,
+          "round": 10,
+          "stadium": "",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 5,
+              "away": 6
+            },
+            "cards": {
+              "home": 2,
+              "away": 1
+            },
+            "possession": {
+              "home": 59,
+              "away": 41
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825257,
+          "date": "2025-04-25T12:00:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 979059,
+            "name": "Yunnan Yukun FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 2,
+          "awayScore": 3,
+          "round": 9,
+          "stadium": "",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 9,
+              "away": 1
+            },
+            "cards": {
+              "home": 0,
+              "away": 1
+            },
+            "possession": {
+              "home": 47,
+              "away": 53
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825255,
+          "date": "2025-04-20T11:35:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 672291,
+            "name": "Chengdu Better City FC"
+          },
+          "homeScore": 1,
+          "awayScore": 3,
+          "round": 8,
+          "stadium": "",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 4,
+              "away": 2
+            },
+            "cards": {
+              "home": 5,
+              "away": 3
+            },
+            "possession": {
+              "home": 66,
+              "away": 34
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825243,
+          "date": "2025-04-16T10:00:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 847,
+            "name": "Tianjin Teda FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 1,
+          "awayScore": 4,
+          "round": 7,
+          "stadium": "TEDA Football Stadium (Tianjin)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 4,
+              "away": 1
+            },
+            "cards": {
+              "home": 1,
+              "away": 2
+            },
+            "possession": {
+              "home": 33,
+              "away": 67
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825229,
+          "date": "2025-04-06T11:35:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 846,
+            "name": "Shanghai Shenhua FC"
+          },
+          "homeScore": 1,
+          "awayScore": 1,
+          "round": 5,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 8,
+              "away": 10
+            },
+            "cards": {
+              "home": 4,
+              "away": 2
+            },
+            "possession": {
+              "home": 47,
+              "away": 53
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825223,
+          "date": "2025-04-02T12:00:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 943,
+            "name": "Meizhou Hakka FC"
+          },
+          "homeScore": 2,
+          "awayScore": 1,
+          "round": 4,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 2,
+              "away": 4
+            },
+            "cards": {
+              "home": 1,
+              "away": 4
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825208,
+          "date": "2025-03-28T11:00:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 703937,
+            "name": "Qingdao Youth Island FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 3,
+          "awayScore": 3,
+          "round": 3,
+          "stadium": "Qingdao West Coast University City Stadium (Qingdao)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 1,
+              "away": 8
+            },
+            "cards": {
+              "home": 2,
+              "away": 3
+            },
+            "possession": {
+              "home": 31,
+              "away": 69
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825201,
+          "date": "2025-02-28T11:35:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 843,
+            "name": "Changchun Yatai FC"
+          },
+          "homeScore": 2,
+          "awayScore": 0,
+          "round": 2,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 5,
+              "away": 3
+            },
+            "cards": {
+              "home": 4,
+              "away": 2
+            },
+            "possession": {
+              "home": 56,
+              "away": 44
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825199,
+          "date": "2025-02-23T11:35:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 672294,
+            "name": "Sichuan Jiuniu FC"
+          },
+          "homeScore": 3,
+          "awayScore": 1,
+          "round": 1,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 5,
+              "away": 6
+            },
+            "cards": {
+              "home": 3,
+              "away": 3
+            },
+            "possession": {
+              "home": 56,
+              "away": 44
+            }
+          },
+          "competition": "China Chinese Super League"
+        }
+      ],
+      "recentMatches": [
+        {
+          "id": 7825431,
+          "date": "2025-11-22T07:30:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 979057,
+            "name": "Dalian Zhixing FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 30,
+          "stadium": "Dalian Suoyuwan Football Stadium (Dalian)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825416,
+          "date": "2025-10-31T10:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 839,
+            "name": "Zhejiang Professional FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 29,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825412,
+          "date": "2025-10-26T07:30:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 844,
+            "name": "Shandong Luneng Taishan FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 28,
+          "stadium": "Jinan Olympic Sports Center (Jinan)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825400,
+          "date": "2025-10-17T10:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 952,
+            "name": "Qingdao Jonoon FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 27,
+          "stadium": "Qingdao Youth Football Stadium (Qingdao)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825395,
+          "date": "2025-09-26T12:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 672253,
+            "name": "Wuhan Three Towns FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 26,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825389,
+          "date": "2025-09-21T10:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 840,
+            "name": "Beijing Guoan FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 25,
+          "stadium": "Workers' Stadium (Beijing)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825376,
+          "date": "2025-09-12T10:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 979059,
+            "name": "Yunnan Yukun FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 24,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825371,
+          "date": "2025-08-30T11:35:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 672291,
+            "name": "Chengdu Better City FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 23,
+          "stadium": "Wuliangye Sports Center Stadium (Chengdu)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825360,
+          "date": "2025-08-23T11:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 847,
+            "name": "Tianjin Teda FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 22,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825352,
+          "date": "2025-08-15T11:35:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 837,
+            "name": "Henan Jianye FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 21,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825347,
+          "date": "2025-08-09T11:35:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 846,
+            "name": "Shanghai Shenhua FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 20,
+          "stadium": "Shanghai Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825339,
+          "date": "2025-08-02T12:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 943,
+            "name": "Meizhou Hakka FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 19,
+          "stadium": "Wuhua Olympic Sports Center Huitang Stadium (Wuhua)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825328,
+          "date": "2025-07-26T11:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "awayTeam": {
+            "id": 703937,
+            "name": "Qingdao Youth Island FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 18,
+          "stadium": "SAIC Motor Pudong Arena (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825321,
+          "date": "2025-07-18T08:30:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 843,
+            "name": "Changchun Yatai FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 17,
+          "stadium": "Changchun Sports Center Stadium (Changchun)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        },
+        {
+          "id": 7825319,
+          "date": "2025-06-30T12:00:00.000Z",
+          "status": "incomplete",
+          "homeTeam": {
+            "id": 672294,
+            "name": "Sichuan Jiuniu FC"
+          },
+          "awayTeam": {
+            "id": 836,
+            "name": "Shanghai SIPG FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 16,
+          "stadium": "Shenzhen Stadium (Shenzhen)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": -1,
+              "away": -1
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": -1,
+              "away": -1
+            }
+          },
+          "competition": "China Chinese Super League"
+        }
+      ],
+      "nextMatch": null,
+      "seasonStats": {
+        "totalMatches": 15,
+        "completedMatches": 15,
+        "upcomingMatches": 0
+      },
+      "competitionInfo": {
+        "type": "unknown",
+        "confidence": 0,
+        "dataSource": "league-teams",
+        "isLeagueData": false,
+        "isCupData": false,
+        "competitionName": "Unknown Competition",
+        "allCompetitionData": null,
+        "message": "Veri türü belirlenemedi",
+        "warning": null
+      },
+      "validation": {
+        "isValid": true,
+        "confidence": 1,
+        "issues": []
+      },
+      "dataQuality": {
+        "score": 100,
+        "warnings": [],
+        "corrections": {},
+        "recommendation": {
+          "status": "reliable",
+          "message": "Data appears to be accurate and complete",
+          "action": "use_as_is"
+        },
+        "metadata": {
+          "dataQualityScore": 100
+        }
+      },
+      "teamResolution": {
+        "originalId": 836,
+        "resolvedId": 836,
+        "wasResolved": false,
+        "confidence": 0.75,
+        "method": "api_data_accepted",
+        "report": {
+          "summary": "Team data has low confidence but no better match found",
+          "details": [
+            "Resolution method: api_data_accepted",
+            "Confidence: 75%"
+          ],
+          "recommendations": []
+        }
+      }
+    }
+  },
+  "849": {
+    "success": true,
+    "data": {
+      "teamInfo": {
+        "id": 849,
+        "name": "Shanghai Shenxin FC",
+        "fullName": "Shanghai Shenxin FC",
+        "englishName": "Shanghai Shenxin FC",
+        "image": "https://cdn.footystats.org/img/teams/china-shanghai-shenxin-fc.png",
+        "country": "China",
+        "founded": "2004",
+        "season": "2019",
+        "competition_id": 1919,
+        "risk": 143,
+        "performance_rank": 16
+      },
+      "league": {
+        "id": 1919,
+        "name": "Unknown League",
+        "country": "China",
+        "season": "2019",
+        "originalCompetitionId": 1919,
+        "confidence": 0.95,
+        "resolutionMethod": "universal_mapping"
+      },
+      "statistics": {
+        "totalMatches": 30,
+        "completedMatches": 30,
+        "wins": 3,
+        "draws": 3,
+        "losses": 24,
+        "points": 12,
+        "pointsPerGame": 0.4,
+        "goalsFor": 30,
+        "goalsAgainst": 82,
+        "goalDifference": -52,
+        "averageGoalsFor": 1,
+        "averageGoalsAgainst": 2.73,
+        "goalsForPerMatch": 1,
+        "goalsAgainstPerMatch": 2.73,
+        "seasonConcededAVG_overall": 2.73,
+        "seasonConcededAVG_home": 2.47,
+        "seasonConcededAVG_away": 3,
+        "avgMatchGoals": 3.73,
+        "seasonScoredAVG_overall": 1,
+        "scored_2hg_avg_overall": 0.63,
+        "scored_2hg_avg_home": 0.53,
+        "scored_2hg_avg_away": 0.73,
+        "scored_2hg_overall": 19,
+        "scored_2hg_home": 8,
+        "scored_2hg_away": 11,
+        "homeMatches": 15,
+        "homeWins": 1,
+        "homeDraws": 1,
+        "homeLosses": 13,
+        "homeGoalsFor": 11,
+        "homeGoalsAgainst": 37,
+        "homePointsPerGame": 0.27,
+        "homeGoalDifference": -26,
+        "awayMatches": 15,
+        "awayWins": 2,
+        "awayDraws": 2,
+        "awayLosses": 11,
+        "awayGoalsFor": 19,
+        "awayGoalsAgainst": 45,
+        "awayPointsPerGame": 0.53,
+        "awayGoalDifference": -26,
+        "winPercentage": 10,
+        "drawPercentage": 10,
+        "lossPercentage": 80,
+        "homeWinPercentage": 7,
+        "awayWinPercentage": 13,
+        "cleanSheets": 1,
+        "failedToScore": 11,
+        "cleanSheetPercentage": 3,
+        "failedToScorePercentage": 37,
+        "homeCleanSheets": 1,
+        "awayCleanSheets": 0,
+        "homeFailedToScore": 7,
+        "awayFailedToScore": 4,
+        "homeCleanSheetPercentage": 7,
+        "awayCleanSheetPercentage": 0,
+        "homeFailedToScorePercentage": 47,
+        "awayFailedToScorePercentage": 27,
+        "over15GoalsPercentage": 83,
+        "over25GoalsPercentage": 63,
+        "over35GoalsPercentage": 47,
+        "over45GoalsPercentage": 40,
+        "bothTeamsScoredPercentage": 63,
+        "bttsAndWinPercentage": 10,
+        "bttsAndDrawPercentage": 7,
+        "bttsAndLosePercentage": 47,
+        "homeOver15GoalsPercentage": 73,
+        "homeOver25GoalsPercentage": 60,
+        "homeOver35GoalsPercentage": 33,
+        "homeOver45GoalsPercentage": 33,
+        "homeBothTeamsScoredPercentage": 53,
+        "homeBttsAndWinPercentage": 7,
+        "homeBttsAndDrawPercentage": 0,
+        "homeBttsAndLosePercentage": 47,
+        "awayOver15GoalsPercentage": 93,
+        "awayOver25GoalsPercentage": 67,
+        "awayOver35GoalsPercentage": 60,
+        "awayOver45GoalsPercentage": 47,
+        "awayBothTeamsScoredPercentage": 73,
+        "awayBttsAndWinPercentage": 13,
+        "awayBttsAndDrawPercentage": 13,
+        "awayBttsAndLosePercentage": 47,
+        "xgFor": 1.08,
+        "xgAgainst": 1.57,
+        "xgForPerMatch": 1.08,
+        "xgAgainstPerMatch": 1.57,
+        "xgDifferencePerMatch": -0.49,
+        "homeXgFor": 1.23,
+        "homeXgAgainst": 1.57,
+        "homeXgForPerMatch": 1.23,
+        "homeXgAgainstPerMatch": 1.57,
+        "awayXgFor": 0.91,
+        "awayXgAgainst": 1.57,
+        "awayXgForPerMatch": 0.91,
+        "awayXgAgainstPerMatch": 1.57,
+        "homeGoalsForPerMatch": 0.73,
+        "awayGoalsForPerMatch": 1.27,
+        "homeGoalsAgainstPerMatch": 2.47,
+        "awayGoalsAgainstPerMatch": 3,
+        "cornersAVG": 4.03,
+        "cornersAgainstAVG": 6.33,
+        "cornersTotalAVG": 10.36,
+        "cornersEarnedPerMatch": 4.03,
+        "cornersAgainstPerMatch": 6.33,
+        "totalCornersPerMatch": 10.36,
+        "homeCornersAVG": 5.2,
+        "homeCornersAgainstAVG": 6,
+        "homeCornersTotalAVG": 11.2,
+        "awayCornersAVG": 2.87,
+        "awayCornersAgainstAVG": 6.67,
+        "awayCornersTotalAVG": 9.54,
+        "cornersOver65": 83,
+        "cornersOver75": 80,
+        "cornersOver85": 77,
+        "over95Corners": 63,
+        "over105Corners": 53,
+        "cornersOver115": 40,
+        "cornersOver125": 20,
+        "cornersOver135": 10,
+        "over25CornersForPercentage_overall": 77,
+        "over35CornersForPercentage_overall": 60,
+        "over45CornersForPercentage_overall": 40,
+        "over55CornersForPercentage_overall": 20,
+        "over65CornersForPercentage_overall": 13,
+        "over75CornersForPercentage_overall": 10,
+        "over85CornersForPercentage_overall": 0,
+        "over25CornersForPercentage_home": 93,
+        "over35CornersForPercentage_home": 93,
+        "over45CornersForPercentage_home": 60,
+        "over55CornersForPercentage_home": 33,
+        "over65CornersForPercentage_home": 27,
+        "over75CornersForPercentage_home": 20,
+        "over85CornersForPercentage_home": 0,
+        "over25CornersForPercentage_away": 60,
+        "over35CornersForPercentage_away": 27,
+        "over45CornersForPercentage_away": 20,
+        "over55CornersForPercentage_away": 7,
+        "over65CornersForPercentage_away": 0,
+        "over75CornersForPercentage_away": 0,
+        "over85CornersForPercentage_away": 0,
+        "over25CornersAgainstPercentage_overall": 93,
+        "over35CornersAgainstPercentage_overall": 83,
+        "over45CornersAgainstPercentage_overall": 70,
+        "over55CornersAgainstPercentage_overall": 60,
+        "over65CornersAgainstPercentage_overall": 56,
+        "over75CornersAgainstPercentage_overall": 33,
+        "over85CornersAgainstPercentage_overall": 13,
+        "over25CornersAgainstPercentage_home": 87,
+        "over35CornersAgainstPercentage_home": 87,
+        "over45CornersAgainstPercentage_home": 73,
+        "over55CornersAgainstPercentage_home": 60,
+        "over65CornersAgainstPercentage_home": 53,
+        "over75CornersAgainstPercentage_home": 27,
+        "over85CornersAgainstPercentage_home": 13,
+        "over25CornersAgainstPercentage_away": 100,
+        "over35CornersAgainstPercentage_away": 80,
+        "over45CornersAgainstPercentage_away": 67,
+        "over55CornersAgainstPercentage_away": 60,
+        "over65CornersAgainstPercentage_away": 60,
+        "over75CornersAgainstPercentage_away": 40,
+        "over85CornersAgainstPercentage_away": 13,
+        "over65CornersPercentage_overall": 83,
+        "over75CornersPercentage_overall": 80,
+        "over85CornersPercentage_overall": 77,
+        "over95CornersPercentage_overall": 63,
+        "over105CornersPercentage_overall": 53,
+        "over115CornersPercentage_overall": 40,
+        "over125CornersPercentage_overall": 20,
+        "over135CornersPercentage_overall": 10,
+        "over65CornersPercentage_home": 93,
+        "over75CornersPercentage_home": 87,
+        "over85CornersPercentage_home": 87,
+        "over95CornersPercentage_home": 80,
+        "over105CornersPercentage_home": 67,
+        "over115CornersPercentage_home": 60,
+        "over125CornersPercentage_home": 20,
+        "over135CornersPercentage_home": 13,
+        "over65CornersPercentage_away": 73,
+        "over75CornersPercentage_away": 73,
+        "over85CornersPercentage_away": 67,
+        "over95CornersPercentage_away": 47,
+        "over105CornersPercentage_away": 40,
+        "over115CornersPercentage_away": 20,
+        "over125CornersPercentage_away": 20,
+        "over135CornersPercentage_away": 7,
+        "corners1H_AVG_overall": 0,
+        "corners2H_AVG_overall": 0,
+        "corners1H_AVG_home": 0,
+        "corners2H_AVG_home": 0,
+        "corners1H_AVG_away": 0,
+        "corners2H_AVG_away": 0,
+        "cornerDrawPercentage_overall": 0,
+        "cornerDrawPercentage_home": 0,
+        "cornerDrawPercentage_away": 0,
+        "winMostCornersPercentage_overall": 23,
+        "winMostCornersPercentage_home": 40,
+        "winMostCornersPercentage_away": 7,
+        "loseMostCornersPercentage_overall": 0,
+        "loseMostCornersPercentage_home": 0,
+        "loseMostCornersPercentage_away": 0,
+        "corners04Percentage_overall": 0,
+        "corners04Percentage_home": 0,
+        "corners04Percentage_away": 0,
+        "corners56Percentage_overall": 0,
+        "corners56Percentage_home": 0,
+        "corners56Percentage_away": 0,
+        "corners78Percentage_overall": 0,
+        "corners78Percentage_home": 0,
+        "corners78Percentage_away": 0,
+        "corners910Percentage_overall": 0,
+        "corners910Percentage_home": 0,
+        "corners910Percentage_away": 0,
+        "corners11PlusPercentage_overall": 0,
+        "corners11PlusPercentage_home": 0,
+        "corners11PlusPercentage_away": 0,
+        "totalCards": 43,
+        "cardsPerMatch": 1.59,
+        "homeCards": 20,
+        "awayCards": 23,
+        "homeCardsPerMatch": 1.33,
+        "awayCardsPerMatch": 1.92,
+        "cardsHighest": 4,
+        "cardsLowest": 0,
+        "cardsFor": 43,
+        "cardsAgainst": 47,
+        "cardsForPerMatch": 1.59,
+        "cardsAgainstPerMatch": 1.74,
+        "homeCardsFor": 20,
+        "homeCardsAgainst": 28,
+        "awayCardsFor": 23,
+        "awayCardsAgainst": 19,
+        "over05CardsForPercentage": 78,
+        "over15CardsForPercentage": 0,
+        "over25CardsForPercentage": 0,
+        "over35CardsForPercentage": 0,
+        "over45CardsForPercentage": 0,
+        "over55CardsForPercentage": 0,
+        "over65CardsForPercentage": 0,
+        "over05CardsAgainstPercentage": 0,
+        "over15CardsAgainstPercentage": 0,
+        "over25CardsAgainstPercentage": 0,
+        "over35CardsAgainstPercentage": 0,
+        "over45CardsAgainstPercentage": 0,
+        "over55CardsAgainstPercentage": 0,
+        "over65CardsAgainstPercentage": 0,
+        "homeOver05CardsForPercentage": 67,
+        "homeOver15CardsForPercentage": 0,
+        "homeOver25CardsForPercentage": 0,
+        "homeOver35CardsForPercentage": 0,
+        "homeOver45CardsForPercentage": 0,
+        "homeOver55CardsForPercentage": 0,
+        "homeOver65CardsForPercentage": 0,
+        "homeOver05CardsAgainstPercentage": 0,
+        "homeOver15CardsAgainstPercentage": 0,
+        "homeOver25CardsAgainstPercentage": 0,
+        "homeOver35CardsAgainstPercentage": 0,
+        "awayOver05CardsForPercentage": 73,
+        "awayOver15CardsForPercentage": 0,
+        "awayOver25CardsForPercentage": 0,
+        "awayOver35CardsForPercentage": 0,
+        "awayOver45CardsForPercentage": 0,
+        "awayOver55CardsForPercentage": 0,
+        "awayOver65CardsForPercentage": 0,
+        "awayOver05CardsAgainstPercentage": 0,
+        "awayOver15CardsAgainstPercentage": 0,
+        "awayOver25CardsAgainstPercentage": 0,
+        "awayOver35CardsAgainstPercentage": 0,
+        "cardsOver05": 100,
+        "cardsOver15": 81,
+        "cardsOver25": 56,
+        "cardsOver35": 44,
+        "cardsOver45": 30,
+        "cardsOver55": 19,
+        "homeCardsOver05": 100,
+        "homeCardsOver15": 80,
+        "homeCardsOver25": 47,
+        "homeCardsOver35": 40,
+        "homeCardsOver45": 27,
+        "homeCardsOver55": 20,
+        "awayCardsOver05": 80,
+        "awayCardsOver15": 67,
+        "awayCardsOver25": 53,
+        "awayCardsOver35": 40,
+        "awayCardsOver45": 27,
+        "awayCardsOver55": 13,
+        "cards1H_AVG_overall": 0,
+        "cards1H_AVG_home": 0,
+        "cards1H_AVG_away": 0,
+        "cards2H_AVG_overall": 0,
+        "cards2H_AVG_home": 0,
+        "cards2H_AVG_away": 0,
+        "cards1H_under2_percentage_overall": 63,
+        "cards1H_2to3_percentage_overall": 33,
+        "cards1H_over3_percentage_overall": 4,
+        "cards1H_under2_percentage_home": 67,
+        "cards1H_2to3_percentage_home": 33,
+        "cards1H_over3_percentage_home": 0,
+        "cards1H_under2_percentage_away": 57,
+        "cards1H_2to3_percentage_away": 33,
+        "cards1H_over3_percentage_away": 8,
+        "cards2H_under2_percentage_overall": 52,
+        "cards2H_2to3_percentage_overall": 30,
+        "cards2H_over3_percentage_overall": 19,
+        "cards2H_under2_percentage_home": 47,
+        "cards2H_2to3_percentage_home": 33,
+        "cards2H_over3_percentage_home": 20,
+        "cards2H_under2_percentage_away": 57,
+        "cards2H_2to3_percentage_away": 25,
+        "cards2H_over3_percentage_away": 17,
+        "cardsHighest1H_overall": 0,
+        "cardsHighest1H_home": 0,
+        "cardsHighest1H_away": 0,
+        "cardsHighest2H_overall": 0,
+        "cardsHighest2H_home": 0,
+        "cardsHighest2H_away": 0,
+        "cardsLowest_home": 0,
+        "cardsLowest_away": 0,
+        "cardsVsOpponents": 0,
+        "cleanGames": 0,
+        "multipleCardsGames": 0,
+        "earlyCards": 0,
+        "lateCards": 0,
+        "cardsInWins": 0,
+        "cardsInLosses": 0,
+        "possessionPercentage": 50,
+        "homePossessionPercentage": 50,
+        "awayPossessionPercentage": 51,
+        "penaltiesWon": 5,
+        "penaltiesConceded": 10,
+        "homePenaltiesWon": 2,
+        "awayPenaltiesWon": 3,
+        "homePenaltiesConceded": 3,
+        "awayPenaltiesConceded": 7,
+        "penalty_in_a_match_percentage_overall": 47,
+        "penalty_in_a_match_percentage_home": 33,
+        "penalty_in_a_match_percentage_away": 60,
+        "recentForm": "ldwllwlllllllllddllllwllllllll",
+        "homeForm": "ldwllllllllllll",
+        "awayForm": "lwlllllddllwlll",
+        "predictionRisk": 143,
+        "homeAdvantagePercentage": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "leadingAtHT_overall": 2,
+        "leadingAtHT_home": 0,
+        "leadingAtHT_away": 2,
+        "leadingAtHTPercentage_overall": 7,
+        "leadingAtHTPercentage_home": 0,
+        "leadingAtHTPercentage_away": 13,
+        "drawingAtHT_overall": 9,
+        "drawingAtHT_home": 3,
+        "drawingAtHT_away": 6,
+        "drawingAtHTPercentage_overall": 30,
+        "drawingAtHTPercentage_home": 20,
+        "drawingAtHTPercentage_away": 40,
+        "trailingAtHT_overall": 19,
+        "trailingAtHT_home": 12,
+        "trailingAtHT_away": 7,
+        "trailingAtHTPercentage_overall": 63,
+        "trailingAtHTPercentage_home": 80,
+        "trailingAtHTPercentage_away": 47,
+        "scoredGoalsHT_overall": 11,
+        "scoredGoalsHT_home": 3,
+        "scoredGoalsHT_away": 8,
+        "concededGoalsHT_overall": 39,
+        "concededGoalsHT_home": 20,
+        "concededGoalsHT_away": 19,
+        "scoredAVGHT_overall": 0.37,
+        "scoredAVGHT_home": 0.2,
+        "scoredAVGHT_away": 0.53,
+        "concededAVGHT_overall": 1.3,
+        "concededAVGHT_home": 1.33,
+        "concededAVGHT_away": 1.27,
+        "seasonCSHT_overall": 6,
+        "seasonCSHT_home": 2,
+        "seasonCSHT_away": 4,
+        "seasonCSPercentageHT_overall": 20,
+        "seasonCSPercentageHT_home": 13,
+        "seasonCSPercentageHT_away": 27,
+        "cs_2hg_percentage_overall": 30,
+        "cs_2hg_percentage_home": 47,
+        "cs_2hg_percentage_away": 13,
+        "seasonFTSHT_overall": 20,
+        "seasonFTSHT_home": 12,
+        "seasonFTSHT_away": 8,
+        "seasonFTSPercentageHT_overall": 67,
+        "seasonFTSPercentageHT_home": 80,
+        "seasonFTSPercentageHT_away": 53,
+        "fts_2hg_percentage_overall": 60,
+        "fts_2hg_percentage_home": 60,
+        "fts_2hg_percentage_away": 60,
+        "seasonBTTSHT_overall": 9,
+        "seasonBTTSHT_home": 3,
+        "seasonBTTSHT_away": 6,
+        "seasonBTTSPercentageHT_overall": 30,
+        "seasonBTTSPercentageHT_home": 20,
+        "seasonBTTSPercentageHT_away": 40,
+        "seasonOver05PercentageHT_overall": 83,
+        "seasonOver05PercentageHT_home": 87,
+        "seasonOver05PercentageHT_away": 80,
+        "seasonOver15PercentageHT_overall": 60,
+        "seasonOver15PercentageHT_home": 53,
+        "seasonOver15PercentageHT_away": 67,
+        "seasonOver25PercentageHT_overall": 20,
+        "seasonOver25PercentageHT_home": 13,
+        "seasonOver25PercentageHT_away": 27,
+        "over05_2hg_percentage_overall": 80,
+        "over05_2hg_percentage_home": 67,
+        "over05_2hg_percentage_away": 93,
+        "over15_2hg_percentage_overall": 56,
+        "over15_2hg_percentage_home": 47,
+        "over15_2hg_percentage_away": 67,
+        "over25_2hg_percentage_overall": 37,
+        "over25_2hg_percentage_home": 33,
+        "over25_2hg_percentage_away": 40,
+        "goals0_15": 6,
+        "goals16_30": 4,
+        "goals31_45": 1,
+        "goals46_60": 4,
+        "goals61_75": 5,
+        "goals76_90": 10,
+        "goalsConc0_15": 11,
+        "goalsConc16_30": 16,
+        "goalsConc31_45": 12,
+        "goalsConc46_60": 8,
+        "goalsConc61_75": 17,
+        "goalsConc76_90": 18,
+        "homeGoals0_15": 0,
+        "homeGoals16_30": 2,
+        "homeGoals31_45": 1,
+        "homeGoals46_60": 1,
+        "homeGoals61_75": 2,
+        "homeGoals76_90": 5,
+        "homeGoalsConc0_15": 7,
+        "homeGoalsConc16_30": 8,
+        "homeGoalsConc31_45": 5,
+        "homeGoalsConc46_60": 4,
+        "homeGoalsConc61_75": 5,
+        "homeGoalsConc76_90": 8,
+        "awayGoals0_15": 6,
+        "awayGoals16_30": 2,
+        "awayGoals31_45": 0,
+        "awayGoals46_60": 3,
+        "awayGoals61_75": 3,
+        "awayGoals76_90": 5,
+        "awayGoalsConc0_15": 4,
+        "awayGoalsConc16_30": 8,
+        "awayGoalsConc31_45": 7,
+        "awayGoalsConc46_60": 4,
+        "awayGoalsConc61_75": 12,
+        "awayGoalsConc76_90": 10,
+        "seasonScoredOver05Percentage_overall": 63,
+        "seasonScoredOver05Percentage_home": 53,
+        "seasonScoredOver05Percentage_away": 73,
+        "seasonScoredOver15Percentage_overall": 27,
+        "seasonScoredOver15Percentage_home": 20,
+        "seasonScoredOver15Percentage_away": 33,
+        "seasonScoredOver25Percentage_overall": 7,
+        "seasonScoredOver25Percentage_home": 0,
+        "seasonScoredOver25Percentage_away": 13,
+        "scoredBothHalvesPercentage_overall": 10,
+        "scoredBothHalvesPercentage_home": 7,
+        "scoredBothHalvesPercentage_away": 13,
+        "firstGoalScoredPercentage_overall": 23,
+        "firstGoalScoredPercentage_home": 7,
+        "firstGoalScoredPercentage_away": 40,
+        "seasonHighestScored_overall": 4,
+        "seasonHighestScored_home": 2,
+        "seasonHighestScored_away": 4,
+        "highestScored": 4,
+        "scoredPercentageHT_overall": 0,
+        "scoredPercentageHT_home": 0,
+        "scoredPercentageHT_away": 0,
+        "scoredPercentage2H_overall": 0,
+        "scoredPercentage2H_home": 0,
+        "scoredPercentage2H_away": 0,
+        "scored1HG_overall": 0,
+        "scored1HG_home": 0,
+        "scored1HG_away": 0,
+        "scored2HG_overall": 0,
+        "scored2HG_home": 0,
+        "scored2HG_away": 0,
+        "seasonConcededOver05Percentage_overall": 97,
+        "seasonConcededOver05Percentage_home": 93,
+        "seasonConcededOver05Percentage_away": 100,
+        "seasonConcededOver15Percentage_overall": 67,
+        "seasonConcededOver15Percentage_home": 67,
+        "seasonConcededOver15Percentage_away": 67,
+        "seasonConcededOver25Percentage_overall": 47,
+        "seasonConcededOver25Percentage_home": 40,
+        "seasonConcededOver25Percentage_away": 53,
+        "cleanSheetPercentage_overall": 0,
+        "cleanSheetPercentage_home": 0,
+        "cleanSheetPercentage_away": 0,
+        "seasonHighestConceded_overall": 9,
+        "seasonHighestConceded_home": 7,
+        "seasonHighestConceded_away": 9,
+        "concededPercentageHT_overall": 0,
+        "concededPercentageHT_home": 0,
+        "concededPercentageHT_away": 0,
+        "conceded_2hg_percentage_overall": 0,
+        "conceded_2hg_percentage_home": 0,
+        "conceded_2hg_percentage_away": 0,
+        "concededBothHalvesPercentage_overall": 0,
+        "concededBothHalvesPercentage_home": 0,
+        "concededBothHalvesPercentage_away": 0,
+        "conceded1HG_overall": 0,
+        "conceded1HG_home": 0,
+        "conceded1HG_away": 0,
+        "conceded2HG_overall": 0,
+        "conceded2HG_home": 0,
+        "conceded2HG_away": 0,
+        "conceded_2hg_avg_overall": 1.43,
+        "conceded_2hg_avg_home": 1.13,
+        "conceded_2hg_avg_away": 1.73,
+        "conceded_2hg_overall": 43,
+        "conceded_2hg_home": 17,
+        "conceded_2hg_away": 26,
+        "over25_and_btts_percentage_overall": 56,
+        "over25_and_btts_percentage_home": 53,
+        "over25_and_btts_percentage_away": 60,
+        "btts_1h2h_yes_yes_percentage_overall": 7,
+        "btts_1h2h_yes_yes_percentage_home": 7,
+        "btts_1h2h_yes_yes_percentage_away": 7,
+        "btts_1h2h_yes_no_percentage_overall": 23,
+        "btts_1h2h_yes_no_percentage_home": 13,
+        "btts_1h2h_yes_no_percentage_away": 33,
+        "btts_1h2h_no_yes_percentage_overall": 23,
+        "btts_1h2h_no_yes_percentage_home": 20,
+        "btts_1h2h_no_yes_percentage_away": 27,
+        "btts_1h2h_no_no_percentage_overall": 47,
+        "btts_1h2h_no_no_percentage_home": 60,
+        "btts_1h2h_no_no_percentage_away": 33,
+        "btts_2hg_percentage_overall": 30,
+        "btts_2hg_percentage_home": 27,
+        "btts_2hg_percentage_away": 33,
+        "shotsAVG": 9.23,
+        "homeShotsAVG": 11.47,
+        "awayShotsAVG": 7,
+        "shotsOnTargetAVG": 3.47,
+        "homeShotsOnTargetAVG": 3.6,
+        "awayShotsOnTargetAVG": 3.33,
+        "shotsOffTargetAVG": 5.77,
+        "homeShotsOffTargetAVG": 7.87,
+        "awayShotsOffTargetAVG": 3.67,
+        "shotsConversionRate": 11,
+        "homeShotsConversionRate": 6,
+        "awayShotsConversionRate": 18,
+        "shotsPerGoal": 9.2,
+        "homeShotsPerGoal": 15.6,
+        "awayShotsPerGoal": 5.5,
+        "shotsOnTargetPerGoal": 3.5,
+        "homeShotsOnTargetPerGoal": 4.9,
+        "awayShotsOnTargetPerGoal": 2.6,
+        "shotsOver10_5": 33,
+        "homeShotsOver10_5": 60,
+        "awayShotsOver10_5": 7,
+        "shotsOver11_5": 30,
+        "homeShotsOver11_5": 53,
+        "awayShotsOver11_5": 7,
+        "shotsOver12_5": 23,
+        "homeShotsOver12_5": 40,
+        "awayShotsOver12_5": 7,
+        "shotsOver13_5": 13,
+        "homeShotsOver13_5": 20,
+        "awayShotsOver13_5": 7,
+        "shotsOver14_5": 7,
+        "homeShotsOver14_5": 20,
+        "awayShotsOver14_5": 7,
+        "shotsOver15_5": 3,
+        "homeShotsOver15_5": 20,
+        "awayShotsOver15_5": 7,
+        "shotsOnTargetOver3_5": 50,
+        "homeShotsOnTargetOver3_5": 47,
+        "awayShotsOnTargetOver3_5": 53,
+        "shotsOnTargetOver4_5": 20,
+        "homeShotsOnTargetOver4_5": 20,
+        "awayShotsOnTargetOver4_5": 20,
+        "shotsOnTargetOver5_5": 7,
+        "homeShotsOnTargetOver5_5": 13,
+        "awayShotsOnTargetOver5_5": 0,
+        "shotsOnTargetOver6_5": 0,
+        "homeShotsOnTargetOver6_5": 0,
+        "awayShotsOnTargetOver6_5": 0,
+        "matchShotsOver23_5": 43,
+        "homeMatchShotsOver23_5": 67,
+        "awayMatchShotsOver23_5": 20,
+        "matchShotsOver24_5": 37,
+        "homeMatchShotsOver24_5": 53,
+        "awayMatchShotsOver24_5": 20,
+        "matchShotsOver25_5": 27,
+        "homeMatchShotsOver25_5": 40,
+        "awayMatchShotsOver25_5": 13,
+        "matchShotsOver26_5": 20,
+        "homeMatchShotsOver26_5": 27,
+        "awayMatchShotsOver26_5": 13,
+        "matchShotsOnTargetOver7_5": 60,
+        "homeMatchShotsOnTargetOver7_5": 53,
+        "awayMatchShotsOnTargetOver7_5": 67,
+        "matchShotsOnTargetOver8_5": 50,
+        "homeMatchShotsOnTargetOver8_5": 47,
+        "awayMatchShotsOnTargetOver8_5": 53,
+        "matchShotsOnTargetOver9_5": 37,
+        "homeMatchShotsOnTargetOver9_5": 40,
+        "awayMatchShotsOnTargetOver9_5": 33,
+        "offsidesAvg": 0,
+        "homeOffsidesAvg": 0,
+        "awayOffsidesAvg": 0,
+        "matchOffsidesAvg": 0,
+        "homeMatchOffsidesAvg": 0,
+        "awayMatchOffsidesAvg": 0,
+        "offsidesOver0_5": 0,
+        "homeOffsidesOver0_5": 0,
+        "awayOffsidesOver0_5": 0,
+        "offsidesOver1_5": 0,
+        "homeOffsidesOver1_5": 0,
+        "awayOffsidesOver1_5": 0,
+        "offsidesOver2_5": 0,
+        "homeOffsidesOver2_5": 0,
+        "awayOffsidesOver2_5": 0,
+        "halfWithMostGoalsIs1HPercentage_overall": 33,
+        "halfWithMostGoalsIs2HPercentage_overall": 47,
+        "halfWithMostGoalsIsBothPercentage_overall": 0,
+        "matchOffsidesOver0_5": 0,
+        "homeMatchOffsidesOver0_5": 0,
+        "awayMatchOffsidesOver0_5": 0,
+        "matchOffsidesOver1_5": 0,
+        "homeMatchOffsidesOver1_5": 0,
+        "awayMatchOffsidesOver1_5": 0,
+        "matchOffsidesOver2_5": 0,
+        "homeMatchOffsidesOver2_5": 0,
+        "awayMatchOffsidesOver2_5": 0,
+        "matchOffsidesOver3_5": 0,
+        "homeMatchOffsidesOver3_5": 0,
+        "awayMatchOffsidesOver3_5": 0
+      },
+      "leaguePosition": {
+        "position": 16,
+        "totalTeams": 16,
+        "positionText": "16/16",
+        "isReliable": true,
+        "note": null
+      },
+      "allMatches": [
+        {
+          "id": 548473,
+          "date": "2019-11-02T06:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 943,
+            "name": "Meizhou Hakka FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 2,
+          "awayScore": 0,
+          "round": 30,
+          "stadium": "Huitang Stadium (Wuhua)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 4,
+              "away": 5
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548465,
+          "date": "2019-10-26T06:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 949,
+            "name": "Qingdao Huanghai FC"
+          },
+          "homeScore": 0,
+          "awayScore": 2,
+          "round": 29,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 1,
+              "away": 8
+            },
+            "cards": {
+              "home": 0,
+              "away": 2
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548454,
+          "date": "2019-10-19T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 948,
+            "name": "Nei Mongol Zhongyou FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 3,
+          "awayScore": 1,
+          "round": 28,
+          "stadium": "Hohhot City Stadium (Hohhot)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 5,
+              "away": 3
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": 48,
+              "away": 52
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548450,
+          "date": "2019-09-28T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 839,
+            "name": "Zhejiang Professional FC"
+          },
+          "homeScore": 1,
+          "awayScore": 2,
+          "round": 27,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 8,
+              "away": 4
+            },
+            "cards": {
+              "home": 3,
+              "away": 4
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548439,
+          "date": "2019-09-21T09:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 944,
+            "name": "Xinjiang Tianshan Leopard FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 4,
+          "awayScore": 3,
+          "round": 26,
+          "stadium": "Xinjiang Stadium (Urumqi)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 7,
+              "away": 4
+            },
+            "cards": {
+              "home": 2,
+              "away": 3
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 728382,
+          "date": "2019-09-14T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 945,
+            "name": "Beijing Enterprises Group FC"
+          },
+          "homeScore": 1,
+          "awayScore": 2,
+          "round": 25,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 5,
+              "away": 7
+            },
+            "cards": {
+              "home": 0,
+              "away": 1
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548400,
+          "date": "2019-09-07T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 938,
+            "name": "Guizhou Hengfeng Zhicheng FC"
+          },
+          "homeScore": 0,
+          "awayScore": 1,
+          "round": 21,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 4,
+              "away": 7
+            },
+            "cards": {
+              "home": 3,
+              "away": 1
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548423,
+          "date": "2019-08-31T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 832,
+            "name": "Liaoning Shenyang Kaixin FC"
+          },
+          "homeScore": 1,
+          "awayScore": 4,
+          "round": 24,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 7,
+              "away": 5
+            },
+            "cards": {
+              "home": 0,
+              "away": 3
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548420,
+          "date": "2019-08-24T11:35:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 11538,
+            "name": "Nantong Zhiyun FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 1,
+          "awayScore": 2,
+          "round": 23,
+          "stadium": "Rugao Olympic Sports Center Stadium (Rugao)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 15,
+              "away": 2
+            },
+            "cards": {
+              "home": 1,
+              "away": 2
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548405,
+          "date": "2019-08-17T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 11537,
+            "name": "Shaanxi Chang'an Athletic"
+          },
+          "homeScore": 2,
+          "awayScore": 3,
+          "round": 22,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 8,
+              "away": 7
+            },
+            "cards": {
+              "home": 1,
+              "away": 1
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548393,
+          "date": "2019-08-04T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 6948,
+            "name": "Meizhou Meixian Techand FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 1,
+          "awayScore": 0,
+          "round": 20,
+          "stadium": "Meixian Tsang Hin-chi Stadium (Meixian)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 3,
+              "away": 3
+            },
+            "cards": {
+              "home": 2,
+              "away": 4
+            },
+            "possession": {
+              "home": 48,
+              "away": 52
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548386,
+          "date": "2019-07-27T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 835,
+            "name": "Shijiazhuang Ever Bright FC"
+          },
+          "homeScore": 0,
+          "awayScore": 2,
+          "round": 19,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 6,
+              "away": 9
+            },
+            "cards": {
+              "home": 0,
+              "away": 1
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548377,
+          "date": "2019-07-20T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 6949,
+            "name": "Heilongjiang Lava Spring FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 3,
+          "awayScore": 1,
+          "round": 18,
+          "stadium": "Harbin International Conference Exhibition and Sports Center (Harbin)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 8,
+              "away": 5
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548372,
+          "date": "2019-07-14T11:35:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 11539,
+            "name": "Sichuan Longfor FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 1,
+          "awayScore": 1,
+          "round": 17,
+          "stadium": "Dujiangyan Phoenix Stadium (Dujiangyan)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 8,
+              "away": 3
+            },
+            "cards": {
+              "home": 2,
+              "away": 2
+            },
+            "possession": {
+              "home": 47,
+              "away": 53
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548363,
+          "date": "2019-07-07T07:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 843,
+            "name": "Changchun Yatai FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 1,
+          "awayScore": 1,
+          "round": 16,
+          "stadium": "Changchun's People Stadium (Changchun)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 10,
+              "away": 1
+            },
+            "cards": {
+              "home": 1,
+              "away": 1
+            },
+            "possession": {
+              "home": 46,
+              "away": 54
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548352,
+          "date": "2019-06-29T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 943,
+            "name": "Meizhou Hakka FC"
+          },
+          "homeScore": 1,
+          "awayScore": 7,
+          "round": 15,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 5,
+              "away": 5
+            },
+            "cards": {
+              "home": 1,
+              "away": 1
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548344,
+          "date": "2019-06-22T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 949,
+            "name": "Qingdao Huanghai FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 9,
+          "awayScore": 2,
+          "round": 14,
+          "stadium": "GuoXin Stadium (Qingdao)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 8,
+              "away": 1
+            },
+            "cards": {
+              "home": 3,
+              "away": 3
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548336,
+          "date": "2019-06-15T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 948,
+            "name": "Nei Mongol Zhongyou FC"
+          },
+          "homeScore": 0,
+          "awayScore": 1,
+          "round": 13,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 4,
+              "away": 2
+            },
+            "cards": {
+              "home": 2,
+              "away": 3
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548332,
+          "date": "2019-06-08T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 839,
+            "name": "Zhejiang Professional FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 5,
+          "awayScore": 0,
+          "round": 12,
+          "stadium": "Yellow Dragon Sports Center (Hangzhou)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 7,
+              "away": 3
+            },
+            "cards": {
+              "home": 1,
+              "away": 2
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548322,
+          "date": "2019-05-25T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 944,
+            "name": "Xinjiang Tianshan Leopard FC"
+          },
+          "homeScore": 0,
+          "awayScore": 1,
+          "round": 11,
+          "stadium": "Jinshan Soccer Stadium",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 5,
+              "away": 2
+            },
+            "cards": {
+              "home": 1,
+              "away": 2
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548310,
+          "date": "2019-05-18T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 945,
+            "name": "Beijing Enterprises Group FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 5,
+          "awayScore": 1,
+          "round": 10,
+          "stadium": "Beijing Olympic Sports Centre Stadium",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 3,
+              "away": 3
+            },
+            "cards": {
+              "home": 2,
+              "away": 1
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548307,
+          "date": "2019-05-11T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 832,
+            "name": "Liaoning Shenyang Kaixin FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 4,
+          "awayScore": 1,
+          "round": 9,
+          "stadium": "Tiexi New District Sports Center",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 3,
+              "away": 2
+            },
+            "cards": {
+              "home": 1,
+              "away": 1
+            },
+            "possession": {
+              "home": 51,
+              "away": 49
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548294,
+          "date": "2019-05-04T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 11538,
+            "name": "Nantong Zhiyun FC"
+          },
+          "homeScore": 0,
+          "awayScore": 3,
+          "round": 8,
+          "stadium": "Jinshan Soccer Stadium",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 4,
+              "away": 8
+            },
+            "cards": {
+              "home": 1,
+              "away": 0
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548285,
+          "date": "2019-04-27T07:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 11537,
+            "name": "Shaanxi Chang'an Athletic"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 2,
+          "awayScore": 0,
+          "round": 7,
+          "stadium": "Weinan Sports Center Stadium (Weinan)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 7,
+              "away": 6
+            },
+            "cards": {
+              "home": 0,
+              "away": 1
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548277,
+          "date": "2019-04-20T07:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 938,
+            "name": "Guizhou Hengfeng Zhicheng FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 1,
+          "awayScore": 4,
+          "round": 6,
+          "stadium": "Guiyang Olympic Sports Center",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 8,
+              "away": 1
+            },
+            "cards": {
+              "home": 3,
+              "away": 2
+            },
+            "possession": {
+              "home": 45,
+              "away": 55
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548274,
+          "date": "2019-04-13T07:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 6948,
+            "name": "Meizhou Meixian Techand FC"
+          },
+          "homeScore": 2,
+          "awayScore": 4,
+          "round": 5,
+          "stadium": "Jinshan Soccer Stadium",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 5,
+              "away": 7
+            },
+            "cards": {
+              "home": 1,
+              "away": 1
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548265,
+          "date": "2019-04-06T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 835,
+            "name": "Shijiazhuang Ever Bright FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 3,
+          "awayScore": 2,
+          "round": 4,
+          "stadium": "Yutong International Sports Center",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 4,
+              "away": 1
+            },
+            "cards": {
+              "home": 1,
+              "away": 0
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548258,
+          "date": "2019-03-30T07:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 6949,
+            "name": "Heilongjiang Lava Spring FC"
+          },
+          "homeScore": 2,
+          "awayScore": 1,
+          "round": 3,
+          "stadium": "Jinshan Soccer Stadium",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 4,
+              "away": 9
+            },
+            "cards": {
+              "home": 4,
+              "away": 1
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548251,
+          "date": "2019-03-17T07:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 11539,
+            "name": "Sichuan Longfor FC"
+          },
+          "homeScore": 0,
+          "awayScore": 0,
+          "round": 2,
+          "stadium": "Jinshan Soccer Stadium",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 8,
+              "away": 4
+            },
+            "cards": {
+              "home": 0,
+              "away": 2
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548238,
+          "date": "2019-03-09T07:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 843,
+            "name": "Changchun Yatai FC"
+          },
+          "homeScore": 1,
+          "awayScore": 4,
+          "round": 1,
+          "stadium": "Jinshan Soccer Stadium",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 4,
+              "away": 6
+            },
+            "cards": {
+              "home": 3,
+              "away": 3
+            },
+            "possession": {
+              "home": 46,
+              "away": 54
+            }
+          },
+          "competition": "Unknown League"
+        }
+      ],
+      "recentMatches": [
+        {
+          "id": 548473,
+          "date": "2019-11-02T06:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 943,
+            "name": "Meizhou Hakka FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 2,
+          "awayScore": 0,
+          "round": 30,
+          "stadium": "Huitang Stadium (Wuhua)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 4,
+              "away": 5
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548465,
+          "date": "2019-10-26T06:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 949,
+            "name": "Qingdao Huanghai FC"
+          },
+          "homeScore": 0,
+          "awayScore": 2,
+          "round": 29,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 1,
+              "away": 8
+            },
+            "cards": {
+              "home": 0,
+              "away": 2
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548454,
+          "date": "2019-10-19T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 948,
+            "name": "Nei Mongol Zhongyou FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 3,
+          "awayScore": 1,
+          "round": 28,
+          "stadium": "Hohhot City Stadium (Hohhot)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 5,
+              "away": 3
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": 48,
+              "away": 52
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548450,
+          "date": "2019-09-28T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 839,
+            "name": "Zhejiang Professional FC"
+          },
+          "homeScore": 1,
+          "awayScore": 2,
+          "round": 27,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 8,
+              "away": 4
+            },
+            "cards": {
+              "home": 3,
+              "away": 4
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548439,
+          "date": "2019-09-21T09:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 944,
+            "name": "Xinjiang Tianshan Leopard FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 4,
+          "awayScore": 3,
+          "round": 26,
+          "stadium": "Xinjiang Stadium (Urumqi)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 7,
+              "away": 4
+            },
+            "cards": {
+              "home": 2,
+              "away": 3
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 728382,
+          "date": "2019-09-14T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 945,
+            "name": "Beijing Enterprises Group FC"
+          },
+          "homeScore": 1,
+          "awayScore": 2,
+          "round": 25,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 5,
+              "away": 7
+            },
+            "cards": {
+              "home": 0,
+              "away": 1
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548400,
+          "date": "2019-09-07T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 938,
+            "name": "Guizhou Hengfeng Zhicheng FC"
+          },
+          "homeScore": 0,
+          "awayScore": 1,
+          "round": 21,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 4,
+              "away": 7
+            },
+            "cards": {
+              "home": 3,
+              "away": 1
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548423,
+          "date": "2019-08-31T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 832,
+            "name": "Liaoning Shenyang Kaixin FC"
+          },
+          "homeScore": 1,
+          "awayScore": 4,
+          "round": 24,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 7,
+              "away": 5
+            },
+            "cards": {
+              "home": 0,
+              "away": 3
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548420,
+          "date": "2019-08-24T11:35:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 11538,
+            "name": "Nantong Zhiyun FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 1,
+          "awayScore": 2,
+          "round": 23,
+          "stadium": "Rugao Olympic Sports Center Stadium (Rugao)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 15,
+              "away": 2
+            },
+            "cards": {
+              "home": 1,
+              "away": 2
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548405,
+          "date": "2019-08-17T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 11537,
+            "name": "Shaanxi Chang'an Athletic"
+          },
+          "homeScore": 2,
+          "awayScore": 3,
+          "round": 22,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 8,
+              "away": 7
+            },
+            "cards": {
+              "home": 1,
+              "away": 1
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548393,
+          "date": "2019-08-04T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 6948,
+            "name": "Meizhou Meixian Techand FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 1,
+          "awayScore": 0,
+          "round": 20,
+          "stadium": "Meixian Tsang Hin-chi Stadium (Meixian)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 3,
+              "away": 3
+            },
+            "cards": {
+              "home": 2,
+              "away": 4
+            },
+            "possession": {
+              "home": 48,
+              "away": 52
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548386,
+          "date": "2019-07-27T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "awayTeam": {
+            "id": 835,
+            "name": "Shijiazhuang Ever Bright FC"
+          },
+          "homeScore": 0,
+          "awayScore": 2,
+          "round": 19,
+          "stadium": "Jinshan Soccer Stadium (Shanghai)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 6,
+              "away": 9
+            },
+            "cards": {
+              "home": 0,
+              "away": 1
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548377,
+          "date": "2019-07-20T11:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 6949,
+            "name": "Heilongjiang Lava Spring FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 3,
+          "awayScore": 1,
+          "round": 18,
+          "stadium": "Harbin International Conference Exhibition and Sports Center (Harbin)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 8,
+              "away": 5
+            },
+            "cards": {
+              "home": -2,
+              "away": -2
+            },
+            "possession": {
+              "home": 50,
+              "away": 50
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548372,
+          "date": "2019-07-14T11:35:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 11539,
+            "name": "Sichuan Longfor FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 1,
+          "awayScore": 1,
+          "round": 17,
+          "stadium": "Dujiangyan Phoenix Stadium (Dujiangyan)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 8,
+              "away": 3
+            },
+            "cards": {
+              "home": 2,
+              "away": 2
+            },
+            "possession": {
+              "home": 47,
+              "away": 53
+            }
+          },
+          "competition": "Unknown League"
+        },
+        {
+          "id": 548363,
+          "date": "2019-07-07T07:30:00.000Z",
+          "status": "complete",
+          "homeTeam": {
+            "id": 843,
+            "name": "Changchun Yatai FC"
+          },
+          "awayTeam": {
+            "id": 849,
+            "name": "Shanghai Shenxin FC"
+          },
+          "homeScore": 1,
+          "awayScore": 1,
+          "round": 16,
+          "stadium": "Changchun's People Stadium (Changchun)",
+          "halfTime": null,
+          "stats": {
+            "corners": {
+              "home": 10,
+              "away": 1
+            },
+            "cards": {
+              "home": 1,
+              "away": 1
+            },
+            "possession": {
+              "home": 46,
+              "away": 54
+            }
+          },
+          "competition": "Unknown League"
+        }
+      ],
+      "nextMatch": null,
+      "seasonStats": {
+        "totalMatches": 30,
+        "completedMatches": 30,
+        "upcomingMatches": 0
+      },
+      "competitionInfo": {
+        "type": "unknown",
+        "confidence": 0,
+        "dataSource": "league-teams",
+        "isLeagueData": false,
+        "isCupData": false,
+        "competitionName": "Unknown Competition",
+        "allCompetitionData": null,
+        "message": "Veri türü belirlenemedi",
+        "warning": null
+      },
+      "validation": {
+        "isValid": false,
+        "confidence": 0.6969600000000002,
+        "issues": [
+          "Outdated season: 2019",
+          "Wins mismatch: API=3, Season=0",
+          "Losses mismatch: API=24, Season=0"
+        ]
+      },
+      "dataQuality": {
+        "score": 80,
+        "warnings": [],
+        "corrections": {},
+        "recommendation": {
+          "status": "reliable",
+          "message": "Data appears to be accurate and complete",
+          "action": "use_as_is"
+        },
+        "metadata": {
+          "dataQualityScore": 80
+        }
+      },
+      "teamResolution": {
+        "originalId": 849,
+        "resolvedId": 849,
+        "wasResolved": false,
+        "confidence": 0.75,
+        "method": "api_data_accepted",
+        "report": {
+          "summary": "Team data has low confidence but no better match found",
+          "details": [
+            "Resolution method: api_data_accepted",
+            "Confidence: 75%"
+          ],
+          "recommendations": []
+        }
+      }
+    }
+  },
+  "1020": {
+    "success": true,
+    "data": {
+      "teamInfo": {
+        "id": 1020,
+        "name": "Forest Green Rovers",
+        "fullName": "Forest Green Rovers FC",
+        "englishName": "Forest Green Rovers FC",
+        "image": "https://cdn.footystats.org/img/teams/england-forest-green-rovers-fc.png",
+        "country": "England",
+        "founded": "1890",
+        "season": "2024/2025",
+        "competition_id": 12545,
+        "risk": 0,
+        "performance_rank": 84
+      },
+      "league": {
+        "id": 12545,
+        "name": "Unknown League",
+        "country": "England",
+        "season": "2024/2025",
+        "originalCompetitionId": 12545,
+        "confidence": 0.95,
+        "resolutionMethod": "universal_mapping"
+      },
+      "statistics": {
+        "totalMatches": 3,
+        "completedMatches": 3,
+        "wins": 1,
+        "draws": 1,
+        "losses": 1,
+        "points": 4,
+        "pointsPerGame": 1.33,
+        "goalsFor": 3,
+        "goalsAgainst": 2,
+        "goalDifference": 1,
+        "averageGoalsFor": 1,
+        "averageGoalsAgainst": 0.67,
+        "goalsForPerMatch": 1,
+        "goalsAgainstPerMatch": 0.67,
+        "seasonConcededAVG_overall": 0.67,
+        "seasonConcededAVG_home": 0,
+        "seasonConcededAVG_away": 1,
+        "avgMatchGoals": 1.67,
+        "seasonScoredAVG_overall": 1,
+        "scored_2hg_avg_overall": 1,
+        "scored_2hg_avg_home": 2,
+        "scored_2hg_avg_away": 0.5,
+        "scored_2hg_overall": 3,
+        "scored_2hg_home": 2,
+        "scored_2hg_away": 1,
+        "homeMatches": 1,
+        "homeWins": 1,
+        "homeDraws": 0,
+        "homeLosses": 0,
+        "homeGoalsFor": 2,
+        "homeGoalsAgainst": 0,
+        "homePointsPerGame": 3,
+        "homeGoalDifference": 2,
+        "awayMatches": 2,
+        "awayWins": 0,
+        "awayDraws": 1,
+        "awayLosses": 1,
+        "awayGoalsFor": 1,
+        "awayGoalsAgainst": 2,
+        "awayPointsPerGame": 0.5,
+        "awayGoalDifference": -1,
+        "winPercentage": 33,
+        "drawPercentage": 33,
+        "lossPercentage": 33,
+        "homeWinPercentage": 100,
+        "awayWinPercentage": 0,
+        "cleanSheets": 1,
+        "failedToScore": 1,
+        "cleanSheetPercentage": 33,
+        "failedToScorePercentage": 33,
+        "homeCleanSheets": 1,
+        "awayCleanSheets": 0,
+        "homeFailedToScore": 0,
+        "awayFailedToScore": 1,
+        "homeCleanSheetPercentage": 100,
+        "awayCleanSheetPercentage": 0,
+        "homeFailedToScorePercentage": 0,
+        "awayFailedToScorePercentage": 50,
+        "over15GoalsPercentage": 67,
+        "over25GoalsPercentage": 0,
+        "over35GoalsPercentage": 0,
+        "over45GoalsPercentage": 0,
+        "bothTeamsScoredPercentage": 33,
+        "bttsAndWinPercentage": 0,
+        "bttsAndDrawPercentage": 33,
+        "bttsAndLosePercentage": 0,
+        "homeOver15GoalsPercentage": 100,
+        "homeOver25GoalsPercentage": 0,
+        "homeOver35GoalsPercentage": 0,
+        "homeOver45GoalsPercentage": 0,
+        "homeBothTeamsScoredPercentage": 0,
+        "homeBttsAndWinPercentage": 0,
+        "homeBttsAndDrawPercentage": 0,
+        "homeBttsAndLosePercentage": 0,
+        "awayOver15GoalsPercentage": 50,
+        "awayOver25GoalsPercentage": 0,
+        "awayOver35GoalsPercentage": 0,
+        "awayOver45GoalsPercentage": 0,
+        "awayBothTeamsScoredPercentage": 50,
+        "awayBttsAndWinPercentage": 0,
+        "awayBttsAndDrawPercentage": 50,
+        "awayBttsAndLosePercentage": 0,
+        "xgFor": 1.61,
+        "xgAgainst": 1.13,
+        "xgForPerMatch": 1.61,
+        "xgAgainstPerMatch": 1.13,
+        "xgDifferencePerMatch": 0.4800000000000002,
+        "homeXgFor": 1.99,
+        "homeXgAgainst": 1.12,
+        "homeXgForPerMatch": 1.99,
+        "homeXgAgainstPerMatch": 1.12,
+        "awayXgFor": 1.22,
+        "awayXgAgainst": 1.14,
+        "awayXgForPerMatch": 1.22,
+        "awayXgAgainstPerMatch": 1.14,
+        "homeGoalsForPerMatch": 2,
+        "awayGoalsForPerMatch": 0.5,
+        "homeGoalsAgainstPerMatch": 0,
+        "awayGoalsAgainstPerMatch": 1,
+        "cornersAVG": 4,
+        "cornersAgainstAVG": 3.5,
+        "cornersTotalAVG": 7.5,
+        "cornersEarnedPerMatch": 4,
+        "cornersAgainstPerMatch": 3.5,
+        "totalCornersPerMatch": 7.5,
+        "homeCornersAVG": 5,
+        "homeCornersAgainstAVG": 4,
+        "homeCornersTotalAVG": 9,
+        "awayCornersAVG": 3,
+        "awayCornersAgainstAVG": 3,
+        "awayCornersTotalAVG": 6,
+        "cornersOver65": 50,
+        "cornersOver75": 50,
+        "cornersOver85": 50,
+        "over95Corners": 0,
+        "over105Corners": 0,
+        "cornersOver115": 0,
+        "cornersOver125": 0,
+        "cornersOver135": 0,
+        "over25CornersForPercentage_overall": 100,
+        "over35CornersForPercentage_overall": 50,
+        "over45CornersForPercentage_overall": 50,
+        "over55CornersForPercentage_overall": 0,
+        "over65CornersForPercentage_overall": 0,
+        "over75CornersForPercentage_overall": 0,
+        "over85CornersForPercentage_overall": 0,
+        "over25CornersForPercentage_home": 100,
+        "over35CornersForPercentage_home": 100,
+        "over45CornersForPercentage_home": 100,
+        "over55CornersForPercentage_home": 0,
+        "over65CornersForPercentage_home": 0,
+        "over75CornersForPercentage_home": 0,
+        "over85CornersForPercentage_home": 0,
+        "over25CornersForPercentage_away": 100,
+        "over35CornersForPercentage_away": 0,
+        "over45CornersForPercentage_away": 0,
+        "over55CornersForPercentage_away": 0,
+        "over65CornersForPercentage_away": 0,
+        "over75CornersForPercentage_away": 0,
+        "over85CornersForPercentage_away": 0,
+        "over25CornersAgainstPercentage_overall": 100,
+        "over35CornersAgainstPercentage_overall": 50,
+        "over45CornersAgainstPercentage_overall": 0,
+        "over55CornersAgainstPercentage_overall": 0,
+        "over65CornersAgainstPercentage_overall": 0,
+        "over75CornersAgainstPercentage_overall": 0,
+        "over85CornersAgainstPercentage_overall": 0,
+        "over25CornersAgainstPercentage_home": 100,
+        "over35CornersAgainstPercentage_home": 100,
+        "over45CornersAgainstPercentage_home": 0,
+        "over55CornersAgainstPercentage_home": 0,
+        "over65CornersAgainstPercentage_home": 0,
+        "over75CornersAgainstPercentage_home": 0,
+        "over85CornersAgainstPercentage_home": 0,
+        "over25CornersAgainstPercentage_away": 100,
+        "over35CornersAgainstPercentage_away": 0,
+        "over45CornersAgainstPercentage_away": 0,
+        "over55CornersAgainstPercentage_away": 0,
+        "over65CornersAgainstPercentage_away": 0,
+        "over75CornersAgainstPercentage_away": 0,
+        "over85CornersAgainstPercentage_away": 0,
+        "over65CornersPercentage_overall": 50,
+        "over75CornersPercentage_overall": 50,
+        "over85CornersPercentage_overall": 50,
+        "over95CornersPercentage_overall": 0,
+        "over105CornersPercentage_overall": 0,
+        "over115CornersPercentage_overall": 0,
+        "over125CornersPercentage_overall": 0,
+        "over135CornersPercentage_overall": 0,
+        "over65CornersPercentage_home": 100,
+        "over75CornersPercentage_home": 100,
+        "over85CornersPercentage_home": 100,
+        "over95CornersPercentage_home": 0,
+        "over105CornersPercentage_home": 0,
+        "over115CornersPercentage_home": 0,
+        "over125CornersPercentage_home": 0,
+        "over135CornersPercentage_home": 0,
+        "over65CornersPercentage_away": 0,
+        "over75CornersPercentage_away": 0,
+        "over85CornersPercentage_away": 0,
+        "over95CornersPercentage_away": 0,
+        "over105CornersPercentage_away": 0,
+        "over115CornersPercentage_away": 0,
+        "over125CornersPercentage_away": 0,
+        "over135CornersPercentage_away": 0,
+        "corners1H_AVG_overall": 0,
+        "corners2H_AVG_overall": 0,
+        "corners1H_AVG_home": 0,
+        "corners2H_AVG_home": 0,
+        "corners1H_AVG_away": 0,
+        "corners2H_AVG_away": 0,
+        "cornerDrawPercentage_overall": 0,
+        "cornerDrawPercentage_home": 0,
+        "cornerDrawPercentage_away": 0,
+        "winMostCornersPercentage_overall": 50,
+        "winMostCornersPercentage_home": 100,
+        "winMostCornersPercentage_away": 0,
+        "loseMostCornersPercentage_overall": 0,
+        "loseMostCornersPercentage_home": 0,
+        "loseMostCornersPercentage_away": 0,
+        "corners04Percentage_overall": 0,
+        "corners04Percentage_home": 0,
+        "corners04Percentage_away": 0,
+        "corners56Percentage_overall": 0,
+        "corners56Percentage_home": 0,
+        "corners56Percentage_away": 0,
+        "corners78Percentage_overall": 0,
+        "corners78Percentage_home": 0,
+        "corners78Percentage_away": 0,
+        "corners910Percentage_overall": 0,
+        "corners910Percentage_home": 0,
+        "corners910Percentage_away": 0,
+        "corners11PlusPercentage_overall": 0,
+        "corners11PlusPercentage_home": 0,
+        "corners11PlusPercentage_away": 0,
+        "totalCards": 0,
+        "cardsPerMatch": 0,
+        "homeCards": 0,
+        "awayCards": 0,
+        "homeCardsPerMatch": 0,
+        "awayCardsPerMatch": 0,
+        "cardsHighest": 0,
+        "cardsLowest": 0,
+        "cardsFor": 0,
+        "cardsAgainst": 0,
+        "cardsForPerMatch": 0,
+        "cardsAgainstPerMatch": 0,
+        "homeCardsFor": 0,
+        "homeCardsAgainst": 0,
+        "awayCardsFor": 0,
+        "awayCardsAgainst": 0,
+        "over05CardsForPercentage": 0,
+        "over15CardsForPercentage": 0,
+        "over25CardsForPercentage": 0,
+        "over35CardsForPercentage": 0,
+        "over45CardsForPercentage": 0,
+        "over55CardsForPercentage": 0,
+        "over65CardsForPercentage": 0,
+        "over05CardsAgainstPercentage": 0,
+        "over15CardsAgainstPercentage": 0,
+        "over25CardsAgainstPercentage": 0,
+        "over35CardsAgainstPercentage": 0,
+        "over45CardsAgainstPercentage": 0,
+        "over55CardsAgainstPercentage": 0,
+        "over65CardsAgainstPercentage": 0,
+        "homeOver05CardsForPercentage": 0,
+        "homeOver15CardsForPercentage": 0,
+        "homeOver25CardsForPercentage": 0,
+        "homeOver35CardsForPercentage": 0,
+        "homeOver45CardsForPercentage": 0,
+        "homeOver55CardsForPercentage": 0,
+        "homeOver65CardsForPercentage": 0,
+        "homeOver05CardsAgainstPercentage": 0,
+        "homeOver15CardsAgainstPercentage": 0,
+        "homeOver25CardsAgainstPercentage": 0,
+        "homeOver35CardsAgainstPercentage": 0,
+        "awayOver05CardsForPercentage": 0,
+        "awayOver15CardsForPercentage": 0,
+        "awayOver25CardsForPercentage": 0,
+        "awayOver35CardsForPercentage": 0,
+        "awayOver45CardsForPercentage": 0,
+        "awayOver55CardsForPercentage": 0,
+        "awayOver65CardsForPercentage": 0,
+        "awayOver05CardsAgainstPercentage": 0,
+        "awayOver15CardsAgainstPercentage": 0,
+        "awayOver25CardsAgainstPercentage": 0,
+        "awayOver35CardsAgainstPercentage": 0,
+        "cardsOver05": 0,
+        "cardsOver15": 0,
+        "cardsOver25": 0,
+        "cardsOver35": 0,
+        "cardsOver45": 0,
+        "cardsOver55": 0,
+        "homeCardsOver05": 0,
+        "homeCardsOver15": 0,
+        "homeCardsOver25": 0,
+        "homeCardsOver35": 0,
+        "homeCardsOver45": 0,
+        "homeCardsOver55": 0,
+        "awayCardsOver05": 0,
+        "awayCardsOver15": 0,
+        "awayCardsOver25": 0,
+        "awayCardsOver35": 0,
+        "awayCardsOver45": 0,
+        "awayCardsOver55": 0,
+        "cards1H_AVG_overall": 0,
+        "cards1H_AVG_home": 0,
+        "cards1H_AVG_away": 0,
+        "cards2H_AVG_overall": 0,
+        "cards2H_AVG_home": 0,
+        "cards2H_AVG_away": 0,
+        "cards1H_under2_percentage_overall": 0,
+        "cards1H_2to3_percentage_overall": 0,
+        "cards1H_over3_percentage_overall": 0,
+        "cards1H_under2_percentage_home": 0,
+        "cards1H_2to3_percentage_home": 0,
+        "cards1H_over3_percentage_home": 0,
+        "cards1H_under2_percentage_away": 0,
+        "cards1H_2to3_percentage_away": 0,
+        "cards1H_over3_percentage_away": 0,
+        "cards2H_under2_percentage_overall": 0,
+        "cards2H_2to3_percentage_overall": 0,
+        "cards2H_over3_percentage_overall": 0,
+        "cards2H_under2_percentage_home": 0,
+        "cards2H_2to3_percentage_home": 0,
+        "cards2H_over3_percentage_home": 0,
+        "cards2H_under2_percentage_away": 0,
+        "cards2H_2to3_percentage_away": 0,
+        "cards2H_over3_percentage_away": 0,
+        "cardsHighest1H_overall": 0,
+        "cardsHighest1H_home": 0,
+        "cardsHighest1H_away": 0,
+        "cardsHighest2H_overall": 0,
+        "cardsHighest2H_home": 0,
+        "cardsHighest2H_away": 0,
+        "cardsLowest_home": 0,
+        "cardsLowest_away": 0,
+        "cardsVsOpponents": 0,
+        "cleanGames": 0,
+        "multipleCardsGames": 0,
+        "earlyCards": 0,
+        "lateCards": 0,
+        "cardsInWins": 0,
+        "cardsInLosses": 0,
+        "possessionPercentage": 59,
+        "homePossessionPercentage": 50,
+        "awayPossessionPercentage": 68,
+        "penaltiesWon": 0,
+        "penaltiesConceded": 0,
+        "homePenaltiesWon": 0,
+        "awayPenaltiesWon": 0,
+        "homePenaltiesConceded": 0,
+        "awayPenaltiesConceded": 0,
+        "penalty_in_a_match_percentage_overall": 0,
+        "penalty_in_a_match_percentage_home": 0,
+        "penalty_in_a_match_percentage_away": 0,
+        "recentForm": "dwl",
+        "homeForm": "w",
+        "awayForm": "dl",
+        "predictionRisk": 0,
+        "homeAdvantagePercentage": 0,
+        "bigChancesCreated": 0,
+        "bigChancesMissed": 0,
+        "leadingAtHT_overall": 0,
+        "leadingAtHT_home": 0,
+        "leadingAtHT_away": 0,
+        "leadingAtHTPercentage_overall": 0,
+        "leadingAtHTPercentage_home": 0,
+        "leadingAtHTPercentage_away": 0,
+        "drawingAtHT_overall": 1,
+        "drawingAtHT_home": 1,
+        "drawingAtHT_away": 0,
+        "drawingAtHTPercentage_overall": 33,
+        "drawingAtHTPercentage_home": 100,
+        "drawingAtHTPercentage_away": 0,
+        "trailingAtHT_overall": 2,
+        "trailingAtHT_home": 0,
+        "trailingAtHT_away": 2,
+        "trailingAtHTPercentage_overall": 67,
+        "trailingAtHTPercentage_home": 0,
+        "trailingAtHTPercentage_away": 100,
+        "scoredGoalsHT_overall": 0,
+        "scoredGoalsHT_home": 0,
+        "scoredGoalsHT_away": 0,
+        "concededGoalsHT_overall": 2,
+        "concededGoalsHT_home": 0,
+        "concededGoalsHT_away": 2,
+        "scoredAVGHT_overall": 0,
+        "scoredAVGHT_home": 0,
+        "scoredAVGHT_away": 0,
+        "concededAVGHT_overall": 0.67,
+        "concededAVGHT_home": 0,
+        "concededAVGHT_away": 1,
+        "seasonCSHT_overall": 1,
+        "seasonCSHT_home": 1,
+        "seasonCSHT_away": 0,
+        "seasonCSPercentageHT_overall": 33,
+        "seasonCSPercentageHT_home": 100,
+        "seasonCSPercentageHT_away": 0,
+        "cs_2hg_percentage_overall": 100,
+        "cs_2hg_percentage_home": 100,
+        "cs_2hg_percentage_away": 100,
+        "seasonFTSHT_overall": 3,
+        "seasonFTSHT_home": 1,
+        "seasonFTSHT_away": 2,
+        "seasonFTSPercentageHT_overall": 100,
+        "seasonFTSPercentageHT_home": 100,
+        "seasonFTSPercentageHT_away": 100,
+        "fts_2hg_percentage_overall": 33,
+        "fts_2hg_percentage_home": 0,
+        "fts_2hg_percentage_away": 50,
+        "seasonBTTSHT_overall": 0,
+        "seasonBTTSHT_home": 0,
+        "seasonBTTSHT_away": 0,
+        "seasonBTTSPercentageHT_overall": 0,
+        "seasonBTTSPercentageHT_home": 0,
+        "seasonBTTSPercentageHT_away": 0,
+        "seasonOver05PercentageHT_overall": 67,
+        "seasonOver05PercentageHT_home": 0,
+        "seasonOver05PercentageHT_away": 100,
+        "seasonOver15PercentageHT_overall": 0,
+        "seasonOver15PercentageHT_home": 0,
+        "seasonOver15PercentageHT_away": 0,
+        "seasonOver25PercentageHT_overall": 0,
+        "seasonOver25PercentageHT_home": 0,
+        "seasonOver25PercentageHT_away": 0,
+        "over05_2hg_percentage_overall": 67,
+        "over05_2hg_percentage_home": 100,
+        "over05_2hg_percentage_away": 50,
+        "over15_2hg_percentage_overall": 33,
+        "over15_2hg_percentage_home": 100,
+        "over15_2hg_percentage_away": 0,
+        "over25_2hg_percentage_overall": 0,
+        "over25_2hg_percentage_home": 0,
+        "over25_2hg_percentage_away": 0,
+        "goals0_15": 0,
+        "goals16_30": 0,
+        "goals31_45": 0,
+        "goals46_60": 1,
+        "goals61_75": 2,
+        "goals76_90": 0,
+        "goalsConc0_15": 1,
+        "goalsConc16_30": 0,
+        "goalsConc31_45": 1,
+        "goalsConc46_60": 0,
+        "goalsConc61_75": 0,
+        "goalsConc76_90": 0,
+        "homeGoals0_15": 0,
+        "homeGoals16_30": 0,
+        "homeGoals31_45": 0,
+        "homeGoals46_60": 1,
+        "homeGoals61_75": 1,
+        "homeGoals76_90": 0,
+        "homeGoalsConc0_15": 0,
+        "homeGoalsConc16_30": 0,
+        "homeGoalsConc31_45": 0,
+        "homeGoalsConc46_60": 0,
+        "homeGoalsConc61_75": 0,
+        "homeGoalsConc76_90": 0,
+        "awayGoals0_15": 0,
+        "awayGoals16_30": 0,
+        "awayGoals31_45": 0,
+        "awayGoals46_60": 0,
+        "awayGoals61_75": 1,
+        "awayGoals76_90": 0,
+        "awayGoalsConc0_15": 1,
+        "awayGoalsConc16_30": 0,
+        "awayGoalsConc31_45": 1,
+        "awayGoalsConc46_60": 0,
+        "awayGoalsConc61_75": 0,
+        "awayGoalsConc76_90": 0,
+        "seasonScoredOver05Percentage_overall": 67,
+        "seasonScoredOver05Percentage_home": 100,
+        "seasonScoredOver05Percentage_away": 50,
+        "seasonScoredOver15Percentage_overall": 33,
+        "seasonScoredOver15Percentage_home": 100,
+        "seasonScoredOver15Percentage_away": 0,
+        "seasonScoredOver25Percentage_overall": 0,
+        "seasonScoredOver25Percentage_home": 0,
+        "seasonScoredOver25Percentage_away": 0,
+        "scoredBothHalvesPercentage_overall": 0,
+        "scoredBothHalvesPercentage_home": 0,
+        "scoredBothHalvesPercentage_away": 0,
+        "firstGoalScoredPercentage_overall": 33,
+        "firstGoalScoredPercentage_home": 100,
+        "firstGoalScoredPercentage_away": 0,
+        "seasonHighestScored_overall": 2,
+        "seasonHighestScored_home": 2,
+        "seasonHighestScored_away": 1,
+        "highestScored": 2,
+        "scoredPercentageHT_overall": 0,
+        "scoredPercentageHT_home": 0,
+        "scoredPercentageHT_away": 0,
+        "scoredPercentage2H_overall": 0,
+        "scoredPercentage2H_home": 0,
+        "scoredPercentage2H_away": 0,
+        "scored1HG_overall": 0,
+        "scored1HG_home": 0,
+        "scored1HG_away": 0,
+        "scored2HG_overall": 0,
+        "scored2HG_home": 0,
+        "scored2HG_away": 0,
+        "seasonConcededOver05Percentage_overall": 67,
+        "seasonConcededOver05Percentage_home": 0,
+        "seasonConcededOver05Percentage_away": 100,
+        "seasonConcededOver15Percentage_overall": 0,
+        "seasonConcededOver15Percentage_home": 0,
+        "seasonConcededOver15Percentage_away": 0,
+        "seasonConcededOver25Percentage_overall": 0,
+        "seasonConcededOver25Percentage_home": 0,
+        "seasonConcededOver25Percentage_away": 0,
+        "cleanSheetPercentage_overall": 0,
+        "cleanSheetPercentage_home": 0,
+        "cleanSheetPercentage_away": 0,
+        "seasonHighestConceded_overall": 1,
+        "seasonHighestConceded_home": 0,
+        "seasonHighestConceded_away": 1,
+        "concededPercentageHT_overall": 0,
+        "concededPercentageHT_home": 0,
+        "concededPercentageHT_away": 0,
+        "conceded_2hg_percentage_overall": 0,
+        "conceded_2hg_percentage_home": 0,
+        "conceded_2hg_percentage_away": 0,
+        "concededBothHalvesPercentage_overall": 0,
+        "concededBothHalvesPercentage_home": 0,
+        "concededBothHalvesPercentage_away": 0,
+        "conceded1HG_overall": 0,
+        "conceded1HG_home": 0,
+        "conceded1HG_away": 0,
+        "conceded2HG_overall": 0,
+        "conceded2HG_home": 0,
+        "conceded2HG_away": 0,
+        "conceded_2hg_avg_overall": 0,
+        "conceded_2hg_avg_home": 0,
+        "conceded_2hg_avg_away": 0,
+        "conceded_2hg_overall": 0,
+        "conceded_2hg_home": 0,
+        "conceded_2hg_away": 0,
+        "over25_and_btts_percentage_overall": 0,
+        "over25_and_btts_percentage_home": 0,
+        "over25_and_btts_percentage_away": 0,
+        "btts_1h2h_yes_yes_percentage_overall": 0,
+        "btts_1h2h_yes_yes_percentage_home": 0,
+        "btts_1h2h_yes_yes_percentage_away": 0,
+        "btts_1h2h_yes_no_percentage_overall": 0,
+        "btts_1h2h_yes_no_percentage_home": 0,
+        "btts_1h2h_yes_no_percentage_away": 0,
+        "btts_1h2h_no_yes_percentage_overall": 0,
+        "btts_1h2h_no_yes_percentage_home": 0,
+        "btts_1h2h_no_yes_percentage_away": 0,
+        "btts_1h2h_no_no_percentage_overall": 100,
+        "btts_1h2h_no_no_percentage_home": 100,
+        "btts_1h2h_no_no_percentage_away": 100,
+        "btts_2hg_percentage_overall": 0,
+        "btts_2hg_percentage_home": 0,
+        "btts_2hg_percentage_away": 0,
+        "shotsAVG": 14.5,
+        "homeShotsAVG": 18,
+        "awayShotsAVG": 11,
+        "shotsOnTargetAVG": 5,
+        "homeShotsOnTargetAVG": 8,
+        "awayShotsOnTargetAVG": 2,
+        "shotsOffTargetAVG": 9.5,
+        "homeShotsOffTargetAVG": 10,
+        "awayShotsOffTargetAVG": 9,
+        "shotsConversionRate": 7,
+        "homeShotsConversionRate": 11,
+        "awayShotsConversionRate": 0,
+        "shotsPerGoal": 14.5,
+        "homeShotsPerGoal": 9,
+        "awayShotsPerGoal": 0,
+        "shotsOnTargetPerGoal": 5,
+        "homeShotsOnTargetPerGoal": 4,
+        "awayShotsOnTargetPerGoal": 0,
+        "shotsOver10_5": 100,
+        "homeShotsOver10_5": 100,
+        "awayShotsOver10_5": 100,
+        "shotsOver11_5": 50,
+        "homeShotsOver11_5": 100,
+        "awayShotsOver11_5": 0,
+        "shotsOver12_5": 50,
+        "homeShotsOver12_5": 100,
+        "awayShotsOver12_5": 0,
+        "shotsOver13_5": 50,
+        "homeShotsOver13_5": 100,
+        "awayShotsOver13_5": 0,
+        "shotsOver14_5": 50,
+        "homeShotsOver14_5": 100,
+        "awayShotsOver14_5": 0,
+        "shotsOver15_5": 50,
+        "homeShotsOver15_5": 100,
+        "awayShotsOver15_5": 0,
+        "shotsOnTargetOver3_5": 50,
+        "homeShotsOnTargetOver3_5": 100,
+        "awayShotsOnTargetOver3_5": 0,
+        "shotsOnTargetOver4_5": 50,
+        "homeShotsOnTargetOver4_5": 100,
+        "awayShotsOnTargetOver4_5": 0,
+        "shotsOnTargetOver5_5": 50,
+        "homeShotsOnTargetOver5_5": 100,
+        "awayShotsOnTargetOver5_5": 0,
+        "shotsOnTargetOver6_5": 50,
+        "homeShotsOnTargetOver6_5": 100,
+        "awayShotsOnTargetOver6_5": 0,
+        "matchShotsOver23_5": 50,
+        "homeMatchShotsOver23_5": 100,
+        "awayMatchShotsOver23_5": 0,
+        "matchShotsOver24_5": 50,
+        "homeMatchShotsOver24_5": 100,
+        "awayMatchShotsOver24_5": 0,
+        "matchShotsOver25_5": 50,
+        "homeMatchShotsOver25_5": 100,
+        "awayMatchShotsOver25_5": 0,
+        "matchShotsOver26_5": 50,
+        "homeMatchShotsOver26_5": 100,
+        "awayMatchShotsOver26_5": 0,
+        "matchShotsOnTargetOver7_5": 50,
+        "homeMatchShotsOnTargetOver7_5": 100,
+        "awayMatchShotsOnTargetOver7_5": 0,
+        "matchShotsOnTargetOver8_5": 50,
+        "homeMatchShotsOnTargetOver8_5": 100,
+        "awayMatchShotsOnTargetOver8_5": 0,
+        "matchShotsOnTargetOver9_5": 50,
+        "homeMatchShotsOnTargetOver9_5": 100,
+        "awayMatchShotsOnTargetOver9_5": 0,
+        "offsidesAvg": 0,
+        "homeOffsidesAvg": 0,
+        "awayOffsidesAvg": 0,
+        "matchOffsidesAvg": 0,
+        "homeMatchOffsidesAvg": 0,
+        "awayMatchOffsidesAvg": 0,
+        "offsidesOver0_5": 0,
+        "homeOffsidesOver0_5": 0,
+        "awayOffsidesOver0_5": 0,
+        "offsidesOver1_5": 0,
+        "homeOffsidesOver1_5": 0,
+        "awayOffsidesOver1_5": 0,
+        "offsidesOver2_5": 0,
+        "homeOffsidesOver2_5": 0,
+        "awayOffsidesOver2_5": 0,
+        "halfWithMostGoalsIs1HPercentage_overall": 33,
+        "halfWithMostGoalsIs2HPercentage_overall": 33,
+        "halfWithMostGoalsIsBothPercentage_overall": 0,
+        "matchOffsidesOver0_5": 0,
+        "homeMatchOffsidesOver0_5": 0,
+        "awayMatchOffsidesOver0_5": 0,
+        "matchOffsidesOver1_5": 0,
+        "homeMatchOffsidesOver1_5": 0,
+        "awayMatchOffsidesOver1_5": 0,
+        "matchOffsidesOver2_5": 0,
+        "homeMatchOffsidesOver2_5": 0,
+        "awayMatchOffsidesOver2_5": 0,
+        "matchOffsidesOver3_5": 0,
+        "homeMatchOffsidesOver3_5": 0,
+        "awayMatchOffsidesOver3_5": 0
+      },
+      "leaguePosition": {
+        "position": null,
+        "totalTeams": null,
+        "positionText": "N/A",
+        "isReliable": false,
+        "note": "Position data temporarily unavailable"
+      },
+      "allMatches": [],
+      "recentMatches": [],
+      "nextMatch": null,
+      "seasonStats": {
+        "totalMatches": 3,
+        "completedMatches": 3,
+        "upcomingMatches": 0
+      },
+      "competitionInfo": {
+        "type": "unknown",
+        "confidence": 0,
+        "dataSource": "team",
+        "isLeagueData": false,
+        "isCupData": false,
+        "competitionName": "Unknown Competition",
+        "allCompetitionData": null,
+        "message": "Veri türü belirlenemedi",
+        "warning": null
+      },
+      "validation": {
+        "isValid": true,
+        "confidence": 1,
+        "issues": []
+      },
+      "dataQuality": {
+        "score": 65,
+        "warnings": [
+          {
+            "type": "unknown_league",
+            "message": "League is unknown, suggested: Premier League",
+            "severity": "medium"
+          }
+        ],
+        "corrections": {
+          "suggestedLeague": "Premier League"
+        },
+        "recommendation": {
+          "status": "questionable",
+          "message": "Data has some issues but may be partially accurate",
+          "action": "use_with_caution"
+        },
+        "metadata": {
+          "dataQualityScore": 65
+        }
+      },
+      "teamResolution": {
+        "originalId": 1020,
+        "resolvedId": 1020,
+        "wasResolved": false,
+        "confidence": 0.2,
+        "method": "team_not_in_chosen_leagues",
+        "report": {
+          "summary": "Team data has low confidence but no better match found",
+          "details": [
+            "Resolution method: team_not_in_chosen_leagues",
+            "Confidence: 20%",
+            "Warnings: 1"
+          ],
+          "recommendations": [
+            "Manual verification recommended"
+          ]
+        }
+      }
+    }
+  }
+}

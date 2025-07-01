@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Debug Test</title>
+</head>
+<body>
+    <h1>Frontend Cards Debug Test</h1>
+    <div id="result"></div>
+    
+    <script>
+        async function testFrontend() {
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/teams/data?teamId=836');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const statistics = data.data.statistics;
+                    
+                    // Test the exact same logic as team-stats.js
+                    const currentCardsFilter = 'overall';
+                    
+                    const filteredStats = currentCardsFilter === 'overall'
+                        ? {
+                            cards1HAvg: statistics.cards1H_AVG || statistics.cards1H_AVG_overall || 0,
+                          }
+                        : null;
+                    
+                    resultDiv.innerHTML = `
+                        <h2>Debug Results:</h2>
+                        <p><strong>Raw statistics.cards1H_AVG:</strong> ${statistics.cards1H_AVG}</p>
+                        <p><strong>Raw statistics.cards1H_AVG_overall:</strong> ${statistics.cards1H_AVG_overall}</p>
+                        <p><strong>Frontend filteredStats.cards1HAvg:</strong> ${filteredStats.cards1HAvg}</p>
+                        <p><strong>Frontend display value:</strong> ${filteredStats.cards1HAvg.toFixed(2)}</p>
+                    `;
+                    
+                    // Log to console too
+                    console.log('statistics object:', statistics);
+                    console.log('cards1H_AVG:', statistics.cards1H_AVG);
+                    console.log('cards1H_AVG_overall:', statistics.cards1H_AVG_overall);
+                    console.log('filteredStats.cards1HAvg:', filteredStats.cards1HAvg);
+                } else {
+                    resultDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+                console.error('Error:', error);
+            }
+        }
+        
+        // Run test on page load
+        testFrontend();
+    </script>
+</body>
+</html>

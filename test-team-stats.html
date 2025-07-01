@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Team Stats Test</title>
+  </head>
+  <body>
+    <h1>Team Stats Test</h1>
+    <div id="results"></div>
+
+    <script>
+      fetch('http://localhost:3001/api/team/836')
+        .then(response => response.json())
+        .then(data => {
+          const resultsDiv = document.getElementById('results');
+          if (data.success && data.data && data.data.statistics) {
+            const stats = data.data.statistics;
+            resultsDiv.innerHTML = `
+                        <h2>API Data Test</h2>
+                        <p><strong>Total Matches:</strong> ${stats.totalMatches}</p>
+                        <p><strong>Wins:</strong> ${stats.wins}</p>
+                        <p><strong>Draws:</strong> ${stats.draws}</p>
+                        <p><strong>Losses:</strong> ${stats.losses}</p>
+                        <p><strong>Shots Per Match:</strong> ${stats.shotsAVG}</p>
+                        <p><strong>Goals Scored (0-15 min):</strong> ${stats.goals0_15}</p>
+                        <p><strong>Goals Scored (16-30 min):</strong> ${stats.goals16_30}</p>
+                        <p><strong>Penalties Won:</strong> ${stats.penaltiesWon}</p>
+                        <p><strong>Penalties Conceded:</strong> ${stats.penaltiesConceded}</p>
+                        <p><strong>Highest Scored:</strong> ${stats.highestScored}</p>
+                        <p><strong>Win Most Corners %:</strong> ${stats.winMostCornersPercentage_overall}</p>
+                    `;
+          } else {
+            resultsDiv.innerHTML = '<p>Failed to load data</p>';
+          }
+        })
+        .catch(error => {
+          document.getElementById('results').innerHTML = '<p>Error: ' + error + '</p>';
+        });
+    </script>
+  </body>
+</html>

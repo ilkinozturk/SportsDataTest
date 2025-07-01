@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-push checks..."
+
+# Run code quality checks
+echo "📝 Checking code quality..."
+npm run code-quality
+
+# Run tests if they exist
+if [ -f "jest.config.js" ]; then
+  echo "🧪 Running tests..."
+  npm test
+fi
+
+echo "✅ Pre-push checks completed!"

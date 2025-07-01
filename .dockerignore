@@ -1,0 +1,82 @@
+# Docker ignore file for SportsData.Ai
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test files
+test-*
+old-tests/
+old-data/
+*.test.js
+coverage/
+
+# Development files
+.git/
+.gitignore
+README.md
+CLAUDE.md
+*.md
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env.local
+.env.development
+.env.test
+
+# Logs
+logs/
+*.log
+
+# Cache directories
+cache/
+.cache/
+temp/
+exports/
+
+# Build artifacts
+dist/
+build/
+
+# Docker files (don't include in the image)
+Dockerfile*
+docker-compose*
+
+# Package manager files
+package-lock.json
+yarn.lock
+
+# Runtime files
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+.nyc_output/
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# ESLint cache
+.eslintcache
+
+# Husky
+.husky/
+
+# TypeScript cache
+*.tsbuildinfo

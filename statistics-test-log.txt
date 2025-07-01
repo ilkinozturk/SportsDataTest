@@ -1,0 +1,162 @@
+🧪 Testing team statistics for 25 teams from different leagues...
+
+============================================================
+📊 Testing: New York RB (ID: 4) - MLS, USA
+============================================================
+Error fetching team 4: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Chicago Fire (ID: 7) - MLS, USA
+============================================================
+Error fetching team 7: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Columbus Crew (ID: 10) - MLS, USA
+============================================================
+Error fetching team 10: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Seattle Sounders (ID: 86) - MLS, USA
+============================================================
+Error fetching team 86: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: LA Galaxy (ID: 124) - MLS, USA
+============================================================
+Error fetching team 124: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Shanghai SIPG (ID: 836) - Chinese Super League, China
+============================================================
+Error fetching team 836: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Guangzhou FC (ID: 1093) - Chinese Super League, China
+============================================================
+Error fetching team 1093: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Beijing Guoan (ID: 9306) - Chinese Super League, China
+============================================================
+Error fetching team 9306: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Flamengo (ID: 134) - Serie A, Brazil
+============================================================
+Error fetching team 134: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Palmeiras (ID: 142) - Serie A, Brazil
+============================================================
+Error fetching team 142: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Santos (ID: 146) - Serie A, Brazil
+============================================================
+Error fetching team 146: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Sao Paulo (ID: 148) - Serie A, Brazil
+============================================================
+Error fetching team 148: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: AIK (ID: 368) - Allsvenskan, Sweden
+============================================================
+Error fetching team 368: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Djurgardens (ID: 372) - Allsvenskan, Sweden
+============================================================
+Error fetching team 372: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Hammarby (ID: 375) - Allsvenskan, Sweden
+============================================================
+Error fetching team 375: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Kawasaki Frontale (ID: 438) - J1 League, Japan
+============================================================
+Error fetching team 438: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Vissel Kobe (ID: 441) - J1 League, Japan
+============================================================
+Error fetching team 441: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Urawa Red Diamonds (ID: 2269) - J1 League, Japan
+============================================================
+Error fetching team 2269: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Bodo/Glimt (ID: 361) - Eliteserien, Norway
+============================================================
+Error fetching team 361: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Brann (ID: 362) - Eliteserien, Norway
+============================================================
+Error fetching team 362: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Molde (ID: 363) - Eliteserien, Norway
+============================================================
+Error fetching team 363: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: HJK (ID: 412) - Veikkausliiga, Finland
+============================================================
+Error fetching team 412: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: KuPS (ID: 413) - Veikkausliiga, Finland
+============================================================
+Error fetching team 413: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Haka (ID: 414) - Veikkausliiga, Finland
+============================================================
+Error fetching team 414: Request failed with status code 422
+❌ No team data returned from API
+============================================================
+📊 Testing: Green Gully (ID: 5500) - Victoria NPL, Australia
+============================================================
+Error fetching team 5500: Request failed with status code 422
+❌ No team data returned from API
+
+============================================================
+📊 SUMMARY
+============================================================
+Total teams tested: 25
+✅ Correct statistics: 0
+⚠️ Incorrect statistics: 0
+❌ No data returned: 25
+
+❌ Teams with no data:
+  - New York RB (ID: 4)
+  - Chicago Fire (ID: 7)
+  - Columbus Crew (ID: 10)
+  - Seattle Sounders (ID: 86)
+  - LA Galaxy (ID: 124)
+  - Shanghai SIPG (ID: 836)
+  - Guangzhou FC (ID: 1093)
+  - Beijing Guoan (ID: 9306)
+  - Flamengo (ID: 134)
+  - Palmeiras (ID: 142)
+  - Santos (ID: 146)
+  - Sao Paulo (ID: 148)
+  - AIK (ID: 368)
+  - Djurgardens (ID: 372)
+  - Hammarby (ID: 375)
+  - Kawasaki Frontale (ID: 438)
+  - Vissel Kobe (ID: 441)
+  - Urawa Red Diamonds (ID: 2269)
+  - Bodo/Glimt (ID: 361)
+  - Brann (ID: 362)
+  - Molde (ID: 363)
+  - HJK (ID: 412)
+  - KuPS (ID: 413)
+  - Haka (ID: 414)
+  - Green Gully (ID: 5500)

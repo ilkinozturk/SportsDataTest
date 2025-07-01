@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test AllStats Section</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 20px; }
+      .test-section { background: #f5f5f5; padding: 20px; margin: 10px 0; border-radius: 8px; }
+      .success { color: green; }
+      .error { color: red; }
+      .info { color: blue; }
+    </style>
+  </head>
+  <body>
+    <h1>AllStats Test - Shanghai SIPG FC</h1>
+    
+    <div class="test-section">
+      <h2>API Test</h2>
+      <div id="apiStatus">Testing API...</div>
+      <div id="apiData"></div>
+    </div>
+    
+    <div class="test-section">
+      <h2>Main Stats Title Test</h2>
+      <h3 id="mainStatsTitle">Default Title</h3>
+      <div id="titleStatus">Waiting for data...</div>
+    </div>
+    
+    <div class="test-section">
+      <h2>Statistics Display</h2>
+      <div id="statsDisplay">Loading statistics...</div>
+    </div>
+    
+    <script>
+      console.log('🔍 AllStats Test Started');
+      
+      async function testAllStats() {
+        try {
+          // Test API call
+          console.log('📡 Calling API...');
+          const response = await fetch('/api/teams/data?teamId=836');
+          const data = await response.json();
+          
+          if (data.success) {
+            document.getElementById('apiStatus').innerHTML = '<span class="success">✅ API Call Successful</span>';
+            document.getElementById('apiData').innerHTML = `
+              <strong>Team:</strong> ${data.data.teamInfo.name}<br>
+              <strong>Statistics Keys:</strong> ${Object.keys(data.data.statistics).length} fields
+            `;
+            
+            console.log('📊 API Data:', data.data);
+            
+            // Test title update
+            const titleElement = document.getElementById('mainStatsTitle');
+            const expectedTitle = `2025 ${data.data.teamInfo.name} Statistics`;
+            titleElement.textContent = expectedTitle;
+            
+            document.getElementById('titleStatus').innerHTML = `<span class="success">✅ Title Updated: ${expectedTitle}</span>`;
+            
+            // Display key statistics
+            const stats = data.data.statistics;
+            document.getElementById('statsDisplay').innerHTML = `
+              <strong>Points Per Game:</strong> ${stats.pointsPerGame || 'N/A'}<br>
+              <strong>Goals For Per Match:</strong> ${stats.goalsForPerMatch || 'N/A'}<br>
+              <strong>Win Percentage:</strong> ${stats.winPercentage || 'N/A'}%<br>
+              <strong>Total Cards:</strong> ${stats.totalCards || 'N/A'}<br>
+              <strong>Cards 1H AVG:</strong> ${stats.cards1H_AVG_overall || 'N/A'}<br>
+              <strong>Cards 2H AVG:</strong> ${stats.cards2H_AVG_overall || 'N/A'}
+            `;
+            
+            console.log('✅ Test completed successfully');
+            
+          } else {
+            throw new Error(data.error || 'API call failed');
+          }
+          
+        } catch (error) {
+          console.error('❌ Test failed:', error);
+          document.getElementById('apiStatus').innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+          document.getElementById('titleStatus').innerHTML = `<span class="error">❌ Test failed</span>`;
+          document.getElementById('statsDisplay').innerHTML = `<span class="error">❌ Could not load statistics</span>`;
+        }
+      }
+      
+      // Run test on page load
+      testAllStats();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,140 @@
+{
+  "subscription": {
+    "totalLeagues": 1695,
+    "rateLimit": "1800",
+    "rateRemaining": "1667"
+  },
+  "majorLeagues": [
+    {
+      "name": "England Premier League",
+      "country": "England",
+      "seasonId": 12325,
+      "seasonYear": 20242025,
+      "available": true
+    },
+    {
+      "name": "Spain La Liga",
+      "country": "Spain",
+      "seasonId": 12316,
+      "seasonYear": 20242025,
+      "available": true
+    },
+    {
+      "name": "Germany Bundesliga",
+      "country": "Germany",
+      "seasonId": 12529,
+      "seasonYear": 20242025,
+      "available": true
+    },
+    {
+      "name": "Italy Serie A",
+      "country": "Italy",
+      "seasonId": 12530,
+      "seasonYear": 20242025,
+      "available": true
+    },
+    {
+      "name": "France Ligue 1",
+      "country": "France",
+      "seasonId": 12337,
+      "seasonYear": 20242025,
+      "available": true
+    },
+    {
+      "name": "Europe UEFA Champions League",
+      "country": "Europe",
+      "seasonId": 12321,
+      "seasonYear": 20242025,
+      "available": true
+    },
+    {
+      "name": "Europe UEFA Europa League",
+      "country": "Europe",
+      "seasonId": 12327,
+      "seasonYear": 20242025,
+      "available": true
+    }
+  ],
+  "workingSeasons": [
+    {
+      "name": "USA MLS",
+      "country": "USA",
+      "seasonId": 13973,
+      "seasonYear": 2025,
+      "teams": 30,
+      "status": "working"
+    }
+  ],
+  "failedTests": [
+    {
+      "name": "England Premier League",
+      "country": "England",
+      "seasonId": 12325,
+      "seasonYear": 20242025,
+      "available": true,
+      "error": "teams_failed",
+      "details": "League is not chosen by the user (this might be delayed by cache if you chose the league recently, wait 1 hour). League may not exist, or is not available to this user."
+    },
+    {
+      "name": "Spain La Liga",
+      "country": "Spain",
+      "seasonId": 12316,
+      "seasonYear": 20242025,
+      "available": true,
+      "error": "teams_failed",
+      "details": "League is not chosen by the user (this might be delayed by cache if you chose the league recently, wait 1 hour). League may not exist, or is not available to this user."
+    },
+    {
+      "name": "Germany Bundesliga",
+      "country": "Germany",
+      "seasonId": 12529,
+      "seasonYear": 20242025,
+      "available": true,
+      "error": "teams_failed",
+      "details": "League is not chosen by the user (this might be delayed by cache if you chose the league recently, wait 1 hour). League may not exist, or is not available to this user."
+    },
+    {
+      "name": "Italy Serie A",
+      "country": "Italy",
+      "seasonId": 12530,
+      "seasonYear": 20242025,
+      "available": true,
+      "error": "teams_failed",
+      "details": "League is not chosen by the user (this might be delayed by cache if you chose the league recently, wait 1 hour). League may not exist, or is not available to this user."
+    },
+    {
+      "name": "France Ligue 1",
+      "country": "France",
+      "seasonId": 12337,
+      "seasonYear": 20242025,
+      "available": true,
+      "error": "teams_failed",
+      "details": "League is not chosen by the user (this might be delayed by cache if you chose the league recently, wait 1 hour). League may not exist, or is not available to this user."
+    },
+    {
+      "name": "Europe UEFA Champions League",
+      "country": "Europe",
+      "seasonId": 12321,
+      "seasonYear": 20242025,
+      "available": true,
+      "error": "teams_failed",
+      "details": "League is not chosen by the user (this might be delayed by cache if you chose the league recently, wait 1 hour). League may not exist, or is not available to this user."
+    },
+    {
+      "name": "Europe UEFA Europa League",
+      "country": "Europe",
+      "seasonId": 12327,
+      "seasonYear": 20242025,
+      "available": true,
+      "error": "teams_failed",
+      "details": "League is not chosen by the user (this might be delayed by cache if you chose the league recently, wait 1 hour). League may not exist, or is not available to this user."
+    }
+  ],
+  "recommendations": [
+    "Update your application to use season IDs instead of league IDs",
+    "Use the working season IDs identified above",
+    "Implement dynamic season selection (latest season per league)",
+    "Add error handling for leagues not in subscription",
+    "Consider subscription upgrade if major European leagues are needed"
+  ]
+}

@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Test Corner Data</title>
+  </head>
+  <body>
+    <h1>Testing Corner Data for Team 836</h1>
+    <div id="results"></div>
+
+    <script>
+      fetch('http://localhost:3001/api/team/836')
+        .then(res => res.json())
+        .then(data => {
+          const stats = data.data.statistics;
+          const resultsDiv = document.getElementById('results');
+
+          resultsDiv.innerHTML = `
+                    <h2>Corner Data Found:</h2>
+                    <p><strong>Corners AVG:</strong> ${stats.cornersAVG || 'NOT FOUND'}</p>
+                    <p><strong>Corners Against AVG:</strong> ${stats.cornersAgainstAVG || 'NOT FOUND'}</p>
+                    <p><strong>Home Corners AVG:</strong> ${stats.homeCornersAVG || 'NOT FOUND'}</p>
+                    <p><strong>Away Corners AVG:</strong> ${stats.awayCornersAVG || 'NOT FOUND'}</p>
+                    <p><strong>Total Matches:</strong> ${stats.totalMatches || 'NOT FOUND'}</p>
+                    <p><strong>Home Matches:</strong> ${stats.homeMatches || 'NOT FOUND'}</p>
+                    <p><strong>Away Matches:</strong> ${stats.awayMatches || 'NOT FOUND'}</p>
+                    <p><strong>Win Most Corners %:</strong> ${stats.winMostCornersPercentage_overall || 'NOT FOUND'}</p>
+                    
+                    <h3>Calculated Totals:</h3>
+                    <p><strong>Total Corners Earned:</strong> ${Math.round((stats.cornersAVG || 0) * (stats.totalMatches || 0))}</p>
+                    <p><strong>Total Corners Against:</strong> ${Math.round((stats.cornersAgainstAVG || 0) * (stats.totalMatches || 0))}</p>
+                `;
+        })
+        .catch(err => {
+          document.getElementById('results').innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
+        });
+    </script>
+  </body>
+</html>

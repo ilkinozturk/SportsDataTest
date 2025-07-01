@@ -1,0 +1,81 @@
+# Blue-Green Deployment Configuration
+version: '3.8'
+
+services:
+  # Blue environment (current production)
+  blue:
+    image: ghcr.io/${GITHUB_REPOSITORY}:${BLUE_VERSION:-latest}
+    container_name: sportsdata-api-blue
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - REDIS_URL=redis://redis:6379
+      - SERVICE_NAME=blue
+    networks:
+      - sportsdata-network
+    depends_on:
+      - redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Green environment (new deployment)
+  green:
+    image: ghcr.io/${GITHUB_REPOSITORY}:${GREEN_VERSION:-latest}
+    container_name: sportsdata-api-green
+    environment:
+      - NODE_ENV=production
+      - PORT=3002
+      - REDIS_URL=redis://redis:6379
+      - SERVICE_NAME=green
+    networks:
+      - sportsdata-network
+    depends_on:
+      - redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Nginx load balancer
+  nginx:
+    image: nginx:alpine
+    container_name: sportsdata-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-blue-green.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - blue
+      - green
+    networks:
+      - sportsdata-network
+    restart: unless-stopped
+
+  # Shared Redis
+  redis:
+    image: redis:7-alpine
+    container_name: sportsdata-redis
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      - sportsdata-network
+    restart: unless-stopped
+
+networks:
+  sportsdata-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local

@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Test Takım Sayfası</title>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <h1>Takım Verisi Test</h1>
+    <div id="status">Yükleniyor...</div>
+    <pre id="data"></pre>
+
+    <script>
+      const teamId = new URLSearchParams(window.location.search).get('teamId') || '836';
+
+      fetch(`/api/team/${teamId}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('status').textContent = data.success ? 'Başarılı' : 'Hata';
+          document.getElementById('data').textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(err => {
+          document.getElementById('status').textContent = 'Hata: ' + err.message;
+        });
+    </script>
+  </body>
+</html>

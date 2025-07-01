@@ -1,0 +1,299 @@
+{
+  "timestamp": "2025-06-25T12:28:03.404Z",
+  "summary": {
+    "totalTested": 50,
+    "activeCount": 12,
+    "inactiveCount": 38,
+    "requestsUsed": 63
+  },
+  "activeLeagues": [
+    {
+      "id": 13973,
+      "name": "USA MLS (USA)",
+      "isActive": true,
+      "teamsCount": 30,
+      "matchesCount": 510,
+      "error": null
+    },
+    {
+      "id": 13987,
+      "name": "Norway Eliteserien (Norway)",
+      "isActive": true,
+      "teamsCount": 16,
+      "matchesCount": 240,
+      "error": null
+    },
+    {
+      "id": 14089,
+      "name": "Finland Veikkausliiga (Finland)",
+      "isActive": true,
+      "teamsCount": 12,
+      "matchesCount": 132,
+      "error": null
+    },
+    {
+      "id": 14119,
+      "name": "Finland Ykkösliiga (Finland)",
+      "isActive": true,
+      "teamsCount": 10,
+      "matchesCount": 90,
+      "error": null
+    },
+    {
+      "id": 14231,
+      "name": "Brazil Serie A (Brazil)",
+      "isActive": true,
+      "teamsCount": 20,
+      "matchesCount": 380,
+      "error": null
+    },
+    {
+      "id": 14305,
+      "name": "Brazil Serie B (Brazil)",
+      "isActive": true,
+      "teamsCount": 20,
+      "matchesCount": 380,
+      "error": null
+    },
+    {
+      "id": 13963,
+      "name": "Sweden Allsvenskan (Sweden)",
+      "isActive": true,
+      "teamsCount": 16,
+      "matchesCount": 240,
+      "error": null
+    },
+    {
+      "id": 13975,
+      "name": "Sweden Superettan (Sweden)",
+      "isActive": true,
+      "teamsCount": 16,
+      "matchesCount": 240,
+      "error": null
+    },
+    {
+      "id": 14153,
+      "name": "China Chinese Super League (China)",
+      "isActive": true,
+      "teamsCount": 16,
+      "matchesCount": 240,
+      "error": null
+    },
+    {
+      "id": 13961,
+      "name": "Japan J2 League (Japan)",
+      "isActive": true,
+      "teamsCount": 20,
+      "matchesCount": 380,
+      "error": null
+    },
+    {
+      "id": 14400,
+      "name": "China China League One (China)",
+      "isActive": true,
+      "teamsCount": 16,
+      "matchesCount": 240,
+      "error": null
+    },
+    {
+      "id": 13960,
+      "name": "Japan J1 League (Japan)",
+      "isActive": true,
+      "teamsCount": 20,
+      "matchesCount": 380,
+      "error": null
+    }
+  ],
+  "inactiveLeagues": [
+    {
+      "id": 12455,
+      "name": "Scotland Premiership (Scotland)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12529,
+      "name": "Germany Bundesliga (Germany)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12321,
+      "name": "Europe UEFA Champions League (Europe)",
+      "error": "League not activated"
+    },
+    {
+      "id": 11438,
+      "name": "Malaysia Super League (Malaysia)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12325,
+      "name": "England Premier League (England)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12931,
+      "name": "Portugal Liga NOS (Portugal)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12641,
+      "name": "Turkey Süper Lig (Turkey)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12451,
+      "name": "England Championship (England)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12446,
+      "name": "England EFL League One (England)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12422,
+      "name": "England EFL League Two (England)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12316,
+      "name": "Spain La Liga (Spain)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12467,
+      "name": "Spain Segunda División (Spain)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12928,
+      "name": "Turkey 1. Lig (Turkey)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12322,
+      "name": "Netherlands Eredivisie (Netherlands)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12317,
+      "name": "Netherlands Eerste Divisie (Netherlands)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12337,
+      "name": "France Ligue 1 (France)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12530,
+      "name": "Italy Serie A (Italy)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12338,
+      "name": "France Ligue 2 (France)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12621,
+      "name": "Italy Serie B (Italy)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12137,
+      "name": "Belgium Pro League (Belgium)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12528,
+      "name": "Germany 2. Bundesliga (Germany)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12623,
+      "name": "Germany 3. Liga (Germany)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12472,
+      "name": "Austria Bundesliga (Austria)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12478,
+      "name": "Austria 2. Liga (Austria)",
+      "error": "League not activated"
+    },
+    {
+      "id": 13703,
+      "name": "Australia A-League (Australia)",
+      "error": "League not activated"
+    },
+    {
+      "id": 5220,
+      "name": "Argentina Primera División (Argentina)",
+      "error": "League not activated"
+    },
+    {
+      "id": 5272,
+      "name": "Argentina Prim B Nacional (Argentina)",
+      "error": "League not activated"
+    },
+    {
+      "id": 2450,
+      "name": "Argentina Prim B Metro (Argentina)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12156,
+      "name": "Poland 1. Liga (Poland)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12820,
+      "name": "Poland 2. Liga (Poland)",
+      "error": "League not activated"
+    },
+    {
+      "id": 14290,
+      "name": "Belarus Vysheyshaya Liga (Belarus)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12638,
+      "name": "Armenia Armenian Premier League (Armenia)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12326,
+      "name": "Switzerland Super League (Switzerland)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12277,
+      "name": "Switzerland Challenge League (Switzerland)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12740,
+      "name": "Azerbaijan Premyer Liqası (Azerbaijan)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12335,
+      "name": "Russia Russian Premier League (Russia)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12585,
+      "name": "Portugal LigaPro (Portugal)",
+      "error": "League not activated"
+    },
+    {
+      "id": 12547,
+      "name": "Switzerland 1. Liga Promotion (Switzerland)",
+      "error": "League not activated"
+    }
+  ]
+}

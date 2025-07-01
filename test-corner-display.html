@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Test Corner Display</title>
+    <style>
+      body {
+        font-family: Arial;
+        padding: 20px;
+        background: #1a1a1a;
+        color: white;
+      }
+      .stat-row {
+        margin: 10px 0;
+      }
+      .stat-label {
+        display: inline-block;
+        width: 200px;
+      }
+      .stat-value {
+        font-weight: bold;
+        color: #4caf50;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Testing Corner Display</h1>
+
+    <div class="stat-row">
+      <span class="stat-label">Over 2.5 Earned:</span>
+      <span class="stat-value" id="test-over25">Loading...</span>
+    </div>
+
+    <div class="stat-row">
+      <span class="stat-label">Over 3.5 Earned:</span>
+      <span class="stat-value" id="test-over35">Loading...</span>
+    </div>
+
+    <div class="stat-row">
+      <span class="stat-label">Over 2.5 Against:</span>
+      <span class="stat-value" id="test-over25Against">Loading...</span>
+    </div>
+
+    <h2>Debug Info</h2>
+    <pre id="debug"></pre>
+
+    <script>
+      // Test direct API call
+      fetch('http://localhost:3001/api/team/836')
+        .then(res => res.json())
+        .then(data => {
+          const stats = data.data.statistics;
+
+          // Update display
+          document.getElementById('test-over25').textContent = stats.over25CornersForPercentage_overall + '%';
+          document.getElementById('test-over35').textContent = stats.over35CornersForPercentage_overall + '%';
+          document.getElementById('test-over25Against').textContent =
+            stats.over25CornersAgainstPercentage_overall + '%';
+
+          // Debug info
+          document.getElementById('debug').textContent = JSON.stringify(
+            {
+              over25CornersForPercentage_overall: stats.over25CornersForPercentage_overall,
+              over35CornersForPercentage_overall: stats.over35CornersForPercentage_overall,
+              over45CornersForPercentage_overall: stats.over45CornersForPercentage_overall,
+              over25CornersAgainstPercentage_overall: stats.over25CornersAgainstPercentage_overall,
+              cornersAVG: stats.cornersAVG,
+              homeCornersAVG: stats.homeCornersAVG,
+              awayCornersAVG: stats.awayCornersAVG,
+            },
+            null,
+            2
+          );
+        })
+        .catch(err => {
+          document.getElementById('debug').textContent = 'Error: ' + err.message;
+        });
+    </script>
+  </body>
+</html>

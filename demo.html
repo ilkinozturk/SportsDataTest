@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Football Prediction Engine - Bugünün Maçları</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+
+      .animate-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .glass {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .match-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      .gradient-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .status-live {
+        background: linear-gradient(45deg, #ef4444, #dc2626);
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+
+      .status-finished {
+        background: linear-gradient(45deg, #6b7280, #4b5563);
+      }
+
+      .status-scheduled {
+        background: linear-gradient(45deg, #3b82f6, #2563eb);
+      }
+    </style>
+  </head>
+  <body class="gradient-bg min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-2xl border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-6 py-8">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              ⚽ Football Prediction Engine
+            </h1>
+            <p class="text-gray-600 mt-2 text-lg">Powered by FootyStats API & Advanced Analytics</p>
+          </div>
+          <div class="text-right">
+            <div class="text-sm text-gray-500 mb-1">Son Güncelleme</div>
+            <div id="lastUpdate" class="font-semibold text-gray-700 text-lg"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <!-- Navigation Tabs -->
+      <div
+        class="flex space-x-2 bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg p-2 rounded-xl w-fit mx-auto mb-10 shadow-lg"
+      >
+        <button
+          onclick="switchTab('today')"
+          id="todayTab"
+          class="px-8 py-4 rounded-lg font-semibold transition-all duration-300 text-white bg-white bg-opacity-30"
+        >
+          📅 Bugünün Maçları (<span id="todayCount">0</span>)
+        </button>
+        <button
+          onclick="switchTab('upcoming')"
+          id="upcomingTab"
+          class="px-8 py-4 rounded-lg font-semibold transition-all duration-300 text-white hover:bg-white hover:bg-opacity-20"
+        >
+          🔮 Yaklaşan Maçlar (<span id="upcomingCount">0</span>)
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading" class="flex justify-center items-center py-20">
+        <div class="text-center">
+          <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto mb-4"></div>
+          <p class="text-white text-xl font-medium">Maçlar yükleniyor...</p>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div id="error" class="hidden bg-red-50 border-2 border-red-200 rounded-xl p-6 mb-8 shadow-lg">
+        <div class="flex items-center">
+          <span class="text-red-500 text-2xl mr-4">❌</span>
+          <div>
+            <h3 class="font-bold text-red-800 text-lg">Hata Oluştu</h3>
+            <p id="errorMessage" class="text-red-600 mt-1"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Matches List -->
+      <div id="matchesList" class="max-w-4xl mx-auto space-y-4">
+        <!-- Matches will be populated here -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden text-center py-20">
+        <div class="text-8xl mb-6">⚽</div>
+        <h3 class="text-2xl font-bold text-white mb-4">Maç Bulunamadı</h3>
+        <p class="text-white text-opacity-80 text-lg">Maçlar yüklendiğinde burada görünecek</p>
+      </div>
+
+      <!-- Refresh Button -->
+      <div class="text-center mt-12">
+        <button
+          onclick="refreshMatches()"
+          id="refreshBtn"
+          class="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg text-white px-10 py-4 rounded-xl hover:bg-opacity-30 transition-all duration-300 font-semibold text-lg shadow-lg"
+        >
+          🔄 Maçları Yenile
+        </button>
+      </div>
+    </div>
+
+    <script>
+      let todayMatches = [];
+      let upcomingMatches = [];
+      let activeTab = 'today';
+      let isLoading = false;
+
+      const API_BASE = 'http://localhost:3001/api';
+
+      // Sort utilities - inline to avoid 404 errors
+      const SortUtils = {
+        sortMatchesByTime: function (matches) {
+          return matches.sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return dateA.getTime() - dateB.getTime();
+          });
+        },
+
+        formatMatchTime: function (dateInput) {
+          const date = new Date(dateInput);
+          return date.toLocaleTimeString('tr-TR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          });
+        },
+
+        formatMatchDate: function (dateInput) {
+          const date = new Date(dateInput);
+          return date.toLocaleDateString('tr-TR');
+        },
+      };
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', () => {
+        updateLastUpdateTime();
+        loadMatches();
+      });
+
+      function updateLastUpdateTime() {
+        document.getElementById('lastUpdate').textContent = moment().format('DD/MM/YYYY HH:mm');
+      }
+
+      async function loadMatches() {
+        if (isLoading) return;
+
+        isLoading = true;
+        showLoading(true);
+        hideError();
+
+        try {
+          // Load today's matches
+          const todayResponse = await axios.get(`${API_BASE}/matches/today`);
+          if (todayResponse.data.success) {
+            todayMatches = todayResponse.data.data || [];
+          }
+
+          // Load upcoming matches
+          const upcomingResponse = await axios.get(`${API_BASE}/matches/upcoming?days=7`);
+          if (upcomingResponse.data.success) {
+            upcomingMatches = upcomingResponse.data.data || [];
+          }
+
+          updateCounts();
+          displayMatches();
+          updateLastUpdateTime();
+        } catch (error) {
+          console.error('Error loading matches:', error);
+          showError(error.message || 'Maçlar yüklenirken hata oluştu');
+        } finally {
+          isLoading = false;
+          showLoading(false);
+        }
+      }
+
+      function switchTab(tab) {
+        activeTab = tab;
+
+        // Update tab styles
+        document.getElementById('todayTab').className =
+          tab === 'today'
+            ? 'px-8 py-4 rounded-lg font-semibold transition-all duration-300 text-white bg-white bg-opacity-30'
+            : 'px-8 py-4 rounded-lg font-semibold transition-all duration-300 text-white hover:bg-white hover:bg-opacity-20';
+
+        document.getElementById('upcomingTab').className =
+          tab === 'upcoming'
+            ? 'px-8 py-4 rounded-lg font-semibold transition-all duration-300 text-white bg-white bg-opacity-30'
+            : 'px-8 py-4 rounded-lg font-semibold transition-all duration-300 text-white hover:bg-white hover:bg-opacity-20';
+
+        displayMatches();
+      }
+
+      function displayMatches() {
+        const matches = activeTab === 'today' ? todayMatches : upcomingMatches;
+        const listContainer = document.getElementById('matchesList');
+        const emptyState = document.getElementById('emptyState');
+
+        if (matches.length === 0) {
+          listContainer.innerHTML = '';
+          emptyState.classList.remove('hidden');
+          return;
+        }
+
+        emptyState.classList.add('hidden');
+
+        // Sort matches by time using our utility
+        const sortedMatches = SortUtils.sortMatchesByTime([...matches]);
+
+        listContainer.innerHTML = sortedMatches.map(createMatchListItem).join('');
+      }
+
+      function createMatchListItem(match) {
+        const matchTime = SortUtils.formatMatchTime(match.date);
+        const matchDate = SortUtils.formatMatchDate(match.date);
+        const statusClass = getStatusClass(match.status);
+
+        return `
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between">
+                            <!-- Time and League -->
+                            <div class="flex-shrink-0 text-center">
+                                <div class="text-2xl font-bold text-blue-600 mb-1">${matchTime}</div>
+                                <div class="${statusClass} px-3 py-1 rounded-full text-xs font-bold text-white mb-2">
+                                    ${match.status === 'scheduled' ? 'YAKIN' : match.status.toUpperCase()}
+                                </div>
+                                <div class="text-xs text-gray-500 font-medium">${match.league.name}</div>
+                            </div>
+                            
+                            <!-- Teams -->
+                            <div class="flex-1 mx-8">
+                                <div class="flex items-center justify-between">
+                                    <div class="text-right flex-1">
+                                        <div class="font-bold text-lg text-gray-800 cursor-pointer hover:text-blue-600 transition-colors" onclick="openTeamStats('${match.homeTeam.id}')">${match.homeTeam.name}</div>
+                                        ${
+                                          match.homeScore !== undefined || match.awayScore !== undefined
+                                            ? `
+                                            <div class="text-xl font-bold text-blue-600 mt-1">${match.homeScore || 0}</div>
+                                        `
+                                            : ''
+                                        }
+                                    </div>
+                                    
+                                    <div class="mx-6 text-center">
+                                        ${
+                                          match.homeScore !== undefined || match.awayScore !== undefined
+                                            ? `
+                                            <div class="text-2xl font-bold text-gray-800">-</div>
+                                        `
+                                            : `
+                                            <div class="text-2xl font-bold text-gray-400">VS</div>
+                                        `
+                                        }
+                                    </div>
+                                    
+                                    <div class="text-left flex-1">
+                                        <div class="font-bold text-lg text-gray-800 cursor-pointer hover:text-blue-600 transition-colors" onclick="openTeamStats('${match.awayTeam.id}')">${match.awayTeam.name}</div>
+                                        ${
+                                          match.homeScore !== undefined || match.awayScore !== undefined
+                                            ? `
+                                            <div class="text-xl font-bold text-red-600 mt-1">${match.awayScore || 0}</div>
+                                        `
+                                            : ''
+                                        }
+                                    </div>
+                                </div>
+                                
+                                ${
+                                  match.venue
+                                    ? `
+                                    <div class="text-center text-sm text-gray-500 mt-3">🏟️ ${match.venue}</div>
+                                `
+                                    : ''
+                                }
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex-shrink-0 flex gap-2">
+                                <button class="bg-gradient-to-r from-green-500 to-green-600 text-white py-2 px-4 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 font-semibold text-sm shadow-lg">
+                                    📊 Analiz
+                                </button>
+                                <button class="bg-gradient-to-r from-purple-500 to-purple-600 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-300 font-semibold text-sm shadow-lg">
+                                    🎯 Tahmin
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+      }
+
+      function getStatusClass(status) {
+        switch (status.toLowerCase()) {
+          case 'live':
+            return 'status-live';
+          case 'finished':
+          case 'complete':
+            return 'status-finished';
+          case 'scheduled':
+            return 'status-scheduled';
+          default:
+            return 'bg-gray-500';
+        }
+      }
+
+      function updateCounts() {
+        document.getElementById('todayCount').textContent = todayMatches.length;
+        document.getElementById('upcomingCount').textContent = upcomingMatches.length;
+      }
+
+      function showLoading(show) {
+        document.getElementById('loading').classList.toggle('hidden', !show);
+        document.getElementById('matchesList').classList.toggle('hidden', show);
+      }
+
+      function showError(message) {
+        document.getElementById('errorMessage').textContent = message;
+        document.getElementById('error').classList.remove('hidden');
+      }
+
+      function hideError() {
+        document.getElementById('error').classList.add('hidden');
+      }
+
+      function refreshMatches() {
+        loadMatches();
+      }
+
+      // Function to open team statistics page
+      function openTeamStats(teamId) {
+        if (teamId) {
+          window.open(`team-stats.html?id=${teamId}`, '_blank');
+        }
+      }
+
+      // Auto refresh every 5 minutes
+      setInterval(
+        () => {
+          if (!isLoading) {
+            loadMatches();
+          }
+        },
+        5 * 60 * 1000
+      );
+    </script>
+  </body>
+</html>

@@ -1,0 +1,188 @@
+{
+  "testDate": "2025-06-25T15:34:22.425Z",
+  "sampleTeamData": {
+    "id": 1,
+    "name": "Montreal Impact",
+    "cleanName": "Montreal Impact",
+    "english_name": "Montreal Impact",
+    "shortHand": "montreal-impact",
+    "country": "Canada",
+    "continent": null,
+    "founded": "2010",
+    "image": "https://cdn.footystats.org/img/teams/canada-montreal-impact.png",
+    "flag_element": null,
+    "season": "2025",
+    "seasonClean": null,
+    "url": "https://footystats.org/clubs/montreal-impact-1",
+    "table_position": 0,
+    "performance_rank": 29,
+    "risk": 61,
+    "season_format": "Domestic League",
+    "competition_id": 13973,
+    "full_name": "Montreal Impact",
+    "alt_names": [],
+    "official_sites": [
+      "https://www.cfmontreal.com/"
+    ]
+  },
+  "workingEndpoints": [
+    {
+      "name": "League List",
+      "endpoint": "/league-list",
+      "params": {},
+      "hasStatistics": false,
+      "responseStructure": {
+        "success": true,
+        "dataType": "array",
+        "dataLength": 1695
+      }
+    }
+  ],
+  "failedEndpoints": [
+    {
+      "name": "League Stats",
+      "endpoint": "/league-stats",
+      "params": {
+        "league_id": 13973
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "League Standings",
+      "endpoint": "/league-standings",
+      "params": {
+        "league_id": 13973
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "League Summary",
+      "endpoint": "/league-summary",
+      "params": {
+        "league_id": 13973
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "Team Data",
+      "endpoint": "/team-data",
+      "params": {
+        "team_id": 1
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "Team Details",
+      "endpoint": "/team-details",
+      "params": {
+        "team_id": 1
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "Team Profile",
+      "endpoint": "/team-profile",
+      "params": {
+        "team_id": 1
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "Season Stats",
+      "endpoint": "/season-stats",
+      "params": {
+        "league_id": 13973
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "Season Table",
+      "endpoint": "/season-table",
+      "params": {
+        "league_id": 13973
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "Over Under Stats",
+      "endpoint": "/over-under-stats",
+      "params": {
+        "league_id": 13973
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "BTTS Stats",
+      "endpoint": "/btts-stats",
+      "params": {
+        "league_id": 13973
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "Cards Stats",
+      "endpoint": "/cards-stats",
+      "params": {
+        "league_id": 13973
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "Corners Stats",
+      "endpoint": "/corners-stats",
+      "params": {
+        "league_id": 13973
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "Team League Stats",
+      "endpoint": "/team-league-stats",
+      "params": {
+        "team_id": 1,
+        "league_id": 13973
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "Teams",
+      "endpoint": "/teams",
+      "params": {
+        "league_id": 13973
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "Stats",
+      "endpoint": "/stats",
+      "params": {
+        "league_id": 13973
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "Tables",
+      "endpoint": "/tables",
+      "params": {
+        "league_id": 13973
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "Fixtures",
+      "endpoint": "/fixtures",
+      "params": {
+        "league_id": 13973
+      },
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "Results",
+      "endpoint": "/results",
+      "params": {
+        "league_id": 13973
+      },
+      "error": "Request failed with status code 404"
+    }
+  ]
+}

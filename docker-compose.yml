@@ -1,0 +1,113 @@
+# Docker Compose configuration for SportsData.Ai
+version: '3.8'
+
+services:
+  # Main application service
+  sportsdata-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: sportsdata-api
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - LOG_LEVEL=info
+    volumes:
+      - ./logs:/app/logs
+      - ./cache:/app/cache
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - sportsdata-network
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Redis cache service
+  redis:
+    image: redis:7-alpine
+    container_name: sportsdata-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    restart: unless-stopped
+    networks:
+      - sportsdata-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Optional: Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: sportsdata-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - sportsdata-api
+    restart: unless-stopped
+    networks:
+      - sportsdata-network
+    profiles:
+      - production
+
+  # Optional: Monitoring service
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: sportsdata-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    restart: unless-stopped
+    networks:
+      - sportsdata-network
+    profiles:
+      - monitoring
+
+networks:
+  sportsdata-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local
+  prometheus-data:
+    driver: local

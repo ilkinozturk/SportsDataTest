@@ -1,0 +1,233 @@
+{
+  "testDate": "2025-06-26T19:56:11.278Z",
+  "totalLeaguesTested": 8,
+  "validResults": 8,
+  "realisticResults": 0,
+  "recommendations": [],
+  "allResults": [
+    {
+      "leagueId": 13973,
+      "year": 2025,
+      "name": "USA MLS",
+      "chicago": {
+        "found": true,
+        "id": 7,
+        "name": "Chicago Fire",
+        "apiPosition": 0,
+        "calculatedPosition": 0,
+        "totalTeams": 30,
+        "totalTeamsWithStats": 0,
+        "ppg": 0,
+        "matchesPlayed": 0,
+        "points": 0,
+        "wins": 0,
+        "draws": 0,
+        "losses": 0
+      },
+      "dataQuality": {
+        "teamsWithStats": 0,
+        "totalTeams": 30,
+        "hasRecentStats": false,
+        "avgPPG": "NaN",
+        "allTeamsHaveZeroStats": true
+      },
+      "qualityScore": 0
+    },
+    {
+      "leagueId": 10977,
+      "year": 2024,
+      "name": "USA MLS",
+      "chicago": {
+        "found": true,
+        "id": 7,
+        "name": "Chicago Fire",
+        "apiPosition": 15,
+        "calculatedPosition": 0,
+        "totalTeams": 29,
+        "totalTeamsWithStats": 0,
+        "ppg": 0,
+        "matchesPlayed": 0,
+        "points": 0,
+        "wins": 0,
+        "draws": 0,
+        "losses": 0
+      },
+      "dataQuality": {
+        "teamsWithStats": 0,
+        "totalTeams": 29,
+        "hasRecentStats": false,
+        "avgPPG": "NaN",
+        "allTeamsHaveZeroStats": true
+      },
+      "qualityScore": 0
+    },
+    {
+      "leagueId": 8777,
+      "year": 2023,
+      "name": "USA MLS",
+      "chicago": {
+        "found": true,
+        "id": 7,
+        "name": "Chicago Fire",
+        "apiPosition": 13,
+        "calculatedPosition": 0,
+        "totalTeams": 29,
+        "totalTeamsWithStats": 0,
+        "ppg": 0,
+        "matchesPlayed": 0,
+        "points": 0,
+        "wins": 0,
+        "draws": 0,
+        "losses": 0
+      },
+      "dataQuality": {
+        "teamsWithStats": 0,
+        "totalTeams": 29,
+        "hasRecentStats": false,
+        "avgPPG": "NaN",
+        "allTeamsHaveZeroStats": true
+      },
+      "qualityScore": 0
+    },
+    {
+      "leagueId": 6969,
+      "year": 2022,
+      "name": "USA MLS",
+      "chicago": {
+        "found": true,
+        "id": 7,
+        "name": "Chicago Fire",
+        "apiPosition": 12,
+        "calculatedPosition": 0,
+        "totalTeams": 28,
+        "totalTeamsWithStats": 0,
+        "ppg": 0,
+        "matchesPlayed": 0,
+        "points": 0,
+        "wins": 0,
+        "draws": 0,
+        "losses": 0
+      },
+      "dataQuality": {
+        "teamsWithStats": 0,
+        "totalTeams": 28,
+        "hasRecentStats": false,
+        "avgPPG": "NaN",
+        "allTeamsHaveZeroStats": true
+      },
+      "qualityScore": 0
+    },
+    {
+      "leagueId": 5674,
+      "year": 2021,
+      "name": "USA MLS",
+      "chicago": {
+        "found": true,
+        "id": 7,
+        "name": "Chicago Fire",
+        "apiPosition": 12,
+        "calculatedPosition": 0,
+        "totalTeams": 27,
+        "totalTeamsWithStats": 0,
+        "ppg": 0,
+        "matchesPlayed": 0,
+        "points": 0,
+        "wins": 0,
+        "draws": 0,
+        "losses": 0
+      },
+      "dataQuality": {
+        "teamsWithStats": 0,
+        "totalTeams": 27,
+        "hasRecentStats": false,
+        "avgPPG": "NaN",
+        "allTeamsHaveZeroStats": true
+      },
+      "qualityScore": 0
+    },
+    {
+      "leagueId": 4473,
+      "year": 2020,
+      "name": "USA MLS",
+      "chicago": {
+        "found": true,
+        "id": 7,
+        "name": "Chicago Fire",
+        "apiPosition": 0,
+        "calculatedPosition": 0,
+        "totalTeams": 26,
+        "totalTeamsWithStats": 0,
+        "ppg": 0,
+        "matchesPlayed": 0,
+        "points": 0,
+        "wins": 0,
+        "draws": 0,
+        "losses": 0
+      },
+      "dataQuality": {
+        "teamsWithStats": 0,
+        "totalTeams": 26,
+        "hasRecentStats": false,
+        "avgPPG": "NaN",
+        "allTeamsHaveZeroStats": true
+      },
+      "qualityScore": 0
+    },
+    {
+      "leagueId": 1846,
+      "year": 2019,
+      "name": "USA MLS",
+      "chicago": {
+        "found": true,
+        "id": 7,
+        "name": "Chicago Fire",
+        "apiPosition": 8,
+        "calculatedPosition": 0,
+        "totalTeams": 24,
+        "totalTeamsWithStats": 0,
+        "ppg": 0,
+        "matchesPlayed": 0,
+        "points": 0,
+        "wins": 0,
+        "draws": 0,
+        "losses": 0
+      },
+      "dataQuality": {
+        "teamsWithStats": 0,
+        "totalTeams": 24,
+        "hasRecentStats": false,
+        "avgPPG": "NaN",
+        "allTeamsHaveZeroStats": true
+      },
+      "qualityScore": 0
+    },
+    {
+      "leagueId": 1076,
+      "year": 2018,
+      "name": "USA MLS",
+      "chicago": {
+        "found": true,
+        "id": 7,
+        "name": "Chicago Fire",
+        "apiPosition": 10,
+        "calculatedPosition": 0,
+        "totalTeams": 23,
+        "totalTeamsWithStats": 0,
+        "ppg": 0,
+        "matchesPlayed": 0,
+        "points": 0,
+        "wins": 0,
+        "draws": 0,
+        "losses": 0
+      },
+      "dataQuality": {
+        "teamsWithStats": 0,
+        "totalTeams": 23,
+        "hasRecentStats": false,
+        "avgPPG": "NaN",
+        "allTeamsHaveZeroStats": true
+      },
+      "qualityScore": 0
+    }
+  ]
+}
