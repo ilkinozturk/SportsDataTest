@@ -14,7 +14,7 @@ const errorHandler = (err, req, res, next) => {
     method: req.method,
     ip: req.ip,
     statusCode: err.statusCode || 500,
-    errorCode: err.errorCode || 'INTERNAL_ERROR'
+    errorCode: err.errorCode || 'INTERNAL_ERROR',
   });
 
   // Default error values
@@ -48,23 +48,23 @@ const errorHandler = (err, req, res, next) => {
     logger.error('Non-operational error in production:', err);
   }
 
-  // Send error response
+  // Send error response - Frontend'in beklediği format!
   res.status(statusCode).json({
     success: false,
-    error: {
+    error: message, // Frontend bunu bekliyor
+    errorDetails: {
       code: errorCode,
-      message: message,
-      ...(process.env.NODE_ENV === 'development' && { 
+      ...(process.env.NODE_ENV === 'development' && {
         stack: err.stack,
-        details: err 
-      })
+        details: err,
+      }),
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
 // Async error wrapper to catch async errors
-const asyncHandler = (fn) => (req, res, next) => {
+const asyncHandler = fn => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };
 
@@ -73,16 +73,17 @@ const notFoundHandler = (req, res, next) => {
   const message = `Cannot ${req.method} ${req.originalUrl}`;
   res.status(404).json({
     success: false,
-    error: {
+    error: message, // Frontend'in beklediği format
+    errorDetails: {
       code: 'NOT_FOUND',
-      message: message
+      message: message,
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
 module.exports = {
   errorHandler,
   asyncHandler,
-  notFoundHandler
+  notFoundHandler,
 };
