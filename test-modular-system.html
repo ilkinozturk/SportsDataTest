@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modular System Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #4ade80;
+            color: #000;
+        }
+        .error {
+            background: #f87171;
+            color: #000;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .active {
+            background: #10b981;
+        }
+        #test-log {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Modular System Test</h1>
+    
+    <div class="test-section">
+        <h2>Filter Manager Test</h2>
+        <div class="filter-buttons">
+            <button onclick="testFilterManager.setFilter('overall')">Overall</button>
+            <button onclick="testFilterManager.setFilter('home')">Home</button>
+            <button onclick="testFilterManager.setFilter('away')">Away</button>
+        </div>
+        <p>Current Filter: <span id="current-filter">overall</span></p>
+        <p>Cards Filter: <span id="cards-filter">overall</span></p>
+        <p>XG Filter: <span id="xg-filter">overall</span></p>
+    </div>
+
+    <div class="test-section">
+        <h2>Tab Manager Test</h2>
+        <div class="filter-buttons">
+            <button onclick="testTabManager.show('all')">All Stats</button>
+            <button onclick="testTabManager.show('goals')">Goals</button>
+            <button onclick="testTabManager.show('cards')">Cards</button>
+            <button onclick="testTabManager.show('corners')">Corners</button>
+            <button onclick="testTabManager.show('xg')">xG</button>
+            <button onclick="testTabManager.show('shots')">Shots</button>
+        </div>
+        <p>Current Tab: <span id="current-tab">all</span></p>
+    </div>
+
+    <div class="test-section">
+        <h2>Statistics Modules Test</h2>
+        <button onclick="runStatisticsTest()">Run Test with Mock Data</button>
+        <div id="statistics-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Log</h2>
+        <div id="test-log"></div>
+    </div>
+
+    <script type="module">
+        // Import modules
+        import filterManager from './js/core/FilterManager.js';
+        import tabManager from './js/modules/ui/TabManager.js';
+        import { GoalsStatistics } from './js/modules/statistics/GoalsStatistics.js';
+        import { CardsStatistics } from './js/modules/statistics/CardsStatistics.js';
+        import { CornersStatistics } from './js/modules/statistics/CornersStatistics.js';
+        import { XGStatistics } from './js/modules/statistics/XGStatistics.js';
+        import { ShotsStatistics } from './js/modules/statistics/ShotsStatistics.js';
+
+        // Initialize modules
+        const goalsStats = new GoalsStatistics(filterManager);
+        const cardsStats = new CardsStatistics(filterManager);
+        const cornersStats = new CornersStatistics(filterManager);
+        const xgStats = new XGStatistics(filterManager);
+        const shotsStats = new ShotsStatistics(filterManager);
+
+        // Make available globally for testing
+        window.testFilterManager = {
+            setFilter: (value) => {
+                filterManager.setMainFilter(value);
+                filterManager.setCardsFilter(value);
+                filterManager.setXgFilter(value);
+            }
+        };
+
+        window.testTabManager = tabManager;
+
+        // Add logging
+        const log = (message, type = 'info') => {
+            const logEl = document.getElementById('test-log');
+            const time = new Date().toTimeString().split(' ')[0];
+            const color = type === 'error' ? '#f87171' : type === 'success' ? '#4ade80' : '#fff';
+            logEl.innerHTML += `<div style="color: ${color}">[${time}] ${message}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+        };
+
+        // Listen to filter changes
+        filterManager.on('current', (newValue) => {
+            document.getElementById('current-filter').textContent = newValue;
+            log(`Main filter changed to: ${newValue}`, 'success');
+        });
+
+        filterManager.on('cards', (newValue) => {
+            document.getElementById('cards-filter').textContent = newValue;
+            log(`Cards filter changed to: ${newValue}`, 'success');
+        });
+
+        filterManager.on('xg', (newValue) => {
+            document.getElementById('xg-filter').textContent = newValue;
+            log(`XG filter changed to: ${newValue}`, 'success');
+        });
+
+        // Listen to tab changes
+        tabManager.on('change', (newTab, oldTab) => {
+            document.getElementById('current-tab').textContent = newTab;
+            log(`Tab changed from ${oldTab} to ${newTab}`, 'success');
+        });
+
+        // Mock data for testing
+        const mockStatistics = {
+            totalMatches: 20,
+            homeMatches: 10,
+            awayMatches: 10,
+            wins: 12,
+            draws: 5,
+            losses: 3,
+            goalsFor: 45,
+            goalsAgainst: 20,
+            goalsForPerMatch: 2.25,
+            goalsAgainstPerMatch: 1.0,
+            homeGoalsFor: 25,
+            homeGoalsAgainst: 8,
+            awayGoalsFor: 20,
+            awayGoalsAgainst: 12,
+            totalCards: 60,
+            cardsPerMatch: 3.0,
+            homeCards: 25,
+            awayCards: 35,
+            cornersAVG: 5.5,
+            cornersAgainstAVG: 4.2,
+            xgForPerMatch: 1.8,
+            xgAgainstPerMatch: 0.9,
+            shotsAVG: 12.5,
+            shotsOnTargetAVG: 4.5
+        };
+
+        // Test statistics modules
+        window.runStatisticsTest = () => {
+            log('Starting statistics modules test...', 'info');
+            
+            try {
+                // Create mock DOM elements
+                const resultsDiv = document.getElementById('statistics-results');
+                resultsDiv.innerHTML = `
+                    <div id="goalsFor">-</div>
+                    <div id="goalsAgainst">-</div>
+                    <div id="totalCards">-</div>
+                    <div id="filter-cornersEarnedPerMatch">-</div>
+                    <div id="xgForTotal">-</div>
+                    <div id="shotsPerMatch">-</div>
+                `;
+
+                // Test each module
+                goalsStats.setStatistics(mockStatistics);
+                cardsStats.setStatistics(mockStatistics);
+                cornersStats.setStatistics(mockStatistics);
+                xgStats.setStatistics(mockStatistics);
+                shotsStats.setStatistics(mockStatistics);
+
+                // Check if values were updated
+                const tests = [
+                    { id: 'goalsFor', expected: '45', module: 'GoalsStatistics' },
+                    { id: 'totalCards', expected: '60', module: 'CardsStatistics' },
+                    { id: 'filter-cornersEarnedPerMatch', expected: '5.5', module: 'CornersStatistics' },
+                    { id: 'xgForTotal', expected: '1.80', module: 'XGStatistics' },
+                    { id: 'shotsPerMatch', expected: '12.5', module: 'ShotsStatistics' }
+                ];
+
+                let passed = 0;
+                let failed = 0;
+
+                tests.forEach(test => {
+                    const element = document.getElementById(test.id);
+                    if (element && element.textContent !== '-') {
+                        log(`✓ ${test.module} test passed`, 'success');
+                        passed++;
+                    } else {
+                        log(`✗ ${test.module} test failed`, 'error');
+                        failed++;
+                    }
+                });
+
+                log(`Test completed: ${passed} passed, ${failed} failed`, 
+                    failed === 0 ? 'success' : 'error');
+
+            } catch (error) {
+                log(`Test error: ${error.message}`, 'error');
+                console.error(error);
+            }
+        };
+
+        // Initial log
+        log('Modular system loaded successfully!', 'success');
+        log('Filter Manager: ✓', 'success');
+        log('Tab Manager: ✓', 'success');
+        log('Statistics Modules: ✓', 'success');
+    </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Statistics - <%= htmlWebpackPlugin.options.title %></title>
+    
+    <!-- 
+    Webpack will automatically inject CSS and JS files here
+    No need to manually include them
+    -->
+    
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="/fonts/roboto-regular.woff2" as="font" type="font/woff2" crossorigin>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Meta tags for SEO -->
+    <meta name="description" content="Comprehensive football team statistics and analysis">
+    <meta name="keywords" content="football, soccer, statistics, analysis, team stats">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Team Statistics">
+    <meta property="og:description" content="Comprehensive football team statistics and analysis">
+    <meta property="og:type" content="website">
+    
+    <!-- Performance hints -->
+    <link rel="dns-prefetch" href="//api.yourdomain.com">
+    <link rel="preconnect" href="//api.yourdomain.com">
+    
+    <!-- Critical inline styles (optional) -->
+    <style>
+        /* Critical CSS for above-the-fold content */
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+        }
+        .loading-spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <!-- Loading state -->
+    <div id="app-loading" class="loading-spinner"></div>
+    
+    <!-- Main app container -->
+    <div id="app" class="hidden">
+        <!-- Navigation tabs -->
+        <div class="stats-navigation">
+            <div class="tabs" id="mainTabs">
+                <button class="tab active" data-tab="overview" onclick="showTab('overview', event)">Overview</button>
+                <button class="tab" data-tab="goals" onclick="showTab('goals', event)">Goals</button>
+                <button class="tab" data-tab="cards" onclick="showTab('cards', event)">Cards</button>
+                <button class="tab" data-tab="corners" onclick="showTab('corners', event)">Corners</button>
+                <button class="tab" data-tab="xg" onclick="showTab('xg', event)">Expected Goals</button>
+                <button class="tab" data-tab="shots" onclick="showTab('shots', event)">Shots</button>
+                <button class="tab" data-tab="all" onclick="showTab('all', event)">All Stats</button>
+            </div>
+        </div>
+        
+        <!-- Tab content containers -->
+        <div class="tab-content">
+            <!-- Overview Tab -->
+            <div id="overview-tab" class="tab-pane active" data-tab="overview">
+                <!-- Content will be dynamically loaded -->
+                <div class="loading-placeholder">Loading overview statistics...</div>
+            </div>
+            
+            <!-- Goals Tab -->
+            <div id="goals-tab" class="tab-pane" data-tab="goals">
+                <div class="loading-placeholder">Loading goals statistics...</div>
+            </div>
+            
+            <!-- Cards Tab -->
+            <div id="cards-tab" class="tab-pane" data-tab="cards">
+                <div class="loading-placeholder">Loading cards statistics...</div>
+            </div>
+            
+            <!-- Corners Tab -->
+            <div id="corners-tab" class="tab-pane" data-tab="corners">
+                <div class="loading-placeholder">Loading corners statistics...</div>
+            </div>
+            
+            <!-- XG Tab -->
+            <div id="xg-tab" class="tab-pane" data-tab="xg">
+                <div class="loading-placeholder">Loading expected goals statistics...</div>
+            </div>
+            
+            <!-- Shots Tab -->
+            <div id="shots-tab" class="tab-pane" data-tab="shots">
+                <div class="loading-placeholder">Loading shots statistics...</div>
+            </div>
+            
+            <!-- All Stats Tab -->
+            <div id="all-tab" class="tab-pane" data-tab="all">
+                <div class="loading-placeholder">Loading all statistics...</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Error container -->
+    <div id="error-container" class="hidden">
+        <div class="error-message">
+            <h2>Oops! Something went wrong</h2>
+            <p id="error-details"></p>
+            <button onclick="location.reload()">Reload Page</button>
+        </div>
+    </div>
+    
+    <!-- Inline critical JavaScript -->
+    <script>
+        // Show app after resources load
+        window.addEventListener('DOMContentLoaded', function() {
+            // Check if main app has loaded
+            if (window.appInitialized) {
+                document.getElementById('app-loading').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+            } else {
+                // Wait for app initialization
+                window.addEventListener('app-initialized', function() {
+                    document.getElementById('app-loading').classList.add('hidden');
+                    document.getElementById('app').classList.remove('hidden');
+                });
+            }
+        });
+        
+        // Global error handler
+        window.addEventListener('error', function(event) {
+            console.error('Global error:', event.error);
+            document.getElementById('app-loading').classList.add('hidden');
+            document.getElementById('app').classList.add('hidden');
+            document.getElementById('error-container').classList.remove('hidden');
+            document.getElementById('error-details').textContent = 
+                'Error loading application. Please check your connection and try again.';
+        });
+    </script>
+    
+    <!-- 
+    Webpack will automatically inject bundled JavaScript here
+    Scripts will be added with proper async/defer attributes
+    -->
+    
+    <!-- Performance monitoring (optional) -->
+    <% if (htmlWebpackPlugin.options.enableAnalytics) { %>
+    <script>
+        // Analytics code here
+    </script>
+    <% } %>
+</body>
+</html>

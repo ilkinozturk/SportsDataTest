@@ -1,0 +1,68 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "browsers": [
+            "last 2 versions",
+            "not dead",
+            "> 0.2%",
+            "not IE 11"
+          ]
+        },
+        "modules": false,
+        "useBuiltIns": "usage",
+        "corejs": 3,
+        "debug": false
+      }
+    ]
+  ],
+  "plugins": [
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-syntax-dynamic-import",
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "regenerator": true
+      }
+    ]
+  ],
+  "env": {
+    "production": {
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "targets": {
+              "browsers": [
+                "last 2 versions",
+                "not dead",
+                "> 0.2%"
+              ]
+            },
+            "modules": false,
+            "useBuiltIns": "entry",
+            "corejs": 3
+          }
+        ]
+      ],
+      "plugins": [
+        "transform-remove-console",
+        "transform-remove-debugger"
+      ]
+    },
+    "test": {
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "targets": {
+              "node": "current"
+            }
+          }
+        ]
+      ]
+    }
+  }
+}

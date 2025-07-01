@@ -1,0 +1,152 @@
+<!-- Add this snippet to team-stats.html before closing </body> tag -->
+
+<!-- Development mode error handler -->
+<script type="module">
+  import errorHandler from './js/core/ErrorHandler.js';
+  
+  // Initialize error handler
+  console.log('🛡️ Error handler initialized');
+</script>
+
+<!-- Development mode test suite -->
+<script type="module">
+  import './js/tests/test-suite.js';
+  
+  // Check URL parameters for test mode
+  const urlParams = new URLSearchParams(window.location.search);
+  
+  // Test mode indicators
+  const isTestMode = urlParams.get('test') === 'true';
+  const runTests = urlParams.get('runTests') === 'true';
+  const debugMode = urlParams.get('debug') === 'true';
+  
+  if (isTestMode || runTests) {
+    console.log('🧪 Test mode activated');
+    
+    // Show test indicator
+    const testIndicator = document.createElement('div');
+    testIndicator.style.cssText = `
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #3b82f6;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      z-index: 9999;
+      cursor: pointer;
+    `;
+    testIndicator.innerHTML = '🧪 Test Mode';
+    testIndicator.onclick = () => {
+      if (window.testSuite) {
+        window.testSuite.runAll();
+      }
+    };
+    document.body.appendChild(testIndicator);
+  }
+  
+  if (debugMode) {
+    console.log('🐛 Debug mode activated');
+    
+    // Enable verbose logging
+    window.DEBUG = true;
+    
+    // Show debug panel
+    const debugPanel = document.createElement('div');
+    debugPanel.style.cssText = `
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #0f0;
+      padding: 10px;
+      border-radius: 5px;
+      font-family: monospace;
+      font-size: 12px;
+      z-index: 9999;
+      max-width: 300px;
+    `;
+    debugPanel.id = 'debug-panel';
+    document.body.appendChild(debugPanel);
+    
+    // Update debug info
+    setInterval(() => {
+      const panel = document.getElementById('debug-panel');
+      if (panel && window.filterManager && window.tabManager) {
+        panel.innerHTML = `
+          <div>🐛 Debug Info</div>
+          <div>Current Tab: ${window.tabManager.getCurrentTab()}</div>
+          <div>Main Filter: ${window.filterManager.getFilter('current')}</div>
+          <div>Cards Filter: ${window.filterManager.getFilter('cards')}</div>
+          <div>DOM Elements: ${document.querySelectorAll('[id]').length}</div>
+          <div>Memory: ${performance.memory ? 
+            Math.round(performance.memory.usedJSHeapSize / 1048576) + 'MB' : 
+            'N/A'}</div>
+        `;
+      }
+    }, 1000);
+  }
+</script>
+
+<!-- Keyboard shortcuts for development -->
+<script type="module">
+  document.addEventListener('keydown', (e) => {
+    // Ctrl/Cmd + Shift + T: Run tests
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'T') {
+      e.preventDefault();
+      if (window.testSuite) {
+        console.log('🚀 Running tests via keyboard shortcut');
+        window.testSuite.runAll();
+      }
+    }
+    
+    // Ctrl/Cmd + Shift + E: Toggle error panel
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'E') {
+      e.preventDefault();
+      if (window.errorHandler) {
+        const panel = document.getElementById('error-panel');
+        if (panel && panel.style.display !== 'none') {
+          window.errorHandler.minimizePanel();
+        } else {
+          window.errorHandler.restorePanel();
+        }
+      }
+    }
+    
+    // Ctrl/Cmd + Shift + D: Toggle debug mode
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'D') {
+      e.preventDefault();
+      const debugPanel = document.getElementById('debug-panel');
+      if (debugPanel) {
+        debugPanel.style.display = debugPanel.style.display === 'none' ? 'block' : 'none';
+      } else {
+        // Reload with debug mode
+        const url = new URL(window.location);
+        url.searchParams.set('debug', 'true');
+        window.location = url;
+      }
+    }
+  });
+  
+  // Show keyboard shortcuts info on first visit
+  if (!localStorage.getItem('shortcuts-shown')) {
+    console.log(`
+🎮 Development Keyboard Shortcuts:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Ctrl/Cmd + Shift + T : Run tests
+Ctrl/Cmd + Shift + E : Toggle error panel
+Ctrl/Cmd + Shift + D : Toggle debug mode
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🧪 URL Parameters:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+?test=true     : Enable test mode
+?runTests=true : Auto-run tests on load
+?debug=true    : Enable debug panel
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    `);
+    localStorage.setItem('shortcuts-shown', 'true');
+  }
+</script>

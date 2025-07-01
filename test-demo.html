@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test & Error System Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f1419;
+            color: #e1e8ed;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h2 {
+            color: #3b82f6;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .demo-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .demo-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        button.error {
+            background: #ef4444;
+        }
+        
+        button.error:hover {
+            background: #dc2626;
+        }
+        
+        button.success {
+            background: #10b981;
+        }
+        
+        button.success:hover {
+            background: #059669;
+        }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 6px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            border: 1px solid #334155;
+            margin: 10px 0;
+        }
+        
+        .keyboard-shortcut {
+            display: inline-block;
+            background: #334155;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            margin: 2px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-indicator.success {
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981;
+        }
+        
+        .status-indicator.error {
+            background: #ef4444;
+            box-shadow: 0 0 10px #ef4444;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-list li:before {
+            content: '✓';
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        #test-results {
+            background: #1e293b;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 100px;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .filter-display {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .filter-item {
+            background: #1e293b;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+        }
+        
+        .filter-label {
+            color: #94a3b8;
+            font-size: 0.9em;
+        }
+        
+        .filter-value {
+            color: #3b82f6;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test & Error System Demo</h1>
+        <p class="subtitle">Comprehensive testing and error handling for modular team stats system</p>
+        
+        <!-- Test Suite Section -->
+        <div class="section">
+            <h2>🧪 Test Suite</h2>
+            
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h3>Run All Tests</h3>
+                    <p>Execute the complete test suite including unit, integration, and performance tests.</p>
+                    <button onclick="runAllTests()">Run All Tests</button>
+                </div>
+                
+                <div class="demo-card">
+                    <h3>Individual Test Groups</h3>
+                    <p>Run specific test groups independently.</p>
+                    <button onclick="runTest('FilterManager')">FilterManager</button>
+                    <button onclick="runTest('TabManager')">TabManager</button>
+                    <button onclick="runTest('Statistics')">Statistics</button>
+                </div>
+                
+                <div class="demo-card">
+                    <h3>Performance Tests</h3>
+                    <p>Measure performance of critical operations.</p>
+                    <button onclick="runPerformanceTests()">Run Performance Tests</button>
+                </div>
+            </div>
+            
+            <div id="test-results"></div>
+        </div>
+        
+        <!-- Error Handler Section -->
+        <div class="section">
+            <h2>🚨 Error Handler</h2>
+            
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h3>Trigger Test Errors</h3>
+                    <p>Generate different types of errors to test the error handling system.</p>
+                    <button class="error" onclick="triggerError()">Throw Error</button>
+                    <button class="error" onclick="triggerPromiseRejection()">Promise Rejection</button>
+                    <button class="error" onclick="triggerConsoleError()">Console Error</button>
+                </div>
+                
+                <div class="demo-card">
+                    <h3>Error Panel Controls</h3>
+                    <p>Control the error panel display.</p>
+                    <button onclick="showErrorPanel()">Show Panel</button>
+                    <button onclick="clearErrors()">Clear Errors</button>
+                    <button onclick="exportErrors()">Export Errors</button>
+                </div>
+                
+                <div class="demo-card">
+                    <h3>Error Statistics</h3>
+                    <p>View current error statistics.</p>
+                    <div id="error-stats">
+                        <p>Total Errors: <span id="total-errors">0</span></p>
+                        <p>Last Error: <span id="last-error">None</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Keyboard Shortcuts Section -->
+        <div class="section">
+            <h2>⌨️ Keyboard Shortcuts</h2>
+            
+            <ul class="feature-list">
+                <li>
+                    <span class="keyboard-shortcut">Ctrl/Cmd + Shift + T</span>
+                    Run all tests
+                </li>
+                <li>
+                    <span class="keyboard-shortcut">Ctrl/Cmd + Shift + E</span>
+                    Toggle error panel
+                </li>
+                <li>
+                    <span class="keyboard-shortcut">Ctrl/Cmd + Shift + D</span>
+                    Toggle debug mode
+                </li>
+            </ul>
+        </div>
+        
+        <!-- URL Parameters Section -->
+        <div class="section">
+            <h2>🔗 URL Parameters</h2>
+            
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h3>Test Mode</h3>
+                    <div class="code-block">?test=true</div>
+                    <p>Enable test mode with visual indicator</p>
+                    <button onclick="reloadWithParam('test', 'true')">Enable</button>
+                </div>
+                
+                <div class="demo-card">
+                    <h3>Auto-run Tests</h3>
+                    <div class="code-block">?runTests=true</div>
+                    <p>Automatically run tests on page load</p>
+                    <button onclick="reloadWithParam('runTests', 'true')">Enable</button>
+                </div>
+                
+                <div class="demo-card">
+                    <h3>Debug Mode</h3>
+                    <div class="code-block">?debug=true</div>
+                    <p>Show debug panel with live statistics</p>
+                    <button onclick="reloadWithParam('debug', 'true')">Enable</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filter Manager Demo -->
+        <div class="section">
+            <h2>🎛️ Filter Manager Demo</h2>
+            
+            <div class="demo-card">
+                <h3>Current Filter States</h3>
+                <div class="filter-display" id="filter-display">
+                    <!-- Filters will be displayed here -->
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button onclick="changeFilter('current', 'home')">Set Home</button>
+                    <button onclick="changeFilter('current', 'away')">Set Away</button>
+                    <button onclick="changeFilter('current', 'overall')">Set Overall</button>
+                    <button onclick="resetAllFilters()">Reset All</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Features Overview -->
+        <div class="section">
+            <h2>✨ Features</h2>
+            
+            <ul class="feature-list">
+                <li><span class="status-indicator success"></span>Comprehensive test suite with 40+ tests</li>
+                <li><span class="status-indicator success"></span>Global error handling with visual feedback</li>
+                <li><span class="status-indicator success"></span>Performance monitoring and benchmarks</li>
+                <li><span class="status-indicator success"></span>Development-only features (localhost detection)</li>
+                <li><span class="status-indicator success"></span>Error export functionality</li>
+                <li><span class="status-indicator success"></span>Draggable error panel</li>
+                <li><span class="status-indicator success"></span>Keyboard shortcuts for quick access</li>
+                <li><span class="status-indicator success"></span>URL parameter controls</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Load modules and initialize demo -->
+    <script type="module">
+        import testSuite from './js/tests/test-suite.js';
+        import errorHandler from './js/core/ErrorHandler.js';
+        import filterManager from './js/core/FilterManager.js';
+        
+        // Make available globally for demo
+        window.testSuite = testSuite;
+        window.errorHandler = errorHandler;
+        window.filterManager = filterManager;
+        
+        // Demo functions
+        window.runAllTests = async function() {
+            const resultsEl = document.getElementById('test-results');
+            resultsEl.textContent = 'Running tests...\n';
+            
+            // Run tests
+            testSuite.runAll();
+            
+            // Wait a bit for tests to complete
+            setTimeout(() => {
+                const results = testSuite.getResults();
+                resultsEl.textContent = `
+Test Results:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total Tests: ${results.summary.total}
+✅ Passed: ${results.summary.passed}
+❌ Failed: ${results.summary.failed}
+💥 Errors: ${results.summary.errors}
+⏱️ Duration: ${results.summary.duration?.toFixed(2)}ms
+🎯 Success Rate: ${((results.summary.passed / results.summary.total) * 100).toFixed(1)}%
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                `;
+                
+                // Show failed tests if any
+                if (results.summary.failed > 0 || results.summary.errors > 0) {
+                    resultsEl.textContent += '\nFailed Tests:\n';
+                    results.results
+                        .filter(r => r.status !== 'passed')
+                        .forEach(r => {
+                            resultsEl.textContent += `❌ ${r.group} > ${r.name}\n`;
+                        });
+                }
+            }, 2000);
+        };
+        
+        window.runTest = function(group) {
+            const resultsEl = document.getElementById('test-results');
+            resultsEl.textContent = `Running ${group} tests...\n`;
+            
+            switch(group) {
+                case 'FilterManager':
+                    testSuite.testFilterManager();
+                    break;
+                case 'TabManager':
+                    testSuite.testTabManager();
+                    break;
+                case 'Statistics':
+                    testSuite.testStatisticsModules();
+                    break;
+            }
+        };
+        
+        window.runPerformanceTests = function() {
+            const resultsEl = document.getElementById('test-results');
+            resultsEl.textContent = 'Running performance tests...\n';
+            testSuite.testPerformance();
+        };
+        
+        window.triggerError = function() {
+            throw new Error('Test error triggered from demo');
+        };
+        
+        window.triggerPromiseRejection = function() {
+            Promise.reject('Test promise rejection from demo');
+        };
+        
+        window.triggerConsoleError = function() {
+            console.error('Test console error from demo');
+        };
+        
+        window.showErrorPanel = function() {
+            errorHandler.restorePanel();
+        };
+        
+        window.clearErrors = function() {
+            errorHandler.clearErrors();
+            updateErrorStats();
+        };
+        
+        window.exportErrors = function() {
+            errorHandler.exportErrors();
+        };
+        
+        window.changeFilter = function(filter, value) {
+            filterManager.setFilter(filter, value);
+            updateFilterDisplay();
+        };
+        
+        window.resetAllFilters = function() {
+            filterManager.resetAllFilters();
+            updateFilterDisplay();
+        };
+        
+        window.reloadWithParam = function(param, value) {
+            const url = new URL(window.location);
+            url.searchParams.set(param, value);
+            window.location = url;
+        };
+        
+        // Update displays
+        function updateFilterDisplay() {
+            const display = document.getElementById('filter-display');
+            const filters = filterManager.getAllFilters();
+            
+            display.innerHTML = Object.entries(filters)
+                .map(([key, value]) => `
+                    <div class="filter-item">
+                        <div class="filter-label">${key}</div>
+                        <div class="filter-value">${value}</div>
+                    </div>
+                `).join('');
+        }
+        
+        function updateErrorStats() {
+            const totalEl = document.getElementById('total-errors');
+            const lastEl = document.getElementById('last-error');
+            
+            const errors = errorHandler.getErrors();
+            totalEl.textContent = errors.length;
+            
+            if (errors.length > 0) {
+                const lastError = errors[errors.length - 1];
+                lastEl.textContent = lastError.message || 'Unknown error';
+            } else {
+                lastEl.textContent = 'None';
+            }
+        }
+        
+        // Listen to errors
+        errorHandler.on(() => {
+            updateErrorStats();
+        });
+        
+        // Listen to filter changes
+        Object.keys(filterManager.getAllFilters()).forEach(key => {
+            filterManager.on(key, () => {
+                updateFilterDisplay();
+            });
+        });
+        
+        // Initial updates
+        updateFilterDisplay();
+        updateErrorStats();
+        
+        // Show success message
+        console.log(`
+✅ Test & Error System Demo loaded successfully!
+
+Available commands:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+runAllTests()          - Run all tests
+triggerError()         - Trigger a test error
+showErrorPanel()       - Show error panel
+filterManager          - Access filter manager
+errorHandler           - Access error handler
+testSuite              - Access test suite
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        `);
+    </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Stats - Modular Test</title>
+    <link rel="stylesheet" href="team-stats.css">
+</head>
+<body>
+    <h1>Modular Team Stats Test</h1>
+    
+    <!-- Test elements -->
+    <div id="test-container">
+        <p>Current Filter: <span id="current-filter-display"></span></p>
+        <p>Current Tab: <span id="current-tab-display"></span></p>
+        
+        <div class="filter-buttons">
+            <button onclick="setMainFilter('overall')">Overall</button>
+            <button onclick="setMainFilter('home')">Home</button>
+            <button onclick="setMainFilter('away')">Away</button>
+        </div>
+        
+        <div class="tab-buttons">
+            <button onclick="showTab('all')">All Stats</button>
+            <button onclick="showTab('goals')">Goals</button>
+            <button onclick="showTab('cards')">Cards</button>
+        </div>
+    </div>
+
+    <!-- Load modular version -->
+    <script type="module">
+        // Import the modular version
+        import './team-stats-modular.js';
+        
+        // Test the modules
+        window.addEventListener('load', () => {
+            console.log('Modular system loaded');
+            
+            // Test filter manager
+            setInterval(() => {
+                document.getElementById('current-filter-display').textContent = 
+                    window.filterManager.getFilter('current');
+                document.getElementById('current-tab-display').textContent = 
+                    window.tabManager.getCurrentTab();
+            }, 100);
+        });
+    </script>
+</body>
+</html>
