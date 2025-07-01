@@ -4,22 +4,27 @@ const compression = require('compression');
 const axios = require('axios');
 const moment = require('moment');
 const path = require('path');
+const config = require('./src/config');
 const LeagueManager = require('./utils/LeagueManager');
 const footyStatsAPI = require('./services/footyStatsAPI');
 const MatchesService = require('./services/matchesService');
 
 const app = express();
-const PORT = 3001;
-
-// API Configuration from .env
-const API_KEY = process.env.FOOTYSTATS_API_KEY;
-const BASE_URL = process.env.FOOTYSTATS_BASE_URL;
 
 // Initialize services
-const leagueManager = new LeagueManager(API_KEY, BASE_URL);
-const matchesService = new MatchesService(API_KEY, BASE_URL, leagueManager);
+const leagueManager = new LeagueManager(config.API.FOOTBALL_API_KEY, config.API.FOOTBALL_API_URL);
+const matchesService = new MatchesService(config.API.FOOTBALL_API_KEY, config.API.FOOTBALL_API_URL, leagueManager);
 const TeamDataService = require('./services/teamDataService');
-const teamDataService = new TeamDataService(API_KEY, BASE_URL, leagueManager);
+const teamDataService = new TeamDataService(config.API.FOOTBALL_API_KEY, config.API.FOOTBALL_API_URL, leagueManager);
+
+// Initialize new service layer
+const TeamService = require('./src/services/TeamService');
+const teamService = new TeamService(config.API.FOOTBALL_API_KEY, config.API.FOOTBALL_API_URL, {
+  fullyDynamicService: teamDataService.fullyDynamicService,
+  leagueManager: leagueManager,
+  schemaMapper: teamDataService.schemaMapper,
+  dataEnhancer: teamDataService.dataEnhancer
+});
 
 // Swagger documentation
 const swaggerUi = require('swagger-ui-express');
@@ -46,23 +51,34 @@ const logger = new Logger('Server');
 const { setupGlobalErrorTracking, errorTrackingMiddleware } = require('./middleware/errorTracking');
 const errorTrackingRoutes = require('./routes/errorTracking');
 
+// Professional error handling
+const { AppError, ValidationError, NotFoundError, ExternalAPIError } = require('./src/errors/AppError');
+const { errorHandler, asyncHandler, notFoundHandler } = require('./src/middleware/errorHandler');
+
+// DTOs
+const TeamStatisticsDTO = require('./src/dtos/TeamStatisticsDTO');
+const MatchDTO = require('./src/dtos/MatchDTO');
+const ComparisonDTO = require('./src/dtos/ComparisonDTO');
+
 // Initialize Redis client (optional - will fallback to memory if not available)
 let redisClient = null;
-if (process.env.REDIS_URL || process.env.REDIS_HOST) {
+if (config.REDIS.ENABLED && (config.REDIS.URL || config.REDIS.HOST)) {
   try {
     const redis = require('redis');
     redisClient = redis.createClient({
       url:
-        process.env.REDIS_URL ||
-        `redis://${process.env.REDIS_HOST || 'localhost'}:${process.env.REDIS_PORT || 6379}`,
+        config.REDIS.URL ||
+        `redis://${config.REDIS.HOST}:${config.REDIS.PORT}`,
+      password: config.REDIS.PASSWORD || undefined,
+      database: config.REDIS.DB,
       socket: {
-        connectTimeout: 5000,
+        connectTimeout: config.REDIS.CONNECTION_TIMEOUT,
         reconnectStrategy: retries => {
-          if (retries > 3) {
+          if (retries > config.REDIS.MAX_RETRY_ATTEMPTS) {
             logger.warn('Redis reconnection limit reached, using memory cache only');
             return false;
           }
-          return Math.min(retries * 100, 3000);
+          return Math.min(retries * config.REDIS.RETRY_DELAY_BASE, config.REDIS.MAX_RETRY_DELAY);
         },
       },
     });
@@ -92,19 +108,23 @@ app.use(performanceMonitor());
 app.use(httpMetricsMiddleware()); // Prometheus HTTP metrics
 app.use(corsMiddleware);
 app.use(errorTrackingMiddleware());
-app.use(
-  compression({
-    filter: (req, res) => {
-      // Compress all JSON responses
-      if (req.headers['x-no-compression']) {
-        return false;
-      }
-      return compression.filter(req, res);
-    },
-    level: 6, // Balanced compression level
-    threshold: 1024, // Only compress responses larger than 1KB
-  })
-);
+// Apply compression middleware if enabled
+if (config.COMPRESSION.ENABLED) {
+  app.use(
+    compression({
+      filter: (req, res) => {
+        // Compress all JSON responses
+        if (req.headers['x-no-compression']) {
+          return false;
+        }
+        return compression.filter(req, res);
+      },
+      level: config.COMPRESSION.LEVEL,
+      threshold: config.COMPRESSION.THRESHOLD,
+      memLevel: config.COMPRESSION.MEMORY_LEVEL,
+    })
+  );
+}
 app.use(express.json());
 
 // Rate limiting
@@ -126,7 +146,7 @@ const { validators } = require('./middleware/validator');
 
 // Initialize cache (will use Redis if available, otherwise memory)
 const cache = new RedisCache(redisClient);
-const CACHE_TTL = 5 * 60; // 5 minutes in seconds for Redis
+const CACHE_TTL = Math.floor(config.CACHE.DEFAULT_TTL / 1000); // Convert ms to seconds for Redis
 
 // Rate limiting cache - much faster rate limiting
 let requestCount = 0;
@@ -136,9 +156,10 @@ const rateLimit = async () => {
   const now = Date.now();
   const timeSinceLastRequest = now - lastRequestTime;
 
-  // Only 200ms delay instead of 1 second
-  if (timeSinceLastRequest < 200) {
-    await new Promise(resolve => setTimeout(resolve, 200 - timeSinceLastRequest));
+  // Rate limiting delay based on config
+  const minDelay = config.API.MIN_REQUEST_DELAY;
+  if (timeSinceLastRequest < minDelay) {
+    await new Promise(resolve => setTimeout(resolve, minDelay - timeSinceLastRequest));
   }
 
   lastRequestTime = Date.now();
@@ -162,9 +183,9 @@ const makeApiRequest = async (endpoint, params = {}) => {
     logger.info(`API Request #${requestCount}: ${endpoint}`, { params });
 
     const apiStartTime = Date.now();
-    const response = await axios.get(`${BASE_URL}${endpoint}`, {
-      params: { key: API_KEY, ...params },
-      timeout: 5000, // Reduced timeout
+    const response = await axios.get(`${config.API.FOOTBALL_API_URL}${endpoint}`, {
+      params: { key: config.API.FOOTBALL_API_KEY, ...params },
+      timeout: config.API.TIMEOUT,
     });
     const apiDuration = Date.now() - apiStartTime;
 
@@ -194,7 +215,7 @@ const makeApiRequest = async (endpoint, params = {}) => {
       endpoint,
       params,
       method: 'GET',
-      baseUrl: BASE_URL,
+      baseUrl: config.API.FOOTBALL_API_URL,
     });
 
     throw error;
@@ -203,29 +224,27 @@ const makeApiRequest = async (endpoint, params = {}) => {
 
 // Format match data
 const formatMatch = match => ({
-  id:
-    match.id ||
-    `${match.homeID || match.home_id}-${match.awayID || match.away_id}-${match.date_unix}`,
+  id: match.id || `${match.homeTeam?.id || match.homeID}-${match.awayTeam?.id || match.awayID}-${match.timestamp || match.date_unix}`,
   homeTeam: {
-    id: match.homeID || match.home_id,
-    name: match.home_name || match.homeTeam?.name || 'Unknown Home',
-    logo: match.home_image || match.homeTeam?.logo,
+    id: match.homeTeam?.id || match.homeID || match.home_id,
+    name: match.homeTeam?.name || match.home_name || 'Unknown Home',
+    logo: match.homeTeam?.logo || match.home_image,
   },
   awayTeam: {
-    id: match.awayID || match.away_id,
-    name: match.away_name || match.awayTeam?.name || 'Unknown Away',
-    logo: match.away_image || match.awayTeam?.logo,
+    id: match.awayTeam?.id || match.awayID || match.away_id,
+    name: match.awayTeam?.name || match.away_name || 'Unknown Away',
+    logo: match.awayTeam?.logo || match.away_image,
   },
   league: {
-    id: match.competition_id || match.league_id,
-    name: match.competition?.name || match.league_name || 'Unknown League',
-    logo: match.competition?.logo || match.league_logo,
+    id: match.league?.id || match.competition_id || match.league_id,
+    name: match.league?.name || match.competition?.name || match.league_name || 'Unknown League',
+    logo: match.league?.logo || match.competition?.logo || match.league_logo,
   },
   date: match.date || moment.unix(match.date_unix).format('YYYY-MM-DD'),
   time: match.time || moment.unix(match.date_unix).format('HH:mm'),
   status: match.status || 'scheduled',
-  homeScore: match.homeGoalCount || match.home_scored || 0,
-  awayScore: match.awayGoalCount || match.away_scored || 0,
+  homeScore: match.homeTeam?.goals || match.homeGoalCount || match.home_scored || 0,
+  awayScore: match.awayTeam?.goals || match.awayGoalCount || match.away_scored || 0,
   stats: match.team_a_stats || match.stats || {},
   winProbability: match.winProbability,
   btts: match.btts || match.btts_percentage,
@@ -244,6 +263,22 @@ app.get('/health', (req, res) => {
     cache_size: cache.size,
     request_count: requestCount,
   });
+});
+
+// Clear matches cache
+app.delete('/api/matches/cache', async (req, res) => {
+  try {
+    matchesService.clearCache();
+    res.json({
+      success: true,
+      message: 'Matches cache cleared'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
 });
 
 // Get today's matches
@@ -289,10 +324,10 @@ app.use('/api/errors', errorTrackingRoutes);
 
 // Health check endpoints
 const healthRoutes = require('./routes/health');
-app.use('/health', healthRoutes);
+app.use(config.MONITORING.HEALTH_CHECK_PATH, healthRoutes);
 
 // Prometheus metrics endpoint
-app.get('/metrics', getMetricsHandler());
+app.get(config.MONITORING.METRICS_PATH, getMetricsHandler());
 
 // Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
@@ -306,13 +341,62 @@ app.get('/api-docs.json', (req, res) => {
   res.send(swaggerSpec);
 });
 
-// Get matches for specific date
-app.get('/api/matches/date/:date', async (req, res) => {
-  try {
-    const { date } = req.params;
-    logger.info(`Fetching matches for date: ${date}`);
+// Get matches for today (without date parameter)
+app.get('/api/matches/date', asyncHandler(async (req, res, next) => {
+  const today = moment().format('YYYY-MM-DD');
+  const { timezone } = req.query;
+  
+  logger.info(`Fetching today's matches: ${today} (timezone: ${timezone || 'UTC'})`);
 
-    const matches = await matchesService.getMatchesByDate(date);
+  try {
+    const matchesResult = await matchesService.getMatchesByDate(today);
+    const matches = matchesResult.matches || [];
+    
+    logger.info(`Found ${matches.length} matches for ${today}`);
+    
+    // Debug first match to see the structure
+    if (matches.length > 0) {
+      logger.info('First match structure:', {
+        homeTeam: matches[0].homeTeam,
+        awayTeam: matches[0].awayTeam,
+        league: matches[0].league
+      });
+    }
+
+    res.json({
+      success: true,
+      count: matches.length,
+      date: today,
+      matches: matches.map(formatMatch),
+    });
+  } catch (error) {
+    logger.error('Error fetching today matches', error);
+    
+    // Handle external API errors specifically
+    if (error.message.includes('API') || error.response?.status >= 500) {
+      throw new ExternalAPIError('Football data service is temporarily unavailable');
+    }
+    
+    throw error;
+  }
+}));
+
+// Get matches for specific date
+app.get('/api/matches/date/:date', asyncHandler(async (req, res, next) => {
+  const { date } = req.params;
+  
+  // Validate date format
+  if (!moment(date, 'YYYY-MM-DD', true).isValid()) {
+    throw new ValidationError('Invalid date format. Use YYYY-MM-DD');
+  }
+  
+  logger.info(`Fetching matches for date: ${date}`);
+
+  try {
+    const matchesResult = await matchesService.getMatchesByDate(date);
+    const matches = matchesResult.matches || [];
+    
+    logger.info(`Found ${matches.length} matches for ${date}`);
 
     res.json({
       success: true,
@@ -322,28 +406,34 @@ app.get('/api/matches/date/:date', async (req, res) => {
     });
   } catch (error) {
     logger.error('Error fetching matches by date', error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    
+    // Handle external API errors specifically
+    if (error.message.includes('API') || error.response?.status >= 500) {
+      throw new ExternalAPIError('Football data service is temporarily unavailable');
+    }
+    
+    throw error;
   }
-});
+}));
 
 // Get matches for date range
 app.get('/api/matches/range', async (req, res) => {
   try {
-    const { from, to } = req.query;
+    // Support both naming conventions
+    const from = req.query.from || req.query.startDate;
+    const to = req.query.to || req.query.endDate;
 
     if (!from || !to) {
       return res.status(400).json({
         success: false,
-        error: 'Both "from" and "to" dates are required',
+        error: 'Both "from/startDate" and "to/endDate" dates are required',
       });
     }
 
     logger.info(`Fetching matches from ${from} to ${to}`);
 
-    const matches = await matchesService.getMatchesInRange(from, to);
+    const result = await matchesService.getMatchesForDateRange(from, to);
+    const matches = result.matches || [];
 
     res.json({
       success: true,
@@ -360,62 +450,62 @@ app.get('/api/matches/range', async (req, res) => {
   }
 });
 
-// Get matches for specific team
-app.get('/api/teams/:teamId/matches', async (req, res) => {
-  try {
-    const { teamId } = req.params;
-    const { from, to, limit } = req.query;
+// Get matches for specific team - NOW USING SERVICE LAYER
+app.get('/api/teams/:teamId/matches', asyncHandler(async (req, res, next) => {
+  const { teamId } = req.params;
+  const { from, to, limit, status } = req.query;
 
-    logger.info(`Fetching matches for team: ${teamId}`);
+  logger.info(`[Service Layer] Fetching matches for team: ${teamId}`);
 
-    const matches = await matchesService.getTeamMatches(teamId, {
-      from,
-      to,
-      limit: limit ? parseInt(limit) : undefined,
-    });
+  const options = {
+    from,
+    to,
+    limit: limit ? parseInt(limit) : config.API.DEFAULT_MATCH_LIMIT,
+    status: status || 'complete'
+  };
 
-    res.json({
-      success: true,
-      teamId,
-      count: matches.length,
-      matches: matches.map(formatMatch),
-    });
-  } catch (error) {
-    logger.error('Error fetching team matches', error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
-});
+  const matches = await teamService.getTeamMatches(teamId, options);
+
+  res.json({
+    success: true,
+    teamId,
+    count: matches.length,
+    matches: matches, // Already formatted by DTO
+  });
+}));
 
 // Get H2H matches
-app.get('/api/matches/h2h/:team1/:team2', async (req, res) => {
-  try {
-    const { team1, team2 } = req.params;
-    const { limit } = req.query;
+app.get('/api/matches/h2h/:team1/:team2', asyncHandler(async (req, res, next) => {
+  const { team1, team2 } = req.params;
+  const { limit } = req.query;
 
-    logger.info(`Fetching H2H matches: ${team1} vs ${team2}`);
-
-    const matches = await matchesService.getH2HMatches(team1, team2, {
-      limit: limit ? parseInt(limit) : 10,
-    });
-
-    res.json({
-      success: true,
-      team1,
-      team2,
-      count: matches.length,
-      matches: matches.map(formatMatch),
-    });
-  } catch (error) {
-    logger.error('Error fetching H2H matches', error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+  // Validate team IDs
+  if (!team1 || !team2) {
+    throw new ValidationError('Both team IDs are required');
   }
-});
+  
+  if (team1 === team2) {
+    throw new ValidationError('Team IDs must be different');
+  }
+  
+  // Validate limit if provided
+  const parsedLimit = limit ? parseInt(limit) : config.API.DEFAULT_H2H_LIMIT;
+  if (limit && (isNaN(parsedLimit) || parsedLimit < 1 || parsedLimit > 100)) {
+    throw new ValidationError('Limit must be a number between 1 and 100');
+  }
+
+  logger.info(`[Service Layer] Fetching H2H matches: ${team1} vs ${team2}`);
+
+  const matches = await teamService.getH2HMatches(team1, team2, { limit: parsedLimit });
+
+  res.json({
+    success: true,
+    team1,
+    team2,
+    count: matches.length,
+    matches: matches, // Already formatted by DTO
+  });
+}));
 
 // Get league standings
 app.get('/api/leagues/:leagueId/standings', async (req, res) => {
@@ -451,36 +541,44 @@ app.get('/api/leagues/:leagueId/standings', async (req, res) => {
   }
 });
 
-// New route: Get team data with statistics
-app.get('/api/teams/data', validators.teamData, async (req, res) => {
+// New route: Get team data with statistics - USING LEGACY SYSTEM FOR COMPATIBILITY
+app.get('/api/teams/data', validators.teamData, asyncHandler(async (req, res, next) => {
+  const teamId = req.validated?.teamId || req.query.teamId;
+  
+  logger.info(`[Legacy System] Fetching team data for ID: ${teamId}`);
+
   try {
-    const teamId = req.validated.teamId;
-
-    logger.info(`Fetching team data for ID: ${teamId}`);
-
-    const teamData = await teamDataService.getTeamData(teamId);
+    // Use the existing working system
+    const data = await teamDataService.getTeamData(teamId);
     
-    // DEBUG: Check what's being returned
-    console.log('[DEBUG] API endpoint - teamData statistics check:', {
-      hasStatistics: !!teamData.statistics,
-      cards1H_AVG: teamData.statistics?.cards1H_AVG,
-      cards1H_AVG_overall: teamData.statistics?.cards1H_AVG_overall,
-      cardsAverage: teamData.statistics?.cardsAverage,
-      cardsTotal: teamData.statistics?.cardsTotal
-    });
+    // Keep debug log for development
+    if (config.isDevelopment()) {
+      console.log('[DEBUG] Legacy System Response:', {
+        hasData: !!data,
+        hasStatistics: !!data?.statistics,
+        teamName: data?.teamInfo?.name
+      });
+    }
 
     res.json({
       success: true,
-      data: teamData,
+      data: data,
     });
   } catch (error) {
-    logger.error('Error fetching team data', error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    logger.error('Error fetching team data:', error);
+    
+    // Try with new service as fallback
+    try {
+      const data = await teamService.getTeamStatistics(teamId);
+      res.json({
+        success: true,
+        data: data,
+      });
+    } catch (fallbackError) {
+      throw error; // Throw original error
+    }
   }
-});
+}));
 
 // Get live matches
 app.get('/api/matches/live', async (req, res) => {
@@ -532,25 +630,85 @@ app.get('/api/leagues/:leagueId/matches', async (req, res) => {
   }
 });
 
+// Team comparison endpoint - NOW USING SERVICE LAYER
+app.get('/api/teams/compare', asyncHandler(async (req, res, next) => {
+  const { team1, team2 } = req.query;
+  
+  logger.info(`[Service Layer] Comparing teams: ${team1} vs ${team2}`);
+  
+  // Use the new TeamService
+  const comparison = await teamService.compareTeams(team1, team2);
+  
+  res.json({
+    success: true,
+    data: comparison
+  });
+}));
+
+// Batch fetch multiple teams - NEW ENDPOINT
+app.post('/api/teams/batch', asyncHandler(async (req, res, next) => {
+  const { teamIds } = req.body;
+  
+  logger.info(`[Service Layer] Batch fetching ${teamIds?.length || 0} teams`);
+  
+  const results = await teamService.getMultipleTeamsStatistics(teamIds);
+  
+  res.json({
+    success: true,
+    count: results.length,
+    data: results
+  });
+}));
+
+// Clear team cache - NEW ENDPOINT
+app.delete('/api/teams/:teamId/cache', asyncHandler(async (req, res, next) => {
+  const { teamId } = req.params;
+  
+  logger.info(`[Service Layer] Clearing cache for team ${teamId}`);
+  
+  await teamService.clearTeamCache(teamId);
+  
+  res.json({
+    success: true,
+    message: `Cache cleared for team ${teamId}`
+  });
+}));
+
+// Get cache statistics - NEW ENDPOINT
+app.get('/api/cache/stats', asyncHandler(async (req, res, next) => {
+  const stats = teamService.getCacheStatistics();
+  
+  res.json({
+    success: true,
+    data: stats
+  });
+}));
+
 // Serve static files
 app.use(express.static(path.join(__dirname)));
 
-// Error handling middleware - must be last
-const { errorHandler, notFound } = require('./middleware/errorHandler');
-app.use(notFound);
+// 404 handler - must be before error handler
+app.use(notFoundHandler);
+
+// Global error handling middleware - must be last
 app.use(errorHandler);
 
 // Start server
-app.listen(PORT, () => {
+app.listen(config.PORT, () => {
   logger.success('FullyDynamicTeamService initialized');
   logger.success('UniversalMappingService: FullyDynamicTeamService entegre edildi');
-  logger.success(`OPTIMIZED Server running on http://localhost:${PORT}`);
+  const host = process.env.HOST || 'localhost';
+  logger.success(`OPTIMIZED Server running on http://${host}:${config.PORT}`);
   
   // Start Prometheus metrics collection
-  startMetricsCollection(10000); // Collect metrics every 10 seconds
-  logger.info('Prometheus metrics collection started');
+  if (config.MONITORING.PROMETHEUS_ENABLED) {
+    startMetricsCollection(config.MONITORING.METRICS_COLLECTION_INTERVAL);
+    logger.info(`Prometheus metrics collection started (interval: ${config.MONITORING.METRICS_COLLECTION_INTERVAL}ms)`);
+  }
   logger.info('Using chosen leagues from FootyStats API');
-  logger.info(`API Key configured: ${!!API_KEY}`);
-  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  logger.info('Features: Cache enabled, Parallel processing, Faster rate limiting');
+  logger.info(`API Key configured: ${!!config.API.FOOTBALL_API_KEY}`);
+  logger.info(`Environment: ${config.NODE_ENV}`);
+  logger.info(`Cache enabled: ${config.CACHE.ENABLE_CACHE}`);
+  logger.info(`Redis enabled: ${config.REDIS.ENABLED}`);
+  logger.info('Features: Parallel processing, Configurable rate limiting');
 });

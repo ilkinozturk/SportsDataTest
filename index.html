@@ -199,8 +199,8 @@
             todayMatches = todayMatches.map(match => ({
               ...match,
               date: match.date,
-              homeScore: match.status === 'complete' ? match.homeTeam.goals : undefined,
-              awayScore: match.status === 'complete' ? match.awayTeam.goals : undefined,
+              homeScore: match.homeScore,
+              awayScore: match.awayScore,
               venue: match.stadium?.name || undefined,
             }));
           }
@@ -223,6 +223,8 @@
             upcomingMatches = upcomingMatches.map(match => ({
               ...match,
               date: match.date,
+              homeScore: match.homeScore,
+              awayScore: match.awayScore,
               venue: match.stadium?.name || undefined,
             }));
           }
@@ -299,7 +301,7 @@
                                     <div class="text-right flex-1">
                                         <div class="font-bold text-lg text-gray-800 cursor-pointer hover:text-blue-600 transition-colors" onclick="openTeamStats('${match.homeTeam.id}')">${match.homeTeam.name}</div>
                                         ${
-                                          match.homeScore !== undefined || match.awayScore !== undefined
+                                          match.status === 'complete'
                                             ? `
                                             <div class="text-xl font-bold text-blue-600 mt-1">${match.homeScore || 0}</div>
                                         `
@@ -309,7 +311,7 @@
                                     
                                     <div class="mx-6 text-center">
                                         ${
-                                          match.homeScore !== undefined || match.awayScore !== undefined
+                                          match.status === 'complete'
                                             ? `
                                             <div class="text-2xl font-bold text-gray-800">-</div>
                                         `
@@ -322,7 +324,7 @@
                                     <div class="text-left flex-1">
                                         <div class="font-bold text-lg text-gray-800 cursor-pointer hover:text-blue-600 transition-colors" onclick="openTeamStats('${match.awayTeam.id}')">${match.awayTeam.name}</div>
                                         ${
-                                          match.homeScore !== undefined || match.awayScore !== undefined
+                                          match.status === 'complete'
                                             ? `
                                             <div class="text-xl font-bold text-red-600 mt-1">${match.awayScore || 0}</div>
                                         `
