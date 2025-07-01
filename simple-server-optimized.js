@@ -17,6 +17,10 @@ const matchesService = new MatchesService(config.API.FOOTBALL_API_KEY, config.AP
 const TeamDataService = require('./services/teamDataService');
 const teamDataService = new TeamDataService(config.API.FOOTBALL_API_KEY, config.API.FOOTBALL_API_URL, leagueManager);
 
+// Initialize Repository Pattern
+const teamRepository = require('./src/repositories/TeamRepositorySimple');
+teamRepository.setTeamDataService(teamDataService);
+
 // Initialize new service layer
 const TeamService = require('./src/services/TeamService');
 const teamService = new TeamService(config.API.FOOTBALL_API_KEY, config.API.FOOTBALL_API_URL, {
@@ -59,6 +63,9 @@ const { errorHandler, asyncHandler, notFoundHandler } = require('./src/middlewar
 const TeamStatisticsDTO = require('./src/dtos/TeamStatisticsDTO');
 const MatchDTO = require('./src/dtos/MatchDTO');
 const ComparisonDTO = require('./src/dtos/ComparisonDTO');
+
+// Routes
+const teamRoutes = require('./src/routes/teamRoutes');
 
 // Initialize Redis client (optional - will fallback to memory if not available)
 let redisClient = null;
@@ -322,6 +329,9 @@ app.get('/api/metrics/health', metricsHandlers.healthCheck);
 // Error tracking endpoints
 app.use('/api/errors', errorTrackingRoutes);
 
+// Team endpoints - NEW MODULAR APPROACH
+app.use('/api/teams', teamRoutes);
+
 // Health check endpoints
 const healthRoutes = require('./routes/health');
 app.use(config.MONITORING.HEALTH_CHECK_PATH, healthRoutes);
@@ -541,44 +551,46 @@ app.get('/api/leagues/:leagueId/standings', async (req, res) => {
   }
 });
 
-// New route: Get team data with statistics - USING LEGACY SYSTEM FOR COMPATIBILITY
-app.get('/api/teams/data', validators.teamData, asyncHandler(async (req, res, next) => {
-  const teamId = req.validated?.teamId || req.query.teamId;
-  
-  logger.info(`[Legacy System] Fetching team data for ID: ${teamId}`);
-
-  try {
-    // Use the existing working system
-    const data = await teamDataService.getTeamData(teamId);
-    
-    // Keep debug log for development
-    if (config.isDevelopment()) {
-      console.log('[DEBUG] Legacy System Response:', {
-        hasData: !!data,
-        hasStatistics: !!data?.statistics,
-        teamName: data?.teamInfo?.name
-      });
-    }
-
-    res.json({
-      success: true,
-      data: data,
-    });
-  } catch (error) {
-    logger.error('Error fetching team data:', error);
-    
-    // Try with new service as fallback
-    try {
-      const data = await teamService.getTeamStatistics(teamId);
-      res.json({
-        success: true,
-        data: data,
-      });
-    } catch (fallbackError) {
-      throw error; // Throw original error
-    }
-  }
-}));
+// REPLACED BY ROUTE MODULE - SEE /api/teams ROUTE BELOW
+// Old route: Get team data with statistics - NOW USING REPOSITORY PATTERN
+// app.get('/api/teams/data', validators.teamData, asyncHandler(async (req, res, next) => {
+//   const teamId = req.validated?.teamId || req.query.teamId;
+//   
+//   logger.info(`[Repository Pattern] Fetching team data for ID: ${teamId}`);
+//
+//   try {
+//     // Use repository pattern with caching
+//     const data = await teamRepository.getTeamStatistics(teamId);
+//     
+//     // Keep debug log for development
+//     if (config.isDevelopment()) {
+//       console.log('[DEBUG] Repository Pattern Response:', {
+//         hasData: !!data,
+//         hasStatistics: !!data?.statistics,
+//         teamName: data?.teamInfo?.name,
+//         cacheStats: teamRepository.getCacheStats()
+//       });
+//     }
+//
+//     res.json({
+//       success: true,
+//       data: data,
+//     });
+//   } catch (error) {
+//     logger.error('Error fetching team data:', error);
+//     
+//     // Fallback to direct teamDataService if repository fails
+//     try {
+//       const data = await teamDataService.getTeamData(teamId);
+//       res.json({
+//         success: true,
+//         data: data,
+//       });
+//     } catch (fallbackError) {
+//       throw error; // Throw original error
+//     }
+//   }
+// }));
 
 // Get live matches
 app.get('/api/matches/live', async (req, res) => {
@@ -676,11 +688,29 @@ app.delete('/api/teams/:teamId/cache', asyncHandler(async (req, res, next) => {
 
 // Get cache statistics - NEW ENDPOINT
 app.get('/api/cache/stats', asyncHandler(async (req, res, next) => {
-  const stats = teamService.getCacheStatistics();
+  const serviceStats = teamService.getCacheStatistics();
+  const repositoryStats = teamRepository.getCacheStats();
   
   res.json({
     success: true,
-    data: stats
+    data: {
+      service: serviceStats,
+      repository: repositoryStats
+    }
+  });
+}));
+
+// Clear repository cache for a team - NEW ENDPOINT
+app.delete('/api/repository/teams/:teamId/cache', asyncHandler(async (req, res, next) => {
+  const { teamId } = req.params;
+  
+  logger.info(`[Repository] Clearing cache for team ${teamId}`);
+  
+  teamRepository.clearTeamCache(teamId);
+  
+  res.json({
+    success: true,
+    message: `Repository cache cleared for team ${teamId}`
   });
 }));
 
