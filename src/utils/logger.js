@@ -83,4 +83,61 @@ logger.stream = {
   },
 };
 
+// Add cache logging helpers
+logger.cacheHit = (key, service) => {
+  logger.debug(`Cache hit: ${key}`, { 
+    cacheKey: key, 
+    service: service || 'unknown',
+    event: 'cache_hit'
+  });
+};
+
+logger.cacheMiss = (key, service) => {
+  logger.debug(`Cache miss: ${key}`, { 
+    cacheKey: key, 
+    service: service || 'unknown',
+    event: 'cache_miss'
+  });
+};
+
+logger.cacheSet = (key, ttl, service) => {
+  logger.debug(`Cache set: ${key}`, { 
+    cacheKey: key, 
+    ttl: ttl,
+    service: service || 'unknown',
+    event: 'cache_set'
+  });
+};
+
+// Add API logging helpers
+logger.apiRequest = (endpoint, params, service) => {
+  logger.info(`API request: ${endpoint}`, {
+    endpoint,
+    params,
+    service: service || 'API',
+    event: 'api_request'
+  });
+};
+
+logger.apiResponse = (endpoint, status, duration, service) => {
+  const level = status >= 400 ? 'error' : 'info';
+  logger[level](`API response: ${endpoint} - ${status}`, {
+    endpoint,
+    status,
+    duration: `${duration}ms`,
+    service: service || 'API',
+    event: 'api_response'
+  });
+};
+
+// Add performance logging
+logger.performance = (operation, duration, metadata = {}) => {
+  const level = duration > 1000 ? 'warn' : 'debug';
+  logger[level](`Performance: ${operation}`, {
+    duration: `${duration}ms`,
+    slow: duration > 1000,
+    ...metadata
+  });
+};
+
 module.exports = logger;

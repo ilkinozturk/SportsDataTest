@@ -110,10 +110,20 @@ global.metricsStore = metricsStore;
 // Setup global error tracking
 setupGlobalErrorTracking();
 
+// Security middleware
+const security = require('./src/middleware/security');
+
+// Apply security middleware
+app.use(security.helmet);
+app.use(security.securityHeaders);
+app.use(security.xssProtection);
+app.use(security.securityLogger);
+app.use(security.mongoSanitize);
+
 // Middleware
 app.use(performanceMonitor());
 app.use(httpMetricsMiddleware()); // Prometheus HTTP metrics
-app.use(corsMiddleware);
+app.use(security.cors); // Use security CORS instead of corsMiddleware
 app.use(errorTrackingMiddleware());
 // Apply compression middleware if enabled
 if (config.COMPRESSION.ENABLED) {
@@ -134,17 +144,16 @@ if (config.COMPRESSION.ENABLED) {
 }
 app.use(express.json());
 
-// Rate limiting
-const { rateLimiters } = require('./middleware/rateLimiter');
-const generalLimiter = rateLimiters.general(redisClient);
-const strictLimiter = rateLimiters.strict(redisClient);
+// Apply general rate limiter to all API routes
+app.use('/api/', security.limiter);
 
-// Apply general rate limiter to all routes
-app.use('/api/', generalLimiter);
+// Apply strict rate limiter to sensitive data endpoints
+app.use('/api/teams/data', security.strictLimiter);
+app.use('/api/leagues/:leagueId/teams', security.strictLimiter);
+app.use('/api/teams/:teamId/matches', security.strictLimiter);
 
-// Apply strict rate limiter to data endpoints
-app.use('/api/teams/data', strictLimiter);
-app.use('/api/leagues/:leagueId/teams', strictLimiter);
+// Apply auth limiter to authentication endpoints (if any)
+// app.use('/api/auth/', security.authLimiter);
 
 app.use('/utils', express.static(path.join(__dirname, 'utils')));
 
@@ -262,15 +271,15 @@ const formatMatch = match => ({
 
 // Routes
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    cache_size: cache.size,
-    request_count: requestCount,
-  });
-});
+// Basic health check endpoint (replaced by comprehensive monitoring routes)
+// app.get('/health', (req, res) => {
+//   res.json({
+//     status: 'ok',
+//     timestamp: new Date().toISOString(),
+//     cache_size: cache.size,
+//     request_count: requestCount,
+//   });
+// });
 
 // Clear matches cache
 app.delete('/api/matches/cache', async (req, res) => {
@@ -332,9 +341,25 @@ app.use('/api/errors', errorTrackingRoutes);
 // Team endpoints - NEW MODULAR APPROACH
 app.use('/api/teams', teamRoutes);
 
-// Health check endpoints
+// Test routes (only in development)
+if (config.NODE_ENV === 'development') {
+  const testRoutes = require('./src/routes/testRoutes');
+  app.use('/api/test', testRoutes);
+}
+
+// Health check endpoints - using new comprehensive monitoring routes
+try {
+  const monitoringRoutes = require('./src/routes/monitoringRoutes');
+  const healthPath = config.MONITORING.HEALTH_CHECK_PATH || '/health';
+  console.log(`[Server] INFO: Mounting monitoring routes at ${healthPath}`);
+  app.use(healthPath, monitoringRoutes);
+} catch (error) {
+  console.error('[Server] ERROR: Failed to load monitoring routes:', error.message);
+}
+
+// Also keep the old health routes for backward compatibility at /api/health
 const healthRoutes = require('./routes/health');
-app.use(config.MONITORING.HEALTH_CHECK_PATH, healthRoutes);
+app.use('/api/health', healthRoutes);
 
 // Prometheus metrics endpoint
 app.get(config.MONITORING.METRICS_PATH, getMetricsHandler());
@@ -564,7 +589,7 @@ app.get('/api/leagues/:leagueId/standings', async (req, res) => {
 //     
 //     // Keep debug log for development
 //     if (config.isDevelopment()) {
-//       console.log('[DEBUG] Repository Pattern Response:', {
+//       logger.debug('Repository Pattern Response:', {
 //         hasData: !!data,
 //         hasStatistics: !!data?.statistics,
 //         teamName: data?.teamInfo?.name,

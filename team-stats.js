@@ -3652,3 +3652,79 @@ function updateCardsTopStats(statistics) {
   updateElement('teamBookedAvgValue', teamBookedAvg.toFixed(2));
   updateElement('opponentsBookedAvgValue', opponentsBookedAvg.toFixed(2));
 }
+
+// Add event listeners for tab buttons when DOM is loaded
+
+// Add event listeners for filter buttons
+function initializeFilterButtons() {
+  // Add click event listeners to all filter buttons
+  const filterButtons = document.querySelectorAll('.section-filter[data-filter-type]');
+  filterButtons.forEach(button => {
+    button.addEventListener('click', function(event) {
+      const filterType = this.getAttribute('data-filter-type');
+      const filterValue = this.getAttribute('data-filter-value');
+      
+      if (filterType && filterValue) {
+        // Call the appropriate filter function based on type
+        switch(filterType) {
+          case 'corners':
+            setCornersFilter(filterValue);
+            break;
+          case 'teamCorners':
+            setTeamCornersFilter(filterValue);
+            break;
+          case 'main':
+            setMainFilter(filterValue);
+            break;
+          case 'cards':
+            setCardsFilter(filterValue);
+            break;
+          case 'matchCards':
+            setMatchCardsFilter(filterValue);
+            break;
+          case 'teamCards':
+            setTeamCardsFilter(filterValue);
+            break;
+          case 'overUnder':
+            setOverUnderFilter(filterValue);
+            break;
+          case 'btts':
+            setBTTSFilter(filterValue);
+            break;
+          case 'goalTimings':
+            setGoalTimingsFilter(filterValue);
+            break;
+          case 'xg':
+            setXgFilter(filterValue);
+            break;
+          case 'halftime':
+            setHalftimeFilter(filterValue);
+            break;
+          case 'timing':
+            setTimingFilter(filterValue);
+            break;
+          case 'shots':
+            setShotsFilter(filterValue);
+            break;
+        }
+      }
+    });
+  });
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Add click event listeners to tab buttons
+  const tabButtons = document.querySelectorAll('.tab-button');
+  tabButtons.forEach(button => {
+    button.addEventListener('click', function(event) {
+      const tabName = this.getAttribute('data-tab');
+      if (tabName) {
+        showTab(tabName, event);
+      }
+    });
+  });
+
+  // Initialize filter buttons
+  initializeFilterButtons();
+});

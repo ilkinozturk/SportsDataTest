@@ -3,7 +3,7 @@
  * Catches all errors and returns consistent error responses
  */
 
-const logger = require('../utils/logger');
+const logger = require('../../src/utils/logger');
 
 const errorHandler = (err, req, res, next) => {
   // Log error details

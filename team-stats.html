@@ -34,10 +34,10 @@
 
         <!-- Tab Menu -->
         <div class="tab-menu">
-          <button class="tab-button active" onclick="showTab('all', event)">All Stats</button>
-          <button class="tab-button" onclick="showTab('goals', event)">Goals</button>
-          <button class="tab-button" onclick="showTab('corners', event)">Corners</button>
-          <button class="tab-button" onclick="showTab('cards', event)">Cards</button>
+          <button class="tab-button active" data-tab="all">All Stats</button>
+          <button class="tab-button" data-tab="goals">Goals</button>
+          <button class="tab-button" data-tab="corners">Corners</button>
+          <button class="tab-button" data-tab="cards">Cards</button>
         </div>
 
         <!-- Top Statistics Cards -->
@@ -343,15 +343,15 @@
           <div class="section-filters">
             <button
               class="section-filter active"
-              onclick="setCornersFilter('overall')"
+              data-filter-type="corners" data-filter-value="overall"
               id="filter-cornersOverallFilter"
             >
               Overall
             </button>
-            <button class="section-filter" onclick="setCornersFilter('home')" id="filter-cornersHomeFilter">
+            <button class="section-filter" data-filter-type="corners" data-filter-value="home" id="filter-cornersHomeFilter">
               At Home
             </button>
-            <button class="section-filter" onclick="setCornersFilter('away')" id="filter-cornersAwayFilter">
+            <button class="section-filter" data-filter-type="corners" data-filter-value="away" id="filter-cornersAwayFilter">
               At Away
             </button>
           </div>
@@ -415,15 +415,15 @@
           <div class="section-filters">
             <button
               class="section-filter active"
-              onclick="setTeamCornersFilter('overall')"
+              data-filter-type="teamCorners" data-filter-value="overall"
               id="teamCornersOverallFilter"
             >
               Overall
             </button>
-            <button class="section-filter" onclick="setTeamCornersFilter('home')" id="teamCornersHomeFilter">
+            <button class="section-filter" data-filter-type="teamCorners" data-filter-value="home" id="teamCornersHomeFilter">
               At Home
             </button>
-            <button class="section-filter" onclick="setTeamCornersFilter('away')" id="teamCornersAwayFilter">
+            <button class="section-filter" data-filter-type="teamCorners" data-filter-value="away" id="teamCornersAwayFilter">
               At Away
             </button>
           </div>
@@ -523,9 +523,9 @@
 
           <!-- Scored Filter Tabs -->
           <div class="section-filters">
-            <button class="section-filter active" onclick="setMainFilter('overall')">Overall</button>
-            <button class="section-filter" onclick="setMainFilter('home')">At Home</button>
-            <button class="section-filter" onclick="setMainFilter('away')">At Away</button>
+            <button class="section-filter active" data-filter-type="main" data-filter-value="overall">Overall</button>
+            <button class="section-filter" data-filter-type="main" data-filter-value="home">At Home</button>
+            <button class="section-filter" data-filter-type="main" data-filter-value="away">At Away</button>
           </div>
 
           <div class="stats-categories">
@@ -653,9 +653,9 @@
 
           <!-- Conceded Filter Tabs -->
           <div class="section-filters">
-            <button class="section-filter active" onclick="setMainFilter('overall')">Overall</button>
-            <button class="section-filter" onclick="setMainFilter('home')">At Home</button>
-            <button class="section-filter" onclick="setMainFilter('away')">At Away</button>
+            <button class="section-filter active" data-filter-type="main" data-filter-value="overall">Overall</button>
+            <button class="section-filter" data-filter-type="main" data-filter-value="home">At Home</button>
+            <button class="section-filter" data-filter-type="main" data-filter-value="away">At Away</button>
           </div>
 
           <div class="stats-categories">
@@ -742,11 +742,11 @@
 
           <!-- Cards Filter Tabs -->
           <div class="section-filters">
-            <button class="section-filter active" onclick="setCardsFilter('overall')" id="cardsOverallFilter">
+            <button class="section-filter active" data-filter-type="cards" data-filter-value="overall" id="cardsOverallFilter">
               Overall
             </button>
-            <button class="section-filter" onclick="setCardsFilter('home')" id="cardsHomeFilter">At Home</button>
-            <button class="section-filter" onclick="setCardsFilter('away')" id="cardsAwayFilter">At Away</button>
+            <button class="section-filter" data-filter-type="cards" data-filter-value="home" id="cardsHomeFilter">At Home</button>
+            <button class="section-filter" data-filter-type="cards" data-filter-value="away" id="cardsAwayFilter">At Away</button>
           </div>
 
           <div class="stats-categories" id="cardsStatsContainer">
@@ -822,13 +822,13 @@
 
           <!-- Cards Filter Tabs -->
           <div class="section-filters">
-            <button class="section-filter active" onclick="setMatchCardsFilter('overall')" id="matchCardsOverallFilter">
+            <button class="section-filter active" data-filter-type="matchCards" data-filter-value="overall" id="matchCardsOverallFilter">
               Overall
             </button>
-            <button class="section-filter" onclick="setMatchCardsFilter('home')" id="matchCardsHomeFilter">
+            <button class="section-filter" data-filter-type="matchCards" data-filter-value="home" id="matchCardsHomeFilter">
               At Home
             </button>
-            <button class="section-filter" onclick="setMatchCardsFilter('away')" id="matchCardsAwayFilter">
+            <button class="section-filter" data-filter-type="matchCards" data-filter-value="away" id="matchCardsAwayFilter">
               At Away
             </button>
           </div>
@@ -970,13 +970,13 @@
 
           <!-- Team Cards Filter Tabs -->
           <div class="section-filters">
-            <button class="section-filter active" onclick="setTeamCardsFilter('overall')" id="teamCardsOverallFilter">
+            <button class="section-filter active" data-filter-type="teamCards" data-filter-value="overall" id="teamCardsOverallFilter">
               Overall
             </button>
-            <button class="section-filter" onclick="setTeamCardsFilter('home')" id="teamCardsHomeFilter">
+            <button class="section-filter" data-filter-type="teamCards" data-filter-value="home" id="teamCardsHomeFilter">
               At Home
             </button>
-            <button class="section-filter" onclick="setTeamCardsFilter('away')" id="teamCardsAwayFilter">
+            <button class="section-filter" data-filter-type="teamCards" data-filter-value="away" id="teamCardsAwayFilter">
               At Away
             </button>
           </div>
@@ -1080,9 +1080,9 @@
 
           <!-- Over/Under Filter Tabs -->
           <div class="section-filters">
-            <button class="section-filter active" onclick="setOverUnderFilter('overall')">Overall</button>
-            <button class="section-filter" onclick="setOverUnderFilter('home')">At Home</button>
-            <button class="section-filter" onclick="setOverUnderFilter('away')">At Away</button>
+            <button class="section-filter active" data-filter-type="overUnder" data-filter-value="overall">Overall</button>
+            <button class="section-filter" data-filter-type="overUnder" data-filter-value="home">At Home</button>
+            <button class="section-filter" data-filter-type="overUnder" data-filter-value="away">At Away</button>
           </div>
 
           <div class="stats-categories">
@@ -1248,9 +1248,9 @@
 
           <!-- BTTS Filter Tabs -->
           <div class="section-filters">
-            <button class="section-filter active" onclick="setBTTSFilter('overall')">Overall</button>
-            <button class="section-filter" onclick="setBTTSFilter('home')">At Home</button>
-            <button class="section-filter" onclick="setBTTSFilter('away')">At Away</button>
+            <button class="section-filter active" data-filter-type="btts" data-filter-value="overall">Overall</button>
+            <button class="section-filter" data-filter-type="btts" data-filter-value="home">At Home</button>
+            <button class="section-filter" data-filter-type="btts" data-filter-value="away">At Away</button>
           </div>
 
           <div class="stats-categories">
@@ -1353,15 +1353,15 @@
           <div class="section-filters">
             <button
               class="section-filter active"
-              onclick="setGoalTimingsFilter('overall')"
+              data-filter-type="goalTimings" data-filter-value="overall"
               id="goalTimingsOverallFilter"
             >
               Overall
             </button>
-            <button class="section-filter" onclick="setGoalTimingsFilter('home')" id="goalTimingsHomeFilter">
+            <button class="section-filter" data-filter-type="goalTimings" data-filter-value="home" id="goalTimingsHomeFilter">
               At Home
             </button>
-            <button class="section-filter" onclick="setGoalTimingsFilter('away')" id="goalTimingsAwayFilter">
+            <button class="section-filter" data-filter-type="goalTimings" data-filter-value="away" id="goalTimingsAwayFilter">
               At Away
             </button>
           </div>
@@ -1485,11 +1485,11 @@
 
           <!-- Shots Filter Tabs -->
           <div class="section-filters">
-            <button class="section-filter active" onclick="setShotsFilter('overall')" id="shotsOverallFilter">
+            <button class="section-filter active" data-filter-type="shots" data-filter-value="overall" id="shotsOverallFilter">
               Overall
             </button>
-            <button class="section-filter" onclick="setShotsFilter('home')" id="shotsHomeFilter">At Home</button>
-            <button class="section-filter" onclick="setShotsFilter('away')" id="shotsAwayFilter">At Away</button>
+            <button class="section-filter" data-filter-type="shots" data-filter-value="home" id="shotsHomeFilter">At Home</button>
+            <button class="section-filter" data-filter-type="shots" data-filter-value="away" id="shotsAwayFilter">At Away</button>
           </div>
 
           <div class="stats-categories">
@@ -1659,9 +1659,9 @@
 
           <!-- xG Filter Tabs -->
           <div class="section-filters">
-            <button class="section-filter active" onclick="setXgFilter('overall')" id="xgOverallFilter">Overall</button>
-            <button class="section-filter" onclick="setXgFilter('home')" id="xgHomeFilter">At Home</button>
-            <button class="section-filter" onclick="setXgFilter('away')" id="xgAwayFilter">At Away</button>
+            <button class="section-filter active" data-filter-type="xg" data-filter-value="overall" id="xgOverallFilter">Overall</button>
+            <button class="section-filter" data-filter-type="xg" data-filter-value="home" id="xgHomeFilter">At Home</button>
+            <button class="section-filter" data-filter-type="xg" data-filter-value="away" id="xgAwayFilter">At Away</button>
           </div>
 
           <div class="stats-categories">
@@ -1700,11 +1700,11 @@
 
           <!-- Halftime Filter Tabs -->
           <div class="section-filters">
-            <button class="section-filter active" onclick="setHalftimeFilter('overall')" id="halftimeOverallFilter">
+            <button class="section-filter active" data-filter-type="halftime" data-filter-value="overall" id="halftimeOverallFilter">
               Overall
             </button>
-            <button class="section-filter" onclick="setHalftimeFilter('home')" id="halftimeHomeFilter">At Home</button>
-            <button class="section-filter" onclick="setHalftimeFilter('away')" id="halftimeAwayFilter">At Away</button>
+            <button class="section-filter" data-filter-type="halftime" data-filter-value="home" id="halftimeHomeFilter">At Home</button>
+            <button class="section-filter" data-filter-type="halftime" data-filter-value="away" id="halftimeAwayFilter">At Away</button>
           </div>
 
           <table class="stats-table">
@@ -1757,15 +1757,15 @@
 
           <!-- Timing Filter Tabs -->
           <div class="section-filters">
-            <button class="section-filter active" onclick="setTimingFilter('overall')" id="timingOverallFilter">
+            <button class="section-filter active" data-filter-type="timing" data-filter-value="overall" id="timingOverallFilter">
               Overall
             </button>
-            <button class="section-filter" onclick="setTimingFilter('home')" id="timingHomeFilter">At Home</button>
-            <button class="section-filter" onclick="setTimingFilter('away')" id="timingAwayFilter">At Away</button>
-            <button class="section-filter" onclick="setTimingFilter('scored')" id="timingScoredFilter">
+            <button class="section-filter" data-filter-type="timing" data-filter-value="home" id="timingHomeFilter">At Home</button>
+            <button class="section-filter" data-filter-type="timing" data-filter-value="away" id="timingAwayFilter">At Away</button>
+            <button class="section-filter" data-filter-type="timing" data-filter-value="scored" id="timingScoredFilter">
               Goals Scored
             </button>
-            <button class="section-filter" onclick="setTimingFilter('conceded')" id="timingConcededFilter">
+            <button class="section-filter" data-filter-type="timing" data-filter-value="conceded" id="timingConcededFilter">
               Goals Conceded
             </button>
           </div>
