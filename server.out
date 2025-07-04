@@ -1,0 +1,26 @@
+Configuration loaded: {
+  NODE_ENV: 'development',
+  PORT: 3001,
+  API_URL: 'https://api.football-data-api.com',
+  CACHE_ENABLED: true,
+  REDIS_ENABLED: false,
+  LOG_LEVEL: 'info'
+}
+[32m[TeamDataService] SUCCESS: FullyDynamicTeamService initialized[0m
+[32m[UniversalMappingService] SUCCESS: FullyDynamicTeamService integrated successfully[0m
+[36m[ErrorTrackingMiddleware] INFO: Global error tracking setup completed[0m
+[33m[RedisCache] WARN: Redis client not provided, using in-memory cache only[0m
+[Server] INFO: Mounting monitoring routes at /health
+[31m[ErrorTrackingMiddleware] ERROR: Uncaught Exception[0m
+UNCAUGHT EXCEPTION DETAILS: listen EADDRINUSE: address already in use :::3001 Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:1811:16)
+    at listenInCluster (node:net:1859:12)
+    at Server.listen (node:net:1947:7)
+    at Function.listen (/mnt/d/SportsData.ai/node_modules/express/lib/application.js:635:24)
+    at Object.<anonymous> (/mnt/d/SportsData.ai/simple-server-optimized.js:752:5)
+    at Module._compile (node:internal/modules/cjs/loader:1356:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1414:10)
+    at Module.load (node:internal/modules/cjs/loader:1197:32)
+    at Module._load (node:internal/modules/cjs/loader:1013:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12)
+[31m[ErrorTracker] ERROR: Error tracked[0m

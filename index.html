@@ -146,7 +146,7 @@
       let activeTab = 'today';
       let isLoading = false;
 
-      const API_BASE = 'http://localhost:3001/api';
+      const API_BASE = '/api';
 
       // Sort utilities - inline to avoid 404 errors
       const SortUtils = {
@@ -215,7 +215,7 @@
           const endDate = nextWeek.toISOString().split('T')[0];
 
           const upcomingResponse = await axios.get(
-            `${API_BASE}/matches/range?startDate=${startDate}&endDate=${endDate}&timezone=Europe/Istanbul`
+            `${API_BASE}/matches/range?from=${startDate}&to=${endDate}&timezone=Europe/Istanbul`
           );
           if (upcomingResponse.data.success) {
             upcomingMatches = upcomingResponse.data.matches || [];

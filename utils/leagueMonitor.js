@@ -103,7 +103,7 @@ class LeagueMonitor {
    */
   loadCurrentLeagues() {
     try {
-      const serverPath = path.join(__dirname, '../simple-server.js');
+      const serverPath = path.join(__dirname, '../simple-server-optimized.js');
       const serverContent = fs.readFileSync(serverPath, 'utf8');
 
       // Extract league IDs from the activeLeagueIds array
@@ -141,7 +141,7 @@ class LeagueMonitor {
    */
   updateServerFile(newLeagues) {
     try {
-      const serverPath = path.join(__dirname, '../simple-server.js');
+      const serverPath = path.join(__dirname, '../simple-server-optimized.js');
       let serverContent = fs.readFileSync(serverPath, 'utf8');
 
       const newLeagueString = newLeagues.join(', ');

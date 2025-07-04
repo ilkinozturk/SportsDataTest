@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: '/mnt/d/SportsData.Ai/.env' });
 const express = require('express');
 const compression = require('compression');
 const axios = require('axios');
@@ -256,8 +256,8 @@ const formatMatch = match => ({
     name: match.league?.name || match.competition?.name || match.league_name || 'Unknown League',
     logo: match.league?.logo || match.competition?.logo || match.league_logo,
   },
-  date: match.date || moment.unix(match.date_unix).format('YYYY-MM-DD'),
-  time: match.time || moment.unix(match.date_unix).format('HH:mm'),
+  date: match.date || (match.date_unix ? moment.unix(match.date_unix).format('YYYY-MM-DD') : ''),
+  time: match.time || (match.date_unix ? moment.unix(match.date_unix).format('HH:mm') : (match.date ? moment(match.date).format('HH:mm') : '')),
   status: match.status || 'scheduled',
   homeScore: match.homeTeam?.goals || match.homeGoalCount || match.home_scored || 0,
   awayScore: match.awayTeam?.goals || match.awayGoalCount || match.away_scored || 0,
