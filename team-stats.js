@@ -813,23 +813,21 @@ function updateTopStatsForTab(tabName) {
 }
 
 // Get team ID from URL parameter
-const urlParams = new URLSearchParams(window.location.search);
-const teamId = urlParams.get('teamId');
+// NOTE: This is now handled in DOMContentLoaded to ensure modules are loaded
+// const urlParams = new URLSearchParams(window.location.search);
+// const teamId = urlParams.get('teamId');
 
-if (teamId) {
-  loadTeamData(teamId);
-}
+// if (teamId) {
+//   loadTeamData(teamId);
+// }
 
 async function loadTeamData(teamId) {
   try {
-    const response = await fetch(`/api/teams/data?teamId=${teamId}`);
-    const result = await response.json();
-
-    if (result.success) {
-      displayDetailedTeamData(result.data);
-    } else {
-      throw new Error(result.error || 'Takım verisi yüklenemedi');
-    }
+    // Use API Client instead of direct fetch
+    const result = await TeamStatsAPIClient.getTeamData(teamId);
+    
+    // API Client returns the data directly (success is handled internally)
+    displayDetailedTeamData(result);
   } catch (error) {
     console.error('Error loading team data:', error);
     // Show error in loading section if error section doesn't exist
@@ -2568,12 +2566,10 @@ function initializeMatchDetailsHover() {
     }
 
     try {
-      // Fetch match details
-      const response = await fetch(`/api/match/${matchId}`);
-      const result = await response.json();
+      // Use API Client instead of direct fetch
+      const details = await TeamStatsAPIClient.getMatchDetails(matchId);
 
-      if (result.success && result.data) {
-        const details = result.data;
+      if (details) {
 
         // Build goal details HTML
         let goalDetailsHTML = '';
@@ -3727,4 +3723,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Initialize filter buttons
   initializeFilterButtons();
+  
+  // Load team data if teamId is present in URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const teamId = urlParams.get('teamId');
+  if (teamId) {
+    loadTeamData(teamId);
+  }
 });

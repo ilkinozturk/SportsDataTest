@@ -1882,6 +1882,42 @@
       </div>
     </div>
 
+    <!-- Core Modules - Gradual Migration -->
+    <script src="public/js/modules/core/constants.js?v=1"></script>
+    <script src="public/js/modules/core/state-manager.js?v=4"></script>
+    <script src="public/js/modules/core/event-bus.js?v=4"></script>
+    <script src="public/js/modules/core/api-client.js?v=5"></script>
+    
+    <!-- Original team-stats.js - Will continue to work -->
     <script src="team-stats.js"></script>
+    
+    <!-- Core Modules Integration Check -->
+    <script>
+      // Log module loading status
+      const modules = {
+        stateManager: window.TeamStatsStateManager,
+        eventBus: window.TeamStatsEventBus,
+        apiClient: window.TeamStatsAPIClient
+      };
+      
+      if (modules.stateManager && modules.eventBus && modules.apiClient) {
+        console.log('[Core Modules] ✓ All modules loaded successfully');
+        console.log('[Core Modules] State Manager, Event Bus, and API Client ready');
+        
+        // Set up basic state change events (optional)
+        modules.stateManager.subscribe('currentFilter', (newValue, oldValue) => {
+          modules.eventBus.emit('state:filter:changed', {
+            filterType: 'main',
+            oldValue: oldValue,
+            newValue: newValue
+          });
+        });
+        
+      } else {
+        console.warn('[Core Modules] Some modules failed to load');
+        if (!modules.stateManager) console.warn('- State Manager not loaded');
+        if (!modules.eventBus) console.warn('- Event Bus not loaded');
+      }
+    </script>
   </body>
 </html>
