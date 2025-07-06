@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Logo</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .logo-test { 
+            width: 64px; 
+            height: 64px; 
+            border: 2px solid #007bff; 
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+        }
+        .logo-test img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <h1>Logo Debug Test</h1>
+    
+    <h3>1. Direct IMG Test:</h3>
+    <img src="https://cdn.footystats.org/img/teams/china-shanghai-sipg-fc.png" 
+         alt="Direct Logo" 
+         style="width: 64px; height: 64px; border: 1px solid red;">
+    
+    <h3>2. Container Test (same as team-stats):</h3>
+    <div class="logo-test" id="logoTest">
+        <!-- Logo will be inserted here by JS -->
+    </div>
+    
+    <h3>3. Current teamLogo element from main page:</h3>
+    <div class="logo-test" id="teamLogo">
+        BVB
+    </div>
+    
+    <button onclick="testLogo()">Test Logo Update</button>
+    
+    <script>
+        function testLogo() {
+            const logoUrl = 'https://cdn.footystats.org/img/teams/china-shanghai-sipg-fc.png';
+            
+            // Test 1: Update our test element
+            const testEl = document.getElementById('logoTest');
+            testEl.innerHTML = `<img src="${logoUrl}" alt="Test Logo" style="width: 100%; height: 100%; object-fit: contain;">`;
+            
+            // Test 2: Update the actual teamLogo element
+            const teamLogoEl = document.getElementById('teamLogo');
+            teamLogoEl.innerHTML = `<img src="${logoUrl}" alt="Team Logo" style="width: 100%; height: 100%; object-fit: contain;">`;
+            
+            console.log('Logo updated!');
+        }
+        
+        // Auto-test on load
+        setTimeout(testLogo, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Corners Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+        }
+        .field {
+            margin: 5px 0;
+            padding: 5px 10px;
+            background: white;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .field-name {
+            color: #0066cc;
+            font-weight: bold;
+        }
+        .field-value {
+            color: #333;
+        }
+        .no-data {
+            color: #999;
+            font-style: italic;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+            font-size: 18px;
+            padding: 40px;
+        }
+        .error {
+            color: #d32f2f;
+            background: #fee;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0052a3;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Corners Data Check for Team ID 836</h1>
+        
+        <button onclick="checkCornersData()">Fetch Corners Data</button>
+        
+        <div id="loading" class="loading" style="display: none;">
+            Loading API data...
+        </div>
+        
+        <div id="error" class="error" style="display: none;"></div>
+        
+        <div id="results" style="display: none;">
+            <div class="section">
+                <h2>Corners Fields in Main Stats</h2>
+                <div id="mainStats" class="stats-grid"></div>
+            </div>
+            
+            <div class="section">
+                <h2>Corners Fields in Additional Info</h2>
+                <div id="additionalInfo" class="stats-grid"></div>
+            </div>
+            
+            <div class="section">
+                <h2>All Corners-Related Fields</h2>
+                <div id="allFields" class="stats-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function checkCornersData() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const results = document.getElementById('results');
+            
+            // Reset display
+            loading.style.display = 'block';
+            error.style.display = 'none';
+            results.style.display = 'none';
+            
+            try {
+                // Fetch data from API
+                const response = await fetch('/api/teams/data?teamId=836');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Full API Response:', data);
+                
+                if (!data.teamData || !data.teamData.stats) {
+                    throw new Error('Invalid data structure received');
+                }
+                
+                const stats = data.teamData.stats;
+                const additionalInfo = stats.additional_info || {};
+                
+                // Find corners fields in main stats
+                const mainStatsCorners = {};
+                Object.keys(stats).forEach(key => {
+                    if (key.toLowerCase().includes('corner')) {
+                        mainStatsCorners[key] = stats[key];
+                    }
+                });
+                
+                // Find corners fields in additional_info
+                const additionalCorners = {};
+                Object.keys(additionalInfo).forEach(key => {
+                    if (key.toLowerCase().includes('corner')) {
+                        additionalCorners[key] = additionalInfo[key];
+                    }
+                });
+                
+                // Find all corners fields in the entire response
+                const allCornersFields = findFieldsWithKeyword(data, 'corner');
+                
+                // Display results
+                displayFields('mainStats', mainStatsCorners);
+                displayFields('additionalInfo', additionalCorners);
+                displayAllFields('allFields', allCornersFields);
+                
+                loading.style.display = 'none';
+                results.style.display = 'block';
+                
+                // Log to console for debugging
+                console.log('Main Stats Corners:', mainStatsCorners);
+                console.log('Additional Info Corners:', additionalCorners);
+                console.log('All Corners Fields:', allCornersFields);
+                
+                // Save to localStorage for further inspection
+                localStorage.setItem('cornersData', JSON.stringify({
+                    timestamp: new Date().toISOString(),
+                    teamId: 836,
+                    mainStatsCorners,
+                    additionalCorners,
+                    allCornersFields,
+                    fullStats: stats,
+                    fullAdditionalInfo: additionalInfo
+                }));
+                
+                console.log('Full data saved to localStorage. Access with: JSON.parse(localStorage.getItem("cornersData"))');
+                
+            } catch (err) {
+                loading.style.display = 'none';
+                error.style.display = 'block';
+                error.textContent = `Error: ${err.message}`;
+                console.error('Error fetching data:', err);
+            }
+        }
+        
+        function displayFields(containerId, fields) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            if (Object.keys(fields).length === 0) {
+                container.innerHTML = '<div class="no-data">No corners fields found</div>';
+                return;
+            }
+            
+            Object.entries(fields).forEach(([key, value]) => {
+                const field = document.createElement('div');
+                field.className = 'field';
+                field.innerHTML = `
+                    <span class="field-name">${key}:</span>
+                    <span class="field-value">${value}</span>
+                `;
+                container.appendChild(field);
+            });
+        }
+        
+        function displayAllFields(containerId, fields) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            if (fields.length === 0) {
+                container.innerHTML = '<div class="no-data">No corners fields found in entire response</div>';
+                return;
+            }
+            
+            fields.forEach(({path, value}) => {
+                const field = document.createElement('div');
+                field.className = 'field';
+                field.innerHTML = `
+                    <span class="field-name">${path}:</span>
+                    <span class="field-value">${value}</span>
+                `;
+                container.appendChild(field);
+            });
+        }
+        
+        function findFieldsWithKeyword(obj, keyword, currentPath = '', results = []) {
+            if (obj === null || obj === undefined) return results;
+            
+            Object.entries(obj).forEach(([key, value]) => {
+                const path = currentPath ? `${currentPath}.${key}` : key;
+                
+                if (key.toLowerCase().includes(keyword.toLowerCase())) {
+                    if (typeof value !== 'object' || value === null) {
+                        results.push({ path, value });
+                    }
+                }
+                
+                if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                    findFieldsWithKeyword(value, keyword, path, results);
+                }
+            });
+            
+            return results;
+        }
+        
+        // Auto-load on page load
+        window.addEventListener('load', () => {
+            checkCornersData();
+        });
+    </script>
+</body>
+</html>

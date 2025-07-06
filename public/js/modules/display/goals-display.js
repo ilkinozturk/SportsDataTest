@@ -15,12 +15,16 @@
 (function(global) {
   'use strict';
 
+  // Debug mode - set to false for production
+  const DEBUG = false;
+  const log = DEBUG ? console.log.bind(console) : () => {};
+
   // Module dependencies check
   const requiredModules = ['TeamStatsEventBus', 'TeamStatsStateManager'];
   const missingModules = requiredModules.filter(module => !global[module]);
   
   if (missingModules.length > 0) {
-    console.warn('[GoalsDisplay] Missing optional modules:', missingModules);
+    log('[GoalsDisplay] Missing optional modules:', missingModules);
   }
 
   class GoalsDisplay {
@@ -143,14 +147,14 @@
      */
     initialize() {
       if (this.initialized) {
-        console.warn('[GoalsDisplay] Already initialized');
+        log('[GoalsDisplay] Already initialized');
         return;
       }
 
-      console.log('[GoalsDisplay] Initializing...');
+      log('[GoalsDisplay] Initializing...');
       this.setupEventListeners();
       this.initialized = true;
-      console.log('[GoalsDisplay] ✓ Initialized successfully');
+      log('[GoalsDisplay] ✓ Initialized successfully');
     }
 
     /**
@@ -169,7 +173,7 @@
         
         // Listen for initial team data load
         global.TeamStatsEventBus.on('data:team:loaded', (data) => {
-          console.log('[GoalsDisplay] Team data loaded:', data);
+          log('[GoalsDisplay] Team data loaded:', data);
           if (data.data && data.data.statistics) {
             this.lastStatistics = data.data.statistics;
             // Update with current filter
@@ -196,7 +200,7 @@
         animated = true
       } = options;
 
-      console.log('[GoalsDisplay] Rendering goals section with filter:', filter);
+      log('[GoalsDisplay] Rendering goals section with filter:', filter);
 
       // Clear container
       this.clearContainer(container);
@@ -250,7 +254,7 @@
      */
     renderOverviewCards(container, statistics, filter) {
       // Debug logging
-      console.log('[GoalsDisplay] renderOverviewCards - statistics:', statistics);
+      log('[GoalsDisplay] renderOverviewCards - statistics:', statistics);
       
       // Extract data based on filter
       let goalsFor, goalsAgainst, cleanSheets, failedToScore, matches;
@@ -789,7 +793,7 @@
      * Handle data update
      */
     handleDataUpdate(data) {
-      console.log('[GoalsDisplay] Handling data update:', data);
+      log('[GoalsDisplay] Handling data update:', data);
       // Re-render affected sections
     }
 
@@ -797,7 +801,7 @@
      * Handle filter change
      */
     handleFilterChange(filter) {
-      console.log('[GoalsDisplay] Handling filter change:', filter);
+      log('[GoalsDisplay] Handling filter change:', filter);
       
       // Handle both direct filter value and object with value property
       const filterValue = typeof filter === 'string' ? filter : (filter.value || filter.venue || 'overall');
@@ -813,7 +817,7 @@
      * Update goals statistics based on filter
      */
     updateGoalsStatistics(statistics, filter) {
-      console.log('[GoalsDisplay] Updating goals statistics with filter:', filter);
+      log('[GoalsDisplay] Updating goals statistics with filter:', filter);
       
       const suffix = filter === 'overall' ? '_overall' : `_${filter}`;
       
@@ -827,10 +831,10 @@
         matches = statistics.awayMatches || 0;
       }
       
-      // Update scored per match
+      // Update scored per match - use correct API fields
       const scoredPerMatch = filter === 'overall' 
-        ? (statistics.seasonScoredAVG_overall || statistics.goalsForPerMatch || statistics.goalsForAVG_overall || 0)
-        : (statistics[`seasonScoredAVG${suffix}`] || statistics[`goalsForPerMatch${suffix}`] || statistics[`goalsForAVG${suffix}`] || 0);
+        ? (statistics.averageGoalsFor || statistics.goalsForPerMatch || statistics.seasonScoredAVG_overall || 0)
+        : (statistics[`${filter}GoalsForPerMatch`] || statistics[`seasonScoredAVG${suffix}`] || statistics[`goalsForPerMatch${suffix}`] || 0);
       
       this.updateElement('scoredPerMatch', scoredPerMatch.toFixed(2));
       this.updateElement('goalsPerMatch', scoredPerMatch.toFixed(2));
@@ -838,27 +842,290 @@
       // Update Goals top stats cards
       this.updateElement('scoredPerMatchGoals', scoredPerMatch.toFixed(2));
       
-      // Update 1st Half Scored
+      // Update scored and conceded top stats cards if in goals tab
+      const activeTab = global.TeamStatsStateManager?.get('ui.activeTab') || 'all';
+      if (activeTab === 'goals') {
+        this.updateScoredTopStats(statistics, filter);
+        this.updateConcededTopStats(statistics, filter);
+      }
+      
+      // Update 1st Half Scored - use correct API fields
       const scored1H = filter === 'overall' 
-        ? (statistics.scoredAVGHT_overall || statistics.seasonScoredAVGHT_overall || statistics.firstHalfGoalsAVG_overall || 0)
-        : (statistics[`scoredAVGHT${suffix}`] || statistics[`seasonScoredAVGHT${suffix}`] || statistics[`firstHalfGoalsAVG${suffix}`] || 0);
+        ? (statistics.scoredAVGHT_overall || statistics.firstHalfGoalsAVG_overall || 0)
+        : (statistics[`scoredAVGHT${suffix}`] || statistics[`firstHalfGoalsAVG${suffix}`] || 0);
       this.updateElement('scored1HPerMatch', scored1H.toFixed(2));
       
-      // Update 2nd Half Scored
+      // Update 2nd Half Scored - use correct API fields
       const scored2H = filter === 'overall'
-        ? (statistics.scored_2hg_avg_overall || statistics.seasonScored2HAVG_overall || statistics.secondHalfGoalsAVG_overall || statistics.scoredAVG2H_overall || 0)
-        : (statistics[`scored_2hg_avg${suffix}`] || statistics[`seasonScored2HAVG${suffix}`] || statistics[`secondHalfGoalsAVG${suffix}`] || statistics[`scoredAVG2H${suffix}`] || 0);
+        ? (statistics.scored_2hg_avg_overall || statistics.secondHalfGoalsAVG_overall || statistics.scoredAVG2H_overall || 0)
+        : (statistics[`scored_2hg_avg${suffix}`] || statistics[`secondHalfGoalsAVG${suffix}`] || statistics[`scoredAVG2H${suffix}`] || 0);
       this.updateElement('scored2HPerMatch', scored2H.toFixed(2));
       
-      // Update conceded per match
+      // Update conceded per match - use correct API fields
       const concededPerMatch = filter === 'overall'
-        ? (statistics.goalsAgainstPerMatch || statistics.goalsAgainstAVG_overall || 0)
-        : (statistics[`goalsAgainstPerMatch${suffix}`] || statistics[`goalsAgainstAVG${suffix}`] || 0);
+        ? (statistics.averageGoalsAgainst || statistics.goalsAgainstPerMatch || 0)
+        : (statistics[`${filter}GoalsAgainstPerMatch`] || statistics[`goalsAgainstPerMatch${suffix}`] || 0);
       
       this.updateElement('concededPerMatch', concededPerMatch.toFixed(2));
       
       // Update all goal-related elements
       this.updateGoalElements(statistics, filter);
+    }
+
+    /**
+     * Update ONLY Scored Statistics section
+     */
+    updateScoredSection(statistics, filter) {
+      log('[GoalsDisplay] Updating ONLY Scored Statistics section with filter:', filter);
+      
+      // Update scored per match - use correct API fields
+      const scoredPerMatch = filter === 'overall' 
+        ? (statistics.averageGoalsFor || statistics.goalsForPerMatch || statistics.seasonScoredAVG_overall || 0)
+        : (statistics[`${filter}GoalsForPerMatch`] || statistics[`seasonScoredAVG_${filter}`] || 0);
+      
+      this.updateElement('scoredPerMatch', scoredPerMatch.toFixed(2));
+      
+      // Update 1st Half Scored
+      const scored1H = filter === 'overall' 
+        ? (statistics.scoredAVGHT_overall || statistics.firstHalfGoalsAVG_overall || 0)
+        : (statistics[`scoredAVGHT_${filter}`] || statistics[`firstHalfGoalsAVG_${filter}`] || 0);
+      this.updateElement('scoredAvg1H', scored1H.toFixed(2));
+      
+      // Update 2nd Half Scored
+      const scored2H = filter === 'overall'
+        ? (statistics.scored_2hg_avg_overall || statistics.secondHalfGoalsAVG_overall || statistics.scoredAVG2H_overall || 0)
+        : (statistics[`scored_2hg_avg_${filter}`] || statistics[`secondHalfGoalsAVG_${filter}`] || 0);
+      this.updateElement('scoredAvg2H', scored2H.toFixed(2));
+
+      // Update scored percentages
+      const suffix = filter === 'overall' ? '_overall' : `_${filter}`;
+      
+      let scoredOver05, scoredOver15, scoredOver25;
+      if (filter === 'overall') {
+        scoredOver05 = statistics.seasonScoredOver05Percentage_overall || 0;
+        scoredOver15 = statistics.seasonScoredOver15Percentage_overall || 0;
+        scoredOver25 = statistics.seasonScoredOver25Percentage_overall || 0;
+      } else {
+        scoredOver05 = statistics[`seasonScoredOver05Percentage${suffix}`] || 0;
+        scoredOver15 = statistics[`seasonScoredOver15Percentage${suffix}`] || 0;
+        scoredOver25 = statistics[`seasonScoredOver25Percentage${suffix}`] || 0;
+      }
+      
+      this.updateElement('scoredOver05', scoredOver05 + '%');
+      this.updateElement('scoredOver15', scoredOver15 + '%');
+      this.updateElement('scoredOver25', scoredOver25 + '%');
+
+      // Update other scored stats
+      const scoredBothHalves = filter === 'overall' 
+        ? (statistics.scoredBothHalvesPercentage_overall || 0)
+        : (statistics[`scoredBothHalvesPercentage${suffix}`] || 0);
+      this.updateElement('scoredBothHalves', scoredBothHalves + '%');
+
+      const firstToScore = filter === 'overall' 
+        ? (statistics.firstGoalScoredPercentage_overall || 0)
+        : (statistics[`firstGoalScoredPercentage${suffix}`] || 0);
+      this.updateElement('firstToScore', firstToScore + '%');
+
+      const failedToScore = statistics.failedToScorePercentage || 0;
+      this.updateElement('failedToScoreGoals', failedToScore + '%');
+
+      const highestScored = statistics.seasonHighestScored_overall || 0;
+      this.updateElement('highestScored', highestScored + ' Goals');
+
+      // Update penalty stats
+      if (filter === 'overall') {
+        const totalMatches = statistics.totalMatches || 0;
+        this.updateElement('penaltiesWonGoals', `${statistics.penaltiesWon || 0} in ${totalMatches}`);
+        this.updateElement('penaltiesConcededGoals', `${statistics.penaltiesConceded || 0} in ${totalMatches}`);
+        this.updateElement('penaltyInMatch', (statistics.penalty_in_a_match_percentage_overall || 0) + '%');
+      } else if (filter === 'home') {
+        const homeMatches = statistics.homeMatches || 0;
+        this.updateElement('penaltiesWonGoals', `${statistics.homePenaltiesWon || 0} in ${homeMatches}`);
+        this.updateElement('penaltiesConcededGoals', `${statistics.homePenaltiesConceded || 0} in ${homeMatches}`);
+        this.updateElement('penaltyInMatch', (statistics.penalty_in_a_match_percentage_home || 0) + '%');
+      } else if (filter === 'away') {
+        const awayMatches = statistics.awayMatches || 0;
+        this.updateElement('penaltiesWonGoals', `${statistics.awayPenaltiesWon || 0} in ${awayMatches}`);
+        this.updateElement('penaltiesConcededGoals', `${statistics.awayPenaltiesConceded || 0} in ${awayMatches}`);
+        this.updateElement('penaltyInMatch', (statistics.penalty_in_a_match_percentage_away || 0) + '%');
+      }
+
+      // Update minutes per goal
+      const totalMatches = filter === 'overall' ? (statistics.totalMatches || 0) : 
+                          (filter === 'home' ? statistics.homeMatches : statistics.awayMatches) || 0;
+      const goalsFor = filter === 'overall' ? (statistics.goalsFor || 0) :
+                      (filter === 'home' ? statistics.homeGoalsFor : statistics.awayGoalsFor) || 0;
+      const minutesPerGoal = goalsFor > 0 ? Math.round((totalMatches * 90) / goalsFor) : 0;
+      this.updateElement('minutesPerGoal', minutesPerGoal + ' min');
+
+      // Update 1H/2H detailed stats
+      this.updateScoredHalfTimeStats(statistics, filter);
+    }
+
+    /**
+     * Update scored halftime statistics
+     */
+    updateScoredHalfTimeStats(statistics, filter) {
+      // Calculate failed to score percentages
+      let failedToScore1HPercentage = 0;
+      let failedToScore2HPercentage = 0;
+      
+      if (filter === 'overall') {
+        failedToScore1HPercentage = statistics.seasonFTSPercentageHT_overall || 0;
+        failedToScore2HPercentage = statistics.fts_2hg_percentage_overall || 0;
+      } else {
+        const suffix = `_${filter}`;
+        failedToScore1HPercentage = statistics[`seasonFTSPercentageHT${suffix}`] || 0;
+        failedToScore2HPercentage = statistics[`fts_2hg_percentage${suffix}`] || 0;
+      }
+      
+      // Calculate scored in percentages (inverse of failed to score)
+      const scoredIn1HPercentage = 100 - failedToScore1HPercentage;
+      const scoredIn2HPercentage = 100 - failedToScore2HPercentage;
+      
+      this.updateElement('scoredIn1H', scoredIn1HPercentage.toFixed(0) + '%');
+      this.updateElement('failedToScore1H', failedToScore1HPercentage + '%');
+      this.updateElement('scoredIn2H', scoredIn2HPercentage.toFixed(0) + '%');
+      this.updateElement('failedToScore2H', failedToScore2HPercentage + '%');
+
+      // Update goals in matches
+      const matches = filter === 'overall' ? (statistics.totalMatches || 0) :
+                     (filter === 'home' ? statistics.homeMatches : statistics.awayMatches) || 0;
+      
+      let goals1H = 0, goals2H = 0;
+      if (filter === 'overall') {
+        goals1H = statistics.scoredGoalsHT_overall || 0;
+        goals2H = statistics.scored_2hg_overall || 0;
+      } else {
+        const suffix = `_${filter}`;
+        goals1H = statistics[`scoredGoalsHT${suffix}`] || 0;
+        goals2H = statistics[`scored_2hg${suffix}`] || 0;
+      }
+
+      const matchesWithGoals1H = matches - (statistics[`seasonFTSHT_${filter === 'overall' ? 'overall' : filter}`] || 0);
+      const matchesWithGoals2H = matches - (statistics[`seasonFTS2H_${filter === 'overall' ? 'overall' : filter}`] || 0);
+
+      this.updateElement('goals1HScored', `${goals1H} in ${Math.max(0, matchesWithGoals1H)}`);
+      this.updateElement('goals2HScored', `${goals2H} in ${Math.max(0, matchesWithGoals2H)}`);
+    }
+
+    /**
+     * Update ONLY Conceded Statistics section
+     */
+    updateConcededSection(statistics, filter) {
+      log('[GoalsDisplay] Updating ONLY Conceded Statistics section with filter:', filter);
+      
+      // Update conceded per match - use correct API fields
+      const concededPerMatch = filter === 'overall' 
+        ? (statistics.averageGoalsAgainst || statistics.goalsAgainstPerMatch || statistics.seasonConcededAVG_overall || 0)
+        : (statistics[`${filter}GoalsAgainstPerMatch`] || statistics[`seasonConcededAVG_${filter}`] || 0);
+      
+      console.log('[GoalsDisplay] Updating concededPerMatch:', {
+        filter,
+        averageGoalsAgainst: statistics.averageGoalsAgainst,
+        goalsAgainstPerMatch: statistics.goalsAgainstPerMatch,
+        seasonConcededAVG_overall: statistics.seasonConcededAVG_overall,
+        calculatedValue: concededPerMatch
+      });
+      
+      this.updateElement('concededPerMatch', concededPerMatch.toFixed(2));
+      
+      // Update 1st Half Conceded
+      const conceded1H = filter === 'overall' 
+        ? (statistics.concededAVGHT_overall || statistics.firstHalfGoalsAgainstAVG_overall || statistics.concededGoalsHT_overall / statistics.totalMatches || 0)
+        : (statistics[`concededAVGHT_${filter}`] || statistics[`firstHalfGoalsAgainstAVG_${filter}`] || 0);
+      this.updateElement('concededAvg1H', conceded1H.toFixed(2));
+      
+      // Update 2nd Half Conceded
+      const conceded2H = filter === 'overall'
+        ? (statistics.conceded_2hg_avg_overall || statistics.secondHalfGoalsAgainstAVG_overall || statistics.concededAVG2H_overall || 0)
+        : (statistics[`conceded_2hg_avg_${filter}`] || statistics[`secondHalfGoalsAgainstAVG_${filter}`] || statistics[`conceded_2hg_avg_${filter}`] || 0);
+      this.updateElement('concededAvg2H', conceded2H.toFixed(2));
+
+      // Update conceded percentages
+      const suffix = filter === 'overall' ? '_overall' : `_${filter}`;
+      
+      let concededOver05, concededOver15, concededOver25;
+      if (filter === 'overall') {
+        concededOver05 = statistics.seasonConcededOver05Percentage_overall || 0;
+        concededOver15 = statistics.seasonConcededOver15Percentage_overall || 0;
+        concededOver25 = statistics.seasonConcededOver25Percentage_overall || 0;
+      } else {
+        concededOver05 = statistics[`seasonConcededOver05Percentage${suffix}`] || 0;
+        concededOver15 = statistics[`seasonConcededOver15Percentage${suffix}`] || 0;
+        concededOver25 = statistics[`seasonConcededOver25Percentage${suffix}`] || 0;
+      }
+      
+      this.updateElement('concededOver05', concededOver05 + '%');
+      this.updateElement('concededOver15', concededOver15 + '%');
+      this.updateElement('concededOver25', concededOver25 + '%');
+
+      // Update clean sheets
+      const cleanSheets = filter === 'overall' 
+        ? (statistics.cleanSheetsPercentage_overall || statistics.cleanSheetPercentage || 0)
+        : (statistics[`cleanSheetsPercentage${suffix}`] || statistics[`${filter}CleanSheetPercentage`] || 0);
+      this.updateElement('cleanSheets', cleanSheets + '%');
+
+      const highestConceded = statistics.seasonHighestConceded_overall || statistics.highestConceded_overall || 0;
+      this.updateElement('highestConceded', highestConceded + ' Goals');
+
+      // Update minutes per goal conceded
+      const totalMatches = filter === 'overall' ? (statistics.totalMatches || 0) : 
+                          (filter === 'home' ? statistics.homeMatches : statistics.awayMatches) || 0;
+      const goalsAgainst = filter === 'overall' ? (statistics.goalsAgainst || 0) :
+                          (filter === 'home' ? statistics.homeGoalsAgainst : statistics.awayGoalsAgainst) || 0;
+      const minutesPerGoalConceded = goalsAgainst > 0 ? Math.round((totalMatches * 90) / goalsAgainst) : 0;
+      this.updateElement('minutesPerGoalConceded', minutesPerGoalConceded + ' min');
+
+      // Update 1H/2H detailed conceded stats
+      this.updateConcededHalfTimeStats(statistics, filter);
+    }
+
+    /**
+     * Update conceded halftime statistics
+     */
+    updateConcededHalfTimeStats(statistics, filter) {
+      // Calculate clean sheet percentages
+      let cleanSheet1HPercentage = 0;
+      let cleanSheet2HPercentage = 0;
+      
+      if (filter === 'overall') {
+        cleanSheet1HPercentage = statistics.seasonCSPercentageHT_overall || 0;
+        cleanSheet2HPercentage = statistics.cs_2hg_percentage_overall || 0;
+      } else {
+        const suffix = `_${filter}`;
+        cleanSheet1HPercentage = statistics[`seasonCSPercentageHT${suffix}`] || 0;
+        cleanSheet2HPercentage = statistics[`cs_2hg_percentage${suffix}`] || 0;
+      }
+      
+      // Calculate conceded in percentages (inverse of clean sheets)
+      const concededIn1HPercentage = 100 - cleanSheet1HPercentage;
+      const concededIn2HPercentage = 100 - cleanSheet2HPercentage;
+      
+      this.updateElement('concededIn1H', concededIn1HPercentage.toFixed(0) + '%');
+      this.updateElement('cleanSheet1H', cleanSheet1HPercentage + '%');
+      this.updateElement('concededIn2H', concededIn2HPercentage.toFixed(0) + '%');
+      this.updateElement('cleanSheet2H', cleanSheet2HPercentage + '%');
+
+      // Update goals conceded in matches
+      const matches = filter === 'overall' ? (statistics.totalMatches || 0) :
+                     (filter === 'home' ? statistics.homeMatches : statistics.awayMatches) || 0;
+      
+      let goalsConceded1H = 0, goalsConceded2H = 0;
+      if (filter === 'overall') {
+        goalsConceded1H = statistics.concededGoalsHT_overall || 0;
+        goalsConceded2H = statistics.conceded_2hg_overall || 0;
+      } else {
+        const suffix = `_${filter}`;
+        goalsConceded1H = statistics[`concededGoalsHT${suffix}`] || 0;
+        goalsConceded2H = statistics[`conceded_2hg${suffix}`] || 0;
+      }
+
+      const matchesWithGoalsConceded1H = matches - (statistics[`seasonCSHT_${filter === 'overall' ? 'overall' : filter}`] || 0);
+      const matchesWithGoalsConceded2H = matches - (statistics[`seasonCS2H_${filter === 'overall' ? 'overall' : filter}`] || 0);
+
+      this.updateElement('goals1HConceded', `${goalsConceded1H} in ${Math.max(0, matchesWithGoalsConceded1H)}`);
+      this.updateElement('goals2HConceded', `${goalsConceded2H} in ${Math.max(0, matchesWithGoalsConceded2H)}`);
     }
     
     /**
@@ -867,7 +1134,13 @@
     updateElement(id, value) {
       const element = document.getElementById(id);
       if (element) {
+        const oldValue = element.textContent;
         element.textContent = value;
+        if (id === 'concededPerMatch') {
+          console.log(`[GoalsDisplay] updateElement: ${id} changed from "${oldValue}" to "${value}"`);
+        }
+      } else if (id === 'concededPerMatch') {
+        console.error(`[GoalsDisplay] Element not found: ${id}`);
       }
     }
     
@@ -889,10 +1162,10 @@
       this.updateElement('totalGoalsFor', goalsFor);
       this.updateElement('totalGoalsAgainst', goalsAgainst);
       
-      // Update scored per match for both elements
+      // Update scored per match for both elements - use correct API fields
       const scoredPerMatch = filter === 'overall' 
-        ? (statistics.seasonScoredAVG_overall || statistics.goalsForPerMatch || statistics.goalsForAVG_overall || statistics.averageGoalsFor || 0)
-        : (statistics[`seasonScoredAVG${suffix}`] || statistics[`goalsForPerMatch${suffix}`] || statistics[`goalsForAVG${suffix}`] || 0);
+        ? (statistics.averageGoalsFor || statistics.goalsForPerMatch || statistics.seasonScoredAVG_overall || 0)
+        : (statistics[`${filter}GoalsForPerMatch`] || statistics[`seasonScoredAVG${suffix}`] || statistics[`goalsForPerMatch${suffix}`] || 0);
       
       this.updateElement('scoredPerMatch', scoredPerMatch.toFixed(2));
       this.updateElement('scoredPerMatchAll', scoredPerMatch.toFixed(2));
@@ -986,7 +1259,7 @@
       this.updateElement('scoredIn1H', scoredIn1HPercentage.toFixed(0) + '%');
       
       // Debug logging
-      console.log('[GoalsDisplay] 1H Stats Debug:', {
+      log('[GoalsDisplay] 1H Stats Debug:', {
         filter,
         suffix,
         matches,
@@ -1049,7 +1322,7 @@
       }
       
       // Debug logging
-      console.log('[GoalsDisplay] 2H Stats Debug:', {
+      log('[GoalsDisplay] 2H Stats Debug:', {
         filter,
         matches,
         failedToScore2HCount,
@@ -1404,71 +1677,71 @@
       this.updateElement('halftimeColumnHeader', filter.charAt(0).toUpperCase() + filter.slice(1));
       
       // Update Scored 1st Half section
-      goals1H = 0;
+      // goals1H already calculated above as const
       let matches1H = matches;
-      let scored1HAvg = 0;
+      let scored1HAvgSecond = 0;  // Renamed to avoid duplicate declaration
       let scored1HPercentage = 0;
-      let failedToScore1HPercentage = 0;
-      let matchesWithGoals1H = 0;
+      // failedToScore1HPercentage already declared above
+      // matchesWithGoals1H already declared above
       
       if (filter === 'overall') {
-        goals1H = statistics.scoredGoalsHT_overall || statistics.seasonGoals1H_overall || statistics.goals1H_overall || 0;
+        // goals1H already calculated above as const
         const seasonFTSHT = statistics.seasonFTSHT_overall || 0;
         matchesWithGoals1H = matches - seasonFTSHT;
-        scored1HAvg = statistics.seasonScoredAVGHT_overall || statistics.scoredAVGHT_overall || 0;
+        scored1HAvgSecond = statistics.seasonScoredAVGHT_overall || statistics.scoredAVGHT_overall || 0;
         scored1HPercentage = matches > 0 ? Math.round((matchesWithGoals1H / matches) * 100) : 0;
         failedToScore1HPercentage = matches > 0 ? Math.round((seasonFTSHT / matches) * 100) : 0;
       } else if (filter === 'home') {
-        goals1H = statistics.scoredGoalsHT_home || statistics.seasonGoals1H_home || statistics.goals1H_home || 0;
+        // goals1H already calculated above as const
         const seasonFTSHT = statistics.seasonFTSHT_home || 0;
         matchesWithGoals1H = matches - seasonFTSHT;
-        scored1HAvg = statistics.seasonScoredAVGHT_home || statistics.scoredAVGHT_home || 0;
+        scored1HAvgSecond = statistics.seasonScoredAVGHT_home || statistics.scoredAVGHT_home || 0;
         scored1HPercentage = matches > 0 ? Math.round((matchesWithGoals1H / matches) * 100) : 0;
         failedToScore1HPercentage = matches > 0 ? Math.round((seasonFTSHT / matches) * 100) : 0;
       } else if (filter === 'away') {
-        goals1H = statistics.scoredGoalsHT_away || statistics.seasonGoals1H_away || statistics.goals1H_away || 0;
+        // goals1H already calculated above as const
         const seasonFTSHT = statistics.seasonFTSHT_away || 0;
         matchesWithGoals1H = matches - seasonFTSHT;
-        scored1HAvg = statistics.seasonScoredAVGHT_away || statistics.scoredAVGHT_away || 0;
+        scored1HAvgSecond = statistics.seasonScoredAVGHT_away || statistics.scoredAVGHT_away || 0;
         scored1HPercentage = matches > 0 ? Math.round((matchesWithGoals1H / matches) * 100) : 0;
         failedToScore1HPercentage = matches > 0 ? Math.round((seasonFTSHT / matches) * 100) : 0;
       }
       
       // Update Scored 1st Half elements
-      this.updateElement('scoredAvg1H', scored1HAvg.toFixed(2));
+      this.updateElement('scoredAvg1H', scored1HAvgSecond.toFixed(2));
       this.updateElement('scoredIn1H', scored1HPercentage + '%');
       this.updateElement('failedToScore1H', failedToScore1HPercentage + '%');
       this.updateElement('goals1HScored', `${goals1H} in ${matchesWithGoals1H}`);
       
       // Update Scored 2nd Half section
-      goals2H = 0;
+      // goals2H already calculated above as const
       let matches2H = matches;
-      let scored2HAvg = 0;
+      // scored2HAvg already declared above
       let scored2HPercentage = 0;
-      let failedToScore2HPercentage = 0;
-      let matchesWithGoals2H = 0;
+      // failedToScore2HPercentage already declared above  
+      // matchesWithGoals2H already declared above
       
       if (filter === 'overall') {
-        goals2H = statistics.scored_2hg_overall || statistics.seasonGoals2H_overall || statistics.goals2H_overall || 0;
+        // goals2H already calculated above as const
         const seasonFTS2H = statistics.seasonFTS2H_overall || 0;
         matchesWithGoals2H = matches - seasonFTS2H;
-        scored2HAvg = statistics.seasonScored2HAVG_overall || statistics.scored_2hg_avg_overall || 0;
+        // scored2HAvg already calculated above
         scored2HPercentage = matches > 0 ? Math.round((matchesWithGoals2H / matches) * 100) : 0;
-        failedToScore2HPercentage = matches > 0 ? Math.round((seasonFTS2H / matches) * 100) : 0;
+        // failedToScore2HPercentage already calculated above
       } else if (filter === 'home') {
-        goals2H = statistics.scored_2hg_home || statistics.seasonGoals2H_home || statistics.goals2H_home || 0;
+        // goals2H already calculated above as const
         const seasonFTS2H = statistics.seasonFTS2H_home || 0;
         matchesWithGoals2H = matches - seasonFTS2H;
-        scored2HAvg = statistics.seasonScored2HAVG_home || statistics.scored_2hg_avg_home || 0;
+        // scored2HAvg already calculated above
         scored2HPercentage = matches > 0 ? Math.round((matchesWithGoals2H / matches) * 100) : 0;
-        failedToScore2HPercentage = matches > 0 ? Math.round((seasonFTS2H / matches) * 100) : 0;
+        // failedToScore2HPercentage already calculated above
       } else if (filter === 'away') {
-        goals2H = statistics.scored_2hg_away || statistics.seasonGoals2H_away || statistics.goals2H_away || 0;
+        // goals2H already calculated above as const
         const seasonFTS2H = statistics.seasonFTS2H_away || 0;
         matchesWithGoals2H = matches - seasonFTS2H;
-        scored2HAvg = statistics.seasonScored2HAVG_away || statistics.scored_2hg_avg_away || 0;
+        // scored2HAvg already calculated above
         scored2HPercentage = matches > 0 ? Math.round((matchesWithGoals2H / matches) * 100) : 0;
-        failedToScore2HPercentage = matches > 0 ? Math.round((seasonFTS2H / matches) * 100) : 0;
+        // failedToScore2HPercentage already calculated above
       }
       
       // Update Scored 2nd Half elements
@@ -1756,7 +2029,7 @@
      * Destroy the module
      */
     destroy() {
-      console.log('[GoalsDisplay] Destroying module...');
+      log('[GoalsDisplay] Destroying module...');
       
       // Remove event listeners
       if (global.TeamStatsEventBus) {
@@ -1773,7 +2046,93 @@
       };
 
       this.initialized = false;
-      console.log('[GoalsDisplay] ✓ Module destroyed');
+      log('[GoalsDisplay] ✓ Module destroyed');
+    }
+    
+    /**
+     * Update scored top stats cards
+     */
+    updateScoredTopStats(statistics, filter) {
+      log('[GoalsDisplay] Updating scored top stats with filter:', filter);
+      
+      // Scored per match
+      let scoredPerMatch;
+      if (filter === 'overall') {
+        scoredPerMatch = statistics.averageGoalsFor || statistics.goalsForPerMatch || statistics.seasonScoredAVG_overall || 0;
+      } else if (filter === 'home') {
+        scoredPerMatch = statistics.homeGoalsForPerMatch || statistics.seasonScoredAVG_home || 0;
+      } else if (filter === 'away') {
+        scoredPerMatch = statistics.awayGoalsForPerMatch || statistics.seasonScoredAVG_away || 0;
+      }
+      
+      this.updateElement('scoredPerMatchCard', scoredPerMatch.toFixed(2));
+      
+      // 1st Half Scored
+      let scored1H;
+      if (filter === 'overall') {
+        scored1H = statistics.scoredAVGHT_overall || statistics.goalsFor1H_AVG_overall || 0;
+      } else if (filter === 'home') {
+        scored1H = statistics.scoredAVGHT_home || statistics.goalsFor1H_AVG_home || 0;
+      } else if (filter === 'away') {
+        scored1H = statistics.scoredAVGHT_away || statistics.goalsFor1H_AVG_away || 0;
+      }
+      
+      this.updateElement('scoredAvg1HCard', scored1H.toFixed(2));
+      
+      // 2nd Half Scored
+      let scored2H;
+      if (filter === 'overall') {
+        scored2H = statistics.scored_2hg_avg_overall || statistics.goalsFor2H_AVG_overall || statistics.scored2H_AVG_overall || 0;
+      } else if (filter === 'home') {
+        scored2H = statistics.scored_2hg_avg_home || statistics.goalsFor2H_AVG_home || statistics.scored2H_AVG_home || 0;
+      } else if (filter === 'away') {
+        scored2H = statistics.scored_2hg_avg_away || statistics.goalsFor2H_AVG_away || statistics.scored2H_AVG_away || 0;
+      }
+      
+      this.updateElement('scoredAvg2HCard', scored2H.toFixed(2));
+    }
+    
+    /**
+     * Update conceded top stats cards
+     */
+    updateConcededTopStats(statistics, filter) {
+      log('[GoalsDisplay] Updating conceded top stats with filter:', filter);
+      
+      // Conceded per match
+      let concededPerMatch;
+      if (filter === 'overall') {
+        concededPerMatch = statistics.averageGoalsAgainst || statistics.goalsAgainstPerMatch || statistics.seasonConcededAVG_overall || 0;
+      } else if (filter === 'home') {
+        concededPerMatch = statistics.homeGoalsAgainstPerMatch || statistics.seasonConcededAVG_home || 0;
+      } else if (filter === 'away') {
+        concededPerMatch = statistics.awayGoalsAgainstPerMatch || statistics.seasonConcededAVG_away || 0;
+      }
+      
+      this.updateElement('concededPerMatchCard', concededPerMatch.toFixed(2));
+      
+      // 1st Half Conceded
+      let conceded1H;
+      if (filter === 'overall') {
+        conceded1H = statistics.concededAVGHT_overall || statistics.goalsAgainst1H_AVG_overall || 0;
+      } else if (filter === 'home') {
+        conceded1H = statistics.concededAVGHT_home || statistics.goalsAgainst1H_AVG_home || 0;
+      } else if (filter === 'away') {
+        conceded1H = statistics.concededAVGHT_away || statistics.goalsAgainst1H_AVG_away || 0;
+      }
+      
+      this.updateElement('concededAvg1HCard', conceded1H.toFixed(2));
+      
+      // 2nd Half Conceded  
+      let conceded2H;
+      if (filter === 'overall') {
+        conceded2H = statistics.conceded_2hg_avg_overall || statistics.goalsAgainst2H_AVG_overall || statistics.conceded2H_AVG_overall || 0;
+      } else if (filter === 'home') {
+        conceded2H = statistics.conceded_2hg_avg_home || statistics.goalsAgainst2H_AVG_home || statistics.conceded2H_AVG_home || 0;
+      } else if (filter === 'away') {
+        conceded2H = statistics.conceded_2hg_avg_away || statistics.goalsAgainst2H_AVG_away || statistics.conceded2H_AVG_away || 0;
+      }
+      
+      this.updateElement('concededAvg2HCard', conceded2H.toFixed(2));
     }
 
     /**
@@ -1814,6 +2173,6 @@
   // Export to global scope
   global.TeamStatsGoalsDisplay = goalsDisplay;
 
-  console.log('[GoalsDisplay] Module loaded successfully');
+  log('[GoalsDisplay] Module loaded successfully');
 
 })(window);

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check HT Fields</title>
+</head>
+<body>
+    <h1>Checking Halftime Fields for Team 836</h1>
+    <div id="results"></div>
+    
+    <script>
+        fetch('/api/teams/data?teamId=836')
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('results');
+                let html = '<h2>API Response Structure:</h2>';
+                
+                if (data && data.stats) {
+                    // Check if fields exist in stats directly
+                    html += '<h3>Halftime fields in stats:</h3><ul>';
+                    ['leadingAtHT_overall', 'drawingAtHT_overall', 'trailingAtHT_overall',
+                     'leadingAtHTPercentage_overall', 'drawingAtHTPercentage_overall', 'trailingAtHTPercentage_overall'].forEach(field => {
+                        html += `<li>${field}: ${data.stats[field] !== undefined ? data.stats[field] : 'NOT FOUND'}</li>`;
+                    });
+                    html += '</ul>';
+                    
+                    // Check additional_info
+                    if (data.stats.additional_info) {
+                        html += '<h3>Checking additional_info for HT/FT data:</h3>';
+                        html += '<pre>' + JSON.stringify(data.stats.additional_info, null, 2).substring(0, 2000) + '</pre>';
+                        
+                        // Look for HT/FT fields
+                        html += '<h3>HT/FT Related Fields in additional_info:</h3><ul>';
+                        Object.keys(data.stats.additional_info).forEach(key => {
+                            if (key.toLowerCase().includes('ht_ft') || 
+                                key.toLowerCase().includes('htft') ||
+                                key.toLowerCase().includes('halftime') ||
+                                key.toLowerCase().includes('leading') ||
+                                key.toLowerCase().includes('drawing') ||
+                                key.toLowerCase().includes('trailing')) {
+                                html += `<li>${key}: ${data.stats.additional_info[key]}</li>`;
+                            }
+                        });
+                        html += '</ul>';
+                    }
+                    
+                    // Show team info
+                    html += '<h3>Team Info:</h3>';
+                    html += `<p>Team: ${data.name} (ID: ${data.team_id})</p>`;
+                    html += `<p>Total Matches: ${data.stats.totalMatches_overall || 0}</p>`;
+                }
+                
+                resultsDiv.innerHTML = html;
+            })
+            .catch(error => {
+                document.getElementById('results').innerHTML = `<p>Error: ${error.message}</p>`;
+            });
+    </script>
+</body>
+</html>

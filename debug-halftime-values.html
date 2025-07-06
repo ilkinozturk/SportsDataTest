@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Halftime Values</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .found { color: green; font-weight: bold; }
+        .not-found { color: red; }
+        pre { background: #f0f0f0; padding: 10px; overflow: auto; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Debug Halftime Values for Team 836</h1>
+    <button onclick="debugHalftime()">Debug Halftime Data</button>
+    <div id="results"></div>
+
+    <script>
+        async function debugHalftime() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>Fetching data...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:3005/api/teams/data?teamId=836');
+                const data = await response.json();
+                
+                if (!data || !data.success) {
+                    resultsDiv.innerHTML = '<p class="not-found">No data received</p>';
+                    return;
+                }
+                
+                const stats = data.statistics || {};
+                let html = '<h2>Halftime Data Analysis</h2>';
+                
+                // Check various field names for leading/drawing/losing at HT
+                const halftimeFields = {
+                    'Leading at HT': [
+                        'leadingAtHT_overall',
+                        'leadingAtHT',
+                        'leading_at_ht_overall',
+                        'ht_leading_overall',
+                        'halftimeWins_overall',
+                        'halftime_wins_overall'
+                    ],
+                    'Drawing at HT': [
+                        'drawingAtHT_overall',
+                        'drawingAtHT',
+                        'drawing_at_ht_overall',
+                        'ht_drawing_overall',
+                        'halftimeDraws_overall',
+                        'halftime_draws_overall'
+                    ],
+                    'Losing at HT': [
+                        'losingAtHT_overall',
+                        'losingAtHT',
+                        'losing_at_ht_overall',
+                        'ht_losing_overall',
+                        'trailingAtHT_overall',
+                        'trailing_at_ht_overall',
+                        'halftimeLosses_overall',
+                        'halftime_losses_overall'
+                    ]
+                };
+                
+                html += '<table>';
+                html += '<tr><th>Category</th><th>Field Names Checked</th><th>Value Found</th></tr>';
+                
+                Object.entries(halftimeFields).forEach(([category, fields]) => {
+                    let foundValue = null;
+                    let foundField = null;
+                    
+                    fields.forEach(field => {
+                        if (stats[field] !== undefined && stats[field] !== null) {
+                            foundValue = stats[field];
+                            foundField = field;
+                        }
+                    });
+                    
+                    html += '<tr>';
+                    html += `<td><strong>${category}</strong></td>`;
+                    html += `<td>${fields.join('<br>')}</td>`;
+                    html += `<td class="${foundValue !== null ? 'found' : 'not-found'}">`;
+                    if (foundValue !== null) {
+                        html += `${foundValue} (found in: ${foundField})`;
+                    } else {
+                        html += 'NOT FOUND';
+                    }
+                    html += '</td>';
+                    html += '</tr>';
+                });
+                
+                html += '</table>';
+                
+                // Check additional_info
+                if (stats.additional_info) {
+                    html += '<h3>Checking additional_info object:</h3>';
+                    html += '<table>';
+                    html += '<tr><th>Field</th><th>Value</th></tr>';
+                    
+                    Object.keys(stats.additional_info).forEach(key => {
+                        if (key.toLowerCase().includes('ht') || 
+                            key.toLowerCase().includes('half') ||
+                            key.toLowerCase().includes('leading') ||
+                            key.toLowerCase().includes('drawing') ||
+                            key.toLowerCase().includes('losing') ||
+                            key.toLowerCase().includes('trailing')) {
+                            html += `<tr><td>${key}</td><td>${stats.additional_info[key]}</td></tr>`;
+                        }
+                    });
+                    
+                    html += '</table>';
+                }
+                
+                // Show all available fields
+                html += '<h3>All Statistics Fields (for debugging):</h3>';
+                html += '<details><summary>Click to expand</summary>';
+                html += '<pre>' + JSON.stringify(stats, null, 2) + '</pre>';
+                html += '</details>';
+                
+                resultsDiv.innerHTML = html;
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<p class="not-found">Error: ${error.message}</p>`;
+                console.error('Error:', error);
+            }
+        }
+        
+        // Auto-run on page load
+        window.addEventListener('DOMContentLoaded', debugHalftime);
+    </script>
+</body>
+</html>

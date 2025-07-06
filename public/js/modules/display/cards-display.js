@@ -1321,16 +1321,20 @@
      * Update Match Cards section
      */
     updateMatchCardsSection(statistics, filter) {
+      console.log('[CardsDisplay] Updating Match Cards section with filter:', filter);
+      console.log('[CardsDisplay] Statistics:', statistics);
+      
       // Update Match Cards AVG
       let matchCardsAvg = 0;
       if (filter === 'overall') {
-        matchCardsAvg = statistics.cardsPerMatch || statistics.cardsAVG_overall || 0;
+        matchCardsAvg = statistics.cardsPerMatch || statistics.cardsAVG_overall || statistics.cardsAVG || 0;
       } else if (filter === 'home') {
         matchCardsAvg = statistics.homeCardsPerMatch || statistics.cardsAVG_home || 0;
       } else if (filter === 'away') {
         matchCardsAvg = statistics.awayCardsPerMatch || statistics.cardsAVG_away || 0;
       }
-      this.updateElement('matchCardsAvgFT', matchCardsAvg.toFixed(2));
+      console.log('[CardsDisplay] matchCardsAvg:', matchCardsAvg);
+      this.updateElement('matchCardsAvg', matchCardsAvg.toFixed(2));
       
       // Update Highest/Lowest in a Match
       let highestCards = 0;
@@ -1345,8 +1349,9 @@
         highestCards = statistics.cardsHighest_away || 0;
         lowestCards = statistics.cardsLowest_away || 0;
       }
-      this.updateElement('highestCardsInMatch', highestCards);
-      this.updateElement('lowestCardsInMatch', lowestCards);
+      console.log('[CardsDisplay] highestCards:', highestCards, 'lowestCards:', lowestCards);
+      this.updateElement('matchCardsHighest', highestCards);
+      this.updateElement('matchCardsLowest', lowestCards);
       
       // Match cards over percentages
       const cardOverFields = ['05', '15', '25', '35', '45', '55'];

@@ -7,6 +7,10 @@
 (function(window) {
   'use strict';
 
+  // Debug mode - set to false for production
+  const DEBUG = false;
+  const log = DEBUG ? console.log.bind(console) : () => {};
+
   // State Manager Class
   class StateManager {
     constructor() {
@@ -370,7 +374,7 @@
         this._notifyObservers(key, this._state[key], null);
       });
       
-      console.log('[StateManager] State reset to initial values');
+      log('[StateManager] State reset to initial values');
     }
   }
   

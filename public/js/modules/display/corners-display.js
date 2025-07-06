@@ -176,6 +176,9 @@
       
       const suffix = filter === 'overall' ? '_overall' : `_${filter}`;
       
+      // Update top stats cards
+      this.updateCornersTopStats(statistics, filter);
+      
       // Update total corners
       const totalCorners = filter === 'overall'
         ? (statistics.cornersTotal || statistics.cornersTotal_overall || 0)
@@ -273,6 +276,115 @@
       if (element) {
         element.textContent = value;
       }
+    }
+    
+    /**
+     * Update Team Corners section specifically
+     */
+    updateTeamCornersSection(statistics, filter) {
+      console.log('[CornersDisplay] Updating Team Corners section with filter:', filter);
+      
+      // Update corners earned stats
+      let cornersEarnedPerMatch, cornersAgainstPerMatch;
+      
+      if (filter === 'overall') {
+        cornersEarnedPerMatch = statistics.cornersAVG || statistics.cornersForPerMatch || statistics.cornersEarnedPerMatch || 0;
+        cornersAgainstPerMatch = statistics.cornersAgainstAVG || statistics.cornersAgainstPerMatch || 0;
+      } else if (filter === 'home') {
+        cornersEarnedPerMatch = statistics.homeCornersAVG || statistics.cornersForPerMatch_home || statistics.homeCornersForPerMatch || 0;
+        cornersAgainstPerMatch = statistics.homeCornersAgainstAVG || statistics.cornersAgainstPerMatch_home || statistics.homeCornersAgainstPerMatch || 0;
+      } else if (filter === 'away') {
+        cornersEarnedPerMatch = statistics.awayCornersAVG || statistics.cornersForPerMatch_away || statistics.awayCornersForPerMatch || 0;
+        cornersAgainstPerMatch = statistics.awayCornersAgainstAVG || statistics.cornersAgainstPerMatch_away || statistics.awayCornersAgainstPerMatch || 0;
+      }
+      
+      // Update earned per match
+      this.updateElement('teamCorners-avgEarned', cornersEarnedPerMatch.toFixed(2));
+      
+      // Update against per match
+      this.updateElement('teamCorners-avgAgainst', cornersAgainstPerMatch.toFixed(2));
+      
+      // Calculate total corners
+      const matches = filter === 'overall' ? (statistics.totalMatches || statistics.matches || 0) :
+                     (filter === 'home' ? statistics.homeMatches : statistics.awayMatches) || 0;
+      
+      const totalEarned = Math.round(cornersEarnedPerMatch * matches);
+      const totalAgainst = Math.round(cornersAgainstPerMatch * matches);
+      
+      this.updateElement('teamCorners-totalEarned', totalEarned);
+      this.updateElement('teamCorners-totalAgainst', totalAgainst);
+      
+      // Update more corners than opponent percentage
+      let moreThanOpponent;
+      if (filter === 'overall') {
+        moreThanOpponent = statistics.winMostCornersPercentage || statistics.winMostCornersPercentage_overall || 0;
+      } else if (filter === 'home') {
+        moreThanOpponent = statistics.winMostCornersPercentage_home || 0;
+      } else if (filter === 'away') {
+        moreThanOpponent = statistics.winMostCornersPercentage_away || 0;
+      }
+      this.updateElement('teamCorners-moreThanOpponent', moreThanOpponent + '%');
+      
+      // Update corners earned over percentages
+      const earnedThresholds = ['25', '35', '45', '55', '65', '75', '85'];
+      earnedThresholds.forEach(threshold => {
+        let value;
+        if (filter === 'overall') {
+          value = statistics[`over${threshold}CornersForPercentage_overall`] || 
+                 statistics[`over${threshold}CornersForPercentage`] || 0;
+        } else if (filter === 'home') {
+          value = statistics[`over${threshold}CornersForPercentage_home`] || 0;
+        } else if (filter === 'away') {
+          value = statistics[`over${threshold}CornersForPercentage_away`] || 0;
+        }
+        this.updateElement(`teamCorners-earnedOver${threshold}`, value + '%');
+      });
+      
+      // Update corners against over percentages
+      const againstThresholds = ['25', '35', '45', '55', '65', '75', '85'];
+      againstThresholds.forEach(threshold => {
+        let value;
+        if (filter === 'overall') {
+          value = statistics[`over${threshold}CornersAgainstPercentage_overall`] || 
+                 statistics[`over${threshold}CornersAgainstPercentage`] || 0;
+        } else if (filter === 'home') {
+          value = statistics[`over${threshold}CornersAgainstPercentage_home`] || 0;
+        } else if (filter === 'away') {
+          value = statistics[`over${threshold}CornersAgainstPercentage_away`] || 0;
+        }
+        this.updateElement(`teamCorners-againstOver${threshold}`, value + '%');
+      });
+    }
+
+    /**
+     * Update corners top stats cards
+     */
+    updateCornersTopStats(statistics, filter) {
+      console.log('[CornersDisplay] Updating corners top stats with filter:', filter);
+      
+      // Total corners per match
+      let totalCornersPerMatch, cornersEarnedPerMatch, cornersAgainstPerMatch;
+      
+      if (filter === 'overall') {
+        cornersEarnedPerMatch = statistics.cornersAVG || statistics.cornersForPerMatch || statistics.cornersEarnedPerMatch || 0;
+        cornersAgainstPerMatch = statistics.cornersAgainstAVG || statistics.cornersAgainstPerMatch || 0;
+        totalCornersPerMatch = statistics.cornersTotalAVG || statistics.totalCornersPerMatch || 
+                              (parseFloat(cornersEarnedPerMatch) + parseFloat(cornersAgainstPerMatch));
+      } else if (filter === 'home') {
+        cornersEarnedPerMatch = statistics.homeCornersAVG || statistics.cornersForPerMatch_home || statistics.homeCornersForPerMatch || 0;
+        cornersAgainstPerMatch = statistics.homeCornersAgainstAVG || statistics.cornersAgainstPerMatch_home || statistics.homeCornersAgainstPerMatch || 0;
+        totalCornersPerMatch = statistics.homeCornersTotalAVG || statistics.totalCornersPerMatch_home ||
+                              (parseFloat(cornersEarnedPerMatch) + parseFloat(cornersAgainstPerMatch));
+      } else if (filter === 'away') {
+        cornersEarnedPerMatch = statistics.awayCornersAVG || statistics.cornersForPerMatch_away || statistics.awayCornersForPerMatch || 0;
+        cornersAgainstPerMatch = statistics.awayCornersAgainstAVG || statistics.cornersAgainstPerMatch_away || statistics.awayCornersAgainstPerMatch || 0;
+        totalCornersPerMatch = statistics.awayCornersTotalAVG || statistics.totalCornersPerMatch_away ||
+                              (parseFloat(cornersEarnedPerMatch) + parseFloat(cornersAgainstPerMatch));
+      }
+      
+      this.updateElement('cornersPerMatchCard', totalCornersPerMatch.toFixed(2));
+      this.updateElement('cornersEarnedPerMatchCard', cornersEarnedPerMatch.toFixed(2));
+      this.updateElement('cornersAgainstPerMatchCard', cornersAgainstPerMatch.toFixed(2));
     }
 
     /**

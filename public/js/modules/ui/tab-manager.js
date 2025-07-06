@@ -7,6 +7,10 @@
 (function(global) {
     'use strict';
 
+    // Debug mode - set to false for production
+    const DEBUG = false;
+    const log = DEBUG ? console.log.bind(console) : () => {};
+
     class TabManager {
         constructor() {
             // Tab configuration
@@ -123,14 +127,14 @@
         initializeDependencies() {
             // Check for required dependencies
             if (typeof TeamStatsStateManager === 'undefined') {
-                console.warn('TabManager: StateManager not found, running in standalone mode');
+                log('TabManager: StateManager not found, running in standalone mode');
                 this.stateManager = null;
             } else {
                 this.stateManager = TeamStatsStateManager;
             }
 
             if (typeof TeamStatsEventBus === 'undefined') {
-                console.warn('TabManager: EventBus not found, running in standalone mode');
+                log('TabManager: EventBus not found, running in standalone mode');
                 this.eventBus = null;
             } else {
                 this.eventBus = TeamStatsEventBus;
@@ -602,7 +606,7 @@
                         }
                     }
                 } catch (error) {
-                    console.warn('TabManager: Failed to restore state', error);
+                    log('TabManager: Failed to restore state', error);
                 }
             }
         }

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Halftime Data</title>
+</head>
+<body>
+    <h1>Checking Halftime Data for Team 836</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function checkHalftimeData() {
+            const resultsDiv = document.getElementById('results');
+            
+            try {
+                const response = await fetch('/api/teams/data?teamId=836');
+                const data = await response.json();
+                
+                if (!data || !data.stats) {
+                    resultsDiv.innerHTML = '<p>No stats data found</p>';
+                    return;
+                }
+                
+                const stats = data.stats;
+                const additionalInfo = stats.additional_info || {};
+                
+                let html = '<h2>Halftime-related fields found:</h2>';
+                html += '<h3>In main stats object:</h3><ul>';
+                
+                // Check main stats
+                let foundInStats = false;
+                Object.keys(stats).forEach(key => {
+                    const lowerKey = key.toLowerCase();
+                    if (lowerKey.includes('ht') || 
+                        lowerKey.includes('half') || 
+                        lowerKey.includes('halftime') ||
+                        lowerKey.includes('leading') || 
+                        lowerKey.includes('drawing') || 
+                        lowerKey.includes('trailing') ||
+                        lowerKey.includes('losing')) {
+                        html += `<li><strong>${key}:</strong> ${stats[key]}</li>`;
+                        foundInStats = true;
+                    }
+                });
+                
+                if (!foundInStats) {
+                    html += '<li>No halftime fields found in main stats</li>';
+                }
+                html += '</ul>';
+                
+                // Check additional_info
+                html += '<h3>In additional_info object:</h3><ul>';
+                let foundInAdditional = false;
+                Object.keys(additionalInfo).forEach(key => {
+                    const lowerKey = key.toLowerCase();
+                    if (lowerKey.includes('ht') || 
+                        lowerKey.includes('half') || 
+                        lowerKey.includes('halftime') ||
+                        lowerKey.includes('leading') || 
+                        lowerKey.includes('drawing') || 
+                        lowerKey.includes('trailing') ||
+                        lowerKey.includes('losing')) {
+                        html += `<li><strong>${key}:</strong> ${additionalInfo[key]}</li>`;
+                        foundInAdditional = true;
+                    }
+                });
+                
+                if (!foundInAdditional) {
+                    html += '<li>No halftime fields found in additional_info</li>';
+                }
+                html += '</ul>';
+                
+                // Show some context
+                html += '<h3>Context - General Stats:</h3><ul>';
+                html += `<li>Total Matches: ${stats.totalMatches_overall || 0}</li>`;
+                html += `<li>Wins: ${stats.wins_overall || 0}</li>`;
+                html += `<li>Draws: ${stats.draws_overall || 0}</li>`;
+                html += `<li>Losses: ${stats.losses_overall || 0}</li>`;
+                html += '</ul>';
+                
+                // Show raw data for debugging
+                html += '<h3>Raw Data (first 50 keys from stats):</h3>';
+                html += '<pre>' + JSON.stringify(Object.keys(stats).slice(0, 50), null, 2) + '</pre>';
+                
+                if (Object.keys(additionalInfo).length > 0) {
+                    html += '<h3>Raw Data (all keys from additional_info):</h3>';
+                    html += '<pre>' + JSON.stringify(Object.keys(additionalInfo), null, 2) + '</pre>';
+                }
+                
+                resultsDiv.innerHTML = html;
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Run on page load
+        checkHalftimeData();
+    </script>
+</body>
+</html>

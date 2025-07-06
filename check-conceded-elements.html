@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Check Conceded Elements</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .result { margin: 10px 0; padding: 10px; background: #f3f4f6; border-radius: 4px; }
+        .found { color: green; }
+        .not-found { color: red; }
+        .value { font-weight: bold; color: #3b82f6; }
+        button { padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Check Conceded Elements</h1>
+    <button onclick="checkElements()">Check All Conceded Elements</button>
+    <div id="results"></div>
+
+    <script>
+        async function checkElements() {
+            const resultsEl = document.getElementById('results');
+            resultsEl.innerHTML = '<h3>Checking elements...</h3>';
+            
+            // Load team-stats.html
+            try {
+                const response = await fetch('/team-stats.html?teamId=836');
+                const html = await response.text();
+                
+                // Create a temporary div to parse HTML
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                
+                // Check for all conceded-related IDs
+                const idsToCheck = [
+                    'concededPerMatch',
+                    'concededPerMatchTop',
+                    'concededPerMatchCard',
+                    'minutesPerGoalConceded',
+                    'concededOver05',
+                    'concededOver15',
+                    'concededOver25',
+                    'cleanSheets',
+                    'highestConceded'
+                ];
+                
+                let results = '<h3>Element Check Results:</h3>';
+                
+                idsToCheck.forEach(id => {
+                    const elements = tempDiv.querySelectorAll(`#${id}`);
+                    if (elements.length > 0) {
+                        results += `<div class="result found">✓ Found ${elements.length} element(s) with ID: ${id}`;
+                        elements.forEach((el, index) => {
+                            results += `<br>&nbsp;&nbsp;- Element ${index + 1}: ${el.tagName}, value: <span class="value">${el.textContent}</span>`;
+                        });
+                        results += '</div>';
+                    } else {
+                        results += `<div class="result not-found">✗ Not found: ${id}</div>`;
+                    }
+                });
+                
+                // Check for duplicate IDs
+                results += '<h3>Checking for Duplicate IDs:</h3>';
+                const allIds = Array.from(tempDiv.querySelectorAll('[id]')).map(el => el.id);
+                const duplicates = allIds.filter((id, index) => allIds.indexOf(id) !== index);
+                
+                if (duplicates.length > 0) {
+                    results += '<div class="result not-found">⚠️ Found duplicate IDs: ' + [...new Set(duplicates)].join(', ') + '</div>';
+                } else {
+                    results += '<div class="result found">✓ No duplicate IDs found</div>';
+                }
+                
+                resultsEl.innerHTML = results;
+                
+                // Now check the actual page
+                results += '<h3>Current Page Values:</h3>';
+                idsToCheck.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        results += `<div class="result found">Current value of ${id}: <span class="value">${el.textContent}</span></div>`;
+                    }
+                });
+                
+                resultsEl.innerHTML = results;
+                
+            } catch (error) {
+                resultsEl.innerHTML = '<div class="result not-found">Error: ' + error.message + '</div>';
+            }
+        }
+    </script>
+</body>
+</html>

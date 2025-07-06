@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Scored Statistics Filtering</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .section-filter { padding: 8px 16px; margin: 4px; cursor: pointer; }
+        .section-filter.active { background: #007bff; color: white; }
+        .stats-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; }
+        .debug-info { background: #f8f9fa; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Debug Scored Statistics Filtering for Team 836</h1>
+    
+    <div class="debug-info">
+        <h3>Filter Buttons (data-filter-type="scored")</h3>
+        <button class="section-filter active" data-filter-type="scored" data-filter-value="overall">Overall</button>
+        <button class="section-filter" data-filter-type="scored" data-filter-value="home">Home</button>
+        <button class="section-filter" data-filter-type="scored" data-filter-value="away">Away</button>
+    </div>
+
+    <div class="stats-section">
+        <h3>Scored Statistics Section</h3>
+        <div>Scored / Match: <span id="scoredPerMatch">Loading...</span></div>
+        <div>1st Half Scored: <span id="scoredAvg1H">Loading...</span></div>
+        <div>2nd Half Scored: <span id="scoredAvg2H">Loading...</span></div>
+        <div>Over 0.5 Goals: <span id="scoredOver05">Loading...</span></div>
+        <div>Over 1.5 Goals: <span id="scoredOver15">Loading...</span></div>
+        <div>Over 2.5 Goals: <span id="scoredOver25">Loading...</span></div>
+    </div>
+
+    <div class="debug-info">
+        <h4>Debug Console</h4>
+        <div id="debugConsole"></div>
+    </div>
+
+    <!-- Load necessary modules -->
+    <script src="public/js/modules/core/api-client.js"></script>
+    <script src="public/js/modules/core/state-manager.js"></script>
+    <script src="public/js/modules/display/goals-display.js"></script>
+    <script src="public/js/team-stats-modular.js"></script>
+
+    <script>
+        let currentStats = null;
+        
+        // Debug function
+        function log(message) {
+            const console = document.getElementById('debugConsole');
+            console.innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + message + '</div>';
+        }
+
+        // Test function
+        async function testScoredFiltering() {
+            log('Starting scored filtering test...');
+            
+            try {
+                // Load team data
+                const response = await fetch('http://localhost:3005/api/teams/data?teamId=836');
+                const data = await response.json();
+                
+                if (!data.success) {
+                    log('ERROR: Failed to load team data');
+                    return;
+                }
+                
+                currentStats = data.statistics;
+                log('Team data loaded successfully');
+                
+                // Check if GoalsDisplay module is available
+                if (window.TeamStatsGoalsDisplay) {
+                    log('✓ TeamStatsGoalsDisplay module is available');
+                    
+                    // Test updateScoredSection function
+                    if (typeof window.TeamStatsGoalsDisplay.updateScoredSection === 'function') {
+                        log('✓ updateScoredSection function is available');
+                        
+                        // Test with overall filter
+                        log('Testing Overall filter...');
+                        window.TeamStatsGoalsDisplay.updateScoredSection(currentStats, 'overall');
+                        
+                        // Test with home filter
+                        setTimeout(() => {
+                            log('Testing Home filter...');
+                            window.TeamStatsGoalsDisplay.updateScoredSection(currentStats, 'home');
+                        }, 1000);
+                        
+                        // Test with away filter
+                        setTimeout(() => {
+                            log('Testing Away filter...');
+                            window.TeamStatsGoalsDisplay.updateScoredSection(currentStats, 'away');
+                        }, 2000);
+                        
+                    } else {
+                        log('ERROR: updateScoredSection function not found');
+                    }
+                } else {
+                    log('ERROR: TeamStatsGoalsDisplay module not available');
+                }
+                
+            } catch (error) {
+                log('ERROR: ' + error.message);
+            }
+        }
+
+        // Filter click handler
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('section-filter')) {
+                const filterValue = e.target.dataset.filterValue;
+                const filterType = e.target.dataset.filterType;
+                
+                log(`Filter clicked: ${filterType} = ${filterValue}`);
+                
+                // Update button states
+                document.querySelectorAll('.section-filter').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                // Test the filtering
+                if (currentStats && window.TeamStatsGoalsDisplay) {
+                    if (filterType === 'scored') {
+                        log(`Calling updateScoredSection with filter: ${filterValue}`);
+                        window.TeamStatsGoalsDisplay.updateScoredSection(currentStats, filterValue);
+                    }
+                }
+            }
+        });
+
+        // Auto-start when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            log('DOM loaded, starting test...');
+            setTimeout(testScoredFiltering, 500);
+        });
+    </script>
+</body>
+</html>

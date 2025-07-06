@@ -523,9 +523,9 @@
 
           <!-- Scored Filter Tabs -->
           <div class="section-filters">
-            <button class="section-filter active" data-filter-type="main" data-filter-value="overall">Overall</button>
-            <button class="section-filter" data-filter-type="main" data-filter-value="home">At Home</button>
-            <button class="section-filter" data-filter-type="main" data-filter-value="away">At Away</button>
+            <button class="section-filter active" data-filter-type="scored" data-filter-value="overall">Overall</button>
+            <button class="section-filter" data-filter-type="scored" data-filter-value="home">At Home</button>
+            <button class="section-filter" data-filter-type="scored" data-filter-value="away">At Away</button>
           </div>
 
           <div class="stats-categories">
@@ -653,9 +653,9 @@
 
           <!-- Conceded Filter Tabs -->
           <div class="section-filters">
-            <button class="section-filter active" data-filter-type="main" data-filter-value="overall">Overall</button>
-            <button class="section-filter" data-filter-type="main" data-filter-value="home">At Home</button>
-            <button class="section-filter" data-filter-type="main" data-filter-value="away">At Away</button>
+            <button class="section-filter active" data-filter-type="conceded" data-filter-value="overall">Overall</button>
+            <button class="section-filter" data-filter-type="conceded" data-filter-value="home">At Home</button>
+            <button class="section-filter" data-filter-type="conceded" data-filter-value="away">At Away</button>
           </div>
 
           <div class="stats-categories">
@@ -664,7 +664,7 @@
               <div class="category-title">Conceded Per Game</div>
               <div class="stat-row">
                 <span class="stat-label">Conceded / Match</span>
-                <span class="stat-value" id="concededPerMatchStats">0.00</span>
+                <span class="stat-value" id="concededPerMatch">0.00</span>
               </div>
               <div class="stat-row">
                 <span class="stat-label">Minutes / Goal Conceded</span>
@@ -684,7 +684,7 @@
               </div>
               <div class="stat-row">
                 <span class="stat-label">Clean Sheets</span>
-                <span class="stat-value percentage-good" id="cleanSheetsGoals">0%</span>
+                <span class="stat-value percentage-good" id="cleanSheets">0%</span>
               </div>
               <div class="stat-row">
                 <span class="stat-label">Highest Conceded in a Match</span>
@@ -2014,7 +2014,8 @@
             const leaguePosition = document.getElementById('leaguePosition');
             
             if (teamName) teamName.textContent = teamData.teamInfo.name || 'Team';
-            if (teamLogo) teamLogo.textContent = (teamData.teamInfo.name || 'T').substring(0, 3).toUpperCase();
+            // Logo is already handled by the modular system - don't override it here
+            // if (teamLogo) teamLogo.textContent = (teamData.teamInfo.name || 'T').substring(0, 3).toUpperCase();
             if (seasonInfo) seasonInfo.textContent = teamData.teamInfo.season || '2024/25';
             if (leagueInfo) leagueInfo.textContent = teamData.league?.name || 'League';
             if (leaguePosition && teamData.leaguePosition) {

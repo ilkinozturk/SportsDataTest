@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find HT/FT Fields</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .field { padding: 5px; margin: 2px 0; background: #f0f0f0; }
+        .found { background: #d4f5d4; }
+        .not-found { background: #f5d4d4; }
+        pre { background: #f5f5f5; padding: 10px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>Finding HT/FT Fields in API Response</h1>
+    <div id="loading">Loading...</div>
+    <div id="results"></div>
+    
+    <script>
+        async function findHTFTFields() {
+            try {
+                const response = await fetch('/api/teams/data?teamId=836');
+                const data = await response.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                let html = '<h2>Team: ' + data.name + ' (ID: ' + data.team_id + ')</h2>';
+                
+                if (!data.stats) {
+                    html += '<p>No stats found!</p>';
+                    document.getElementById('results').innerHTML = html;
+                    return;
+                }
+                
+                const stats = data.stats;
+                const additionalInfo = stats.additional_info || {};
+                
+                // Expected fields from HTML
+                const expectedFields = [
+                    'leadingAtHT', 'drawingAtHT', 'losingAtHT', 'trailingAtHT',
+                    'leadingAtHTPercentage', 'drawingAtHTPercentage', 'losingAtHTPercentage', 'trailingAtHTPercentage'
+                ];
+                
+                html += '<h3>Checking Expected Fields:</h3>';
+                
+                // Check each expected field with different suffixes
+                expectedFields.forEach(field => {
+                    html += '<div><strong>' + field + ':</strong><ul>';
+                    
+                    // Check base field
+                    if (stats[field] !== undefined) {
+                        html += '<li class="field found">' + field + ': ' + stats[field] + '</li>';
+                    }
+                    
+                    // Check with suffixes
+                    ['_overall', '_home', '_away'].forEach(suffix => {
+                        const fieldName = field + suffix;
+                        if (stats[fieldName] !== undefined) {
+                            html += '<li class="field found">' + fieldName + ': ' + stats[fieldName] + '</li>';
+                        }
+                    });
+                    
+                    // Check in additional_info
+                    if (additionalInfo[field] !== undefined) {
+                        html += '<li class="field found">additionalInfo.' + field + ': ' + additionalInfo[field] + '</li>';
+                    }
+                    
+                    ['_overall', '_home', '_away'].forEach(suffix => {
+                        const fieldName = field + suffix;
+                        if (additionalInfo[fieldName] !== undefined) {
+                            html += '<li class="field found">additionalInfo.' + fieldName + ': ' + additionalInfo[fieldName] + '</li>';
+                        }
+                    });
+                    
+                    html += '</ul></div>';
+                });
+                
+                // Look for HT/FT patterns in additional_info
+                html += '<h3>HT/FT Pattern Fields in additional_info:</h3>';
+                const htftFields = Object.keys(additionalInfo).filter(key => 
+                    key.toLowerCase().includes('ht_ft') || 
+                    key.toLowerCase().includes('htft') ||
+                    key.toLowerCase().includes('ht/ft') ||
+                    (key.toLowerCase().includes('ht') && key.toLowerCase().includes('ft'))
+                );
+                
+                if (htftFields.length > 0) {
+                    html += '<ul>';
+                    htftFields.forEach(field => {
+                        html += '<li class="field found">' + field + ': ' + JSON.stringify(additionalInfo[field]) + '</li>';
+                    });
+                    html += '</ul>';
+                } else {
+                    html += '<p class="not-found">No HT/FT pattern fields found</p>';
+                }
+                
+                // Show all fields that might be halftime related
+                html += '<h3>All Halftime-Related Fields Found:</h3>';
+                const allHTFields = [];
+                
+                Object.keys(stats).forEach(key => {
+                    if (key.toLowerCase().includes('ht') || 
+                        key.toLowerCase().includes('half') || 
+                        key.toLowerCase().includes('leading') ||
+                        key.toLowerCase().includes('drawing') ||
+                        key.toLowerCase().includes('trailing')) {
+                        allHTFields.push('stats.' + key + ': ' + stats[key]);
+                    }
+                });
+                
+                Object.keys(additionalInfo).forEach(key => {
+                    if (key.toLowerCase().includes('ht') || 
+                        key.toLowerCase().includes('half') || 
+                        key.toLowerCase().includes('leading') ||
+                        key.toLowerCase().includes('drawing') ||
+                        key.toLowerCase().includes('trailing')) {
+                        allHTFields.push('additional_info.' + key + ': ' + additionalInfo[key]);
+                    }
+                });
+                
+                if (allHTFields.length > 0) {
+                    html += '<ul>';
+                    allHTFields.forEach(field => {
+                        html += '<li class="field">' + field + '</li>';
+                    });
+                    html += '</ul>';
+                } else {
+                    html += '<p class="not-found">No halftime fields found!</p>';
+                }
+                
+                // Show raw keys for debugging
+                html += '<h3>Debug - First 30 keys in stats:</h3>';
+                html += '<pre>' + JSON.stringify(Object.keys(stats).slice(0, 30), null, 2) + '</pre>';
+                
+                html += '<h3>Debug - First 30 keys in additional_info:</h3>';
+                html += '<pre>' + JSON.stringify(Object.keys(additionalInfo).slice(0, 30), null, 2) + '</pre>';
+                
+                document.getElementById('results').innerHTML = html;
+                
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('results').innerHTML = '<p>Error: ' + error.message + '</p>';
+            }
+        }
+        
+        findHTFTFields();
+    </script>
+</body>
+</html>

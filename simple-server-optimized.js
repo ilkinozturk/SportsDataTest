@@ -583,46 +583,45 @@ app.get('/api/leagues/:leagueId/standings', async (req, res) => {
   }
 });
 
-// REPLACED BY ROUTE MODULE - SEE /api/teams ROUTE BELOW
 // Old route: Get team data with statistics - NOW USING REPOSITORY PATTERN
-// app.get('/api/teams/data', validators.teamData, asyncHandler(async (req, res, next) => {
-//   const teamId = req.validated?.teamId || req.query.teamId;
-//   
-//   logger.info(`[Repository Pattern] Fetching team data for ID: ${teamId}`);
-//
-//   try {
-//     // Use repository pattern with caching
-//     const data = await teamRepository.getTeamStatistics(teamId);
-//     
-//     // Keep debug log for development
-//     if (config.isDevelopment()) {
-//       logger.debug('Repository Pattern Response:', {
-//         hasData: !!data,
-//         hasStatistics: !!data?.statistics,
-//         teamName: data?.teamInfo?.name,
-//         cacheStats: teamRepository.getCacheStats()
-//       });
-//     }
-//
-//     res.json({
-//       success: true,
-//       data: data,
-//     });
-//   } catch (error) {
-//     logger.error('Error fetching team data:', error);
-//     
-//     // Fallback to direct teamDataService if repository fails
-//     try {
-//       const data = await teamDataService.getTeamData(teamId);
-//       res.json({
-//         success: true,
-//         data: data,
-//       });
-//     } catch (fallbackError) {
-//       throw error; // Throw original error
-//     }
-//   }
-// }));
+app.get('/api/teams/data', asyncHandler(async (req, res, next) => {
+  const teamId = req.query.teamId;
+  
+  logger.info(`[Repository Pattern] Fetching team data for ID: ${teamId}`);
+
+  try {
+    // Use repository pattern with caching
+    const data = await teamRepository.getTeamStatistics(teamId);
+    
+    // Keep debug log for development
+    if (config.isDevelopment()) {
+      logger.debug('Repository Pattern Response:', {
+        hasData: !!data,
+        hasStatistics: !!data?.statistics,
+        teamName: data?.teamInfo?.name,
+        cacheStats: teamRepository.getCacheStats()
+      });
+    }
+
+    res.json({
+      success: true,
+      data: data,
+    });
+  } catch (error) {
+    logger.error('Error fetching team data:', error);
+    
+    // Fallback to direct teamDataService if repository fails
+    try {
+      const data = await teamDataService.getTeamData(teamId);
+      res.json({
+        success: true,
+        data: data,
+      });
+    } catch (fallbackError) {
+      throw error; // Throw original error
+    }
+  }
+}));
 
 // Get live matches
 app.get('/api/matches/live', async (req, res) => {

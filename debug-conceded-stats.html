@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Conceded Statistics</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .debug-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .field-value {
+            margin: 5px 0;
+            padding: 5px;
+            background: #e9ecef;
+            border-left: 3px solid #007bff;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .success {
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <h1>Debug Conceded Statistics</h1>
+    
+    <div class="debug-section">
+        <h2>Test Teams</h2>
+        <button onclick="debugTeam(836)">Shanghai SIPG (836)</button>
+        <button onclick="debugTeam(15)">Manchester United (15)</button>
+        <button onclick="debugTeam(3011)">Test Team 3011</button>
+        <button onclick="debugTeam(2672)">PSG (2672)</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        async function debugTeam(teamId) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>Loading...</p>';
+            
+            try {
+                // Fetch team data
+                const response = await fetch(`/api/teams/data?teamId=${teamId}`);
+                const data = await response.json();
+                
+                console.log('Full API Response:', data);
+                
+                let html = `<div class="debug-section">`;
+                html += `<h2>Team: ${data.team?.name || 'Unknown'} (ID: ${teamId})</h2>`;
+                
+                // Check main stats object
+                html += `<h3>Main Stats Object</h3>`;
+                html += `<pre>${JSON.stringify(data.statistics || {}, null, 2)}</pre>`;
+                
+                // Check for conceded-related fields in statistics
+                html += `<h3>Conceded Fields in Statistics</h3>`;
+                const stats = data.statistics || {};
+                const concededFields = [
+                    'goalsAgainst_overall',
+                    'goalsAgainstAVG_overall',
+                    'conceded_overall',
+                    'concededAVG_overall',
+                    'conceded_per_match',
+                    'minutes_per_conceded_overall',
+                    'minutesPerConceded_overall',
+                    'cleanSheet_overall',
+                    'cleanSheetPercentage_overall',
+                    'over05Conceded_overall',
+                    'over15Conceded_overall',
+                    'over25Conceded_overall',
+                    'highestConceded_overall',
+                    'goals_against',
+                    'goals_against_avg',
+                    'clean_sheet',
+                    'clean_sheet_percentage'
+                ];
+                
+                html += '<div>';
+                for (const field of concededFields) {
+                    const value = stats[field];
+                    if (value !== undefined && value !== null) {
+                        html += `<div class="field-value success"><strong>${field}:</strong> ${value}</div>`;
+                    }
+                }
+                html += '</div>';
+                
+                // Check additional_info
+                html += `<h3>Additional Info Object</h3>`;
+                const additionalInfo = data.statistics?.additional_info || {};
+                html += `<pre>${JSON.stringify(additionalInfo, null, 2)}</pre>`;
+                
+                // Check for conceded fields in additional_info
+                html += `<h3>Conceded Fields in Additional Info</h3>`;
+                html += '<div>';
+                for (const field of concededFields) {
+                    const value = additionalInfo[field];
+                    if (value !== undefined && value !== null) {
+                        html += `<div class="field-value success"><strong>${field}:</strong> ${value}</div>`;
+                    }
+                }
+                html += '</div>';
+                
+                // Check team.stats if exists
+                if (data.team?.stats) {
+                    html += `<h3>Team.Stats Object</h3>`;
+                    html += `<pre>${JSON.stringify(data.team.stats, null, 2)}</pre>`;
+                    
+                    // Check for conceded fields in team.stats
+                    html += `<h3>Conceded Fields in Team.Stats</h3>`;
+                    html += '<div>';
+                    for (const field of concededFields) {
+                        const value = data.team.stats[field];
+                        if (value !== undefined && value !== null) {
+                            html += `<div class="field-value success"><strong>${field}:</strong> ${value}</div>`;
+                        }
+                    }
+                    
+                    // Also check team.stats.additional_info
+                    if (data.team.stats.additional_info) {
+                        html += `<h4>Team.Stats.Additional_Info</h4>`;
+                        const teamAdditionalInfo = data.team.stats.additional_info;
+                        for (const field of concededFields) {
+                            const value = teamAdditionalInfo[field];
+                            if (value !== undefined && value !== null) {
+                                html += `<div class="field-value success"><strong>${field}:</strong> ${value}</div>`;
+                            }
+                        }
+                    }
+                    html += '</div>';
+                }
+                
+                // Search for any field containing "conceded" or "against"
+                html += `<h3>All Fields Containing "conceded" or "against"</h3>`;
+                html += '<div>';
+                
+                function searchObject(obj, path = '') {
+                    const results = [];
+                    for (const key in obj) {
+                        if (obj.hasOwnProperty(key)) {
+                            const fullPath = path ? `${path}.${key}` : key;
+                            if (key.toLowerCase().includes('conceded') || key.toLowerCase().includes('against')) {
+                                results.push(`<div class="field-value"><strong>${fullPath}:</strong> ${obj[key]}</div>`);
+                            }
+                            if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+                                results.push(...searchObject(obj[key], fullPath));
+                            }
+                        }
+                    }
+                    return results;
+                }
+                
+                const foundFields = searchObject(data);
+                html += foundFields.join('');
+                html += '</div>';
+                
+                html += '</div>';
+                resultsDiv.innerHTML = html;
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+                console.error('Debug error:', error);
+            }
+        }
+        
+        // Auto-load Shanghai SIPG on page load
+        window.onload = () => debugTeam(836);
+    </script>
+</body>
+</html>

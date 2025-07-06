@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug Conceded Frontend</title>
+    <link rel="stylesheet" href="team-stats.css">
+    <style>
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 400px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .test-controls {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f3f4f6;
+            border-radius: 8px;
+        }
+        .test-button {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Debug Conceded Frontend</h1>
+        
+        <div class="test-controls">
+            <button class="test-button" onclick="loadFullPage()">1. Load Full Page</button>
+            <button class="test-button" onclick="checkModules()">2. Check Modules</button>
+            <button class="test-button" onclick="loadTeamData()">3. Load Team Data</button>
+            <button class="test-button" onclick="switchToGoalsTab()">4. Switch to Goals Tab</button>
+            <button class="test-button" onclick="checkConcededElements()">5. Check Conceded Elements</button>
+            <button class="test-button" onclick="manualUpdateConceded()">6. Manual Update Conceded</button>
+        </div>
+
+        <!-- Tab Menu -->
+        <div class="tab-menu">
+            <button class="tab-button active" data-tab="all">All Stats</button>
+            <button class="tab-button" data-tab="goals">Goals</button>
+            <button class="tab-button" data-tab="corners">Corners</button>
+            <button class="tab-button" data-tab="cards">Cards</button>
+        </div>
+
+        <!-- Goals Tab Content -->
+        <div class="main-stats-section filterable-section" data-tab="goals" style="display: none">
+            <h2>Goals Statistics</h2>
+            
+            <!-- Conceded Per Game Stats -->
+            <div class="stats-category">
+                <div class="category-title">Conceded Per Game</div>
+                <div class="stat-row">
+                    <span class="stat-label">Conceded / Match</span>
+                    <span class="stat-value" id="concededPerMatch">0.00</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Minutes / Goal Conceded</span>
+                    <span class="stat-value" id="minutesPerGoalConceded">0 min</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Conceded Over 0.5 FT</span>
+                    <span class="stat-value" id="concededOver05">0%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Conceded Over 1.5 FT</span>
+                    <span class="stat-value" id="concededOver15">0%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Conceded Over 2.5 FT</span>
+                    <span class="stat-value" id="concededOver25">0%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Clean Sheets</span>
+                    <span class="stat-value" id="cleanSheets">0%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Highest Conceded in a Match</span>
+                    <span class="stat-value" id="highestConceded">0 Goals</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="debugInfo" class="debug-info">Debug info will appear here...</div>
+
+    <!-- Load all required modules -->
+    <script src="public/js/config/env.js"></script>
+    <script src="public/js/modules/core/constants.js"></script>
+    <script src="public/js/modules/core/event-bus.js"></script>
+    <script src="public/js/modules/core/state-manager.js"></script>
+    <script src="public/js/modules/core/api-client.js"></script>
+    <script src="public/js/modules/core/team-service.js"></script>
+    <script src="public/js/modules/display/goals-display.js"></script>
+    <script src="public/js/team-stats-modular.js"></script>
+
+    <script>
+        let currentStats = null;
+        const debugEl = document.getElementById('debugInfo');
+
+        function log(msg, data = null) {
+            const timestamp = new Date().toLocaleTimeString();
+            let content = `[${timestamp}] ${msg}`;
+            if (data) {
+                content += '\n' + JSON.stringify(data, null, 2);
+            }
+            debugEl.innerHTML = content + '\n\n' + debugEl.innerHTML;
+        }
+
+        function loadFullPage() {
+            log('Loading full page modules...');
+            if (window.TeamStatsModular && window.TeamStatsModular.initialize) {
+                window.TeamStatsModular.initialize();
+                log('TeamStatsModular initialized');
+            } else {
+                log('ERROR: TeamStatsModular not found');
+            }
+        }
+
+        function checkModules() {
+            log('Checking modules...');
+            const modules = {
+                'TeamStatsModular': !!window.TeamStatsModular,
+                'TeamStatsGoalsDisplay': !!window.TeamStatsGoalsDisplay,
+                'updateConcededSection': !!window.TeamStatsGoalsDisplay?.updateConcededSection,
+                'updateElement': !!window.TeamStatsGoalsDisplay?.updateElement,
+                'TeamStatsStateManager': !!window.TeamStatsStateManager,
+                'TeamStatsEventBus': !!window.TeamStatsEventBus
+            };
+            log('Module availability:', modules);
+        }
+
+        async function loadTeamData() {
+            try {
+                log('Loading team data...');
+                const response = await fetch('/api/teams/data?teamId=836');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const teamData = data.data || data;
+                    currentStats = teamData.statistics || teamData.stats;
+                    log('Team data loaded. Conceded stats:', {
+                        averageGoalsAgainst: currentStats.averageGoalsAgainst,
+                        seasonConcededAVG_overall: currentStats.seasonConcededAVG_overall,
+                        cleanSheetsPercentage_overall: currentStats.cleanSheetsPercentage_overall,
+                        seasonHighestConceded_overall: currentStats.seasonHighestConceded_overall,
+                        seasonConcededOver05Percentage_overall: currentStats.seasonConcededOver05Percentage_overall
+                    });
+                } else {
+                    log('Failed to load team data');
+                }
+            } catch (error) {
+                log('Error loading data: ' + error.message);
+            }
+        }
+
+        function switchToGoalsTab() {
+            log('Switching to Goals tab...');
+            
+            // Hide all tab content
+            document.querySelectorAll('[data-tab]').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Show goals tab content
+            document.querySelectorAll('[data-tab="goals"]').forEach(el => {
+                el.style.display = 'block';
+            });
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('[data-tab="goals"].tab-button').classList.add('active');
+            
+            log('Switched to Goals tab');
+        }
+
+        function checkConcededElements() {
+            log('Checking conceded elements...');
+            const ids = [
+                'concededPerMatch',
+                'minutesPerGoalConceded',
+                'concededOver05',
+                'concededOver15',
+                'concededOver25',
+                'cleanSheets',
+                'highestConceded'
+            ];
+            
+            const results = {};
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                results[id] = {
+                    exists: !!el,
+                    value: el ? el.textContent : 'NOT FOUND',
+                    visible: el ? (el.offsetParent !== null) : false
+                };
+            });
+            
+            log('Element check results:', results);
+        }
+
+        function manualUpdateConceded() {
+            if (!currentStats) {
+                log('No stats loaded! Load team data first.');
+                return;
+            }
+
+            log('Manually updating conceded...');
+            
+            if (window.TeamStatsGoalsDisplay && window.TeamStatsGoalsDisplay.updateConcededSection) {
+                try {
+                    window.TeamStatsGoalsDisplay.updateConcededSection(currentStats, 'overall');
+                    log('updateConcededSection called successfully');
+                    checkConcededElements();
+                } catch (error) {
+                    log('Error calling updateConcededSection: ' + error.message, error);
+                }
+            } else {
+                log('ERROR: updateConcededSection not found on TeamStatsGoalsDisplay');
+            }
+        }
+
+        // Auto-check on load
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                checkModules();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
