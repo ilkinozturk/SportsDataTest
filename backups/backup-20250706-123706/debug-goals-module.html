@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Goals Module</title>
+    <link rel="stylesheet" href="/css/team-stats.css">
+    <style>
+        .debug-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .debug-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+        .debug-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .debug-content {
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            color: #666;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .warning {
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>Goals Module Debug - Team 836 (Shanghai SIPG)</h1>
+        
+        <div class="debug-section">
+            <div class="debug-title">1. Loading Core Modules</div>
+            <div id="module-status" class="debug-content">Loading...</div>
+        </div>
+        
+        <div class="debug-section">
+            <div class="debug-title">2. Loading Team Data</div>
+            <div id="data-status" class="debug-content">Waiting...</div>
+        </div>
+        
+        <div class="debug-section">
+            <div class="debug-title">3. Goals Tab Data</div>
+            <div id="goals-data" class="debug-content">Waiting...</div>
+        </div>
+        
+        <div class="debug-section">
+            <div class="debug-title">4. GoalsDisplay Module Status</div>
+            <div id="goals-module" class="debug-content">Waiting...</div>
+        </div>
+        
+        <div class="debug-section">
+            <div class="debug-title">5. updateGoalsStatistics Call</div>
+            <div id="update-call" class="debug-content">Waiting...</div>
+        </div>
+    </div>
+
+    <!-- Core Dependencies -->
+    <script src="/js/utils/lazy-loader.js"></script>
+    <script src="/js/config/env.js"></script>
+    
+    <script>
+        // Debug function
+        function log(section, message, type = '') {
+            const element = document.getElementById(section);
+            if (element) {
+                element.innerHTML += `<span class="${type}">${message}</span>\n`;
+            }
+        }
+        
+        // Test module loading
+        async function testModules() {
+            try {
+                // 1. Load core modules
+                log('module-status', 'Loading core modules...');
+                
+                await LazyLoader.loadModule('core/event-bus');
+                log('module-status', '✓ EventBus loaded', 'success');
+                
+                await LazyLoader.loadModule('core/state-manager');
+                log('module-status', '✓ StateManager loaded', 'success');
+                
+                await LazyLoader.loadModule('core/team-data-service');
+                log('module-status', '✓ TeamDataService loaded', 'success');
+                
+                await LazyLoader.loadModule('display/goals-display');
+                log('module-status', '✓ GoalsDisplay loaded', 'success');
+                
+                // 2. Fetch team data
+                log('data-status', 'Fetching team data for ID 836...');
+                const response = await fetch('/api/teams/data?teamId=836');
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error('API error: ' + (data.error || 'Unknown'));
+                }
+                
+                log('data-status', '✓ Data fetched successfully', 'success');
+                const stats = data.data.statistics;
+                
+                // 3. Show relevant goals data
+                const goalsFields = {
+                    'totalMatches': stats.totalMatches,
+                    'goalsFor': stats.goalsFor,
+                    'seasonScoredAVG_overall': stats.seasonScoredAVG_overall,
+                    'scoredGoalsHT_overall': stats.scoredGoalsHT_overall,
+                    'scored_2hg_overall': stats.scored_2hg_overall,
+                    'scoredAVGHT_overall': stats.scoredAVGHT_overall,
+                    'scored_2hg_avg_overall': stats.scored_2hg_avg_overall,
+                    'seasonFTSHT_overall': stats.seasonFTSHT_overall,
+                    'seasonFTS2H_overall': stats.seasonFTS2H_overall
+                };
+                
+                log('goals-data', 'Goals related fields from API:');
+                for (const [key, value] of Object.entries(goalsFields)) {
+                    const status = value !== undefined && value !== null ? 'success' : 'error';
+                    log('goals-data', `${key}: ${value}`, status);
+                }
+                
+                // 4. Check GoalsDisplay module
+                if (window.TeamStatsGoalsDisplay) {
+                    log('goals-module', '✓ GoalsDisplay module is loaded', 'success');
+                    
+                    const goalsDisplay = window.TeamStatsGoalsDisplay;
+                    log('goals-module', `Version: ${goalsDisplay.version}`);
+                    log('goals-module', `Initialized: ${goalsDisplay.initialized}`);
+                    
+                    // 5. Test updateGoalsStatistics
+                    log('update-call', 'Testing updateGoalsStatistics method...');
+                    
+                    // Create a mock container
+                    const mockContainer = document.createElement('div');
+                    mockContainer.innerHTML = `
+                        <div id="scoredPerMatch">-</div>
+                        <div id="goals1HScored">-</div>
+                        <div id="goals2HScored">-</div>
+                        <div id="scoredAvg1H">-</div>
+                        <div id="scoredAvg2H">-</div>
+                        <div id="scoredIn1H">-</div>
+                        <div id="scoredIn2H">-</div>
+                        <div id="failedToScore1H">-</div>
+                        <div id="failedToScore2H">-</div>
+                    `;
+                    document.body.appendChild(mockContainer);
+                    
+                    // Call updateGoalsStatistics
+                    try {
+                        goalsDisplay.updateGoalsStatistics(stats, 'overall');
+                        log('update-call', '✓ updateGoalsStatistics called successfully', 'success');
+                        
+                        // Check updated values
+                        log('update-call', '\nUpdated values:');
+                        log('update-call', `scoredPerMatch: ${document.getElementById('scoredPerMatch').textContent}`);
+                        log('update-call', `scoredAvg1H: ${document.getElementById('scoredAvg1H').textContent}`);
+                        log('update-call', `scoredAvg2H: ${document.getElementById('scoredAvg2H').textContent}`);
+                        log('update-call', `goals1HScored: ${document.getElementById('goals1HScored').textContent}`);
+                        log('update-call', `goals2HScored: ${document.getElementById('goals2HScored').textContent}`);
+                        
+                    } catch (error) {
+                        log('update-call', `✗ Error in updateGoalsStatistics: ${error.message}`, 'error');
+                        console.error('Full error:', error);
+                    }
+                    
+                } else {
+                    log('goals-module', '✗ GoalsDisplay module not found!', 'error');
+                }
+                
+            } catch (error) {
+                console.error('Test error:', error);
+                log('module-status', `✗ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Run test when page loads
+        window.addEventListener('DOMContentLoaded', testModules);
+    </script>
+</body>
+</html>

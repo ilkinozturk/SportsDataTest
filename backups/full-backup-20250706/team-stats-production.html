@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detaylı Takım Analizi - SportsData.AI (Modular)</title>
+    <link rel="stylesheet" href="team-stats.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Loading Section -->
+      <div id="loadingSection" class="loading-section">
+        <div>📊 Takım verileri yükleniyor...</div>
+      </div>
+
+      <!-- Team Section -->
+      <div id="teamSection" style="display: none">
+        <!-- Header -->
+        <div class="dashboard-header">
+          <div class="team-header">
+            <div class="team-logo" id="teamLogo">BVB</div>
+            <div class="team-info">
+              <h1 id="teamName">Borussia Dortmund</h1>
+              <div class="season-info">
+                <span id="seasonInfo">2024/25 Season</span>
+                <span>•</span>
+                <span id="leagueInfo">Bundesliga</span>
+                <span>•</span>
+                <span id="leaguePosition">4th out of 18</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Menu -->
+        <div class="tab-menu">
+          <button class="tab-button active" data-tab="all">All Stats</button>
+          <button class="tab-button" data-tab="goals">Goals</button>
+          <button class="tab-button" data-tab="corners">Corners</button>
+          <button class="tab-button" data-tab="cards">Cards</button>
+        </div>
+
+        <!-- Top Statistics Cards -->
+        <div class="top-stats" data-tab="overview">
+          <div class="top-stat-card">
+            <h3 id="ppgValue">1.68</h3>
+            <div class="label">Points Per Game</div>
+            <div class="form-display" id="recentForm">
+              <div class="form-badge form-W">W</div>
+              <div class="form-badge form-W">W</div>
+              <div class="form-badge form-D">D</div>
+              <div class="form-badge form-L">L</div>
+              <div class="form-badge form-W">W</div>
+            </div>
+          </div>
+          <div class="top-stat-card">
+            <h3>
+              <span id="scoredPerMatch">2.13</span>/<span id="concededPerMatch">1.47</span>
+            </h3>
+            <div class="label">Scored / Match - Goals Conceded Average</div>
+          </div>
+          <div class="top-stat-card">
+            <h3 id="over15Percentage">87%</h3>
+            <div class="label">Matches with Over 1.5 Goals</div>
+          </div>
+          <div class="top-stat-card">
+            <h3 id="bttsPercentage">67%</h3>
+            <div class="label">Both Teams Score</div>
+          </div>
+        </div>
+
+        <!-- Main Content Container -->
+        <div class="main-content">
+          <!-- Content will be dynamically rendered by display modules -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================== -->
+    <!-- MODULAR SYSTEM - ALL MODULES LOADED      -->
+    <!-- ======================================== -->
+    
+    <!-- Core Modules -->
+    <script src="public/js/modules/core/constants.js"></script>
+    <script src="public/js/modules/core/event-bus.js"></script>
+    <script src="public/js/modules/core/state-manager.js"></script>
+    <script src="public/js/modules/core/api-client.js"></script>
+    <script src="public/js/modules/core/team-service.js"></script>
+    <script src="public/js/modules/core/utils.js"></script>
+    <script src="public/js/modules/core/renderer.js"></script>
+    <script src="public/js/modules/core/router.js"></script>
+    
+    <!-- UI Modules -->
+    <script src="public/js/modules/ui/tabs.js"></script>
+    <script src="public/js/modules/ui/filters.js"></script>
+    <script src="public/js/modules/ui/search.js"></script>
+    <script src="public/js/modules/ui/theme.js"></script>
+    <script src="public/js/modules/ui/modal.js"></script>
+    <script src="public/js/modules/ui/dropdown.js"></script>
+    <script src="public/js/modules/ui/tooltip.js"></script>
+    <script src="public/js/modules/ui/components.js"></script>
+    
+    <!-- Data Modules -->
+    <script src="public/js/modules/data/data-processor.js"></script>
+    <script src="public/js/modules/data/cache-manager.js"></script>
+    <script src="public/js/modules/data/data-validator.js"></script>
+    <script src="public/js/modules/data/export-manager.js"></script>
+    <script src="public/js/modules/data/import-manager.js"></script>
+    
+    <!-- Statistics Modules -->
+    <script src="public/js/modules/statistics/base-statistics.js"></script>
+    <script src="public/js/modules/statistics/goals-statistics.js"></script>
+    <script src="public/js/modules/statistics/cards-statistics.js"></script>
+    <script src="public/js/modules/statistics/corners-statistics.js"></script>
+    <script src="public/js/modules/statistics/xg-statistics.js"></script>
+    <script src="public/js/modules/statistics/form-analyzer.js"></script>
+    <script src="public/js/modules/statistics/predictions.js"></script>
+    
+    <!-- Display Modules -->
+    <script src="public/js/modules/display/goals-display.js"></script>
+    <script src="public/js/modules/display/cards-display.js"></script>
+    <script src="public/js/modules/display/corners-display.js"></script>
+    <script src="public/js/modules/display/form-display.js"></script>
+    <script src="public/js/modules/display/statistics-display.js"></script>
+    
+    <!-- Utility Modules -->
+    <script src="public/js/modules/utility/logger.js"></script>
+    <script src="public/js/modules/utility/error-handler.js"></script>
+    <script src="public/js/modules/utility/performance-monitor.js"></script>
+    <script src="public/js/modules/utility/feature-flags.js"></script>
+    
+    <!-- API Configuration -->
+    <script src="public/js/modules/core/api-config-fix.js"></script>
+    
+    <!-- ======================================== -->
+    <!-- MAIN MODULAR INTEGRATION                 -->
+    <!-- ======================================== -->
+    <script src="public/js/team-stats-modular.js"></script>
+    
+    <!-- Legacy Support (Optional - can be removed later) -->
+    <!-- <script src="team-stats.js"></script> -->
+    
+    <script>
+      // Tab functionality using new modules
+      window.showTab = function(tabName, event) {
+        if (window.TeamStatsTabManager) {
+          window.TeamStatsTabManager.switchTab(tabName);
+          
+          // Update button states
+          document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('active');
+          });
+          
+          if (event && event.target) {
+            event.target.closest('.tab-button').classList.add('active');
+          } else {
+            document.querySelectorAll('.tab-button').forEach(btn => {
+              const btnTab = btn.getAttribute('data-tab');
+              if (btnTab === tabName) {
+                btn.classList.add('active');
+              }
+            });
+          }
+          
+          // Emit tab change event
+          if (window.TeamStatsEventBus) {
+            window.TeamStatsEventBus.emit('tab:changed', { tab: tabName });
+          }
+        }
+      };
+      
+      // Initialize tab buttons
+      document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.tab-button').forEach(button => {
+          button.addEventListener('click', function(e) {
+            const tabName = this.getAttribute('data-tab');
+            window.showTab(tabName, e);
+          });
+        });
+        
+        // Check if modular system is ready
+        if (window.TeamStatsEventBus) {
+          window.TeamStatsEventBus.on('app:ready', function() {
+            console.log('✅ Modular system ready!');
+            
+            // Hide loading, show content
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('teamSection').style.display = 'block';
+          });
+          
+          // Listen for team data loaded event
+          window.TeamStatsEventBus.on('data:team:loaded', function(data) {
+            console.log('Team data loaded:', data);
+            populateTeamInfo(data.data);
+          });
+        }
+        
+        // Function to populate team info
+        function populateTeamInfo(teamData) {
+          if (!teamData) return;
+          
+          // Update team header
+          if (teamData.teamInfo) {
+            const teamName = document.getElementById('teamName');
+            const teamLogo = document.getElementById('teamLogo');
+            const seasonInfo = document.getElementById('seasonInfo');
+            const leagueInfo = document.getElementById('leagueInfo');
+            const leaguePosition = document.getElementById('leaguePosition');
+            
+            if (teamName) teamName.textContent = teamData.teamInfo.name || 'Team';
+            if (teamLogo) teamLogo.textContent = (teamData.teamInfo.name || 'T').substring(0, 3).toUpperCase();
+            if (seasonInfo) seasonInfo.textContent = teamData.teamInfo.season || '2024/25';
+            if (leagueInfo) leagueInfo.textContent = teamData.league?.name || 'League';
+            if (leaguePosition && teamData.leaguePosition) {
+              leaguePosition.textContent = `${teamData.leaguePosition.position}${getPositionSuffix(teamData.leaguePosition.position)} out of ${teamData.leaguePosition.totalTeams}`;
+            }
+          }
+          
+          // Update top stats
+          if (teamData.statistics) {
+            const stats = teamData.statistics;
+            
+            // PPG
+            const ppgValue = document.getElementById('ppgValue');
+            if (ppgValue) ppgValue.textContent = (stats.pointsPerGame || 0).toFixed(2);
+            
+            // Goals
+            const scoredPerMatch = document.getElementById('scoredPerMatch');
+            const concededPerMatch = document.getElementById('concededPerMatch');
+            if (scoredPerMatch) scoredPerMatch.textContent = (stats.goalsPerMatch || 0).toFixed(2);
+            if (concededPerMatch) concededPerMatch.textContent = (stats.goalsConcededPerMatch || 0).toFixed(2);
+            
+            // Over 1.5 Goals
+            const over15Percentage = document.getElementById('over15Percentage');
+            if (over15Percentage) over15Percentage.textContent = `${Math.round(stats.over15GoalsPercentage || 0)}%`;
+            
+            // BTTS
+            const bttsPercentage = document.getElementById('bttsPercentage');
+            if (bttsPercentage) bttsPercentage.textContent = `${Math.round(stats.bttsPercentage || 0)}%`;
+            
+            // Form
+            const recentForm = document.getElementById('recentForm');
+            if (recentForm && stats.recentForm) {
+              recentForm.innerHTML = '';
+              const form = stats.recentForm.split('').slice(0, 5);
+              form.forEach(result => {
+                const badge = document.createElement('div');
+                badge.className = `form-badge form-${result}`;
+                badge.textContent = result;
+                recentForm.appendChild(badge);
+              });
+            }
+          }
+        }
+        
+        function getPositionSuffix(position) {
+          if (position % 10 === 1 && position % 100 !== 11) return 'st';
+          if (position % 10 === 2 && position % 100 !== 12) return 'nd';
+          if (position % 10 === 3 && position % 100 !== 13) return 'rd';
+          return 'th';
+        }
+      });
+    </script>
+  </body>
+</html>

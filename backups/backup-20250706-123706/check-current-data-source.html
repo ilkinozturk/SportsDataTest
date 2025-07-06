@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Current Data Source Check</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test { margin: 10px 0; padding: 10px; border: 1px solid #ddd; }
+        .success { background: #d4edda; }
+        .error { background: #f8d7da; }
+        .warning { background: #fff3cd; }
+    </style>
+</head>
+<body>
+    <h1>Current Data Source Analysis</h1>
+    
+    <div id="results">Analyzing...</div>
+    
+    <script>
+        async function analyzeDataSource() {
+            const resultsDiv = document.getElementById('results');
+            let html = '';
+            
+            try {
+                // Test 1: Direct API
+                console.log('Testing direct API...');
+                const apiResponse = await fetch('/api/teams/data?teamId=836');
+                const apiData = await apiResponse.json();
+                
+                html += `<div class="test success">
+                    <h3>✅ Direct API Test</h3>
+                    <p>Team: ${apiData.data.teamInfo.name}</p>
+                    <p>PPG: ${apiData.data.statistics.pointsPerGame}</p>
+                    <p>Data is: <strong>REAL from API</strong></p>
+                </div>`;
+                
+                // Test 2: Check actual team-stats.html page
+                console.log('Loading team-stats.html iframe...');
+                const iframe = document.createElement('iframe');
+                iframe.src = '/team-stats.html?teamId=836';
+                iframe.style.width = '1px';
+                iframe.style.height = '1px';
+                iframe.style.opacity = '0';
+                
+                iframe.onload = () => {
+                    setTimeout(() => {
+                        try {
+                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                            
+                            // Check what's actually displayed
+                            const teamName = iframeDoc.getElementById('teamName')?.textContent || 'Not found';
+                            const ppgValue = iframeDoc.getElementById('ppgValue')?.textContent || 'Not found';
+                            const goalsPerMatch = iframeDoc.getElementById('goalsPerMatch')?.textContent || 'Not found';
+                            
+                            // Compare with expected API data
+                            const expectedName = apiData.data.teamInfo.name;
+                            const expectedPPG = apiData.data.statistics.pointsPerGame.toFixed(2);
+                            const expectedGoals = apiData.data.statistics.goalsPerMatch.toFixed(2);
+                            
+                            const nameCorrect = teamName === expectedName;
+                            const ppgCorrect = ppgValue === expectedPPG;
+                            const goalsCorrect = goalsPerMatch === expectedGoals;
+                            
+                            html += `<div class="test ${nameCorrect && ppgCorrect && goalsCorrect ? 'success' : 'error'}">
+                                <h3>${nameCorrect && ppgCorrect && goalsCorrect ? '✅' : '❌'} team-stats.html Page Test</h3>
+                                <p>Team Name: "${teamName}" (Expected: "${expectedName}") ${nameCorrect ? '✅' : '❌'}</p>
+                                <p>PPG: "${ppgValue}" (Expected: "${expectedPPG}") ${ppgCorrect ? '✅' : '❌'}</p>
+                                <p>Goals/Match: "${goalsPerMatch}" (Expected: "${expectedGoals}") ${goalsCorrect ? '✅' : '❌'}</p>
+                                <p><strong>${nameCorrect && ppgCorrect && goalsCorrect ? 'Using REAL API data' : 'Using MOCK/STATIC data!'}</strong></p>
+                            </div>`;
+                            
+                            // Also check what's in browser console
+                            html += `<div class="test warning">
+                                <h3>⚠️ Check Browser Console</h3>
+                                <p>Open browser console and look for:</p>
+                                <ul>
+                                    <li>"✅ Modular system ready!" - System loaded</li>
+                                    <li>"Team data loaded:" - API data received</li>
+                                    <li>"[TeamService] Fetching data for team 836" - API call made</li>
+                                    <li>Any error messages</li>
+                                </ul>
+                            </div>`;
+                            
+                            resultsDiv.innerHTML = html;
+                            document.body.removeChild(iframe);
+                            
+                        } catch (e) {
+                            html += `<div class="test error">
+                                <h3>❌ iframe Test Error</h3>
+                                <p>Could not access iframe content: ${e.message}</p>
+                                <p>This might be due to CORS restrictions</p>
+                            </div>`;
+                            resultsDiv.innerHTML = html;
+                        }
+                    }, 3000); // Wait 3 seconds for page to load and process
+                };
+                
+                document.body.appendChild(iframe);
+                
+            } catch (error) {
+                html += `<div class="test error">
+                    <h3>❌ Analysis Error</h3>
+                    <p>${error.message}</p>
+                </div>`;
+                resultsDiv.innerHTML = html;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', analyzeDataSource);
+    </script>
+</body>
+</html>

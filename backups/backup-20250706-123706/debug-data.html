@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Data - Team 836</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .found { color: green; font-weight: bold; }
+        .missing { color: red; }
+        pre { background: #f5f5f5; padding: 15px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Debug Team 836 Data</h1>
+    <div id="output"></div>
+    
+    <script>
+        async function debugData() {
+            const output = document.getElementById('output');
+            
+            try {
+                const response = await fetch('http://localhost:3005/api/teams/data?teamId=836');
+                const data = await response.json();
+                
+                if (data.success && data.stats) {
+                    const stats = data.stats;
+                    
+                    // Check specific fields that should update in UI
+                    const checkFields = {
+                        'Over/Under Goals': {
+                            'over05GoalsPercentage': stats.over05GoalsPercentage,
+                            'over15GoalsPercentage': stats.over15GoalsPercentage,
+                            'over25GoalsPercentage': stats.over25GoalsPercentage,
+                            'over35GoalsPercentage': stats.over35GoalsPercentage,
+                            'over45GoalsPercentage': stats.over45GoalsPercentage,
+                            'seasonOver05Percentage_overall': stats.seasonOver05Percentage_overall,
+                            'seasonOver15Percentage_overall': stats.seasonOver15Percentage_overall,
+                            'seasonOver25Percentage_overall': stats.seasonOver25Percentage_overall,
+                            'seasonOver35Percentage_overall': stats.seasonOver35Percentage_overall,
+                            'seasonOver45Percentage_overall': stats.seasonOver45Percentage_overall
+                        },
+                        'Half Time Over/Under': {
+                            'seasonOver05PercentageHT_overall': stats.seasonOver05PercentageHT_overall,
+                            'seasonOver15PercentageHT_overall': stats.seasonOver15PercentageHT_overall,
+                            'seasonOver25PercentageHT_overall': stats.seasonOver25PercentageHT_overall
+                        },
+                        'Second Half Over/Under': {
+                            'over05_2hg_percentage_overall': stats.over05_2hg_percentage_overall,
+                            'over15_2hg_percentage_overall': stats.over15_2hg_percentage_overall,
+                            'over25_2hg_percentage_overall': stats.over25_2hg_percentage_overall
+                        },
+                        'Cards': {
+                            'cardsTotal_overall': stats.cardsTotal_overall,
+                            'cardsAVG_overall': stats.cardsAVG_overall,
+                            'totalCards': stats.totalCards,
+                            'cardsPerMatch': stats.cardsPerMatch,
+                            'cardsOver05': stats.cardsOver05,
+                            'over05CardsPercentage_overall': stats.over05CardsPercentage_overall,
+                            'over15CardsPercentage_overall': stats.over15CardsPercentage_overall,
+                            'over25CardsPercentage_overall': stats.over25CardsPercentage_overall
+                        }
+                    };
+                    
+                    let html = '<h2>API Data Check</h2>';
+                    
+                    for (const [section, fields] of Object.entries(checkFields)) {
+                        html += `<h3>${section}</h3><ul>`;
+                        for (const [field, value] of Object.entries(fields)) {
+                            const className = value !== undefined && value !== null && value !== 0 ? 'found' : 'missing';
+                            html += `<li class="${className}">${field}: ${value ?? 'undefined'}</li>`;
+                        }
+                        html += '</ul>';
+                    }
+                    
+                    // Show all available fields
+                    html += '<h3>All Available Fields</h3>';
+                    html += '<details><summary>Click to expand</summary>';
+                    html += '<pre>' + JSON.stringify(stats, null, 2) + '</pre>';
+                    html += '</details>';
+                    
+                    output.innerHTML = html;
+                    
+                    // Now check if the page elements exist
+                    html += '<h2>Page Elements Check</h2><ul>';
+                    const elementsToCheck = ['over05FT', 'over15FT', 'over25FT', 'over35FT', 'over45FT', 
+                                           'over05HT', 'over15HT', 'over25HT',
+                                           'over052H', 'over152H', 'over252H',
+                                           'totalCards', 'cardsPerMatch', 'cardsOver05'];
+                    
+                    elementsToCheck.forEach(id => {
+                        const el = document.getElementById(id);
+                        const status = el ? `✅ Found (current value: ${el.textContent})` : '❌ Not found';
+                        html += `<li>${id}: ${status}</li>`;
+                    });
+                    html += '</ul>';
+                    
+                    output.innerHTML = html;
+                    
+                } else {
+                    output.innerHTML = '<p class="missing">Failed to load data from API</p>';
+                }
+            } catch (error) {
+                output.innerHTML = `<p class="missing">Error: ${error.message}</p>`;
+            }
+        }
+        
+        debugData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Debug Test - Goals Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+            border: 1px solid #dee2e6;
+        }
+        .field-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .field-item {
+            padding: 8px;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .field-name {
+            color: #0066cc;
+            font-weight: bold;
+        }
+        .field-value {
+            color: #28a745;
+        }
+        .zero-value {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        #progress {
+            margin: 20px 0;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 4px;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Comprehensive Debug Test - Goals Data Problem</h1>
+        
+        <div class="test-section">
+            <h2>Test Controls</h2>
+            <button onclick="runAllTests()">Run All Tests</button>
+            <button onclick="clearCache()">Clear Cache & Retry</button>
+            <button onclick="testSingleField()">Test Single Field</button>
+        </div>
+        
+        <div id="progress"></div>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const teamId = '836';
+        let testResults = [];
+        
+        function log(message, type = 'info') {
+            const progress = document.getElementById('progress');
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = message;
+            progress.appendChild(div);
+            console.log(`[${type}] ${message}`);
+        }
+        
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = results;
+        }
+        
+        async function runAllTests() {
+            document.getElementById('progress').innerHTML = '';
+            document.getElementById('results').innerHTML = '';
+            testResults = [];
+            
+            log('Starting comprehensive debug test...', 'info');
+            
+            // Test 1: Direct API Call
+            await testDirectAPI();
+            
+            // Test 2: Check Data Transformation
+            await testDataTransformation();
+            
+            // Test 3: Test Frontend Data Flow
+            await testFrontendDataFlow();
+            
+            // Test 4: Check UI Elements
+            await testUIElements();
+            
+            // Display summary
+            displaySummary();
+        }
+        
+        async function testDirectAPI() {
+            log('Test 1: Testing Direct API Call...', 'info');
+            
+            try {
+                const response = await fetch(`/api/teams/data?teamId=${teamId}`);
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    const stats = data.data.statistics || {};
+                    
+                    // Key fields for goals
+                    const keyFields = [
+                        'matches',
+                        'goalsFor',
+                        'seasonScoredAVG_overall',
+                        'seasonGoals1H_overall',
+                        'seasonGoals2H_overall',
+                        'seasonFTSHT_overall',
+                        'seasonFTS2H_overall',
+                        'scoredGoalsHT_overall',
+                        'penaltiesWon',
+                        'penaltiesConceded'
+                    ];
+                    
+                    let hasData = false;
+                    let zeroFields = [];
+                    let nonZeroFields = [];
+                    
+                    keyFields.forEach(field => {
+                        const value = stats[field];
+                        if (value !== undefined && value !== null && value !== 0) {
+                            hasData = true;
+                            nonZeroFields.push(`${field}: ${value}`);
+                        } else {
+                            zeroFields.push(field);
+                        }
+                    });
+                    
+                    if (hasData) {
+                        log(`✅ API returns data! Non-zero fields: ${nonZeroFields.length}`, 'success');
+                        nonZeroFields.forEach(field => log(`  ${field}`, 'info'));
+                    } else {
+                        log('❌ API returns all zeros for key fields!', 'error');
+                    }
+                    
+                    if (zeroFields.length > 0) {
+                        log(`⚠️ Zero/Missing fields: ${zeroFields.join(', ')}`, 'warning');
+                    }
+                    
+                    testResults.push({
+                        test: 'Direct API',
+                        status: hasData ? 'PASS' : 'FAIL',
+                        details: { nonZeroFields, zeroFields }
+                    });
+                    
+                    // Check additional_info
+                    if (stats.additional_info) {
+                        log('📊 Checking additional_info...', 'info');
+                        const additionalFields = ['cards_for', 'cards_against', 'seasonFTSHT_overall'];
+                        additionalFields.forEach(field => {
+                            const value = stats.additional_info[field];
+                            if (value !== undefined) {
+                                log(`  additional_info.${field}: ${value}`, 'info');
+                            }
+                        });
+                    }
+                    
+                } else {
+                    log('❌ API response structure invalid!', 'error');
+                    testResults.push({
+                        test: 'Direct API',
+                        status: 'FAIL',
+                        details: 'Invalid response structure'
+                    });
+                }
+                
+            } catch (error) {
+                log(`❌ API Error: ${error.message}`, 'error');
+                testResults.push({
+                    test: 'Direct API',
+                    status: 'ERROR',
+                    details: error.message
+                });
+            }
+        }
+        
+        async function testDataTransformation() {
+            log('Test 2: Testing Data Transformation...', 'info');
+            
+            // Load TeamService module
+            const scripts = [
+                '/public/js/modules/core/event-bus.js',
+                '/public/js/modules/core/state-manager.js',
+                '/public/js/modules/core/api-client.js',
+                '/public/js/modules/core/team-service.js'
+            ];
+            
+            for (const src of scripts) {
+                await loadScript(src);
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            if (window.TeamStatsTeamService) {
+                try {
+                    const teamData = await window.TeamStatsTeamService.getTeamData(teamId);
+                    
+                    log('✅ TeamService loaded data', 'success');
+                    
+                    // Check transformation
+                    const stats = teamData.statistics || teamData.stats || {};
+                    
+                    log(`  Team Name: ${teamData.teamName || 'N/A'}`, 'info');
+                    log(`  Has statistics: ${!!teamData.statistics}`, 'info');
+                    log(`  Has stats: ${!!teamData.stats}`, 'info');
+                    log(`  Statistics keys: ${Object.keys(stats).length}`, 'info');
+                    
+                    // Check specific fields
+                    const checkFields = ['matches', 'goalsFor', 'seasonScoredAVG_overall'];
+                    checkFields.forEach(field => {
+                        const value = stats[field];
+                        log(`  ${field}: ${value !== undefined ? value : 'MISSING'}`, value ? 'info' : 'warning');
+                    });
+                    
+                    testResults.push({
+                        test: 'Data Transformation',
+                        status: Object.keys(stats).length > 0 ? 'PASS' : 'FAIL',
+                        details: {
+                            statsKeys: Object.keys(stats).length,
+                            hasData: Object.keys(stats).length > 0
+                        }
+                    });
+                    
+                } catch (error) {
+                    log(`❌ TeamService Error: ${error.message}`, 'error');
+                    testResults.push({
+                        test: 'Data Transformation',
+                        status: 'ERROR',
+                        details: error.message
+                    });
+                }
+            } else {
+                log('❌ TeamService not loaded!', 'error');
+                testResults.push({
+                    test: 'Data Transformation',
+                    status: 'FAIL',
+                    details: 'Module not loaded'
+                });
+            }
+        }
+        
+        async function testFrontendDataFlow() {
+            log('Test 3: Testing Frontend Data Flow...', 'info');
+            
+            // Load all required modules
+            const modules = [
+                '/public/js/modules/display/goals-display.js',
+                '/public/js/team-stats-modular.js'
+            ];
+            
+            for (const src of modules) {
+                await loadScript(src);
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Check if modules are loaded
+            if (window.TeamStatsGoalsDisplay) {
+                log('✅ GoalsDisplay module loaded', 'success');
+                
+                // Check if updateGoalsStatistics method exists
+                if (window.TeamStatsGoalsDisplay.updateGoalsStatistics) {
+                    log('✅ updateGoalsStatistics method exists', 'success');
+                    
+                    // Test with mock data
+                    const mockStats = {
+                        matches: 30,
+                        goalsFor: 64,
+                        seasonScoredAVG_overall: 2.13,
+                        seasonGoals1H_overall: 20,
+                        seasonFTSHT_overall: 10,
+                        penaltiesWon: 5
+                    };
+                    
+                    try {
+                        window.TeamStatsGoalsDisplay.updateGoalsStatistics(mockStats, 'overall');
+                        log('✅ updateGoalsStatistics called successfully with mock data', 'success');
+                    } catch (error) {
+                        log(`❌ Error calling updateGoalsStatistics: ${error.message}`, 'error');
+                    }
+                    
+                } else {
+                    log('❌ updateGoalsStatistics method not found!', 'error');
+                }
+            } else {
+                log('❌ GoalsDisplay module not loaded!', 'error');
+            }
+            
+            // Check StateManager
+            if (window.TeamStatsStateManager) {
+                const stats = window.TeamStatsStateManager.get('statistics') || {};
+                log(`📊 StateManager statistics: ${Object.keys(stats).length} keys`, 'info');
+                
+                if (Object.keys(stats).length > 0) {
+                    log('✅ Statistics in StateManager', 'success');
+                    // Sample some values
+                    ['matches', 'goalsFor', 'seasonScoredAVG_overall'].forEach(key => {
+                        log(`  ${key}: ${stats[key] !== undefined ? stats[key] : 'MISSING'}`, 'info');
+                    });
+                } else {
+                    log('❌ No statistics in StateManager!', 'error');
+                }
+            }
+            
+            testResults.push({
+                test: 'Frontend Data Flow',
+                status: window.TeamStatsGoalsDisplay ? 'PARTIAL' : 'FAIL',
+                details: {
+                    goalsDisplayLoaded: !!window.TeamStatsGoalsDisplay,
+                    updateMethodExists: !!(window.TeamStatsGoalsDisplay && window.TeamStatsGoalsDisplay.updateGoalsStatistics),
+                    stateManagerHasData: !!(window.TeamStatsStateManager && Object.keys(window.TeamStatsStateManager.get('statistics') || {}).length > 0)
+                }
+            });
+        }
+        
+        async function testUIElements() {
+            log('Test 4: Testing UI Elements...', 'info');
+            
+            // Check if we're on the actual page
+            const elementsToCheck = [
+                { id: 'scoredPerMatchGoals', name: 'Scored Per Match' },
+                { id: 'scored1HPerMatch', name: '1st Half Scored' },
+                { id: 'scored2HPerMatch', name: '2nd Half Scored' },
+                { id: 'scoredAvg1H', name: 'Scored Avg 1H' },
+                { id: 'scoredIn1H', name: 'Scored in 1H %' },
+                { id: 'failedToScore1H', name: 'Failed to Score 1H' },
+                { id: 'goals1HScored', name: 'Goals 1H Scored' },
+                { id: 'penaltiesWon', name: 'Penalties Won' }
+            ];
+            
+            let foundElements = 0;
+            let zeroElements = [];
+            
+            elementsToCheck.forEach(({ id, name }) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    foundElements++;
+                    const value = element.textContent || element.innerText || '';
+                    if (value === '0' || value === '0.00' || value === '0%' || value === '0 in 0') {
+                        zeroElements.push(`${name} (${id}): "${value}"`);
+                    } else {
+                        log(`✅ ${name}: ${value}`, 'success');
+                    }
+                } else {
+                    log(`⚠️ Element not found: ${id}`, 'warning');
+                }
+            });
+            
+            if (foundElements === 0) {
+                log('ℹ️ No UI elements found - not on the actual page', 'info');
+            } else {
+                log(`Found ${foundElements}/${elementsToCheck.length} elements`, 'info');
+                if (zeroElements.length > 0) {
+                    log(`❌ ${zeroElements.length} elements showing zero:`, 'error');
+                    zeroElements.forEach(el => log(`  ${el}`, 'error'));
+                }
+            }
+            
+            testResults.push({
+                test: 'UI Elements',
+                status: foundElements > 0 && zeroElements.length === 0 ? 'PASS' : 'FAIL',
+                details: {
+                    foundElements,
+                    totalElements: elementsToCheck.length,
+                    zeroElements: zeroElements.length
+                }
+            });
+        }
+        
+        function displaySummary() {
+            let html = '<div class="test-section"><h2>Test Summary</h2>';
+            
+            testResults.forEach(result => {
+                const statusClass = result.status === 'PASS' ? 'success' : 
+                                   result.status === 'FAIL' ? 'error' : 
+                                   result.status === 'PARTIAL' ? 'warning' : 'info';
+                
+                html += `
+                    <div class="${statusClass}">
+                        <strong>${result.test}:</strong> ${result.status}
+                        <pre>${JSON.stringify(result.details, null, 2)}</pre>
+                    </div>
+                `;
+            });
+            
+            // Diagnosis
+            html += '<h3>Diagnosis:</h3>';
+            
+            const apiTest = testResults.find(r => r.test === 'Direct API');
+            const transformTest = testResults.find(r => r.test === 'Data Transformation');
+            const frontendTest = testResults.find(r => r.test === 'Frontend Data Flow');
+            
+            if (apiTest && apiTest.status === 'FAIL') {
+                html += '<div class="error">🔴 Problem: API is returning all zeros. This is a backend issue.</div>';
+                html += '<div class="info">Solution: Check if the API is correctly fetching data from the database.</div>';
+            } else if (transformTest && transformTest.status === 'FAIL') {
+                html += '<div class="error">🔴 Problem: Data transformation is failing.</div>';
+                html += '<div class="info">Solution: Check TeamService.transformApiResponse method.</div>';
+            } else if (frontendTest && frontendTest.status === 'FAIL') {
+                html += '<div class="error">🔴 Problem: Frontend modules are not loading correctly.</div>';
+                html += '<div class="info">Solution: Check module loading order and dependencies.</div>';
+            } else {
+                html += '<div class="warning">🟡 Data seems to be flowing but UI is not updating.</div>';
+                html += '<div class="info">Solution: Check updateGoalsStatistics implementation and element IDs.</div>';
+            }
+            
+            html += '</div>';
+            
+            displayResults(html);
+        }
+        
+        async function clearCache() {
+            log('Clearing cache...', 'info');
+            
+            try {
+                // Clear frontend cache
+                if (window.TeamStatsTeamService && window.TeamStatsTeamService.clearCache) {
+                    window.TeamStatsTeamService.clearCache();
+                    log('✅ Frontend cache cleared', 'success');
+                }
+                
+                // Force reload data
+                await runAllTests();
+                
+            } catch (error) {
+                log(`❌ Error clearing cache: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testSingleField() {
+            const fieldName = prompt('Enter field name to test (e.g., seasonFTSHT_overall):');
+            if (!fieldName) return;
+            
+            document.getElementById('progress').innerHTML = '';
+            log(`Testing single field: ${fieldName}`, 'info');
+            
+            try {
+                const response = await fetch(`/api/teams/data?teamId=${teamId}`);
+                const data = await response.json();
+                
+                if (data.success && data.data && data.data.statistics) {
+                    const value = data.data.statistics[fieldName];
+                    
+                    if (value !== undefined) {
+                        log(`✅ Field found: ${fieldName} = ${value}`, 'success');
+                        
+                        // Check in additional_info too
+                        if (data.data.statistics.additional_info && data.data.statistics.additional_info[fieldName] !== undefined) {
+                            log(`  Also in additional_info: ${data.data.statistics.additional_info[fieldName]}`, 'info');
+                        }
+                    } else {
+                        log(`❌ Field not found: ${fieldName}`, 'error');
+                        
+                        // Search for similar fields
+                        const similar = Object.keys(data.data.statistics).filter(key => 
+                            key.toLowerCase().includes(fieldName.toLowerCase())
+                        );
+                        
+                        if (similar.length > 0) {
+                            log('Similar fields found:', 'info');
+                            similar.forEach(key => {
+                                log(`  ${key}: ${data.data.statistics[key]}`, 'info');
+                            });
+                        }
+                    }
+                }
+                
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                // Check if already loaded
+                if (document.querySelector(`script[src="${src}"]`)) {
+                    resolve();
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Card & Discipline Statistics Data Check</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .section { margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px; }
+        .found { color: green; font-weight: bold; }
+        .not-found { color: red; }
+        .value { color: blue; font-weight: bold; }
+        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Card & Discipline Statistics Data Check - Team 836</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function checkCardDisciplineData() {
+            const results = document.getElementById('results');
+            
+            try {
+                results.innerHTML = '<div>Fetching data for team 836...</div>';
+                
+                const response = await fetch('http://localhost:3005/api/teams/data?teamId=836');
+                const data = await response.json();
+                
+                if (data.success && data.stats) {
+                    const stats = data.stats;
+                    let html = '';
+                    
+                    // Card & Discipline Statistics
+                    html += '<div class="section">';
+                    html += '<h2>Card & Discipline Statistics</h2>';
+                    html += '<table>';
+                    html += '<tr><th>Stat</th><th>Overall</th><th>Home</th><th>Away</th></tr>';
+                    
+                    // Total Cards
+                    html += '<tr>';
+                    html += '<td>Total Cards</td>';
+                    html += `<td class="${stats.cardsTotal_overall ? 'found' : 'not-found'}">${stats.cardsTotal_overall || stats.totalCards || 0}</td>`;
+                    html += `<td class="${stats.cardsTotal_home ? 'found' : 'not-found'}">${stats.cardsTotal_home || stats.homeTotalCards || 0}</td>`;
+                    html += `<td class="${stats.cardsTotal_away ? 'found' : 'not-found'}">${stats.cardsTotal_away || stats.awayTotalCards || 0}</td>`;
+                    html += '</tr>';
+                    
+                    // Cards Per Match
+                    html += '<tr>';
+                    html += '<td>Cards Per Match</td>';
+                    html += `<td class="${stats.cardsAVG_overall ? 'found' : 'not-found'}">${stats.cardsAVG_overall || stats.cardsPerMatch || 0}</td>`;
+                    html += `<td class="${stats.cardsAVG_home ? 'found' : 'not-found'}">${stats.cardsAVG_home || stats.homeCardsPerMatch || 0}</td>`;
+                    html += `<td class="${stats.cardsAVG_away ? 'found' : 'not-found'}">${stats.cardsAVG_away || stats.awayCardsPerMatch || 0}</td>`;
+                    html += '</tr>';
+                    
+                    // Yellow Cards
+                    html += '<tr>';
+                    html += '<td>Total Yellow Cards</td>';
+                    html += `<td class="${stats.yellowCards ? 'found' : 'not-found'}">${stats.yellowCards || stats.yellowCardsTotal || 0}</td>`;
+                    html += `<td class="${stats.yellowCards_home ? 'found' : 'not-found'}">${stats.yellowCards_home || stats.homeYellowCards || 0}</td>`;
+                    html += `<td class="${stats.yellowCards_away ? 'found' : 'not-found'}">${stats.yellowCards_away || stats.awayYellowCards || 0}</td>`;
+                    html += '</tr>';
+                    
+                    // Red Cards
+                    html += '<tr>';
+                    html += '<td>Total Red Cards</td>';
+                    html += `<td class="${stats.redCards ? 'found' : 'not-found'}">${stats.redCards || stats.redCardsTotal || 0}</td>`;
+                    html += `<td class="${stats.redCards_home ? 'found' : 'not-found'}">${stats.redCards_home || stats.homeRedCards || 0}</td>`;
+                    html += `<td class="${stats.redCards_away ? 'found' : 'not-found'}">${stats.redCards_away || stats.awayRedCards || 0}</td>`;
+                    html += '</tr>';
+                    
+                    // Cards in Draws (that we removed)
+                    html += '<tr>';
+                    html += '<td>Cards in Draws (REMOVED)</td>';
+                    html += `<td class="${stats.cardsInDraws ? 'found' : 'not-found'}">${stats.cardsInDraws || 0}</td>`;
+                    html += `<td>-</td>`;
+                    html += `<td>-</td>`;
+                    html += '</tr>';
+                    
+                    html += '</table>';
+                    html += '</div>';
+                    
+                    // All card-related fields
+                    html += '<div class="section">';
+                    html += '<h2>All Card-Related Fields Found:</h2>';
+                    html += '<ul>';
+                    Object.keys(stats).forEach(key => {
+                        if (key.toLowerCase().includes('card') || key.toLowerCase().includes('yellow') || key.toLowerCase().includes('red')) {
+                            html += `<li>${key}: <span class="value">${stats[key]}</span></li>`;
+                        }
+                    });
+                    html += '</ul>';
+                    html += '</div>';
+                    
+                    results.innerHTML = html;
+                } else {
+                    results.innerHTML = '<div class="not-found">Failed to get data from API</div>';
+                }
+                
+            } catch (error) {
+                results.innerHTML = `<div class="not-found">Error: ${error.message}</div>`;
+            }
+        }
+        
+        checkCardDisciplineData();
+    </script>
+</body>
+</html>

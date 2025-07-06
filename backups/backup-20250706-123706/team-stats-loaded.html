@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detaylı Takım Analizi - SportsData.AI</title>
+    <link rel="stylesheet" href="/team-stats.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div id="loadingSection" class="loading-section">
+        <div>📊 Takım verileri yükleniyor...</div>
+      </div>
+      <div id="teamSection" style="display: none">
+        <div class="dashboard-header">
+          <div class="team-header">
+            <div class="team-logo" id="teamLogo">BVB</div>
+            <div class="team-info">
+              <h1 id="teamName">Borussia Dortmund</h1>
+              <div class="season-info">
+                <span id="seasonInfo">2024/25 Season</span>
+                <span>•</span>
+                <span id="leagueInfo">Bundesliga</span>
+                <span>•</span>
+                <span id="leaguePosition">4th out of 18</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="top-stats">
+          <div class="top-stat-card">
+            <h3 id="ppgValue">1.68</h3>
+            <div class="label">Points Per Game</div>
+            <div class="form-display" id="recentForm">
+              <div class="form-badge form-W">W</div>
+              <div class="form-badge form-W">W</div>
+              <div class="form-badge form-W">W</div>
+              <div class="form-badge form-W">W</div>
+              <div class="form-badge form-W">W</div>
+            </div>
+            <div class="performance-text" id="formText">Very Good Form</div>
+          </div>
+          <div class="top-stat-card">
+            <h3 id="goalsPerMatch">2.09</h3>
+            <div class="label">Scored / Match</div>
+            <div class="performance-text">Goals Scored - Very Good</div>
+          </div>
+          <div class="top-stat-card">
+            <h3 id="concededPerMatch">1.50</h3>
+            <div class="label">Conceded / Match</div>
+            <div class="performance-text">Goals Conceded - Average</div>
+          </div>
+        </div>
+        <div class="main-stats-section">
+          <h2 class="section-title" id="mainStatsTitle">2024/25 Borussia Dortmund Statistics</h2>
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Pld</th>
+                <th>W</th>
+                <th>D</th>
+                <th>L</th>
+                <th>GF</th>
+                <th>GA</th>
+                <th>GD</th>
+                <th>PPG</th>
+                <th>Last 5</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight: 700">Home Form</td>
+                <td id="homePlayed">17</td>
+                <td id="homeWins">11</td>
+                <td id="homeDraws">3</td>
+                <td id="homeLosses">3</td>
+                <td id="homeGoalsFor">44</td>
+                <td id="homeGoalsAgainst">19</td>
+                <td id="homeGD">+25</td>
+                <td id="homePPG">2.12</td>
+                <td class="form-cell" id="homeFormDisplay">
+                  <div class="form-display">
+                    <div class="form-badge form-L">L</div>
+                    <div class="form-badge form-W">W</div>
+                    <div class="form-badge form-W">W</div>
+                    <div class="form-badge form-W">W</div>
+                    <div class="form-badge form-W">W</div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight: 700">Away Form</td>
+                <td id="awayPlayed">17</td>
+                <td id="awayWins">6</td>
+                <td id="awayDraws">3</td>
+                <td id="awayLosses">8</td>
+                <td id="awayGoalsFor">27</td>
+                <td id="awayGoalsAgainst">32</td>
+                <td id="awayGD">-5</td>
+                <td id="awayPPG">1.24</td>
+                <td class="form-cell" id="awayFormDisplay">
+                  <div class="form-display">
+                    <div class="form-badge form-L">L</div>
+                    <div class="form-badge form-W">W</div>
+                    <div class="form-badge form-D">D</div>
+                    <div class="form-badge form-W">W</div>
+                    <div class="form-badge form-W">W</div>
+                  </div>
+                </td>
+              </tr>
+              <tr style="background: rgba(255, 235, 59, 0.1); font-weight: 700">
+                <td>Overall</td>
+                <td id="totalPlayed">34</td>
+                <td id="totalWins">17</td>
+                <td id="totalDraws">6</td>
+                <td id="totalLosses">11</td>
+                <td id="totalGoalsFor">71</td>
+                <td id="totalGoalsAgainst">51</td>
+                <td id="totalGD">+20</td>
+                <td id="totalPPG">1.68</td>
+                <td class="form-cell" id="overallFormDisplay">
+                  <div class="form-display">
+                    <div class="form-badge form-W">W</div>
+                    <div class="form-badge form-W">W</div>
+                    <div class="form-badge form-W">W</div>
+                    <div class="form-badge form-W">W</div>
+                    <div class="form-badge form-W">W</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="prediction-info">
+            <span class="risk-high">Prediction Risk: <span id="predictionRisk">118%</span> Very High Risk</span> •
+            <span>Home Advantage: <span id="homeAdvantage">+25%</span></span>
+          </div>
+          <div class="team-description" id="teamDescription">
+            This season in <span id="leagueName">Bundesliga</span>, <span id="teamNameDesc">Borussia Dortmund</span>'s
+            form is <span id="overallFormDesc">Very Good</span> overall with <span id="winsDesc">17</span> wins,
+            <span id="drawsDesc">6</span> draws, and <span id="lossesDesc">11</span> losses. This performance currently
+            places <span id="teamNameDesc2">Borussia Dortmund</span> at
+            <span id="positionDesc">4th out of 18</span> teams in the <span id="leagueNameDesc">Bundesliga</span> Table,
+            winning <span id="winPercentageDesc">50%</span> of matches.
+            <span id="teamNameDesc3">Borussia Dortmund</span>'s home form is
+            <span id="homeFormDesc">excellent</span> with the following results:
+            <span id="homeResultsDesc">11 wins, 3 draws, and 3 losses</span>. And their away form is considered
+            <span id="awayFormDesc">average</span>, as a result of
+            <span id="awayResultsDesc">6 wins, 3 draws, and 8 losses</span>. <br /><br />
+            <span id="teamNameDesc4">Borussia Dortmund</span> has scored a total of
+            <span id="totalGoalsDesc">71</span> goals this season in <span id="leagueNameDesc2">Bundesliga</span>.
+          </div>
+        </div>
+        <div class="filter-tabs">
+          <button class="filter-tab active" onclick="setMainFilter('overall')" id="overallTab">Overall</button>
+          <button class="filter-tab" onclick="setMainFilter('home')" id="homeTab">At Home</button>
+          <button class="filter-tab" onclick="setMainFilter('away')" id="awayTab">At Away</button>
+        </div>
+        <div class="stats-categories" id="statsCategories">
+          <div class="stats-category">
+            <div class="category-title">Basic</div>
+            <div class="stat-row">
+              <span class="stat-label">Wins</span>
+              <span class="stat-value percentage-good" id="winsPercentage">50%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Draws</span>
+              <span class="stat-value" id="drawsPercentage">18%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Losses</span>
+              <span class="stat-value" id="lossesPercentage">32%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Goals For / Match</span>
+              <span class="stat-value percentage-good" id="goalsForPerMatch">2.09</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Goals Against / Match</span>
+              <span class="stat-value" id="goalsAgainstPerMatch">1.50</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">xG For / Match</span>
+              <span class="stat-value" id="xgForPerMatch">1.64</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">xG Against / Match</span>
+              <span class="stat-value" id="xgAgainstPerMatch">1.32</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Clean Sheets %</span>
+              <span class="stat-value percentage-good" id="cleanSheetsPercentage">21%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Failed to Score %</span>
+              <span class="stat-value" id="failedToScorePercentage">15%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Points Per Game</span>
+              <span class="stat-value percentage-good" id="pointsPerGame">1.68</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Ball Possession</span>
+              <span class="stat-value" id="ballPossession">47%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Penalties Won</span>
+              <span class="stat-value" id="penaltiesWon">2 (17 maçta)</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Penalties Conceded</span>
+              <span class="stat-value" id="penaltiesConceded">1 (17 maçta)</span>
+            </div>
+          </div>
+          <div class="stats-category">
+            <div class="category-title">Over/Under</div>
+            <div class="stat-row">
+              <span class="stat-label">Over 1.5 Goals</span>
+              <span class="stat-value percentage-good" id="over15Goals">88%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Over 2.5 Goals</span>
+              <span class="stat-value percentage-good" id="over25Goals">71%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Over 3.5 Goals</span>
+              <span class="stat-value" id="over35Goals">44%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Over 4.5 Goals</span>
+              <span class="stat-value" id="over45Goals">26%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Both Teams to Score</span>
+              <span class="stat-value percentage-good" id="bttsPercentage">68%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">BTTS & Win</span>
+              <span class="stat-value" id="bttsAndWin">35%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">BTTS & Draw</span>
+              <span class="stat-value" id="bttsAndDraw">12%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">BTTS & Lose</span>
+              <span class="stat-value" id="bttsAndLose">21%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Avg Goals / Match</span>
+              <span class="stat-value percentage-good" id="avgMatchGoals">3.59</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Goals Scored</span>
+              <span class="stat-value" id="goalsScored">71 gol (34 maçta)</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Goals Conceded</span>
+              <span class="stat-value" id="goalsConceded">51 gol (34 maçta)</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Clean Sheets</span>
+              <span class="stat-value" id="cleanSheets">7 (34 maçta)</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Failed to Score</span>
+              <span class="stat-value" id="failedToScore">5 (34 maçta)</span>
+            </div>
+          </div>
+          <div class="stats-category">
+            <div class="category-title">Corners</div>
+            <div class="stat-row">
+              <span class="stat-label">Corners Won / Match</span>
+              <span class="stat-value" id="cornersEarnedPerMatch">5.5</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Corners Against / Match</span>
+              <span class="stat-value" id="cornersAgainstPerMatch">4.7</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Total Corners / Match</span>
+              <span class="stat-value" id="totalCornersPerMatch">10.2</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Over 6.5 Corners</span>
+              <span class="stat-value percentage-good" id="cornersOver65">82%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Over 7.5 Corners</span>
+              <span class="stat-value percentage-good" id="cornersOver75">76%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Over 8.5 Corners</span>
+              <span class="stat-value percentage-good" id="cornersOver85">68%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Over 9.5 Corners</span>
+              <span class="stat-value" id="over95Corners">59%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Over 10.5 Corners</span>
+              <span class="stat-value" id="over105Corners">47%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Over 11.5 Corners</span>
+              <span class="stat-value" id="cornersOver115">38%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Over 12.5 Corners</span>
+              <span class="stat-value" id="cornersOver125">26%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Over 13.5 Corners</span>
+              <span class="stat-value" id="cornersOver135">15%</span>
+            </div>
+          </div>
+        </div>
+        <div class="main-stats-section filterable-section">
+          <h2 class="section-title">📱 Cards Breakdown</h2>
+          <div class="section-filters">
+            <button class="section-filter active" onclick="setCardsFilter('overall')" id="cardsOverallFilter">
+              Overall
+            </button>
+            <button class="section-filter" onclick="setCardsFilter('home')" id="cardsHomeFilter">At Home</button>
+            <button class="section-filter" onclick="setCardsFilter('away')" id="cardsAwayFilter">At Away</button>
+          </div>
+          <div class="cards-breakdown-grid">
+            <div class="cards-stat-box">
+              <h3>Total Cards</h3>
+              <div class="stat-number" id="totalCards">89</div>
+              <div class="stat-sublabel">2.6 per match</div>
+            </div>
+            <div class="cards-stat-box">
+              <h3>Cards Per Match</h3>
+              <div class="stat-number" id="cardsPerMatch">2.6</div>
+            </div>
+            <div class="cards-stat-box">
+              <h3>Home Cards</h3>
+              <div class="stat-number home-color" id="homeCards">42</div>
+              <div class="stat-sublabel">47.2% of total</div>
+            </div>
+            <div class="cards-stat-box">
+              <h3>Away Cards</h3>
+              <div class="stat-number away-color" id="awayCards">47</div>
+              <div class="stat-sublabel">52.8% of total</div>
+            </div>
+            <div class="cards-stat-box">
+              <h3>Home Cards/Match</h3>
+              <div class="stat-number home-color" id="homeCardsPerMatch">2.5</div>
+            </div>
+            <div class="cards-stat-box">
+              <h3>Away Cards/Match</h3>
+              <div class="stat-number away-color" id="awayCardsPerMatch">2.8</div>
+            </div>
+            <div class="cards-stat-box">
+              <h3>Most Cards (Single)</h3>
+              <div class="stat-number warning-color" id="cardsHighest">5</div>
+            </div>
+            <div class="cards-stat-box">
+              <h3>Least Cards (Single)</h3>
+              <div class="stat-number success-color" id="cardsLowest">0</div>
+            </div>
+          </div>
+          <h3 class="subsection-title">Card Over Markets</h3>
+          <div class="over-markets-grid">
+            <div class="over-market-item">
+              <span class="market-label">Over 0.5 Cards</span>
+              <span class="market-value" id="cardsOver05">100%</span>
+            </div>
+            <div class="over-market-item">
+              <span class="market-label">Over 1.5 Cards</span>
+              <span class="market-value" id="cardsOver15">91%</span>
+            </div>
+            <div class="over-market-item">
+              <span class="market-label">Over 2.5 Cards</span>
+              <span class="market-value" id="cardsOver25">68%</span>
+            </div>
+            <div class="over-market-item">
+              <span class="market-label">Over 3.5 Cards</span>
+              <span class="market-value" id="cardsOver35">47%</span>
+            </div>
+            <div class="over-market-item">
+              <span class="market-label">Over 4.5 Cards</span>
+              <span class="market-value" id="cardsOver45">26%</span>
+            </div>
+            <div class="over-market-item">
+              <span class="market-label">Over 5.5 Cards</span>
+              <span class="market-value" id="cardsOver55">9%</span>
+            </div>
+          </div>
+        </div>
+        <div class="main-stats-section filterable-section">
+          <h2 class="section-title">📊 Expected Goals (xG)</h2>
+          <div class="section-filters">
+            <button class="section-filter active" onclick="setXgFilter('overall')" id="xgOverallFilter">Overall</button>
+            <button class="section-filter" onclick="setXgFilter('home')" id="xgHomeFilter">At Home</button>
+            <button class="section-filter" onclick="setXgFilter('away')" id="xgAwayFilter">At Away</button>
+          </div>
+          <div class="xg-visual-container">
+            <div class="xg-comparison">
+              <div class="xg-side for">
+                <h3>xG For</h3>
+                <div class="xg-big-number" id="xgForDisplay">1.64</div>
+                <div class="xg-sublabel">per match</div>
+              </div>
+              <div class="xg-vs">VS</div>
+              <div class="xg-side against">
+                <h3>xG Against</h3>
+                <div class="xg-big-number" id="xgAgainstDisplay">1.32</div>
+                <div class="xg-sublabel">per match</div>
+              </div>
+            </div>
+            <div class="xg-difference-bar">
+              <div class="xg-diff-label">xG Difference</div>
+              <div class="xg-diff-value" id="xgDifferenceDisplay">+0.32</div>
+            </div>
+          </div>
+          <div class="xg-detailed-stats">
+            <div class="xg-stat-row">
+              <span class="stat-label">Goals vs xG For</span>
+              <span class="stat-value" id="goalsVsXgFor">+0.45</span>
+            </div>
+            <div class="xg-stat-row">
+              <span class="stat-label">Goals vs xG Against</span>
+              <span class="stat-value" id="goalsVsXgAgainst">+0.18</span>
+            </div>
+            <div class="xg-stat-row">
+              <span class="stat-label">xG Conversion Rate</span>
+              <span class="stat-value" id="xgConversionRate">127%</span>
+            </div>
+          </div>
+        </div>
+        <div class="main-stats-section filterable-section">
+          <h2 class="section-title">⏱️ Half Time Statistics</h2>
+          <div class="section-filters">
+            <button class="section-filter active" onclick="setHalftimeFilter('overall')" id="halftimeOverallFilter">
+              Overall
+            </button>
+            <button class="section-filter" onclick="setHalftimeFilter('home')" id="halftimeHomeFilter">At Home</button>
+            <button class="section-filter" onclick="setHalftimeFilter('away')" id="halftimeAwayFilter">At Away</button>
+          </div>
+          <div class="halftime-visual">
+            <div class="halftime-status-grid">
+              <div class="halftime-status leading">
+                <div class="status-icon">🟢</div>
+                <div class="status-info">
+                  <div class="status-label">Leading at HT</div>
+                  <div class="status-value" id="leadingAtHT">12</div>
+                  <div class="status-percentage" id="leadingAtHTPerc">35%</div>
+                </div>
+              </div>
+              <div class="halftime-status drawing">
+                <div class="status-icon">🟡</div>
+                <div class="status-info">
+                  <div class="status-label">Drawing at HT</div>
+                  <div class="status-value" id="drawingAtHT">15</div>
+                  <div class="status-percentage" id="drawingAtHTPerc">44%</div>
+                </div>
+              </div>
+              <div class="halftime-status trailing">
+                <div class="status-icon">🔴</div>
+                <div class="status-info">
+                  <div class="status-label">Trailing at HT</div>
+                  <div class="status-value" id="trailingAtHT">7</div>
+                  <div class="status-percentage" id="trailingAtHTPerc">21%</div>
+                </div>
+              </div>
+            </div>
+            <div class="halftime-goals-stats">
+              <div class="ht-goals-box">
+                <h4>HT Goals Scored</h4>
+                <div class="ht-goals-number" id="htGoalsScored">32</div>
+                <div class="ht-goals-avg" id="htGoalsScoredAvg">0.94 per match</div>
+              </div>
+              <div class="ht-goals-box">
+                <h4>HT Goals Conceded</h4>
+                <div class="ht-goals-number" id="htGoalsConceded">23</div>
+                <div class="ht-goals-avg" id="htGoalsConcededAvg">0.68 per match</div>
+              </div>
+            </div>
+            <div class="halftime-detailed">
+              <div class="ht-stat-row">
+                <span>HT Clean Sheets</span>
+                <span id="htCleanSheets">16 (47%)</span>
+              </div>
+              <div class="ht-stat-row">
+                <span>HT Failed to Score</span>
+                <span id="htFailedToScore">11 (32%)</span>
+              </div>
+              <div class="ht-stat-row">
+                <span>HT Both Teams Scored</span>
+                <span id="htBothTeamsScored">7 (21%)</span>
+              </div>
+              <div class="ht-stat-row">
+                <span>HT Over 0.5 Goals</span>
+                <span id="htOver05">27 (79%)</span>
+              </div>
+              <div class="ht-stat-row">
+                <span>HT Over 1.5 Goals</span>
+                <span id="htOver15">15 (44%)</span>
+              </div>
+              <div class="ht-stat-row">
+                <span>HT Over 2.5 Goals</span>
+                <span id="htOver25">6 (18%)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="main-stats-section filterable-section">
+          <h2 class="section-title">⏰ Timing Analytics</h2>
+          <div class="section-filters">
+            <button class="section-filter active" onclick="setTimingFilter('overall')" id="timingOverallFilter">
+              Overall
+            </button>
+            <button class="section-filter" onclick="setTimingFilter('home')" id="timingHomeFilter">At Home</button>
+            <button class="section-filter" onclick="setTimingFilter('away')" id="timingAwayFilter">At Away</button>
+            <button class="section-filter" onclick="setTimingFilter('scored')" id="timingScoredFilter">
+              Goals Scored
+            </button>
+            <button class="section-filter" onclick="setTimingFilter('conceded')" id="timingConcededFilter">
+              Goals Conceded
+            </button>
+          </div>
+          <div class="goal-timing">
+            <div class="timing-info">
+              <div class="timing-header">
+                <h3 id="timingTitle">Goal Distribution by Time Periods</h3>
+                <div class="timing-summary">
+                  <span class="timing-total" id="timingTotal">Total: 0 goals</span>
+                  <span class="timing-percentage" id="timingPercentage">Overall distribution</span>
+                </div>
+              </div>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-item">
+                <div class="legend-color scored"></div>
+                <span>Goals Scored</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color conceded"></div>
+                <span>Goals Conceded</span>
+              </div>
+            </div>
+            <div class="timing-chart">
+              <div class="timing-bar-container">
+                <div class="timing-bar">
+                  <div class="timing-fill" id="goals0_15" style="height: 0%"></div>
+                  <div class="timing-stats">
+                    <div class="timing-value" id="goals0_15Text">0</div>
+                    <div class="timing-percentage" id="goals0_15Perc">0%</div>
+                  </div>
+                </div>
+                <div class="timing-description">0-15 Minutes</div>
+              </div>
+              <div class="timing-bar-container">
+                <div class="timing-bar">
+                  <div class="timing-fill" id="goals16_30" style="height: 0%"></div>
+                  <div class="timing-stats">
+                    <div class="timing-value" id="goals16_30Text">0</div>
+                    <div class="timing-percentage" id="goals16_30Perc">0%</div>
+                  </div>
+                </div>
+                <div class="timing-description">16-30 Minutes</div>
+              </div>
+              <div class="timing-bar-container">
+                <div class="timing-bar">
+                  <div class="timing-fill" id="goals31_45" style="height: 0%"></div>
+                  <div class="timing-stats">
+                    <div class="timing-value" id="goals31_45Text">0</div>
+                    <div class="timing-percentage" id="goals31_45Perc">0%</div>
+                  </div>
+                </div>
+                <div class="timing-description">31-45 Minutes</div>
+              </div>
+              <div class="timing-bar-container">
+                <div class="timing-bar">
+                  <div class="timing-fill" id="goals46_60" style="height: 0%"></div>
+                  <div class="timing-stats">
+                    <div class="timing-value" id="goals46_60Text">0</div>
+                    <div class="timing-percentage" id="goals46_60Perc">0%</div>
+                  </div>
+                </div>
+                <div class="timing-description">46-60 Minutes</div>
+              </div>
+              <div class="timing-bar-container">
+                <div class="timing-bar">
+                  <div class="timing-fill" id="goals61_75" style="height: 0%"></div>
+                  <div class="timing-stats">
+                    <div class="timing-value" id="goals61_75Text">0</div>
+                    <div class="timing-percentage" id="goals61_75Perc">0%</div>
+                  </div>
+                </div>
+                <div class="timing-description">61-75 Minutes</div>
+              </div>
+              <div class="timing-bar-container">
+                <div class="timing-bar">
+                  <div class="timing-fill" id="goals76_90" style="height: 0%"></div>
+                  <div class="timing-stats">
+                    <div class="timing-value" id="goals76_90Text">0</div>
+                    <div class="timing-percentage" id="goals76_90Perc">0%</div>
+                  </div>
+                </div>
+                <div class="timing-description">76-90 Minutes</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="match-list">
+          <h2 class="section-title">📅 Scores & Fixtures</h2>
+          <div id="matchesList"></div>
+        </div>
+      </div>
+    </div>
+    <script src="/team-stats.js" defer></script>
+  </body>
+</html>

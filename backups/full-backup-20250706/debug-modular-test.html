@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Modular System Test</title>
+</head>
+<body>
+    <h1>Debug Modular System</h1>
+    <div id="debug-output"></div>
+    
+    <script>
+        console.log('=== Starting Debug Test ===');
+        
+        // Test URL parameter extraction
+        const urlParams = new URLSearchParams(window.location.search);
+        const teamId = urlParams.get('teamId');
+        console.log('Team ID from URL:', teamId);
+        
+        // Wait and check for modular system
+        setTimeout(() => {
+            console.log('Checking modular system availability...');
+            console.log('TeamStatsEventBus available:', !!window.TeamStatsEventBus);
+            console.log('TeamStatsTeamService available:', !!window.TeamStatsTeamService);
+            console.log('TeamStatsAPIClient available:', !!window.TeamStatsAPIClient);
+            console.log('TeamStatsStateManager available:', !!window.TeamStatsStateManager);
+            
+            document.getElementById('debug-output').innerHTML = `
+                <h2>System Status</h2>
+                <p>Team ID: ${teamId}</p>
+                <p>EventBus: ${!!window.TeamStatsEventBus}</p>
+                <p>TeamService: ${!!window.TeamStatsTeamService}</p>
+                <p>APIClient: ${!!window.TeamStatsAPIClient}</p>
+                <p>StateManager: ${!!window.TeamStatsStateManager}</p>
+            `;
+            
+            // Try to load team data manually if teamId exists
+            if (teamId && window.TeamStatsTeamService) {
+                console.log('Attempting to load team data...');
+                window.TeamStatsTeamService.getTeamData(teamId)
+                    .then(data => {
+                        console.log('Team data loaded:', data);
+                        document.getElementById('debug-output').innerHTML += `
+                            <h2>Team Data</h2>
+                            <p>Success: Data loaded for ${data.teamInfo?.name}</p>
+                            <p>PPG: ${data.statistics?.pointsPerGame}</p>
+                            <p>Goals For Per Match: ${data.statistics?.goalsForPerMatch}</p>
+                            <p>Goals Against Per Match: ${data.statistics?.goalsAgainstPerMatch}</p>
+                        `;
+                    })
+                    .catch(error => {
+                        console.error('Failed to load team data:', error);
+                        document.getElementById('debug-output').innerHTML += `
+                            <h2>Error</h2>
+                            <p>Failed to load team data: ${error.message}</p>
+                        `;
+                    });
+            }
+        }, 2000);
+    </script>
+    
+    <!-- Load modular system -->
+    <script src="public/js/team-stats-modular.js"></script>
+</body>
+</html>

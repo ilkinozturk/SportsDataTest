@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Check Penalty Data</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .result { margin: 10px 0; padding: 10px; background: #f0f0f0; }
+        .found { color: green; font-weight: bold; }
+        .not-found { color: red; }
+        .value { color: blue; font-weight: bold; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; max-height: 400px; }
+    </style>
+</head>
+<body>
+    <h1>Penalty Data Check - Team 836</h1>
+    <div id="results"></div>
+    <h2>Filtered API Data (penalty fields only):</h2>
+    <pre id="penalty-data"></pre>
+    
+    <script>
+        async function checkPenaltyData() {
+            const results = document.getElementById('results');
+            const penaltyDataEl = document.getElementById('penalty-data');
+            
+            try {
+                results.innerHTML = '<div>Fetching data for team 836...</div>';
+                
+                const response = await fetch('/api/teams/data?teamId=836');
+                const data = await response.json();
+                
+                if (data.success && data.stats) {
+                    const stats = data.stats;
+                    let html = '<h2>Penalty Related Fields:</h2>';
+                    
+                    // Check all possible penalty fields
+                    const penaltyFields = [];
+                    
+                    // Find all fields containing "penalty" or "Penalty"
+                    Object.keys(stats).forEach(key => {
+                        if (key.toLowerCase().includes('penalt')) {
+                            penaltyFields.push({ key, value: stats[key] });
+                        }
+                    });
+                    
+                    // Display found fields
+                    if (penaltyFields.length > 0) {
+                        html += '<h3>Found Penalty Fields:</h3>';
+                        penaltyFields.forEach(field => {
+                            const status = field.value !== undefined && field.value !== null ? 'found' : 'not-found';
+                            html += `<div class="result ${status}">${field.key}: <span class="value">${field.value}</span></div>`;
+                        });
+                    }
+                    
+                    // Specific fields to check
+                    html += '<h3>Specific Fields Check:</h3>';
+                    const specificFields = [
+                        'penalty_in_a_match_percentage_overall',
+                        'penalty_in_a_match_percentage_home', 
+                        'penalty_in_a_match_percentage_away',
+                        'penaltiesWon',
+                        'penaltiesConceded',
+                        'totalMatches',
+                        'matches'
+                    ];
+                    
+                    specificFields.forEach(field => {
+                        const value = stats[field];
+                        if (value !== undefined) {
+                            html += `<div class="result found">${field}: <span class="value">${value}</span></div>`;
+                        } else {
+                            html += `<div class="result not-found">${field}: not found</div>`;
+                        }
+                    });
+                    
+                    // Calculate penalty in a match percentage
+                    html += '<h3>Calculations:</h3>';
+                    const penaltiesWon = stats.penaltiesWon || 0;
+                    const penaltiesConceded = stats.penaltiesConceded || 0;
+                    const totalMatches = stats.totalMatches || stats.matches || 0;
+                    const totalPenalties = penaltiesWon + penaltiesConceded;
+                    
+                    html += `<div class="result">Penalties Won: ${penaltiesWon}</div>`;
+                    html += `<div class="result">Penalties Conceded: ${penaltiesConceded}</div>`;
+                    html += `<div class="result">Total Penalties: ${totalPenalties}</div>`;
+                    html += `<div class="result">Total Matches: ${totalMatches}</div>`;
+                    
+                    if (totalMatches > 0) {
+                        // Calculate matches with penalties
+                        const matchesWithPenalties = Math.min(totalPenalties, totalMatches);
+                        const percentage = Math.round((matchesWithPenalties / totalMatches) * 100);
+                        html += `<div class="result found">Calculated Penalty % (if 1 penalty = 1 match): ${percentage}%</div>`;
+                    }
+                    
+                    results.innerHTML = html;
+                    
+                    // Show only penalty-related fields in JSON
+                    const penaltyData = {};
+                    Object.keys(stats).forEach(key => {
+                        if (key.toLowerCase().includes('penalt')) {
+                            penaltyData[key] = stats[key];
+                        }
+                    });
+                    penaltyDataEl.textContent = JSON.stringify(penaltyData, null, 2);
+                    
+                } else {
+                    results.innerHTML = '<div class="result not-found">Failed to get data from API</div>';
+                }
+                
+            } catch (error) {
+                results.innerHTML = `<div class="result not-found">Error: ${error.message}</div>`;
+            }
+        }
+        
+        checkPenaltyData();
+    </script>
+</body>
+</html>

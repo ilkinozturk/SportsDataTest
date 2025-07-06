@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix API Configuration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>API Configuration Fix</h1>
+    <div id="status"></div>
+
+    <!-- Load modules -->
+    <script src="public/js/modules/core/constants.js"></script>
+    <script src="public/js/modules/core/event-bus.js"></script>
+    <script src="public/js/modules/core/state-manager.js"></script>
+    <script src="public/js/modules/core/api-client.js"></script>
+    <script src="public/js/modules/core/team-service.js"></script>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        
+        // Check current configuration
+        statusDiv.innerHTML = '<div class="status info">Checking current configuration...</div>';
+        
+        // Fix API Client baseURL if needed
+        if (window.TeamStatsAPIClient) {
+            const currentBaseURL = window.TeamStatsAPIClient.config?.baseURL;
+            statusDiv.innerHTML += `<div class="status info">Current APIClient baseURL: ${currentBaseURL}</div>`;
+            
+            // If baseURL doesn't include full URL, update it
+            if (currentBaseURL && !currentBaseURL.includes('http')) {
+                // Update the config
+                window.TeamStatsAPIClient.config.baseURL = 'http://localhost:3005/api';
+                statusDiv.innerHTML += '<div class="status success">✓ Updated APIClient baseURL to: http://localhost:3005/api</div>';
+            }
+        }
+        
+        // Fix TeamService baseUrl if needed
+        if (window.TeamStatsTeamService) {
+            const currentBaseUrl = window.TeamStatsTeamService.baseUrl;
+            statusDiv.innerHTML += `<div class="status info">Current TeamService baseUrl: ${currentBaseUrl}</div>`;
+            
+            // Update if needed
+            if (currentBaseUrl === '/api/teams') {
+                window.TeamStatsTeamService.baseUrl = 'http://localhost:3005/api/teams';
+                statusDiv.innerHTML += '<div class="status success">✓ Updated TeamService baseUrl to: http://localhost:3005/api/teams</div>';
+            }
+        }
+        
+        // Test API call
+        async function testAPI() {
+            statusDiv.innerHTML += '<div class="status info">Testing API with fixed configuration...</div>';
+            
+            try {
+                const teamService = window.TeamStatsTeamService;
+                const data = await teamService.getTeamData(13);
+                
+                statusDiv.innerHTML += `
+                    <div class="status success">✓ API call successful!</div>
+                    <div class="status info">Team: ${data.teamName}</div>
+                    <div class="status info">Team ID: ${data.teamId}</div>
+                `;
+                
+                // Store configuration for other pages
+                localStorage.setItem('apiConfigFixed', 'true');
+                localStorage.setItem('apiBaseURL', 'http://localhost:3005/api');
+                
+                statusDiv.innerHTML += '<div class="status success">✓ Configuration saved to localStorage</div>';
+                statusDiv.innerHTML += '<div class="status success">Now you can run the test pages!</div>';
+                
+            } catch (error) {
+                statusDiv.innerHTML += `<div class="status error">✗ API call failed: ${error.message}</div>`;
+            }
+        }
+        
+        // Run test after a short delay
+        setTimeout(testAPI, 500);
+    </script>
+</body>
+</html>

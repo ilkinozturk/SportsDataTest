@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Team Load</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .debug-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+        .team-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .team-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .data-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+        .data-section h3 {
+            margin-top: 0;
+        }
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .stat-card h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>Team Data Loading Debug</h1>
+        
+        <div id="status" class="status">Loading modules...</div>
+        
+        <div class="team-info">
+            <div class="team-logo" id="teamLogo">
+                <span style="font-size: 48px; color: #999;">?</span>
+            </div>
+            <div>
+                <h2 id="teamName">Loading...</h2>
+                <p id="teamDetails">-</p>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Points Per Game</h4>
+                <div class="stat-value" id="ppg">-</div>
+            </div>
+            <div class="stat-card">
+                <h4>Goals Per Match</h4>
+                <div class="stat-value" id="goalsPerMatch">-</div>
+            </div>
+            <div class="stat-card">
+                <h4>Total Matches</h4>
+                <div class="stat-value" id="totalMatches">-</div>
+            </div>
+            <div class="stat-card">
+                <h4>Win Rate</h4>
+                <div class="stat-value" id="winRate">-</div>
+            </div>
+        </div>
+        
+        <div class="data-section">
+            <h3>Raw Team Data</h3>
+            <pre id="rawData">Waiting for data...</pre>
+        </div>
+        
+        <div class="data-section">
+            <h3>Processed Statistics</h3>
+            <pre id="statsData">Waiting for data...</pre>
+        </div>
+    </div>
+
+    <!-- Load all required modules -->
+    <script src="public/js/modules/core/constants.js"></script>
+    <script src="public/js/modules/core/event-bus.js"></script>
+    <script src="public/js/modules/core/state-manager.js"></script>
+    <script src="public/js/modules/core/api-client.js"></script>
+    <script src="public/js/modules/core/team-service.js"></script>
+    <script src="public/js/modules/core/api-config-fix.js"></script>
+    
+    <script>
+        const teamId = 836; // Shanghai SIPG
+        
+        function updateStatus(message, isError = false) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = isError ? 'status error' : 'status success';
+        }
+        
+        async function loadTeamData() {
+            try {
+                updateStatus('Loading team data...');
+                
+                // Load team data using the modular system
+                const teamData = await window.TeamStatsTeamService.getTeamData(teamId);
+                
+                if (!teamData) {
+                    throw new Error('No data received');
+                }
+                
+                updateStatus('Data loaded successfully!');
+                
+                // Display raw data
+                document.getElementById('rawData').textContent = JSON.stringify(teamData, null, 2);
+                
+                // Display stats
+                const stats = teamData.statistics || teamData.stats || {};
+                document.getElementById('statsData').textContent = JSON.stringify(stats, null, 2);
+                
+                // Update team info
+                document.getElementById('teamName').textContent = 
+                    teamData.teamInfo?.name || teamData.teamName || 'Unknown Team';
+                
+                document.getElementById('teamDetails').textContent = 
+                    `${teamData.league?.name || teamData.leagueName || 'League'} • ${teamData.teamInfo?.season || '2024/25'} Season • Position: ${teamData.leaguePosition?.position || '-'}`;
+                
+                // Update logo
+                const logoUrl = teamData.teamInfo?.image || teamData.teamLogo;
+                if (logoUrl) {
+                    document.getElementById('teamLogo').innerHTML = 
+                        `<img src="${logoUrl}" alt="Team Logo">`;
+                }
+                
+                // Update stats
+                document.getElementById('ppg').textContent = 
+                    (stats.pointsPerGame || 0).toFixed(2);
+                document.getElementById('goalsPerMatch').textContent = 
+                    (stats.goalsForPerMatch || 0).toFixed(2);
+                document.getElementById('totalMatches').textContent = 
+                    stats.totalMatches || stats.matches || 0;
+                document.getElementById('winRate').textContent = 
+                    (stats.winPercentage || 0) + '%';
+                
+            } catch (error) {
+                updateStatus(`Error: ${error.message}`, true);
+                console.error('Failed to load team data:', error);
+            }
+        }
+        
+        // Wait for modules to load
+        setTimeout(() => {
+            if (window.TeamStatsTeamService) {
+                loadTeamData();
+            } else {
+                updateStatus('Error: Modules not loaded', true);
+            }
+        }, 500);
+    </script>
+</body>
+</html>

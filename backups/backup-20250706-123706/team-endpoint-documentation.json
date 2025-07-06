@@ -1,0 +1,322 @@
+{
+  "endpoint": "/team",
+  "description": "Provides comprehensive team statistics including detailed home/away breakdowns",
+  "parameters": {
+    "key": "API key (required)",
+    "team_id": "Team ID (required)"
+  },
+  "availableStats": {
+    "Goals": [
+      {
+        "stat": "seasonGoals",
+        "variants": [
+          "overall"
+        ]
+      },
+      {
+        "stat": "seasonConceded",
+        "variants": [
+          "overall"
+        ]
+      },
+      {
+        "stat": "seasonGoalsTotal",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonScoredNum",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonConcededNum",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonGoalDifference",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      }
+    ],
+    "Match Results": [
+      {
+        "stat": "seasonWinsNum",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonDrawsNum",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonLossesNum",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonMatchesPlayed",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonPPG",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      }
+    ],
+    "Clean Sheets": [
+      {
+        "stat": "seasonCS",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonCSPercentage",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonCSHT",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonCSPercentageHT",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      }
+    ],
+    "Failed to Score": [
+      {
+        "stat": "seasonFTS",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonFTSPercentage",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonFTSHT",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonFTSPercentageHT",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      }
+    ],
+    "Both Teams to Score": [
+      {
+        "stat": "seasonBTTS",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonBTTSPercentage",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      }
+    ],
+    "Over/Under Goals": [],
+    "Cards": [],
+    "Corners": [],
+    "Possession & Shots": [],
+    "Fouls": [],
+    "Scoring Minutes": [
+      {
+        "stat": "seasonGoalsMin",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonScoredMin",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      },
+      {
+        "stat": "seasonConcededMin",
+        "variants": [
+          "overall",
+          "home",
+          "away"
+        ]
+      }
+    ],
+    "Scoring Patterns": [],
+    "Half Time Stats": [],
+    "Advantages": []
+  },
+  "sampleRequest": {
+    "url": "https://api.football-data-api.com/team",
+    "params": {
+      "key": "YOUR_API_KEY",
+      "team_id": 7
+    }
+  },
+  "sampleResponse": {
+    "teamInfo": {
+      "id": 7,
+      "name": "Chicago Fire",
+      "season": "2025",
+      "competition_id": 13973
+    },
+    "statsStructure": {
+      "Goals": [
+        "seasonGoals",
+        "seasonConceded",
+        "seasonGoalsTotal",
+        "seasonScoredNum",
+        "seasonConcededNum",
+        "seasonGoalDifference"
+      ],
+      "Match Results": [
+        "seasonWinsNum",
+        "seasonDrawsNum",
+        "seasonLossesNum",
+        "seasonMatchesPlayed",
+        "seasonPPG",
+        "seasonWinPercentage"
+      ],
+      "Clean Sheets": [
+        "seasonCS",
+        "seasonCSPercentage",
+        "seasonCSHT",
+        "seasonCSPercentageHT"
+      ],
+      "Failed to Score": [
+        "seasonFTS",
+        "seasonFTSPercentage",
+        "seasonFTSHT",
+        "seasonFTSPercentageHT"
+      ],
+      "Both Teams to Score": [
+        "seasonBTTS",
+        "seasonBTTSPercentage",
+        "seasonBTTSBothHalves",
+        "seasonBTTSPercentageBothHalves"
+      ],
+      "Over/Under Goals": [
+        "seasonOver05",
+        "seasonOver15",
+        "seasonOver25",
+        "seasonOver35",
+        "seasonOver45",
+        "seasonUnder05",
+        "seasonUnder15",
+        "seasonUnder25",
+        "seasonUnder35"
+      ],
+      "Cards": [
+        "seasonCards",
+        "seasonCardsAVG",
+        "seasonCardsTotal",
+        "seasonCardsPercentage"
+      ],
+      "Corners": [
+        "seasonCorners",
+        "seasonCornersAVG",
+        "seasonCornersTotal",
+        "seasonCornersPercentage"
+      ],
+      "Possession & Shots": [
+        "seasonPossessionAVG",
+        "seasonShots",
+        "seasonShotsAVG"
+      ],
+      "Fouls": [
+        "seasonFouls",
+        "seasonFoulsAVG"
+      ],
+      "Scoring Minutes": [
+        "seasonGoalsMin",
+        "seasonScoredMin",
+        "seasonConcededMin"
+      ],
+      "Scoring Patterns": [
+        "seasonScoredFirst",
+        "seasonScoredFirstPercentage",
+        "seasonConcededFirst",
+        "seasonConcededFirstPercentage"
+      ],
+      "Half Time Stats": [
+        "seasonHalfTimeWins",
+        "seasonHalfTimeDraws",
+        "seasonHalfTimeLosses"
+      ],
+      "Advantages": [
+        "homeAttackAdvantage",
+        "homeDefenceAdvantage",
+        "homeOverallAdvantage"
+      ]
+    }
+  }
+}

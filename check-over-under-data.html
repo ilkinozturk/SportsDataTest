@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Over/Under Goals Data Check</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .section { margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px; }
+        .found { color: green; font-weight: bold; }
+        .not-found { color: red; }
+        .value { color: blue; font-weight: bold; }
+        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Over/Under Goals Data Check - Team 836</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function checkOverUnderData() {
+            const results = document.getElementById('results');
+            
+            try {
+                results.innerHTML = '<div>Fetching data for team 836...</div>';
+                
+                const response = await fetch('http://localhost:3005/api/teams/data?teamId=836');
+                const data = await response.json();
+                
+                if (data.success && data.stats) {
+                    const stats = data.stats;
+                    let html = '';
+                    
+                    // Full Time Over/Under
+                    html += '<div class="section">';
+                    html += '<h2>Full Time Over/Under Goals</h2>';
+                    html += '<table>';
+                    html += '<tr><th>Threshold</th><th>Overall</th><th>Home</th><th>Away</th></tr>';
+                    
+                    const thresholds = ['05', '15', '25', '35', '45', '55'];
+                    thresholds.forEach(threshold => {
+                        const overall = stats[`over${threshold}GoalsPercentage`] || 
+                                      stats[`over${threshold}Goals`] || 
+                                      stats[`seasonOver${threshold}Percentage_overall`] || 0;
+                        const home = stats[`homeOver${threshold}GoalsPercentage`] || 
+                                    stats[`over${threshold}GoalsPercentage_home`] || 0;
+                        const away = stats[`awayOver${threshold}GoalsPercentage`] || 
+                                    stats[`over${threshold}GoalsPercentage_away`] || 0;
+                        
+                        html += `<tr>
+                            <td>Over ${threshold.charAt(0)}.${threshold.charAt(1)}</td>
+                            <td class="${overall > 0 ? 'found' : 'not-found'}">${overall}%</td>
+                            <td class="${home > 0 ? 'found' : 'not-found'}">${home}%</td>
+                            <td class="${away > 0 ? 'found' : 'not-found'}">${away}%</td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                    html += '</div>';
+                    
+                    // Half Time Over/Under
+                    html += '<div class="section">';
+                    html += '<h2>Half Time Over/Under Goals</h2>';
+                    html += '<table>';
+                    html += '<tr><th>Threshold</th><th>Overall</th><th>Home</th><th>Away</th></tr>';
+                    
+                    ['05', '15', '25'].forEach(threshold => {
+                        const overall = stats[`seasonOver${threshold}PercentageHT_overall`] || 
+                                      stats[`over${threshold}GoalsHT`] || 0;
+                        const home = stats[`seasonOver${threshold}PercentageHT_home`] || 0;
+                        const away = stats[`seasonOver${threshold}PercentageHT_away`] || 0;
+                        
+                        html += `<tr>
+                            <td>Over ${threshold.charAt(0)}.${threshold.charAt(1)} HT</td>
+                            <td class="${overall > 0 ? 'found' : 'not-found'}">${overall}%</td>
+                            <td class="${home > 0 ? 'found' : 'not-found'}">${home}%</td>
+                            <td class="${away > 0 ? 'found' : 'not-found'}">${away}%</td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                    html += '</div>';
+                    
+                    // Second Half Over/Under
+                    html += '<div class="section">';
+                    html += '<h2>Second Half Over/Under Goals</h2>';
+                    html += '<table>';
+                    html += '<tr><th>Threshold</th><th>Overall</th><th>Home</th><th>Away</th></tr>';
+                    
+                    ['05', '15', '25'].forEach(threshold => {
+                        const overall = stats[`over${threshold}_2hg_percentage_overall`] || 
+                                      stats[`over${threshold}Goals2H`] || 0;
+                        const home = stats[`over${threshold}_2hg_percentage_home`] || 0;
+                        const away = stats[`over${threshold}_2hg_percentage_away`] || 0;
+                        
+                        html += `<tr>
+                            <td>Over ${threshold.charAt(0)}.${threshold.charAt(1)} 2H</td>
+                            <td class="${overall > 0 ? 'found' : 'not-found'}">${overall}%</td>
+                            <td class="${home > 0 ? 'found' : 'not-found'}">${home}%</td>
+                            <td class="${away > 0 ? 'found' : 'not-found'}">${away}%</td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                    html += '</div>';
+                    
+                    // Check all over/under related fields
+                    html += '<div class="section">';
+                    html += '<h2>All Over/Under Related Fields Found:</h2>';
+                    html += '<ul>';
+                    Object.keys(stats).forEach(key => {
+                        if ((key.includes('over') && key.includes('Goal')) || 
+                            (key.includes('over') && key.includes('Percentage'))) {
+                            if (!key.includes('Corner') && !key.includes('Card')) {
+                                html += `<li>${key}: <span class="value">${stats[key]}</span></li>`;
+                            }
+                        }
+                    });
+                    html += '</ul>';
+                    html += '</div>';
+                    
+                    results.innerHTML = html;
+                } else {
+                    results.innerHTML = '<div class="not-found">Failed to get data from API</div>';
+                }
+                
+            } catch (error) {
+                results.innerHTML = `<div class="not-found">Error: ${error.message}</div>`;
+            }
+        }
+        
+        checkOverUnderData();
+    </script>
+</body>
+</html>

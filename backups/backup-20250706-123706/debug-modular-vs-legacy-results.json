@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-07-06T09:31:59.435Z",
+  "legacyResult": {
+    "scored_2hg_avg_overall": 1.47,
+    "secondHalfGoalsAVG_overall": 1.47,
+    "scoredAVG2H_overall": 1.47,
+    "scoredAVGHT_overall": 0.8,
+    "firstHalfGoalsAVG_overall": 0.8,
+    "seasonFTSHT_overall": 3,
+    "seasonFTS2H_overall": 2
+  },
+  "modularResult": {
+    "scored_2hg_avg_overall": 1.47,
+    "secondHalfGoalsAVG_overall": 1.47,
+    "scoredAVG2H_overall": 1.47,
+    "scoredAVGHT_overall": 0.8,
+    "firstHalfGoalsAVG_overall": 0.8,
+    "seasonFTSHT_overall": 3,
+    "seasonFTS2H_overall": 2
+  },
+  "differencesFound": false
+}

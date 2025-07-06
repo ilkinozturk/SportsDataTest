@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Full API Response - Team 836</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .debug-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        .field-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .field-item {
+            padding: 8px;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .field-name {
+            color: #0066cc;
+            font-weight: bold;
+        }
+        .field-value {
+            color: #28a745;
+        }
+        .zero-value {
+            color: #dc3545;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .error {
+            color: #dc3545;
+            padding: 20px;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+        .calculation {
+            background: #e8f5e9;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        pre {
+            overflow-x: auto;
+            font-size: 11px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .important {
+            background: #ffeb3b;
+            font-weight: bold;
+            padding: 2px 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Debug Full API Response - Team 836 (Shanghai SIPG)</h1>
+        
+        <div id="loading" class="loading">Loading team data...</div>
+        <div id="error" class="error" style="display: none;"></div>
+        <div id="content" style="display: none;">
+            <!-- Debug sections will be added here -->
+        </div>
+    </div>
+
+    <script>
+        async function fetchTeamData() {
+            try {
+                const response = await fetch('/api/teams/data?teamId=836');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch team data');
+                }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                throw error;
+            }
+        }
+
+        function findFieldsContaining(obj, searchTerms, prefix = '') {
+            const results = [];
+            
+            for (const [key, value] of Object.entries(obj)) {
+                const fullKey = prefix ? `${prefix}.${key}` : key;
+                
+                // Check if key contains any of our search terms
+                const keyLower = key.toLowerCase();
+                const matches = searchTerms.some(term => keyLower.includes(term));
+                
+                if (matches && typeof value !== 'object') {
+                    results.push({
+                        path: fullKey,
+                        key: key,
+                        value: value,
+                        isZero: value === 0 || value === '0'
+                    });
+                }
+                
+                // Recurse into objects (but not arrays)
+                if (value && typeof value === 'object' && !Array.isArray(value)) {
+                    results.push(...findFieldsContaining(value, searchTerms, fullKey));
+                }
+            }
+            
+            return results;
+        }
+
+        function displayResults(data) {
+            const content = document.getElementById('content');
+            const stats = data.statistics || data.stats || {};
+            
+            // Search for specific fields
+            const searchTermsFTS = ['fts', 'ftsht', 'fts2h', 'failed', 'failedto', 'seasonfts'];
+            const searchTermsGoals = ['goals', 'scored', 'scored1h', 'scored2h', 'goals1h', 'goals2h'];
+            const searchTermsMatches = ['matches', 'match', 'games', 'overall', 'home', 'away'];
+            
+            // Find all related fields
+            const fieldsFTS = findFieldsContaining(data, searchTermsFTS);
+            const fieldsGoals = findFieldsContaining(data, searchTermsGoals);
+            const matchFields = findFieldsContaining(data, searchTermsMatches);
+            
+            // Check specific fields
+            const seasonFTSHT_overall = stats.seasonFTSHT_overall || data.seasonFTSHT_overall || 0;
+            const seasonFTSHT_home = stats.seasonFTSHT_home || data.seasonFTSHT_home || 0;
+            const seasonFTSHT_away = stats.seasonFTSHT_away || data.seasonFTSHT_away || 0;
+            
+            const matches_overall = stats.matches || stats.matches_overall || data.matches || 0;
+            const matches_home = stats.homeMatches || stats.matches_home || data.matches_home || 0;
+            const matches_away = stats.awayMatches || stats.matches_away || data.matches_away || 0;
+            
+            const goals1H_overall = stats.goals1H_overall || stats.seasonGoals1H_overall || 0;
+            const goals2H_overall = stats.goals2H_overall || stats.seasonGoals2H_overall || 0;
+            
+            // Create sections
+            content.innerHTML = `
+                <div class="debug-section">
+                    <h2>🎯 Key Values Check</h2>
+                    <div class="calculation">
+                        <h3>Overall:</h3>
+                        <p>Total Matches: <span class="important">${matches_overall}</span></p>
+                        <p>seasonFTSHT_overall: <span class="important">${seasonFTSHT_overall}</span></p>
+                        <p>Goals in 1H: <span class="important">${goals1H_overall}</span></p>
+                        <p>Goals in 2H: <span class="important">${goals2H_overall}</span></p>
+                        <p>Calculated matches with 1H goals: <span class="important">${matches_overall} - ${seasonFTSHT_overall} = ${matches_overall - seasonFTSHT_overall}</span></p>
+                        
+                        <h3>Home:</h3>
+                        <p>Total Matches: <span class="important">${matches_home}</span></p>
+                        <p>seasonFTSHT_home: <span class="important">${seasonFTSHT_home}</span></p>
+                        
+                        <h3>Away:</h3>
+                        <p>Total Matches: <span class="important">${matches_away}</span></p>
+                        <p>seasonFTSHT_away: <span class="important">${seasonFTSHT_away}</span></p>
+                    </div>
+                </div>
+                
+                <div class="debug-section">
+                    <h2>Failed To Score (FTS) Fields</h2>
+                    <div class="field-list">
+                        ${fieldsFTS.map(f => `
+                            <div class="field-item">
+                                <span class="field-name">${f.path}</span>: 
+                                <span class="${f.isZero ? 'zero-value' : 'field-value'}">${f.value}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="debug-section">
+                    <h2>Goals/Scored Fields</h2>
+                    <div class="field-list">
+                        ${fieldsGoals.map(f => `
+                            <div class="field-item">
+                                <span class="field-name">${f.path}</span>: 
+                                <span class="${f.isZero ? 'zero-value' : 'field-value'}">${f.value}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="debug-section">
+                    <h2>Match/Game Fields</h2>
+                    <div class="field-list">
+                        ${matchFields.map(f => `
+                            <div class="field-item">
+                                <span class="field-name">${f.path}</span>: 
+                                <span class="${f.isZero ? 'zero-value' : 'field-value'}">${f.value}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="debug-section">
+                    <h2>Additional Info Object</h2>
+                    <pre>${JSON.stringify(data.additional_info || stats.additional_info || {}, null, 2)}</pre>
+                </div>
+                
+                <div class="debug-section">
+                    <h2>Full Response Structure</h2>
+                    <h3>Top Level Keys:</h3>
+                    <pre>${JSON.stringify(Object.keys(data), null, 2)}</pre>
+                    
+                    <h3>Statistics/Stats Keys:</h3>
+                    <pre>${JSON.stringify(Object.keys(stats), null, 2)}</pre>
+                    
+                    <h3>Full Data (truncated):</h3>
+                    <pre>${JSON.stringify(data, null, 2).substring(0, 5000)}...</pre>
+                </div>
+            `;
+        }
+
+        async function init() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const content = document.getElementById('content');
+            
+            try {
+                const data = await fetchTeamData();
+                console.log('Full API Response:', data);
+                loading.style.display = 'none';
+                content.style.display = 'block';
+                displayResults(data);
+            } catch (err) {
+                loading.style.display = 'none';
+                error.style.display = 'block';
+                error.textContent = `Error: ${err.message}`;
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

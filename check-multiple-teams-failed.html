@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Check Multiple Teams - Failed to Score</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .team-result { margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px; }
+        .success { color: green; }
+        .zero { color: orange; }
+        .error { color: red; }
+        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Multiple Teams - Failed to Score Check</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function checkTeams() {
+            const results = document.getElementById('results');
+            
+            // Test different teams
+            const teams = [
+                { id: 836, name: 'Shanghai SIPG' },
+                { id: 15, name: 'Manchester United' },
+                { id: 3011, name: 'Unknown Team' },
+                { id: 844, name: 'Shandong Luneng' },
+                { id: 840, name: 'Beijing Guoan' }
+            ];
+            
+            for (const team of teams) {
+                const teamDiv = document.createElement('div');
+                teamDiv.className = 'team-result';
+                
+                try {
+                    const response = await fetch(`/api/teams/data?teamId=${team.id}`);
+                    const data = await response.json();
+                    
+                    if (data.success && data.stats) {
+                        const stats = data.stats;
+                        const teamName = data.teamInfo?.name || team.name;
+                        
+                        let html = `<h3>Team: ${teamName} (ID: ${team.id})</h3>`;
+                        html += '<table>';
+                        html += '<tr><th>Field</th><th>Value</th><th>Status</th></tr>';
+                        
+                        // Check various failed to score fields
+                        const fields = [
+                            'failedToScore',
+                            'failedToScorePercentage',
+                            'homeFailedToScore',
+                            'awayFailedToScore',
+                            'homeFailedToScorePercentage',
+                            'awayFailedToScorePercentage'
+                        ];
+                        
+                        fields.forEach(field => {
+                            const value = stats[field];
+                            const status = value === undefined ? '<span class="error">Not found</span>' :
+                                          value === 0 ? '<span class="zero">Zero</span>' :
+                                          '<span class="success">Has value</span>';
+                            
+                            html += `<tr>
+                                <td>${field}</td>
+                                <td>${value !== undefined ? value : 'N/A'}</td>
+                                <td>${status}</td>
+                            </tr>`;
+                        });
+                        
+                        // Add match info
+                        html += `<tr><td colspan="3"><strong>Matches: ${stats.totalMatches || 0}, Goals: ${stats.goalsFor || 0}</strong></td></tr>`;
+                        
+                        html += '</table>';
+                        teamDiv.innerHTML = html;
+                    } else {
+                        teamDiv.innerHTML = `<h3>Team ID: ${team.id}</h3><p class="error">Failed to load data</p>`;
+                    }
+                } catch (error) {
+                    teamDiv.innerHTML = `<h3>Team ID: ${team.id}</h3><p class="error">Error: ${error.message}</p>`;
+                }
+                
+                results.appendChild(teamDiv);
+            }
+        }
+        
+        checkTeams();
+    </script>
+</body>
+</html>

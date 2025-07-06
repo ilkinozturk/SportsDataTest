@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Display Modules</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .debug-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #2d2d2d;
+            border-radius: 4px;
+            border: 1px solid #3e3e3e;
+        }
+        .success { color: #4fc3f7; }
+        .error { color: #f48fb1; }
+        .warning { color: #ffb74d; }
+        .info { color: #81c784; }
+        pre { margin: 5px 0; }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            background: #3f51b5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover { background: #5c6bc0; }
+    </style>
+</head>
+<body>
+    <h1>Display Modules Debug</h1>
+    
+    <div class="debug-section">
+        <h2>Module Load Order Check</h2>
+        <div id="loadOrder"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>Module Status</h2>
+        <div id="moduleStatus"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>API Configuration</h2>
+        <div id="apiConfig"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>Test API Call</h2>
+        <button onclick="testAPI()">Test Team Data API</button>
+        <div id="apiTest"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>Module Dependencies</h2>
+        <div id="dependencies"></div>
+    </div>
+
+    <!-- Load modules in correct order -->
+    <script>
+        const loadOrder = document.getElementById('loadOrder');
+        loadOrder.innerHTML = '<p class="info">Loading modules in order...</p>';
+    </script>
+    
+    <script src="public/js/modules/core/constants.js"></script>
+    <script>loadOrder.innerHTML += '<p class="success">✓ Constants loaded</p>';</script>
+    
+    <script src="public/js/modules/core/event-bus.js"></script>
+    <script>loadOrder.innerHTML += '<p class="success">✓ EventBus loaded</p>';</script>
+    
+    <script src="public/js/modules/core/state-manager.js"></script>
+    <script>loadOrder.innerHTML += '<p class="success">✓ StateManager loaded</p>';</script>
+    
+    <script src="public/js/modules/core/api-client.js"></script>
+    <script>loadOrder.innerHTML += '<p class="success">✓ APIClient loaded</p>';</script>
+    
+    <script src="public/js/modules/core/team-service.js"></script>
+    <script>loadOrder.innerHTML += '<p class="success">✓ TeamService loaded</p>';</script>
+    
+    <script src="public/js/modules/statistics/base-statistics.js"></script>
+    <script>loadOrder.innerHTML += '<p class="success">✓ BaseStatistics loaded</p>';</script>
+    
+    <script src="public/js/modules/statistics/cards-statistics.js"></script>
+    <script>loadOrder.innerHTML += '<p class="success">✓ CardsStatistics loaded</p>';</script>
+    
+    <script src="public/js/modules/statistics/corners-statistics.js"></script>
+    <script>loadOrder.innerHTML += '<p class="success">✓ CornersStatistics loaded</p>';</script>
+    
+    <script src="public/js/modules/display/cards-display.js"></script>
+    <script>loadOrder.innerHTML += '<p class="success">✓ CardsDisplay loaded</p>';</script>
+    
+    <script src="public/js/modules/display/corners-display.js"></script>
+    <script>loadOrder.innerHTML += '<p class="success">✓ CornersDisplay loaded</p>';</script>
+
+    <script>
+        // Check module status
+        function checkModules() {
+            const status = document.getElementById('moduleStatus');
+            const modules = {
+                'Constants': window.TeamStatsConstants,
+                'EventBus': window.TeamStatsEventBus,
+                'StateManager': window.TeamStatsStateManager,
+                'APIClient': window.TeamStatsAPIClient,
+                'TeamService': window.TeamStatsTeamService,
+                'BaseStatistics': window.TeamStatsBaseStatistics,
+                'CardsStatistics': window.TeamStatsCardsStatistics,
+                'CornersStatistics': window.TeamStatsCornersStatistics,
+                'CardsDisplay': window.TeamStatsCardsDisplay,
+                'CornersDisplay': window.TeamStatsCornersDisplay
+            };
+            
+            let html = '';
+            for (const [name, module] of Object.entries(modules)) {
+                const exists = !!module;
+                html += `<p class="${exists ? 'success' : 'error'}">${exists ? '✓' : '✗'} ${name}: ${exists ? 'Available' : 'Missing'}</p>`;
+                
+                if (exists && module.name) {
+                    html += `<p class="info">  → Name: ${module.name}, Version: ${module.version || 'N/A'}</p>`;
+                }
+            }
+            status.innerHTML = html;
+        }
+        
+        // Check API configuration
+        function checkAPIConfig() {
+            const config = document.getElementById('apiConfig');
+            let html = '';
+            
+            // Check Constants
+            if (window.TeamStatsConstants) {
+                const apiConfig = window.TeamStatsConstants.get('API');
+                html += '<p class="info">Constants API Config:</p>';
+                html += `<pre>${JSON.stringify(apiConfig, null, 2)}</pre>`;
+            }
+            
+            // Check APIClient config
+            if (window.TeamStatsAPIClient) {
+                html += '<p class="info">APIClient Config:</p>';
+                html += `<pre>BaseURL: ${window.TeamStatsAPIClient.config?.baseURL || 'Not set'}</pre>`;
+                html += `<pre>Timeout: ${window.TeamStatsAPIClient.config?.timeout || 'Not set'}</pre>`;
+            }
+            
+            // Check TeamService
+            if (window.TeamStatsTeamService) {
+                html += '<p class="info">TeamService Config:</p>';
+                html += `<pre>BaseURL: ${window.TeamStatsTeamService.baseUrl || 'Not set'}</pre>`;
+            }
+            
+            config.innerHTML = html;
+        }
+        
+        // Test API call
+        async function testAPI() {
+            const testDiv = document.getElementById('apiTest');
+            testDiv.innerHTML = '<p class="warning">Testing API...</p>';
+            
+            try {
+                const teamService = window.TeamStatsTeamService;
+                if (!teamService) {
+                    throw new Error('TeamService not loaded');
+                }
+                
+                // Test with team ID 13
+                const data = await teamService.getTeamData(13);
+                
+                testDiv.innerHTML = `
+                    <p class="success">✓ API call successful!</p>
+                    <p class="info">Team: ${data.teamName}</p>
+                    <p class="info">ID: ${data.teamId}</p>
+                    <p class="info">Has stats: ${!!data.stats}</p>
+                    <pre>${JSON.stringify(Object.keys(data), null, 2)}</pre>
+                `;
+            } catch (error) {
+                testDiv.innerHTML = `
+                    <p class="error">✗ API call failed!</p>
+                    <p class="error">Error: ${error.message}</p>
+                    <pre>${error.stack}</pre>
+                `;
+                
+                // Try direct fetch
+                try {
+                    const response = await fetch('/api/teams/data?teamId=13');
+                    const text = await response.text();
+                    testDiv.innerHTML += `
+                        <p class="warning">Direct fetch status: ${response.status}</p>
+                        <pre>${text.substring(0, 200)}...</pre>
+                    `;
+                } catch (fetchError) {
+                    testDiv.innerHTML += `<p class="error">Direct fetch also failed: ${fetchError.message}</p>`;
+                }
+            }
+        }
+        
+        // Check dependencies
+        function checkDependencies() {
+            const deps = document.getElementById('dependencies');
+            let html = '<h3>Module Dependencies:</h3>';
+            
+            // Check CardsDisplay dependencies
+            html += '<p class="info">CardsDisplay requires:</p>';
+            html += '<ul>';
+            html += `<li>CardsStatistics: ${window.TeamStatsCardsStatistics ? '✓' : '✗'}</li>`;
+            html += `<li>EventBus: ${window.TeamStatsEventBus ? '✓' : '✗'}</li>`;
+            html += `<li>StateManager: ${window.TeamStatsStateManager ? '✓' : '✗'}</li>`;
+            html += '</ul>';
+            
+            // Check CornersDisplay dependencies
+            html += '<p class="info">CornersDisplay requires:</p>';
+            html += '<ul>';
+            html += `<li>CornersStatistics: ${window.TeamStatsCornersStatistics ? '✓' : '✗'}</li>`;
+            html += `<li>EventBus: ${window.TeamStatsEventBus ? '✓' : '✗'}</li>`;
+            html += `<li>StateManager: ${window.TeamStatsStateManager ? '✓' : '✗'}</li>`;
+            html += '</ul>';
+            
+            deps.innerHTML = html;
+        }
+        
+        // Run all checks
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                checkModules();
+                checkAPIConfig();
+                checkDependencies();
+            }, 100);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+Test URLs for verification:
+- http://localhost:3005/team-stats.html?teamId=836  (Real Madrid)
+- http://localhost:3005/team-stats.html?teamId=15   (Manchester United)
+- http://localhost:3005/team-stats.html?teamId=85   (PSG)
+- http://localhost:3005/team-stats.html?teamId=3011 (Shanghai SIPG)

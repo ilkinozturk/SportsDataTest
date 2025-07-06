@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Verify Corner Data</title>
+    <style>
+      body {
+        font-family: Arial;
+        padding: 20px;
+        background: #1a1a1a;
+        color: white;
+      }
+      table {
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+      th,
+      td {
+        border: 1px solid #444;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background: #333;
+      }
+      .good {
+        color: #4caf50;
+      }
+      .warn {
+        color: #ffc107;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Verify Corner Statistics</h1>
+    <div id="status">Loading...</div>
+    <table id="results" style="display: none">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>API Value</th>
+          <th>Display Status</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+    <script>
+      async function loadAndCheck() {
+        try {
+          // Load the actual team stats page in an iframe to check if JS runs
+          const iframe = document.createElement('iframe');
+          iframe.style.width = '100%';
+          iframe.style.height = '500px';
+          iframe.style.border = '1px solid #666';
+          iframe.src = '/team-stats.html?teamId=836';
+          document.body.appendChild(iframe);
+
+          // Also fetch API data directly
+          const response = await fetch('/api/team/836');
+          const data = await response.json();
+          const stats = data.data.statistics;
+
+          // Wait for iframe to load
+          await new Promise(resolve => setTimeout(resolve, 3000));
+
+          // Check values
+          const checks = [
+            { field: 'over25CornersForPercentage_overall', displayId: 'teamCorners-earnedOver25' },
+            { field: 'over35CornersForPercentage_overall', displayId: 'teamCorners-earnedOver35' },
+            { field: 'over45CornersForPercentage_overall', displayId: 'teamCorners-earnedOver45' },
+            { field: 'over25CornersAgainstPercentage_overall', displayId: 'teamCorners-againstOver25' },
+          ];
+
+          const tbody = document.getElementById('tableBody');
+          checks.forEach(check => {
+            const row = tbody.insertRow();
+            row.insertCell(0).textContent = check.field;
+            row.insertCell(1).innerHTML = `<span class="good">${stats[check.field] || 'N/A'}</span>`;
+
+            // Try to get value from iframe
+            let displayValue = 'Could not read from iframe';
+            try {
+              const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+              const element = iframeDoc.getElementById(check.displayId);
+              displayValue = element ? element.textContent : 'Element not found';
+            } catch (e) {
+              displayValue = 'Error: ' + e.message;
+            }
+
+            const displayCell = row.insertCell(2);
+            displayCell.innerHTML =
+              displayValue === `${stats[check.field]}%`
+                ? `<span class="good">${displayValue}</span>`
+                : `<span class="warn">${displayValue}</span>`;
+          });
+
+          document.getElementById('status').textContent = 'Check complete!';
+          document.getElementById('results').style.display = 'table';
+        } catch (error) {
+          document.getElementById('status').textContent = 'Error: ' + error.message;
+        }
+      }
+
+      loadAndCheck();
+    </script>
+  </body>
+</html>
