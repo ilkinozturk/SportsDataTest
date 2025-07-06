@@ -389,6 +389,10 @@ const TeamStatsSchema = {
       sources: ['cardsAVG', 'cards_per_match', 'avg_cards', 'cards_avg'],
       default: 0,
     },
+    cardsAVG: {
+      sources: ['cardsAVG', 'cards_avg', 'average_cards'],
+      default: 0,
+    },
     cardsFor: {
       sources: ['cards_for', 'cards_for_total', 'cards_for_overall'],
       default: 0,
@@ -408,6 +412,14 @@ const TeamStatsSchema = {
       sources: ['cards_against_avg', 'cards_against_per_match', 'cards_against_avg_overall'],
       default: 0,
       additionalInfo: true,
+    },
+    cardsHighest: {
+      sources: ['cardsHighest', 'cards_highest', 'max_cards'],
+      default: 0,
+    },
+    cardsLowest: {
+      sources: ['cardsLowest', 'cards_lowest', 'min_cards'],
+      default: 0,
     },
 
     // Cards Over/Under
@@ -694,10 +706,13 @@ const SpecialMappings = {
     'yellowCards',
     'redCards',
     'cardsPerMatch',
+    'cardsAVG',
     'cardsFor',
     'cardsAgainst',
     'cardsForPerMatch',
     'cardsAgainstPerMatch',
+    'cardsHighest',
+    'cardsLowest',
     'over05Cards',
     'over05CardsPercentage',
     'over15Cards',

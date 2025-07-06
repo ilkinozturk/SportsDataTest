@@ -1324,16 +1324,25 @@
       console.log('[CardsDisplay] Updating Match Cards section with filter:', filter);
       console.log('[CardsDisplay] Statistics:', statistics);
       
+      // Debug: Log specific card fields
+      console.log('[CardsDisplay] cardsPerMatch:', statistics.cardsPerMatch);
+      console.log('[CardsDisplay] cardsAVG_overall:', statistics.cardsAVG_overall);
+      console.log('[CardsDisplay] cardsAVG:', statistics.cardsAVG);
+      console.log('[CardsDisplay] matchCardsAVG:', statistics.matchCardsAVG);
+      console.log('[CardsDisplay] matchCardsAVG_overall:', statistics.matchCardsAVG_overall);
+      
       // Update Match Cards AVG
       let matchCardsAvg = 0;
       if (filter === 'overall') {
-        matchCardsAvg = statistics.cardsPerMatch || statistics.cardsAVG_overall || statistics.cardsAVG || 0;
+        // Also check for matchCardsAVG field specifically
+        matchCardsAvg = statistics.matchCardsAVG_overall || statistics.matchCardsAVG || 
+                       statistics.cardsPerMatch || statistics.cardsAVG_overall || statistics.cardsAVG || 0;
       } else if (filter === 'home') {
-        matchCardsAvg = statistics.homeCardsPerMatch || statistics.cardsAVG_home || 0;
+        matchCardsAvg = statistics.matchCardsAVG_home || statistics.homeCardsPerMatch || statistics.cardsAVG_home || 0;
       } else if (filter === 'away') {
-        matchCardsAvg = statistics.awayCardsPerMatch || statistics.cardsAVG_away || 0;
+        matchCardsAvg = statistics.matchCardsAVG_away || statistics.awayCardsPerMatch || statistics.cardsAVG_away || 0;
       }
-      console.log('[CardsDisplay] matchCardsAvg:', matchCardsAvg);
+      console.log('[CardsDisplay] calculated matchCardsAvg:', matchCardsAvg);
       this.updateElement('matchCardsAvg', matchCardsAvg.toFixed(2));
       
       // Update Highest/Lowest in a Match

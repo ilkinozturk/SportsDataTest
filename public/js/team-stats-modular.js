@@ -753,6 +753,14 @@
       
       if (global.TeamStatsCardsDisplay && global.TeamStatsCardsDisplay.updateCardsStatistics) {
         global.TeamStatsCardsDisplay.updateCardsStatistics(stats, 'overall');
+        // Also update Match Cards section
+        if (global.TeamStatsCardsDisplay.updateMatchCardsSection) {
+          global.TeamStatsCardsDisplay.updateMatchCardsSection(stats, 'overall');
+        }
+        // Also update Team Cards section if exists
+        if (global.TeamStatsCardsDisplay.updateTeamCardsSection) {
+          global.TeamStatsCardsDisplay.updateTeamCardsSection(stats, 'overall');
+        }
       }
       
       if (global.TeamStatsCornersDisplay && global.TeamStatsCornersDisplay.updateCornersStatistics) {
