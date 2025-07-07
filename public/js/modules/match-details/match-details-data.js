@@ -126,15 +126,34 @@ export class MatchDetailsData {
           formData = info.form || info.recent_form || info.last5 || '';
         }
 
-        // Update match data with form
-        if (formData && this.matchData) {
-          console.log(`Setting ${venue} form:`, formData);
+        // Update match data with form and recent matches
+        if (this.matchData) {
           if (venue === 'home' && this.matchData.homeTeam) {
-            this.matchData.homeTeam.homeForm = formData;
+            if (formData) {
+              console.log(`Setting ${venue} form:`, formData);
+              this.matchData.homeTeam.homeForm = formData;
+            }
+            // Add recent matches data
+            if (teamData.recentMatches) {
+              this.matchData.homeTeam.recentMatches = teamData.recentMatches;
+            } else if (teamData.allMatches) {
+              this.matchData.homeTeam.recentMatches = teamData.allMatches.slice(0, 15); // Get last 15 matches
+            }
           } else if (venue === 'away' && this.matchData.awayTeam) {
-            this.matchData.awayTeam.awayForm = formData;
+            if (formData) {
+              console.log(`Setting ${venue} form:`, formData);
+              this.matchData.awayTeam.awayForm = formData;
+            }
+            // Add recent matches data
+            if (teamData.recentMatches) {
+              this.matchData.awayTeam.recentMatches = teamData.recentMatches;
+            } else if (teamData.allMatches) {
+              this.matchData.awayTeam.recentMatches = teamData.allMatches.slice(0, 15); // Get last 15 matches
+            }
           }
-        } else {
+        }
+
+        if (!formData) {
           console.log(`No form data found for ${venue} team`);
         }
       }

@@ -10,6 +10,7 @@ export class H2HData {
     this.apiClient = apiClient;
     this.cache = new Map();
     this.CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+    this.currentMatchData = null;
 
     this.attachEventListeners();
   }
@@ -22,6 +23,7 @@ export class H2HData {
 
     // Listen for match data to extract team IDs
     this.eventBus.on('match-data-loaded', matchData => {
+      this.currentMatchData = matchData; // Store match data for later use
       if (matchData?.homeTeam?.id && matchData?.awayTeam?.id) {
         this.fetchH2HData({
           homeTeamId: matchData.homeTeam.id,
@@ -287,63 +289,134 @@ export class H2HData {
     console.log(`Fetching H2H matches for teams ${homeTeamId} vs ${awayTeamId}`);
 
     try {
-      // Use the H2H endpoint directly
-      const response = await this.apiClient.get(`/api/matches/h2h/${homeTeamId}/${awayTeamId}`);
+      // First try the H2H endpoint
+      const h2hResponse = await this.apiClient.get(`/api/matches/h2h/${homeTeamId}/${awayTeamId}`);
 
-      if (response.success && response.data) {
-        console.log(`H2H endpoint returned:`, response.data);
-
-        // Extract data from response
-        const h2hData = response.data;
-        const h2hMatches = h2hData.matches || [];
-        const summary = h2hData.summary || {
-          homeWins: 0,
-          awayWins: 0,
-          draws: 0,
-          totalMatches: h2hMatches.length,
-        };
-
-        console.log(`Found ${h2hMatches.length} H2H matches from H2H endpoint`);
-
-        // Return the H2H data in expected format
-        const processedData = {
-          summary,
-          matches: h2hMatches,
-          hasData: h2hMatches.length > 0,
-          betting_stats: h2hData.betting_stats || {},
-        };
-
-        // Get team info from response or first match
-        const matchData = {
+      if (
+        h2hResponse.success &&
+        h2hResponse.data &&
+        h2hResponse.data.matches &&
+        h2hResponse.data.matches.length > 0
+      ) {
+        console.log(`H2H endpoint returned ${h2hResponse.data.matches.length} matches`);
+        return this.processH2HData(h2hResponse.data, {
           homeTeam: { id: homeTeamId },
           awayTeam: { id: awayTeamId },
-        };
+        });
+      }
 
-        // Try to get team info from first match if available
-        if (h2hMatches.length > 0) {
-          const firstMatch = h2hMatches[0];
-          if (firstMatch.homeID === homeTeamId) {
-            matchData.homeTeam.name = firstMatch.home_name;
-            matchData.homeTeam.logo = firstMatch.home_image;
-            matchData.awayTeam.name = firstMatch.away_name;
-            matchData.awayTeam.logo = firstMatch.away_image;
-          } else {
-            matchData.homeTeam.name = firstMatch.away_name;
-            matchData.homeTeam.logo = firstMatch.away_image;
-            matchData.awayTeam.name = firstMatch.home_name;
-            matchData.awayTeam.logo = firstMatch.home_image;
-          }
-        }
+      console.log('H2H endpoint returned no matches, trying alternative approach...');
 
-        return this.processH2HData(processedData, matchData);
-      } else {
-        console.log('H2H endpoint returned no data');
+      // Use stored match data
+      const matchData = this.currentMatchData;
+
+      if (!matchData) {
+        console.log('No match data available');
         return {
           summary: { homeWins: 0, awayWins: 0, draws: 0, totalMatches: 0 },
           matches: [],
           hasData: false,
         };
       }
+
+      // Check if we have team matches from the match data
+      const homeTeamData = matchData.homeTeam;
+      const awayTeamData = matchData.awayTeam;
+
+      if (!homeTeamData || !awayTeamData) {
+        console.log('No team data available for H2H calculation');
+        return {
+          summary: { homeWins: 0, awayWins: 0, draws: 0, totalMatches: 0 },
+          matches: [],
+          hasData: false,
+        };
+      }
+
+      // Get matches from team data
+      const homeMatches = homeTeamData.recentMatches || [];
+      const awayMatches = awayTeamData.recentMatches || [];
+
+      console.log(
+        `Home team has ${homeMatches.length} recent matches, Away team has ${awayMatches.length} recent matches`
+      );
+
+      // Find H2H matches by matching IDs
+      const h2hMatches = [];
+      const processedIds = new Set();
+
+      // Check all matches for H2H
+      [...homeMatches, ...awayMatches].forEach(match => {
+        if (!processedIds.has(match.id)) {
+          const isH2H =
+            (match.homeTeam?.id === homeTeamId && match.awayTeam?.id === awayTeamId) ||
+            (match.homeTeam?.id === awayTeamId && match.awayTeam?.id === homeTeamId);
+
+          if (isH2H && match.status === 'complete') {
+            processedIds.add(match.id);
+
+            // Normalize match data
+            const normalizedMatch = {
+              id: match.id,
+              date: match.date,
+              status: match.status,
+              homeID: match.homeTeam.id,
+              awayID: match.awayTeam.id,
+              home_name: match.homeTeam.name,
+              away_name: match.awayTeam.name,
+              homeGoalCount: match.homeScore || 0,
+              awayGoalCount: match.awayScore || 0,
+              competition: match.competition,
+              stadium: match.stadium,
+            };
+
+            h2hMatches.push(normalizedMatch);
+          }
+        }
+      });
+
+      // Sort by date (newest first)
+      h2hMatches.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      console.log(`Found ${h2hMatches.length} H2H matches from team data`);
+
+      // Calculate summary
+      const summary = {
+        homeWins: 0,
+        awayWins: 0,
+        draws: 0,
+        totalMatches: h2hMatches.length,
+      };
+
+      h2hMatches.forEach(match => {
+        const homeGoals = match.homeGoalCount;
+        const awayGoals = match.awayGoalCount;
+
+        if (homeGoals > awayGoals) {
+          if (match.homeID === homeTeamId) {
+            summary.homeWins++;
+          } else {
+            summary.awayWins++;
+          }
+        } else if (awayGoals > homeGoals) {
+          if (match.awayID === homeTeamId) {
+            summary.homeWins++;
+          } else {
+            summary.awayWins++;
+          }
+        } else {
+          summary.draws++;
+        }
+      });
+
+      const processedData = {
+        summary,
+        matches: h2hMatches,
+        hasData: h2hMatches.length > 0,
+        homeTeam: { id: homeTeamId, name: homeTeamData.name, logo: homeTeamData.logo },
+        awayTeam: { id: awayTeamId, name: awayTeamData.name, logo: awayTeamData.logo },
+      };
+
+      return processedData;
     } catch (error) {
       console.error('Error calculating H2H from team matches:', error);
       return {
