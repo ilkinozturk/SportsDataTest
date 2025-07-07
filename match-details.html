@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Match Analysis - H2H Statistics</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="team-stats.css">
+    <link rel="stylesheet" href="match-details.css">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  </head>
+  <body>
+    <!-- Loading State -->
+    <div id="loadingOverlay" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Loading match data...</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+      <!-- Header Section -->
+      <header class="match-header">
+        <div class="match-header-content">
+          <div class="back-button">
+            <a href="index.html" class="btn-back">
+              <i class="fas fa-arrow-left"></i>
+              <span>Back to Matches</span>
+            </a>
+          </div>
+          
+          <div class="match-info">
+            <div class="league-info">
+              <img id="leagueLogo" class="league-logo" src="" alt="" />
+              <span id="leagueName" class="league-name"></span>
+            </div>
+            <div id="matchDate" class="match-date"></div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Match Score Section -->
+      <section class="match-score-section">
+        <div class="match-score-container">
+          <!-- Match Date/Time -->
+          <div class="match-datetime">
+            <p id="matchDateDisplay" class="match-date-text"></p>
+            <p id="matchTimeDisplay" class="match-time-text"></p>
+          </div>
+          
+          <!-- Teams and Score -->
+          <div class="teams-score-wrapper">
+            <div class="team home-team">
+              <img id="homeTeamLogo" class="team-logo" src="" alt="" />
+              <h2 id="homeTeamName" class="team-name"></h2>
+              <div id="homeTeamForm" class="team-form"></div>
+              <div class="team-ppg">
+                <span id="homeTeamPPG" class="ppg-value">0.00</span>
+                <span class="ppg-label">Home PPG</span>
+              </div>
+            </div>
+            
+            <div class="score-display">
+              <div id="matchScore" class="score">
+                <span id="homeScore">-</span>
+                <span class="score-separator">:</span>
+                <span id="awayScore">-</span>
+              </div>
+              <div id="matchStatus" class="match-status"></div>
+              <div id="matchTime" class="match-time"></div>
+            </div>
+            
+            <div class="team away-team">
+              <img id="awayTeamLogo" class="team-logo" src="" alt="" />
+              <h2 id="awayTeamName" class="team-name"></h2>
+              <div id="awayTeamForm" class="team-form"></div>
+              <div class="team-ppg">
+                <span id="awayTeamPPG" class="ppg-value">0.00</span>
+                <span class="ppg-label">Away PPG</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Navigation Tabs -->
+      <nav class="stats-nav">
+        <div class="nav-tabs">
+          <button class="nav-tab active" data-tab="overview" onclick="switchTab('overview')">
+            <i class="fas fa-chart-line"></i>
+            <span>Overview</span>
+          </button>
+          <button class="nav-tab" data-tab="h2h" onclick="switchTab('h2h')">
+            <i class="fas fa-history"></i>
+            <span>H2H History</span>
+          </button>
+          <button class="nav-tab" data-tab="statistics" onclick="switchTab('statistics')">
+            <i class="fas fa-chart-bar"></i>
+            <span>Match Stats</span>
+          </button>
+          <button class="nav-tab" data-tab="lineups" onclick="switchTab('lineups')">
+            <i class="fas fa-users"></i>
+            <span>Lineups</span>
+          </button>
+          <button class="nav-tab" data-tab="events" onclick="switchTab('events')">
+            <i class="fas fa-list"></i>
+            <span>Events</span>
+          </button>
+          <button class="nav-tab" data-tab="odds" onclick="switchTab('odds')">
+            <i class="fas fa-percentage"></i>
+            <span>Odds</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Overview Tab -->
+        <div id="overviewTab" class="tab-pane active" data-tab="overview">
+          <div class="overview-grid">
+            <!-- Key Stats -->
+            <div class="stat-card">
+              <h3 class="card-title">Key Statistics</h3>
+              <div id="keyStats" class="key-stats-grid"></div>
+            </div>
+            
+            <!-- Recent Form -->
+            <div class="stat-card">
+              <h3 class="card-title">Recent Form</h3>
+              <div class="form-comparison">
+                <div class="form-team">
+                  <h4 id="homeFormTitle"></h4>
+                  <div id="homeRecentForm" class="recent-matches"></div>
+                </div>
+                <div class="form-team">
+                  <h4 id="awayFormTitle"></h4>
+                  <div id="awayRecentForm" class="recent-matches"></div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Goal Timing -->
+            <div class="stat-card">
+              <h3 class="card-title">Goal Timing</h3>
+              <div id="goalTiming" class="timing-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- H2H Tab -->
+        <div id="h2hTab" class="tab-pane" data-tab="h2h">
+          <div class="h2h-container">
+            <!-- H2H Summary -->
+            <div class="stat-card">
+              <h3 class="card-title">Head to Head Summary</h3>
+              <div id="h2hSummary" class="h2h-summary"></div>
+            </div>
+            
+            <!-- H2H Matches -->
+            <div class="stat-card">
+              <h3 class="card-title">Previous Meetings</h3>
+              <div id="h2hMatches" class="h2h-matches-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Statistics Tab -->
+        <div id="statisticsTab" class="tab-pane" data-tab="statistics">
+          <div class="statistics-container">
+            <div class="stat-card">
+              <h3 class="card-title">Match Statistics</h3>
+              <div id="matchStatistics" class="match-stats-comparison"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lineups Tab -->
+        <div id="lineupsTab" class="tab-pane" data-tab="lineups">
+          <div class="lineups-container">
+            <!-- Formation -->
+            <div class="stat-card">
+              <h3 class="card-title">Team Formations</h3>
+              <div id="formations" class="formations-display"></div>
+            </div>
+            
+            <!-- Starting XI -->
+            <div class="stat-card">
+              <h3 class="card-title">Starting Lineups</h3>
+              <div id="startingLineups" class="lineups-grid"></div>
+            </div>
+            
+            <!-- Substitutes -->
+            <div class="stat-card">
+              <h3 class="card-title">Substitutes</h3>
+              <div id="substitutes" class="substitutes-grid"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Events Tab -->
+        <div id="eventsTab" class="tab-pane" data-tab="events">
+          <div class="events-container">
+            <div class="stat-card">
+              <h3 class="card-title">Match Events</h3>
+              <div id="matchEvents" class="events-timeline"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Odds Tab -->
+        <div id="oddsTab" class="tab-pane" data-tab="odds">
+          <div class="odds-container">
+            <div class="stat-card">
+              <h3 class="card-title">Betting Odds Comparison</h3>
+              <div id="oddsComparison" class="odds-grid"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="public/js/config/env.js"></script>
+    <script type="module" src="public/js/modules/match-details/match-details-modular.js"></script>
+  </body>
+</html>

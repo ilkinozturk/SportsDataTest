@@ -44,10 +44,15 @@ class MatchDetailsService {
         // Process and structure the data
         const details = {
           id: match.id,
+          status: match.status || 'unknown',
+          date: match.date_unix ? new Date(match.date_unix * 1000).toISOString() : match.date,
           homeTeam: {
             id: match.homeID,
             name: match.home_name,
+            logo: match.home_image || null,
             goals: match.homeGoalCount,
+            homeForm: match.home_form || match.homeForm || null,
+            homePPG: match.home_ppg || match.homePPG || null,
             goalDetails: this.processGoalDetails(
               match.team_a_goal_details,
               match.lineups?.team_a,
@@ -57,7 +62,10 @@ class MatchDetailsService {
           awayTeam: {
             id: match.awayID,
             name: match.away_name,
+            logo: match.away_image || null,
             goals: match.awayGoalCount,
+            awayForm: match.away_form || match.awayForm || null,
+            awayPPG: match.away_ppg || match.awayPPG || null,
             goalDetails: this.processGoalDetails(
               match.team_b_goal_details,
               match.lineups?.team_b,
@@ -122,6 +130,11 @@ class MatchDetailsService {
           referee: match.refereeID,
           attendance: match.attendance,
           weather: match.weather,
+          league: {
+            id: match.competition_id,
+            name: match.competition_name || 'Unknown League',
+            logo: null
+          },
         };
 
         // Cache the result

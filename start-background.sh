@@ -13,7 +13,7 @@ pkill -f "simple-server-optimized.js" 2>/dev/null
 mkdir -p logs
 
 echo "🔄 Starting server in background..."
-echo "🌐 Server will be available at: http://localhost:3001"
+echo "🌐 Server will be available at: http://localhost:3005"
 echo "📝 Logs: tail -f logs/server.log"
 echo "🛑 Stop: pkill -f simple-server-optimized.js"
 echo ""

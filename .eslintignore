@@ -1,0 +1,20 @@
+# ESLint ignore patterns
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+coverage/
+
+# Environment config with mixed module/script syntax
+public/js/config/env.js
+
+# Test files
+*.test.js
+*.spec.js
+
+# Temporary files
+*.tmp
+*.temp

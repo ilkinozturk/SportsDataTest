@@ -3,8 +3,15 @@
  * Displays team's recent matches with filtering and details
  */
 
-(function(global) {
+(function (global) {
   'use strict';
+
+  // Get global references
+  const TeamStatsComponents = global.TeamStatsComponents || {};
+  const TeamStatsRenderer = global.TeamStatsRenderer || {};
+  const TeamStatsStateManager = global.TeamStatsStateManager || {};
+  const TeamStatsEventBus = global.TeamStatsEventBus || {};
+  const TeamStatsUIEvents = global.TeamStatsUIEvents || {};
 
   // Main Match List Component
   TeamStatsComponents.register('match-list', {
@@ -173,29 +180,27 @@
       limit: 20,
       filters: {
         competition: 'all',
-        result: 'all'
-      }
+        result: 'all',
+      },
     },
     state: {
       filteredMatches: [],
       displayedCount: 20,
       selectedMatch: null,
       competitions: [],
-      stats: { wins: 0, draws: 0, losses: 0 }
+      stats: { wins: 0, draws: 0, losses: 0 },
     },
     computed: {
       hasMore() {
         return this.state.filteredMatches.length > this.state.displayedCount;
-      }
+      },
     },
     mounted() {
       // Register partials
-      TeamStatsRenderer.registerPartial('matchRow',
-        TeamStatsComponents.get('match-row').template
-      );
-      
+      TeamStatsRenderer.registerPartial('matchRow', TeamStatsComponents.get('match-row').template);
+
       // Subscribe to team data
-      this.unsubscribe = TeamStatsStateManager.subscribe('globalStatistics', (stats) => {
+      this.unsubscribe = TeamStatsStateManager.subscribe('globalStatistics', stats => {
         if (stats && stats.matches) {
           this.loadMatches();
         }
@@ -203,22 +208,22 @@
 
       // Event listeners
       TeamStatsEventBus.on('match:toggle-details', this.handleMatchDetails.bind(this));
-      
+
       // Filter change handlers
-      TeamStatsUIEvents.delegate(this.element, 'change', '.match-filter', (e) => {
+      TeamStatsUIEvents.delegate(this.element, 'change', '.match-filter', e => {
         const filterType = e.target.dataset.filter;
         const value = e.target.value;
         this.updateFilter(filterType, value);
       });
 
       // Action handlers
-      TeamStatsUIEvents.delegate(this.element, 'click', '[data-action]', (e) => {
+      TeamStatsUIEvents.delegate(this.element, 'click', '[data-action]', e => {
         const action = e.target.dataset.action;
         this.handleAction(action);
       });
 
       // Click outside to close modal
-      TeamStatsUIEvents.on(this.element, 'click', '.match-details-modal', (e) => {
+      TeamStatsUIEvents.on(this.element, 'click', '.match-details-modal', e => {
         if (e.target.classList.contains('match-details-modal')) {
           this.setState({ selectedMatch: null });
         }
@@ -228,18 +233,18 @@
       this.loadMatches();
     },
     methods: {
-      async loadMatches() {
+      loadMatches() {
         try {
           this.update({ loading: true, error: null });
-          
+
           // Get matches from state or API
-          const teamId = TeamStatsStateManager.getState().teamId;
-          const statistics = TeamStatsStateManager.getState().globalStatistics;
-          
+          const _teamId = TeamStatsStateManager.getState().teamId;
+          const _statistics = TeamStatsStateManager.getState().globalStatistics;
+
           // In production, matches would come from API
           // For now, show empty state
           const matches = [];
-          
+
           this.update({ matches, loading: false });
           this.filterMatches();
           this.extractCompetitions();
@@ -269,14 +274,14 @@
         const stats = {
           wins: filtered.filter(m => this.getMatchResult(m) === 'win').length,
           draws: filtered.filter(m => this.getMatchResult(m) === 'draw').length,
-          losses: filtered.filter(m => this.getMatchResult(m) === 'loss').length
+          losses: filtered.filter(m => this.getMatchResult(m) === 'loss').length,
         };
 
         // Update state
-        this.setState({ 
+        this.setState({
           filteredMatches: filtered,
           displayedCount: Math.min(this.props.limit, filtered.length),
-          stats
+          stats,
         });
       },
 
@@ -292,17 +297,17 @@
       extractCompetitions() {
         const competitions = [];
         const seen = new Set();
-        
+
         this.props.matches.forEach(match => {
           if (!seen.has(match.competitionId)) {
             seen.add(match.competitionId);
             competitions.push({
               id: match.competitionId,
-              name: match.competition
+              name: match.competition,
             });
           }
         });
-        
+
         this.setState({ competitions });
       },
 
@@ -318,11 +323,11 @@
             this.loadMatches();
             break;
           case 'load-more':
-            this.setState({ 
+            this.setState({
               displayedCount: Math.min(
                 this.state.displayedCount + this.props.limit,
                 this.state.filteredMatches.length
-              )
+              ),
             });
             break;
         }
@@ -330,11 +335,13 @@
 
       handleMatchDetails(match) {
         this.setState({ selectedMatch: match });
-      }
+      },
     },
     destroyed() {
-      if (this.unsubscribe) this.unsubscribe();
-    }
+      if (this.unsubscribe) {
+        this.unsubscribe();
+      }
+    },
   });
 
   // Match Details Component
@@ -461,7 +468,7 @@
       }
     `,
     props: {
-      match: null
+      match: null,
     },
     computed: {
       homeScore() {
@@ -469,25 +476,24 @@
       },
       awayScore() {
         return this.props.match?.score.split('-')[1] || '0';
-      }
-    }
+      },
+    },
   });
 
   // Register formatDate helper
-  TeamStatsRenderer.registerHelper('formatDate', (dateStr) => {
+  TeamStatsRenderer.registerHelper('formatDate', dateStr => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   });
 
   // Register formatNumber helper
-  TeamStatsRenderer.registerHelper('formatNumber', (num) => {
+  TeamStatsRenderer.registerHelper('formatNumber', num => {
     return num?.toLocaleString() || '0';
   });
 
   console.log('Match List Components registered');
-
 })(window);

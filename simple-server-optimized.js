@@ -8,12 +8,14 @@ const config = require('./src/config');
 const LeagueManager = require('./utils/LeagueManager');
 const footyStatsAPI = require('./services/footyStatsAPI');
 const MatchesService = require('./services/matchesService');
+const MatchDetailsService = require('./services/MatchDetailsService');
 
 const app = express();
 
 // Initialize services
 const leagueManager = new LeagueManager(config.API.FOOTBALL_API_KEY, config.API.FOOTBALL_API_URL);
 const matchesService = new MatchesService(config.API.FOOTBALL_API_KEY, config.API.FOOTBALL_API_URL, leagueManager);
+const matchDetailsService = new MatchDetailsService(config.API.FOOTBALL_API_KEY, config.API.FOOTBALL_API_URL);
 const TeamDataService = require('./services/teamDataService');
 const teamDataService = new TeamDataService(config.API.FOOTBALL_API_KEY, config.API.FOOTBALL_API_URL, leagueManager);
 
@@ -542,6 +544,97 @@ app.get('/api/matches/h2h/:team1/:team2', asyncHandler(async (req, res, next) =>
     count: matches.length,
     matches: matches, // Already formatted by DTO
   });
+}));
+
+// Get match details with H2H
+app.get('/api/matches/:matchId/details', asyncHandler(async (req, res, next) => {
+  const { matchId } = req.params;
+  
+  // Validate match ID
+  if (!matchId) {
+    throw new ValidationError('Match ID is required');
+  }
+  
+  logger.info(`[Match Details] Fetching details for match: ${matchId}`);
+  
+  try {
+    // Get match details from the service
+    const matchDetails = await matchDetailsService.getMatchDetails(matchId);
+    
+    if (!matchDetails) {
+      throw new NotFoundError('Match not found');
+    }
+    
+    // For H2H data, we'll need to make additional calls
+    // This is a simplified version - you might want to enhance this
+    const h2hData = {
+      summary: {
+        homeWins: 0,
+        awayWins: 0,
+        draws: 0
+      },
+      matches: []
+    };
+    
+    // Try to get H2H data if we have team IDs
+    if (matchDetails.homeTeam?.id && matchDetails.awayTeam?.id) {
+      try {
+        const h2hMatches = await teamService.getH2HMatches(
+          matchDetails.homeTeam.id, 
+          matchDetails.awayTeam.id, 
+          { limit: 10 }
+        );
+        
+        // Calculate H2H summary
+        h2hMatches.forEach(match => {
+          if (match.homeScore > match.awayScore) {
+            if (match.homeTeam.id === matchDetails.homeTeam.id) {
+              h2hData.summary.homeWins++;
+            } else {
+              h2hData.summary.awayWins++;
+            }
+          } else if (match.homeScore < match.awayScore) {
+            if (match.awayTeam.id === matchDetails.homeTeam.id) {
+              h2hData.summary.homeWins++;
+            } else {
+              h2hData.summary.awayWins++;
+            }
+          } else {
+            h2hData.summary.draws++;
+          }
+        });
+        
+        h2hData.matches = h2hMatches;
+      } catch (h2hError) {
+        logger.warn(`Failed to fetch H2H data: ${h2hError.message}`);
+      }
+    }
+    
+    // Combine match details with H2H data
+    const responseData = {
+      ...matchDetails,
+      h2h: h2hData,
+      statistics: {
+        home: matchDetails.stats || {},
+        away: matchDetails.stats || {}
+      }
+    };
+    
+    res.json({
+      success: true,
+      data: responseData
+    });
+    
+  } catch (error) {
+    logger.error(`Error fetching match details: ${error.message}`);
+    
+    // Handle external API errors
+    if (error.message.includes('API') || error.response?.status >= 500) {
+      throw new ExternalAPIError('Match details service is temporarily unavailable');
+    }
+    
+    throw error;
+  }
 }));
 
 // Get league standings

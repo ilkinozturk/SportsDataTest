@@ -3,8 +3,13 @@
  * Displays detailed statistics in table format
  */
 
-(function(global) {
+(function (global) {
   'use strict';
+
+  // Get global references
+  const TeamStatsComponents = global.TeamStatsComponents || {};
+  const TeamStatsRenderer = global.TeamStatsRenderer || {};
+  const TeamStatsStateManager = global.TeamStatsStateManager || {};
 
   // Register main stats table component
   TeamStatsComponents.register('team-stats-table', {
@@ -103,11 +108,11 @@
     `,
     props: {
       loading: false,
-      rows: []
+      rows: [],
     },
     mounted() {
       // Subscribe to statistics updates
-      this.unsubscribe = TeamStatsStateManager.subscribe('globalStatistics', (stats) => {
+      this.unsubscribe = TeamStatsStateManager.subscribe('globalStatistics', stats => {
         if (stats) {
           this.updateTableData(stats);
         }
@@ -128,7 +133,7 @@
             home: stats.homeMatches,
             away: stats.awayMatches,
             type: 'number',
-            rowClass: 'row-header'
+            rowClass: 'row-header',
           },
           {
             label: 'Wins',
@@ -136,7 +141,7 @@
             home: stats.homeWins,
             away: stats.awayWins,
             type: 'number',
-            icon: '✅'
+            icon: '✅',
           },
           {
             label: 'Draws',
@@ -144,7 +149,7 @@
             home: stats.homeDraws,
             away: stats.awayDraws,
             type: 'number',
-            icon: '🤝'
+            icon: '🤝',
           },
           {
             label: 'Losses',
@@ -152,15 +157,15 @@
             home: stats.homeLosses,
             away: stats.awayLosses,
             type: 'number',
-            icon: '❌'
+            icon: '❌',
           },
           {
             label: 'Win Rate',
-            overall: (stats.wins / stats.matches * 100),
-            home: (stats.homeWins / stats.homeMatches * 100),
-            away: (stats.awayWins / stats.awayMatches * 100),
+            overall: (stats.wins / stats.matches) * 100,
+            home: (stats.homeWins / stats.homeMatches) * 100,
+            away: (stats.awayWins / stats.awayMatches) * 100,
             type: 'percentage',
-            icon: '📊'
+            icon: '📊',
           },
           {
             label: 'Points Per Game',
@@ -168,7 +173,7 @@
             home: stats.homePpg,
             away: stats.awayPpg,
             type: 'decimal',
-            icon: '📈'
+            icon: '📈',
           },
           {
             label: 'Goals Scored',
@@ -176,21 +181,21 @@
             home: stats.homeGoalsFor,
             away: stats.awayGoalsFor,
             type: 'number',
-            rowClass: 'row-header'
+            rowClass: 'row-header',
           },
           {
             label: 'Goals Conceded',
             overall: stats.goalsAgainst,
             home: stats.homeGoalsAgainst,
             away: stats.awayGoalsAgainst,
-            type: 'number'
+            type: 'number',
           },
           {
             label: 'Goals Per Match',
             overall: stats.goalsFor / stats.matches,
             home: stats.homeGoalsFor / stats.homeMatches,
             away: stats.awayGoalsFor / stats.awayMatches,
-            type: 'decimal'
+            type: 'decimal',
           },
           {
             label: 'Clean Sheets',
@@ -198,32 +203,36 @@
             home: stats.homeCleanSheets,
             away: stats.awayCleanSheets,
             type: 'number',
-            icon: '🛡️'
+            icon: '🛡️',
           },
           {
             label: 'Failed to Score',
             overall: stats.failedToScore,
             home: stats.homeFailedToScore,
             away: stats.awayFailedToScore,
-            type: 'number'
-          }
+            type: 'number',
+          },
         ];
 
         this.update({ rows, loading: false });
-      }
+      },
     },
     destroyed() {
-      if (this.unsubscribe) this.unsubscribe();
-    }
+      if (this.unsubscribe) {
+        this.unsubscribe();
+      }
+    },
   });
 
   // Register table helpers
   TeamStatsRenderer.registerHelper('formatValue', (value, type) => {
-    if (value === null || value === undefined) return '-';
-    
+    if (value === null || value === undefined) {
+      return '-';
+    }
+
     switch (type) {
       case 'percentage':
-        return Math.round(value) + '%';
+        return `${Math.round(value)}%`;
       case 'decimal':
         return value.toFixed(2);
       case 'number':
@@ -232,9 +241,11 @@
     }
   });
 
-  TeamStatsRenderer.registerHelper('getValueClass', (value) => {
-    if (!value && value !== 0) return '';
-    
+  TeamStatsRenderer.registerHelper('getValueClass', value => {
+    if (!value && value !== 0) {
+      return '';
+    }
+
     // Context-specific logic could go here
     // For now, return neutral
     return '';
@@ -297,11 +308,11 @@
     `,
     props: {
       activeFilter: 'overall',
-      goalStats: []
+      goalStats: [],
     },
     mounted() {
       // Subscribe to filter changes
-      this.filterUnsub = TeamStatsStateManager.subscribe('filters', (filters) => {
+      this.filterUnsub = TeamStatsStateManager.subscribe('filters', filters => {
         this.update({ activeFilter: filters.goals || 'overall' });
         this.updateGoalStats();
       });
@@ -312,7 +323,8 @@
       });
 
       // Register filter group partial
-      TeamStatsRenderer.registerPartial('filterGroup',
+      TeamStatsRenderer.registerPartial(
+        'filterGroup',
         TeamStatsComponents.get('filter-group').template
       );
 
@@ -322,12 +334,16 @@
       updateGoalStats() {
         const stats = TeamStatsStateManager.getState().globalStatistics;
         const filter = this.props.activeFilter;
-        
-        if (!stats) return;
+
+        if (!stats) {
+          return;
+        }
 
         const prefix = filter === 'home' ? 'home' : filter === 'away' ? 'away' : '';
-        const getStatValue = (stat) => {
-          return prefix ? stats[prefix + stat.charAt(0).toUpperCase() + stat.slice(1)] : stats[stat];
+        const getStatValue = stat => {
+          return prefix
+            ? stats[prefix + stat.charAt(0).toUpperCase() + stat.slice(1)]
+            : stats[stat];
         };
 
         const matches = getStatValue('matches');
@@ -337,41 +353,45 @@
         const goalStats = [
           {
             label: 'Total Goals',
-            value: goalsFor + goalsAgainst
+            value: goalsFor + goalsAgainst,
           },
           {
             label: 'Goals For',
             value: goalsFor,
-            percentage: Math.round((goalsFor / (goalsFor + goalsAgainst)) * 100)
+            percentage: Math.round((goalsFor / (goalsFor + goalsAgainst)) * 100),
           },
           {
             label: 'Goals Against',
             value: goalsAgainst,
-            percentage: Math.round((goalsAgainst / (goalsFor + goalsAgainst)) * 100)
+            percentage: Math.round((goalsAgainst / (goalsFor + goalsAgainst)) * 100),
           },
           {
             label: 'Avg Goals For',
-            value: (goalsFor / matches).toFixed(2)
+            value: (goalsFor / matches).toFixed(2),
           },
           {
             label: 'Avg Goals Against',
-            value: (goalsAgainst / matches).toFixed(2)
+            value: (goalsAgainst / matches).toFixed(2),
           },
           {
             label: 'Goal Difference',
-            value: goalsFor - goalsAgainst > 0 ? `+${goalsFor - goalsAgainst}` : goalsFor - goalsAgainst
-          }
+            value:
+              goalsFor - goalsAgainst > 0 ? `+${goalsFor - goalsAgainst}` : goalsFor - goalsAgainst,
+          },
         ];
 
         this.update({ goalStats });
-      }
+      },
     },
     destroyed() {
-      if (this.filterUnsub) this.filterUnsub();
-      if (this.statsUnsub) this.statsUnsub();
-    }
+      if (this.filterUnsub) {
+        this.filterUnsub();
+      }
+      if (this.statsUnsub) {
+        this.statsUnsub();
+      }
+    },
   });
 
   console.log('Team Stats Table Components registered');
-
 })(window);

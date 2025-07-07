@@ -222,8 +222,9 @@ ENV.reportError = (error, context = {}) => {
   // Send error to endpoint using API Client
   if (window.TeamStatsAPIClient) {
     TeamStatsAPIClient.post(ENV.ERROR_ENDPOINT, errorData).catch(err => {
-    console.error('Failed to report error:', err);
-  });
+      console.error('Failed to report error:', err);
+    });
+  }
 };
 
 // Performance helper
@@ -245,10 +246,13 @@ ENV.measure = async (name, fn) => {
   }
 };
 
-// Export as both ES module and global
-export default ENV;
-
 // Make available globally for non-module scripts
 if (typeof window !== 'undefined') {
   window.ENV = ENV;
 }
+
+// Export for module environments
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ENV;
+}
+

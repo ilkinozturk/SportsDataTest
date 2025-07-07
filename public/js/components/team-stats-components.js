@@ -3,11 +3,18 @@
  * Custom components for the team statistics application
  */
 
-(function(global) {
+(function (global) {
   'use strict';
 
+  // Get global references
+  const TeamStatsComponents = global.TeamStatsComponents;
+  const TeamStatsRenderer = global.TeamStatsRenderer || {};
+  const TeamStatsStateManager = global.TeamStatsStateManager || {};
+  const TeamStatsEventBus = global.TeamStatsEventBus || {};
+  const TeamStatsUIEvents = global.TeamStatsUIEvents || {};
+
   // Check dependencies
-  if (!global.TeamStatsComponents) {
+  if (!TeamStatsComponents) {
     throw new Error('Team Stats Components requires Components module');
   }
 
@@ -108,8 +115,8 @@
       changeType: null,
       variant: 'default',
       statKey: '',
-      showTrend: false
-    }
+      showTrend: false,
+    },
   });
 
   /**
@@ -215,13 +222,15 @@
     `,
     props: {
       match: null,
-      showDetails: true
+      showDetails: true,
     },
     computed: {
       result() {
         const match = this.props.match;
-        if (!match) return '';
-        
+        if (!match) {
+          return '';
+        }
+
         const [homeScore, awayScore] = match.score.split('-').map(Number);
         if (match.isHome) {
           return homeScore > awayScore ? 'WIN' : homeScore < awayScore ? 'LOSS' : 'DRAW';
@@ -232,15 +241,15 @@
       resultClass() {
         const result = this.result;
         return result.toLowerCase();
-      }
+      },
     },
     mounted() {
       // Add click handler for details toggle
-      TeamStatsUIEvents.on(this.element, 'click', '[data-action="toggle-details"]', (e) => {
+      TeamStatsUIEvents.on(this.element, 'click', '[data-action="toggle-details"]', e => {
         e.stopPropagation();
         TeamStatsEventBus.emit('match:toggle-details', this.props.match);
       });
-    }
+    },
   });
 
   /**
@@ -289,28 +298,30 @@
       filters: [
         { label: 'Overall', value: 'overall' },
         { label: 'Home', value: 'home' },
-        { label: 'Away', value: 'away' }
+        { label: 'Away', value: 'away' },
       ],
-      activeFilter: 'overall'
+      activeFilter: 'overall',
     },
     mounted() {
       // Subscribe to filter changes
-      this.unsubscribe = TeamStatsStateManager.subscribe('filters', (filters) => {
+      this.unsubscribe = TeamStatsStateManager.subscribe('filters', filters => {
         this.update({ activeFilter: filters[this.props.filterType] });
       });
 
       // Add click handlers
-      TeamStatsUIEvents.delegate(this.element, 'click', '.filter-btn', (e) => {
+      TeamStatsUIEvents.delegate(this.element, 'click', '.filter-btn', e => {
         const value = e.target.dataset.filter;
         TeamStatsEventBus.emit('filter:change', {
           type: this.props.filterType,
-          value: value
+          value: value,
         });
       });
     },
     destroyed() {
-      if (this.unsubscribe) this.unsubscribe();
-    }
+      if (this.unsubscribe) {
+        this.unsubscribe();
+      }
+    },
   });
 
   /**
@@ -350,14 +361,15 @@
     `,
     props: {
       stats: [],
-      columns: 'four-columns'
+      columns: 'four-columns',
     },
     beforeMount() {
       // Register stats card as partial
-      TeamStatsRenderer.registerPartial('statsCard', 
+      TeamStatsRenderer.registerPartial(
+        'statsCard',
         TeamStatsComponents.get('stats-card').template
       );
-    }
+    },
   });
 
   /**
@@ -433,7 +445,7 @@
       strokeWidth: 8,
       color: '#2196F3',
       label: '',
-      unit: '%'
+      unit: '%',
     },
     computed: {
       halfSize() {
@@ -448,10 +460,9 @@
       dashOffset() {
         const progress = Math.min(this.props.value / this.props.max, 1);
         return this.circumference * (1 - progress);
-      }
-    }
+      },
+    },
   });
 
   console.log('Team Stats Components registered');
-
 })(window);
