@@ -447,6 +447,8 @@ export class MatchDetailsDisplay {
   }
 
   updateH2HStatistics(h2hData) {
+    console.log('updateH2HStatistics called with h2hData:', h2hData);
+
     if (!h2hData) {
       this.showNoH2HData();
       return;
@@ -670,12 +672,16 @@ export class MatchDetailsDisplay {
   }
 
   updateH2HRecentMatches(matches, homeTeam, awayTeam) {
+    console.log('updateH2HRecentMatches called with:', { matches, homeTeam, awayTeam });
+
     if (!this.elements.h2hRecentMatches) {
+      console.log('No h2hRecentMatches element found');
       return;
     }
 
     // If no matches available
     if (!matches || matches.length === 0) {
+      console.log('No matches provided to updateH2HRecentMatches');
       this.elements.h2hRecentMatches.innerHTML = `
         <div class="no-h2h-matches">
           <p>No recent H2H matches available</p>

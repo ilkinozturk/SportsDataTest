@@ -233,21 +233,6 @@ export class H2HData {
     };
   }
 
-  calculateH2HFromTeamMatches(_homeTeamId, _awayTeamId) {
-    // This would typically fetch team matches and calculate H2H
-    // For now, return empty data structure
-    return {
-      summary: {
-        homeWins: 0,
-        awayWins: 0,
-        draws: 0,
-        totalMatches: 0,
-      },
-      matches: [],
-      hasData: false,
-    };
-  }
-
   emitH2HData(h2hData) {
     // Emit processed H2H data
     this.eventBus.emit('h2h-data-loaded', h2hData);
@@ -275,6 +260,177 @@ export class H2HData {
 
   clearCache() {
     this.cache.clear();
+  }
+
+  async calculateH2HFromTeamMatches(homeTeamId, awayTeamId) {
+    console.log(`Calculating H2H from team matches for teams ${homeTeamId} vs ${awayTeamId}`);
+
+    try {
+      // Fetch recent matches for both teams
+      const [homeTeamMatches, awayTeamMatches] = await Promise.all([
+        this.fetchTeamMatches(homeTeamId),
+        this.fetchTeamMatches(awayTeamId),
+      ]);
+
+      console.log(
+        `Home team matches: ${homeTeamMatches.length}, Away team matches: ${awayTeamMatches.length}`
+      );
+
+      // Find H2H matches
+      const h2hMatches = [];
+      const processedMatchIds = new Set();
+
+      // Combine all matches and filter for H2H
+      const allMatches = [...homeTeamMatches, ...awayTeamMatches];
+
+      allMatches.forEach(match => {
+        // Check if this is a match between the two teams
+        const isH2HMatch =
+          (match.homeID === homeTeamId && match.awayID === awayTeamId) ||
+          (match.homeID === awayTeamId && match.awayID === homeTeamId);
+
+        if (isH2HMatch && !processedMatchIds.has(match.id) && match.status === 'complete') {
+          processedMatchIds.add(match.id);
+          h2hMatches.push(match);
+        }
+      });
+
+      // Sort by date (newest first)
+      h2hMatches.sort((a, b) => {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        return dateB - dateA;
+      });
+
+      console.log(`Found ${h2hMatches.length} H2H matches`);
+
+      // Calculate summary
+      const summary = {
+        homeWins: 0,
+        awayWins: 0,
+        draws: 0,
+        totalMatches: h2hMatches.length,
+      };
+
+      h2hMatches.forEach(match => {
+        const homeGoals = match.homeGoalCount || match.home_scored || 0;
+        const awayGoals = match.awayGoalCount || match.away_scored || 0;
+
+        if (homeGoals > awayGoals) {
+          if (match.homeID === homeTeamId) {
+            summary.homeWins++;
+          } else {
+            summary.awayWins++;
+          }
+        } else if (awayGoals > homeGoals) {
+          if (match.awayID === homeTeamId) {
+            summary.homeWins++;
+          } else {
+            summary.awayWins++;
+          }
+        } else {
+          summary.draws++;
+        }
+      });
+
+      // Return processed H2H data
+      const h2hData = {
+        summary,
+        matches: h2hMatches,
+        hasData: h2hMatches.length > 0,
+      };
+
+      // Also calculate betting stats if we have matches
+      if (h2hMatches.length > 0) {
+        h2hData.betting_stats = this.calculateBettingStatsFromMatches(h2hMatches);
+      }
+
+      // Get team info from match data
+      const matchData = {
+        homeTeam: { id: homeTeamId },
+        awayTeam: { id: awayTeamId },
+      };
+
+      // Try to get team names and logos from first match
+      if (h2hMatches.length > 0) {
+        const firstMatch = h2hMatches[0];
+        if (firstMatch.homeID === homeTeamId) {
+          matchData.homeTeam.name = firstMatch.home_name;
+          matchData.homeTeam.logo = firstMatch.home_image;
+          matchData.awayTeam.name = firstMatch.away_name;
+          matchData.awayTeam.logo = firstMatch.away_image;
+        } else {
+          matchData.homeTeam.name = firstMatch.away_name;
+          matchData.homeTeam.logo = firstMatch.away_image;
+          matchData.awayTeam.name = firstMatch.home_name;
+          matchData.awayTeam.logo = firstMatch.home_image;
+        }
+      }
+
+      return this.processH2HData(h2hData, matchData);
+    } catch (error) {
+      console.error('Error calculating H2H from team matches:', error);
+      return {
+        summary: { homeWins: 0, awayWins: 0, draws: 0, totalMatches: 0 },
+        matches: [],
+        hasData: false,
+      };
+    }
+  }
+
+  async fetchTeamMatches(teamId) {
+    try {
+      const response = await this.apiClient.get(`/api/teams/${teamId}/matches`, {
+        params: {
+          limit: 50, // Get last 50 matches to find H2H
+        },
+      });
+
+      if (response.success && response.data) {
+        return response.data;
+      }
+      return [];
+    } catch (error) {
+      console.error(`Error fetching matches for team ${teamId}:`, error);
+      return [];
+    }
+  }
+
+  calculateBettingStatsFromMatches(matches) {
+    const stats = {
+      total_games: matches.length,
+      over15: 0,
+      over25: 0,
+      over35: 0,
+      btts: 0,
+    };
+
+    matches.forEach(match => {
+      const homeGoals = match.homeGoalCount || match.home_scored || 0;
+      const awayGoals = match.awayGoalCount || match.away_scored || 0;
+      const totalGoals = homeGoals + awayGoals;
+
+      if (totalGoals > 1.5) {
+        stats.over15++;
+      }
+      if (totalGoals > 2.5) {
+        stats.over25++;
+      }
+      if (totalGoals > 3.5) {
+        stats.over35++;
+      }
+      if (homeGoals > 0 && awayGoals > 0) {
+        stats.btts++;
+      }
+    });
+
+    // Calculate percentages
+    stats.over15Percentage = Math.round((stats.over15 / stats.total_games) * 100);
+    stats.over25Percentage = Math.round((stats.over25 / stats.total_games) * 100);
+    stats.over35Percentage = Math.round((stats.over35 / stats.total_games) * 100);
+    stats.bttsPercentage = Math.round((stats.btts / stats.total_games) * 100);
+
+    return stats;
   }
 }
 
