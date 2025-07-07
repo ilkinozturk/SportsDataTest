@@ -101,11 +101,80 @@ export class H2HData {
           draws: results.draw || 0,
           totalMatches: results.totalMatches || 0,
         },
-        matches: h2hData.matches || [], // Check if API provides match details
+        matches: [], // Will be populated from previous_matches_ids
         homeTeam: matchData?.homeTeam,
         awayTeam: matchData?.awayTeam,
         hasData: true,
       };
+
+      // Process previous_matches_ids if available
+      if (h2hData.previous_matches_ids && Array.isArray(h2hData.previous_matches_ids)) {
+        console.log(`Processing ${h2hData.previous_matches_ids.length} H2H matches from API`);
+
+        // Get current team IDs from h2h data
+        const currentTeamAId = h2hData.team_a_id;
+        const currentTeamBId = h2hData.team_b_id;
+
+        // Get current team names from match data
+        const teamAName = matchData?.homeTeam?.name || 'Team A';
+        const teamBName = matchData?.awayTeam?.name || 'Team B';
+
+        processed.matches = h2hData.previous_matches_ids.map(match => {
+          // Convert Unix timestamp to date
+          const date = new Date(match.date_unix * 1000).toISOString();
+
+          // In each historical match, determine which current team was home/away
+          // This is complex because team IDs may have changed over seasons
+          let homeName, awayName;
+
+          // Try to match based on current team IDs first
+          if (match.team_a_id === currentTeamAId || match.team_b_id === currentTeamBId) {
+            // If we can match at least one team ID
+            if (match.team_a_id === currentTeamAId) {
+              homeName = teamAName;
+              awayName = match.team_b_id === currentTeamBId ? teamBName : 'Unknown Team';
+            } else if (match.team_b_id === currentTeamAId) {
+              awayName = teamAName;
+              homeName = match.team_a_id === currentTeamBId ? teamBName : 'Unknown Team';
+            } else if (match.team_a_id === currentTeamBId) {
+              homeName = teamBName;
+              awayName = match.team_b_id === currentTeamAId ? teamAName : 'Unknown Team';
+            } else if (match.team_b_id === currentTeamBId) {
+              awayName = teamBName;
+              homeName = match.team_a_id === currentTeamAId ? teamAName : 'Unknown Team';
+            }
+          } else {
+            // Can't match IDs - use generic names or position-based logic
+            // Since these are H2H matches, we know both teams played
+            homeName = `${teamAName} (Historical)`;
+            awayName = `${teamBName} (Historical)`;
+          }
+
+          return {
+            id: match.id,
+            date: date,
+            status: 'complete',
+            homeID: match.team_a_id,
+            awayID: match.team_b_id,
+            home_name: homeName,
+            away_name: awayName,
+            homeGoalCount: match.team_a_goals || 0,
+            awayGoalCount: match.team_b_goals || 0,
+            // Add additional fields for better display
+            homeScore: match.team_a_goals || 0,
+            awayScore: match.team_b_goals || 0,
+            // Flag if this is a historical match with different IDs
+            isHistorical:
+              match.team_a_id !== currentTeamAId &&
+              match.team_b_id !== currentTeamAId &&
+              match.team_a_id !== currentTeamBId &&
+              match.team_b_id !== currentTeamBId,
+          };
+        });
+
+        // Sort by date (newest first)
+        processed.matches.sort((a, b) => new Date(b.date) - new Date(a.date));
+      }
 
       console.log('Processed H2H from API format:', processed);
       return processed;

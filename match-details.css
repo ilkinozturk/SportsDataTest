@@ -1433,6 +1433,18 @@
   border-left: 3px solid #ff9800;
 }
 
+.h2h-recent-match.home-loss {
+  border-left: 3px solid #f44336;
+}
+
+.h2h-recent-match.away-loss {
+  border-left: 3px solid #f44336;
+}
+
+.h2h-recent-match.neutral {
+  border-left: 3px solid #9e9e9e;
+}
+
 .h2h-match-date {
   font-size: 13px;
   color: #999;
@@ -1511,6 +1523,15 @@
 
 .result-indicator.draw {
   background: linear-gradient(135deg, #ff9800, #f57c00);
+}
+
+.h2h-recent-match.home-loss .result-indicator,
+.h2h-recent-match.away-loss .result-indicator {
+  background: linear-gradient(135deg, #f44336, #d32f2f);
+}
+
+.h2h-recent-match.neutral .result-indicator {
+  background: linear-gradient(135deg, #9e9e9e, #757575);
 }
 
 /* No matches message */

@@ -701,14 +701,50 @@ export class MatchDetailsDisplay {
         const matchDate = match.date ? new Date(match.date).toLocaleDateString() : 'Date N/A';
 
         // Determine winner for styling
+        // Since team IDs can change across seasons, we'll use name matching as fallback
         let resultClass = 'draw';
         let winnerIndicator = '';
+
+        // Check if this match involves the current teams
+        const homeTeamName = homeTeam?.name || '';
+        const awayTeamName = awayTeam?.name || '';
+        const matchHomeName = match.home_name || '';
+        const matchAwayName = match.away_name || '';
+
+        // Try to determine which team is which by name or ID
+        const isHomeTeamPlayingHome =
+          match.homeID === homeTeam?.id ||
+          matchHomeName.includes(homeTeamName) ||
+          homeTeamName.includes(matchHomeName.replace(' (Historical)', ''));
+        const isAwayTeamPlayingAway =
+          match.awayID === awayTeam?.id ||
+          matchAwayName.includes(awayTeamName) ||
+          awayTeamName.includes(matchAwayName.replace(' (Historical)', ''));
+
         if (homeGoals > awayGoals) {
-          resultClass = match.homeID === homeTeam?.id ? 'home-win' : 'away-win';
-          winnerIndicator = match.homeID === homeTeam?.id ? 'W' : 'L';
+          // Home team won the match
+          if (isHomeTeamPlayingHome) {
+            resultClass = 'home-win';
+            winnerIndicator = 'W';
+          } else if (isAwayTeamPlayingAway) {
+            resultClass = 'away-loss';
+            winnerIndicator = 'L';
+          } else {
+            resultClass = 'neutral';
+            winnerIndicator = 'H'; // Home win
+          }
         } else if (awayGoals > homeGoals) {
-          resultClass = match.awayID === awayTeam?.id ? 'away-win' : 'home-win';
-          winnerIndicator = match.awayID === awayTeam?.id ? 'W' : 'L';
+          // Away team won the match
+          if (isAwayTeamPlayingAway) {
+            resultClass = 'away-win';
+            winnerIndicator = 'W';
+          } else if (isHomeTeamPlayingHome) {
+            resultClass = 'home-loss';
+            winnerIndicator = 'L';
+          } else {
+            resultClass = 'neutral';
+            winnerIndicator = 'A'; // Away win
+          }
         } else {
           winnerIndicator = 'D';
         }
