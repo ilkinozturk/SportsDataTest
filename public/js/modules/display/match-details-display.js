@@ -79,11 +79,23 @@ export class MatchDetailsDisplay {
     
     if (league) {
       if (league.logo && this.elements.leagueLogo) {
-        this.elements.leagueLogo.src = league.logo;
+        // Handle league logo path
+        let logoUrl = league.logo;
+        if (!logoUrl.startsWith('http')) {
+          if (logoUrl.startsWith('leagues/')) {
+            logoUrl = `https://cdn.footystats.org/img/${logoUrl}`;
+          } else {
+            logoUrl = `https://cdn.footystats.org/img/leagues/${logoUrl}`;
+          }
+        }
+        this.elements.leagueLogo.src = logoUrl;
         this.elements.leagueLogo.alt = league.name;
+        this.elements.leagueLogo.onerror = () => {
+          this.elements.leagueLogo.style.display = 'none';
+        };
       }
       if (this.elements.leagueName) {
-        this.elements.leagueName.textContent = league.name;
+        this.elements.leagueName.textContent = league.name || 'Unknown League';
       }
     }
     
@@ -117,10 +129,23 @@ export class MatchDetailsDisplay {
     // Update home team
     if (homeTeam) {
       if (this.elements.homeTeamLogo && homeTeam.logo) {
-        this.elements.homeTeamLogo.src = homeTeam.logo.startsWith('http') 
-          ? homeTeam.logo 
-          : `https://cdn.footystats.org/img/${homeTeam.logo}`;
+        // Handle different logo path formats
+        let logoUrl = homeTeam.logo;
+        if (!logoUrl.startsWith('http')) {
+          // If it's a relative path like 'teams/t836.png'
+          if (logoUrl.startsWith('teams/')) {
+            logoUrl = `https://cdn.footystats.org/img/${logoUrl}`;
+          } else {
+            // If it's just the filename
+            logoUrl = `https://cdn.footystats.org/img/teams/${logoUrl}`;
+          }
+        }
+        this.elements.homeTeamLogo.src = logoUrl;
         this.elements.homeTeamLogo.style.display = 'block';
+        this.elements.homeTeamLogo.onerror = () => {
+          console.error('Failed to load home team logo:', logoUrl);
+          this.elements.homeTeamLogo.style.display = 'none';
+        };
       } else if (this.elements.homeTeamLogo) {
         this.elements.homeTeamLogo.style.display = 'none';
       }
@@ -137,10 +162,23 @@ export class MatchDetailsDisplay {
     // Update away team
     if (awayTeam) {
       if (this.elements.awayTeamLogo && awayTeam.logo) {
-        this.elements.awayTeamLogo.src = awayTeam.logo.startsWith('http') 
-          ? awayTeam.logo 
-          : `https://cdn.footystats.org/img/${awayTeam.logo}`;
+        // Handle different logo path formats
+        let logoUrl = awayTeam.logo;
+        if (!logoUrl.startsWith('http')) {
+          // If it's a relative path like 'teams/t836.png'
+          if (logoUrl.startsWith('teams/')) {
+            logoUrl = `https://cdn.footystats.org/img/${logoUrl}`;
+          } else {
+            // If it's just the filename
+            logoUrl = `https://cdn.footystats.org/img/teams/${logoUrl}`;
+          }
+        }
+        this.elements.awayTeamLogo.src = logoUrl;
         this.elements.awayTeamLogo.style.display = 'block';
+        this.elements.awayTeamLogo.onerror = () => {
+          console.error('Failed to load away team logo:', logoUrl);
+          this.elements.awayTeamLogo.style.display = 'none';
+        };
       } else if (this.elements.awayTeamLogo) {
         this.elements.awayTeamLogo.style.display = 'none';
       }

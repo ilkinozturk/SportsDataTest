@@ -49,10 +49,10 @@ class MatchDetailsService {
           homeTeam: {
             id: match.homeID,
             name: match.home_name,
-            logo: match.home_image || null,
+            logo: match.home_image || match.homeImage || `teams/t${match.homeID}.png`,
             goals: match.homeGoalCount,
             homeForm: match.home_form || match.homeForm || null,
-            homePPG: match.home_ppg || match.homePPG || null,
+            homePPG: match.home_ppg || match.homePPG || match.homePointsPerGame || null,
             goalDetails: this.processGoalDetails(
               match.team_a_goal_details,
               match.lineups?.team_a,
@@ -62,10 +62,10 @@ class MatchDetailsService {
           awayTeam: {
             id: match.awayID,
             name: match.away_name,
-            logo: match.away_image || null,
+            logo: match.away_image || match.awayImage || `teams/t${match.awayID}.png`,
             goals: match.awayGoalCount,
             awayForm: match.away_form || match.awayForm || null,
-            awayPPG: match.away_ppg || match.awayPPG || null,
+            awayPPG: match.away_ppg || match.awayPPG || match.awayPointsPerGame || null,
             goalDetails: this.processGoalDetails(
               match.team_b_goal_details,
               match.lineups?.team_b,
@@ -131,9 +131,9 @@ class MatchDetailsService {
           attendance: match.attendance,
           weather: match.weather,
           league: {
-            id: match.competition_id,
-            name: match.competition_name || 'Unknown League',
-            logo: null
+            id: match.competition_id || match.league_id,
+            name: match.competition_name || match.league_name || 'Unknown League',
+            logo: match.competition_logo || match.league_logo || `leagues/l${match.competition_id || match.league_id}.png`
           },
         };
 

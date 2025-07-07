@@ -565,6 +565,47 @@ app.get('/api/matches/:matchId/details', asyncHandler(async (req, res, next) => 
       throw new NotFoundError('Match not found');
     }
     
+    // Enhance with additional team data if available
+    if (matchDetails.homeTeam && matchDetails.homeTeam.id) {
+      try {
+        const homeTeamData = await teamService.getTeamData(matchDetails.homeTeam.id);
+        if (homeTeamData && homeTeamData.statistics) {
+          // Add home PPG from team statistics
+          matchDetails.homeTeam.homePPG = homeTeamData.statistics.homePPG || 
+                                          homeTeamData.statistics.ppg_home || 
+                                          homeTeamData.statistics.homePointsPerGame ||
+                                          homeTeamData.statistics.PPG_overall_home ||
+                                          null;
+          // Add home form if not already present
+          if (!matchDetails.homeTeam.homeForm && homeTeamData.statistics.homeForm) {
+            matchDetails.homeTeam.homeForm = homeTeamData.statistics.homeForm;
+          }
+        }
+      } catch (error) {
+        logger.warn(`Failed to fetch home team data: ${error.message}`);
+      }
+    }
+    
+    if (matchDetails.awayTeam && matchDetails.awayTeam.id) {
+      try {
+        const awayTeamData = await teamService.getTeamData(matchDetails.awayTeam.id);
+        if (awayTeamData && awayTeamData.statistics) {
+          // Add away PPG from team statistics
+          matchDetails.awayTeam.awayPPG = awayTeamData.statistics.awayPPG || 
+                                          awayTeamData.statistics.ppg_away || 
+                                          awayTeamData.statistics.awayPointsPerGame ||
+                                          awayTeamData.statistics.PPG_overall_away ||
+                                          null;
+          // Add away form if not already present
+          if (!matchDetails.awayTeam.awayForm && awayTeamData.statistics.awayForm) {
+            matchDetails.awayTeam.awayForm = awayTeamData.statistics.awayForm;
+          }
+        }
+      } catch (error) {
+        logger.warn(`Failed to fetch away team data: ${error.message}`);
+      }
+    }
+    
     // For H2H data, we'll need to make additional calls
     // This is a simplified version - you might want to enhance this
     const h2hData = {
