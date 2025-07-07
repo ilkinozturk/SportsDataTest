@@ -412,10 +412,10 @@
 
 .nav-tabs {
   display: flex;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 10px;
-  border-radius: 12px;
+  gap: 0;
+  background: transparent;
+  padding: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   overflow-x: auto;
 }
 
@@ -423,31 +423,66 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 20px;
+  padding: 16px 24px;
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  color: #999;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   white-space: nowrap;
+  position: relative;
+  flex: 1;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
 }
 
 .nav-tab:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .nav-tab.active {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  background: transparent;
+  color: #ffeb3b;
+  font-weight: 600;
+  border-bottom-color: #ffeb3b;
+}
+
+.nav-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #ffeb3b;
+  box-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
+  animation: tabActiveUnderline 0.3s ease-out;
+}
+
+@keyframes tabActiveUnderline {
+  from {
+    width: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  to {
+    width: 100%;
+    left: 0;
+    transform: translateX(0);
+  }
 }
 
 .nav-tab i {
   font-size: 16px;
+  margin-right: 4px;
+  opacity: 0.8;
 }
 
 /* Tab Content */
@@ -935,6 +970,18 @@
   .nav-tabs {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    gap: 0;
+  }
+  
+  .nav-tab {
+    flex: initial;
+    min-width: max-content;
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+  
+  .nav-tab i {
+    display: none;
   }
   
   .h2h-match {
