@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug H2H API</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #1a1a1a; color: white; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #2a2a2a; padding: 15px; border-radius: 5px; overflow: auto; }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .info { color: #2196F3; }
+    </style>
+</head>
+<body>
+    <h1>H2H API Debug Tool</h1>
+    
+    <div>
+        <h2>1. Check Environment</h2>
+        <button onclick="checkEnvironment()">Check API Client & Config</button>
+        <pre id="envResult"></pre>
+    </div>
+    
+    <div>
+        <h2>2. Test Direct API Call</h2>
+        <input type="text" id="matchId" value="579101" placeholder="Match ID">
+        <button onclick="testDirectAPI()">Test API Call</button>
+        <pre id="apiResult"></pre>
+    </div>
+    
+    <div>
+        <h2>3. Check Modules</h2>
+        <button onclick="checkModules()">Check Module Loading</button>
+        <pre id="moduleResult"></pre>
+    </div>
+    
+    <div>
+        <h2>4. Test Full Flow</h2>
+        <button onclick="testFullFlow()">Test Match Details Page</button>
+        <pre id="flowResult"></pre>
+    </div>
+
+    <script>
+        function log(elementId, message, type = 'info') {
+            const el = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const colorClass = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            el.innerHTML += `<span class="${colorClass}">[${timestamp}] ${message}</span>\n`;
+        }
+
+        function checkEnvironment() {
+            const result = document.getElementById('envResult');
+            result.innerHTML = '';
+            
+            log('envResult', 'Checking environment...', 'info');
+            
+            // Check window objects
+            log('envResult', `window.TeamStatsAPIClient exists: ${!!window.TeamStatsAPIClient}`, window.TeamStatsAPIClient ? 'success' : 'error');
+            log('envResult', `window.APIClient exists: ${!!window.APIClient}`, window.APIClient ? 'success' : 'error');
+            log('envResult', `window.ENV exists: ${!!window.ENV}`, window.ENV ? 'success' : 'error');
+            
+            // Check ENV config
+            if (window.ENV) {
+                log('envResult', `API URL: ${window.ENV.API_URL}`, 'info');
+                log('envResult', `Environment: ${window.ENV.ENVIRONMENT}`, 'info');
+            }
+            
+            // Check fetch
+            log('envResult', `fetch API exists: ${!!window.fetch}`, 'success');
+            
+            // Check URL params
+            const urlParams = new URLSearchParams(window.location.search);
+            const matchId = urlParams.get('matchId');
+            log('envResult', `URL matchId param: ${matchId || 'not set'}`, matchId ? 'info' : 'error');
+        }
+
+        async function testDirectAPI() {
+            const result = document.getElementById('apiResult');
+            result.innerHTML = '';
+            const matchId = document.getElementById('matchId').value;
+            
+            if (!matchId) {
+                log('apiResult', 'Please enter a match ID', 'error');
+                return;
+            }
+            
+            log('apiResult', `Testing API call for match ${matchId}...`, 'info');
+            
+            const apiUrl = `http://localhost:3005/api/matches/${matchId}/details`;
+            log('apiResult', `API URL: ${apiUrl}`, 'info');
+            
+            try {
+                const startTime = Date.now();
+                const response = await fetch(apiUrl);
+                const elapsed = Date.now() - startTime;
+                
+                log('apiResult', `Response status: ${response.status} (${elapsed}ms)`, response.ok ? 'success' : 'error');
+                log('apiResult', `Response headers:`, 'info');
+                response.headers.forEach((value, key) => {
+                    log('apiResult', `  ${key}: ${value}`, 'info');
+                });
+                
+                const data = await response.json();
+                log('apiResult', `Response data:`, 'info');
+                log('apiResult', JSON.stringify(data, null, 2).substring(0, 1000) + '...', 'info');
+                
+                // Check H2H data
+                if (data.success && data.data) {
+                    const h2h = data.data.h2h;
+                    if (h2h) {
+                        log('apiResult', `\nH2H Data Found!`, 'success');
+                        log('apiResult', `Home Wins: ${h2h.summary?.homeWins || 0}`, 'info');
+                        log('apiResult', `Away Wins: ${h2h.summary?.awayWins || 0}`, 'info');
+                        log('apiResult', `Draws: ${h2h.summary?.draws || 0}`, 'info');
+                        log('apiResult', `Total Matches: ${h2h.summary?.totalMatches || 0}`, 'info');
+                    } else {
+                        log('apiResult', `\nNo H2H data in response`, 'error');
+                    }
+                }
+                
+            } catch (error) {
+                log('apiResult', `Error: ${error.message}`, 'error');
+                log('apiResult', `Stack: ${error.stack}`, 'error');
+            }
+        }
+
+        async function checkModules() {
+            const result = document.getElementById('moduleResult');
+            result.innerHTML = '';
+            
+            log('moduleResult', 'Checking module loading...', 'info');
+            
+            // Try to load modules
+            try {
+                // Load EventBus
+                const EventBusModule = await import('./public/js/modules/events/EventBus.js');
+                log('moduleResult', 'EventBus module loaded', 'success');
+                
+                // Load H2H Data module
+                const H2HDataModule = await import('./public/js/modules/data/h2h-data.js');
+                log('moduleResult', 'H2H Data module loaded', 'success');
+                
+                // Load Match Details Data
+                const MatchDetailsDataModule = await import('./public/js/modules/match-details/match-details-data.js');
+                log('moduleResult', 'Match Details Data module loaded', 'success');
+                
+                // Test instantiation
+                const eventBus = new EventBusModule.EventBus();
+                log('moduleResult', 'EventBus instantiated', 'success');
+                
+                // Test event
+                let eventReceived = false;
+                eventBus.on('test', () => { eventReceived = true; });
+                eventBus.emit('test');
+                log('moduleResult', `EventBus test: ${eventReceived ? 'PASSED' : 'FAILED'}`, eventReceived ? 'success' : 'error');
+                
+            } catch (error) {
+                log('moduleResult', `Module loading error: ${error.message}`, 'error');
+                log('moduleResult', `Stack: ${error.stack}`, 'error');
+            }
+        }
+
+        function testFullFlow() {
+            const result = document.getElementById('flowResult');
+            result.innerHTML = '';
+            
+            const matchId = document.getElementById('matchId').value;
+            if (!matchId) {
+                log('flowResult', 'Please enter a match ID', 'error');
+                return;
+            }
+            
+            log('flowResult', `Opening match details page for match ${matchId}...`, 'info');
+            
+            // Open in new window
+            const url = `match-details.html?matchId=${matchId}`;
+            const newWindow = window.open(url, '_blank');
+            
+            if (newWindow) {
+                log('flowResult', 'Match details page opened in new window', 'success');
+                log('flowResult', 'Check the browser console in the new window for errors', 'info');
+                log('flowResult', 'Check the Network tab for API calls', 'info');
+            } else {
+                log('flowResult', 'Failed to open new window (popup blocked?)', 'error');
+            }
+        }
+
+        // Auto-run environment check on load
+        window.onload = () => {
+            checkEnvironment();
+        };
+    </script>
+</body>
+</html>

@@ -5,12 +5,14 @@ const axios = require('axios');
 const moment = require('moment');
 const path = require('path');
 const config = require('./src/config');
+const Logger = require('./utils/logger');
 const LeagueManager = require('./utils/LeagueManager');
 const footyStatsAPI = require('./services/footyStatsAPI');
 const MatchesService = require('./services/matchesService');
 const MatchDetailsService = require('./services/MatchDetailsService');
 
 const app = express();
+const logger = new Logger('Server');
 
 // Initialize services
 const leagueManager = new LeagueManager(config.API.FOOTBALL_API_KEY, config.API.FOOTBALL_API_URL);
@@ -18,6 +20,8 @@ const matchesService = new MatchesService(config.API.FOOTBALL_API_KEY, config.AP
 const matchDetailsService = new MatchDetailsService(config.API.FOOTBALL_API_KEY, config.API.FOOTBALL_API_URL);
 const TeamDataService = require('./services/teamDataService');
 const teamDataService = new TeamDataService(config.API.FOOTBALL_API_KEY, config.API.FOOTBALL_API_URL, leagueManager);
+const H2HService = require('./services/H2HService');
+const h2hService = new H2HService(footyStatsAPI, matchesService);
 
 // Initialize Repository Pattern
 const teamRepository = require('./src/repositories/TeamRepositorySimple');
@@ -50,8 +54,6 @@ const {
 
 // Enhanced caching with Redis support
 const RedisCache = require('./utils/redisCache');
-const Logger = require('./utils/logger');
-const logger = new Logger('Server');
 
 // Error tracking
 const { setupGlobalErrorTracking, errorTrackingMiddleware } = require('./middleware/errorTracking');
@@ -125,6 +127,16 @@ app.use(security.mongoSanitize);
 // Middleware
 app.use(performanceMonitor());
 app.use(httpMetricsMiddleware()); // Prometheus HTTP metrics
+// Simple CORS for development
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 app.use(security.cors); // Use security CORS instead of corsMiddleware
 app.use(errorTrackingMiddleware());
 // Apply compression middleware if enabled
@@ -606,49 +618,38 @@ app.get('/api/matches/:matchId/details', asyncHandler(async (req, res, next) => 
       }
     }
     
-    // For H2H data, we'll need to make additional calls
-    // This is a simplified version - you might want to enhance this
-    const h2hData = {
-      summary: {
-        homeWins: 0,
-        awayWins: 0,
-        draws: 0
-      },
-      matches: []
-    };
+    // H2H data comes directly from the match details API
+    let h2hData = null;
     
-    // Try to get H2H data if we have team IDs
-    if (matchDetails.homeTeam?.id && matchDetails.awayTeam?.id) {
-      try {
-        const h2hMatches = await teamService.getH2HMatches(
-          matchDetails.homeTeam.id, 
-          matchDetails.awayTeam.id, 
-          { limit: 10 }
-        );
-        
-        // Calculate H2H summary
-        h2hMatches.forEach(match => {
-          if (match.homeScore > match.awayScore) {
-            if (match.homeTeam.id === matchDetails.homeTeam.id) {
-              h2hData.summary.homeWins++;
-            } else {
-              h2hData.summary.awayWins++;
-            }
-          } else if (match.homeScore < match.awayScore) {
-            if (match.awayTeam.id === matchDetails.homeTeam.id) {
-              h2hData.summary.homeWins++;
-            } else {
-              h2hData.summary.awayWins++;
-            }
-          } else {
-            h2hData.summary.draws++;
-          }
-        });
-        
-        h2hData.matches = h2hMatches;
-      } catch (h2hError) {
-        logger.warn(`Failed to fetch H2H data: ${h2hError.message}`);
-      }
+    if (matchDetails.h2h) {
+      // Process H2H data from API
+      const apiH2h = matchDetails.h2h;
+      h2hData = {
+        summary: {
+          homeWins: apiH2h.previous_matches_results?.team_a_wins || 0,
+          awayWins: apiH2h.previous_matches_results?.team_b_wins || 0,
+          draws: apiH2h.previous_matches_results?.draw || 0,
+          totalMatches: apiH2h.previous_matches_results?.totalMatches || 0
+        },
+        matches: apiH2h.previous_matches_ids || [],
+        betting_stats: apiH2h.betting_stats || {},
+        team_a_id: apiH2h.team_a_id,
+        team_b_id: apiH2h.team_b_id
+      };
+      
+      logger.info(`H2H data from API: ${h2hData.summary.totalMatches} matches found`);
+    } else {
+      // Fallback to empty H2H data
+      h2hData = {
+        summary: {
+          homeWins: 0,
+          awayWins: 0,
+          draws: 0,
+          totalMatches: 0
+        },
+        matches: []
+      };
+      logger.warn('No H2H data in API response');
     }
     
     // Combine match details with H2H data

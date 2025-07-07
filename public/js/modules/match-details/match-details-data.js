@@ -132,23 +132,17 @@ export class MatchDetailsData {
   }
 
   emitH2HData() {
-    const { h2h, homeTeam, awayTeam } = this.matchData;
+    // H2H data is now handled by the dedicated H2H module
+    // Just emit the request event with necessary data
+    const { homeTeam, awayTeam } = this.matchData;
     
-    if (!h2h) {
-      this.eventBus.emit('h2h-data', null);
-      return;
+    if (homeTeam?.id && awayTeam?.id) {
+      this.eventBus.emit('request-h2h-data', {
+        homeTeamId: homeTeam.id,
+        awayTeamId: awayTeam.id,
+        matchId: this.matchId
+      });
     }
-    
-    const h2hData = {
-      summary: {
-        ...h2h.summary,
-        homeTeamName: homeTeam.name,
-        awayTeamName: awayTeam.name
-      },
-      matches: h2h.matches || []
-    };
-    
-    this.eventBus.emit('h2h-data', h2hData);
   }
 
   emitStatisticsData() {

@@ -135,6 +135,7 @@ class MatchDetailsService {
             name: match.competition_name || match.league_name || 'Unknown League',
             logo: match.competition_logo || match.league_logo || `leagues/l${match.competition_id || match.league_id}.png`
           },
+          h2h: match.h2h || null,
         };
 
         // Cache the result
@@ -159,7 +160,7 @@ class MatchDetailsService {
    * @param {Array} bench - Bench players
    * @returns {Array} Processed goal details
    */
-  processGoalDetails(goalDetails, lineup = [], bench = []) {
+  processGoalDetails(goalDetails, _lineup = [], _bench = []) {
     if (!goalDetails || !Array.isArray(goalDetails)) {
       return [];
     }

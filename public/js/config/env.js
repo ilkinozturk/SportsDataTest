@@ -31,7 +31,7 @@ const getEnvironment = () => {
 const ENV_CONFIGS = {
   development: {
     // API Configuration
-    API_URL: 'http://localhost:3001/api',
+    API_URL: 'http://localhost:3005/api',
     API_TIMEOUT: 30000, // 30 seconds
     API_RETRY_ATTEMPTS: 3,
     API_RETRY_DELAY: 1000, // 1 second

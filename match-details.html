@@ -134,31 +134,71 @@
         <!-- Overview Tab -->
         <div id="overviewTab" class="tab-pane active" data-tab="overview">
           <div class="overview-grid">
-            <!-- Key Stats -->
-            <div class="stat-card">
-              <h3 class="card-title">Key Statistics</h3>
-              <div id="keyStats" class="key-stats-grid"></div>
-            </div>
-            
-            <!-- Recent Form -->
-            <div class="stat-card">
-              <h3 class="card-title">Recent Form</h3>
-              <div class="form-comparison">
-                <div class="form-team">
-                  <h4 id="homeFormTitle"></h4>
-                  <div id="homeRecentForm" class="recent-matches"></div>
+            <!-- Head to Head Statistics -->
+            <div class="stat-card h2h-stats-card">
+              <h3 class="card-title">Head to Head Statistics</h3>
+              <div class="h2h-stats-content">
+                <!-- Teams Display -->
+                <!-- Teams Display -->
+                <div class="h2h-teams-display">
+                  <div class="h2h-team-section">
+                    <img id="h2hHomeTeamLogo" class="h2h-team-logo" src="" alt="" />
+                    <h4 id="h2hHomeTeamName" class="h2h-team-name">-</h4>
+                  </div>
+                  
+                  <div class="h2h-vs-section">
+                    <span class="vs-text">VS</span>
+                  </div>
+                  
+                  <div class="h2h-team-section">
+                    <img id="h2hAwayTeamLogo" class="h2h-team-logo" src="" alt="" />
+                    <h4 id="h2hAwayTeamName" class="h2h-team-name">-</h4>
+                  </div>
                 </div>
-                <div class="form-team">
-                  <h4 id="awayFormTitle"></h4>
-                  <div id="awayRecentForm" class="recent-matches"></div>
+                
+                <!-- Progress Bar with Stats -->
+                <div class="h2h-progress-container">
+                  <!-- Stats Overlay - Positioned above progress bar -->
+                  <div class="h2h-stats-overlay">
+                    <div class="h2h-stat-item" id="h2hHomeStatItem">
+                      <div class="h2h-wins-count" id="h2hHomeWins">0</div>
+                      <div class="h2h-wins-label">Wins</div>
+                    </div>
+                    
+                    <div class="h2h-stat-item" id="h2hDrawStatItem">
+                      <div class="h2h-draws-count" id="h2hDraws">0</div>
+                      <div class="h2h-draws-label">Draws</div>
+                    </div>
+                    
+                    <div class="h2h-stat-item" id="h2hAwayStatItem">
+                      <div class="h2h-wins-count" id="h2hAwayWins">0</div>
+                      <div class="h2h-wins-label">Wins</div>
+                    </div>
+                  </div>
+                  <div class="h2h-progress-bar">
+                    <div class="h2h-progress-home" id="h2hProgressHome" style="width: 33.33%">
+                      <span class="h2h-progress-label" id="h2hProgressHomeLabel">33%</span>
+                    </div>
+                    <div class="h2h-progress-draw" id="h2hProgressDraw" style="width: 33.33%">
+                      <span class="h2h-progress-label" id="h2hProgressDrawLabel">33%</span>
+                    </div>
+                    <div class="h2h-progress-away" id="h2hProgressAway" style="width: 33.33%">
+                      <span class="h2h-progress-label" id="h2hProgressAwayLabel">33%</span>
+                    </div>
+                  </div>
+                  <div class="h2h-progress-labels">
+                    <span class="h2h-label-home">Home Wins</span>
+                    <span class="h2h-label-draw">Draws</span>
+                    <span class="h2h-label-away">Away Wins</span>
+                  </div>
+                </div>
+                
+                <!-- Total Matches -->
+                <div class="h2h-total-matches">
+                  <span class="total-matches-label">Total Matches:</span>
+                  <span class="total-matches-count" id="h2hTotalMatches">0</span>
                 </div>
               </div>
-            </div>
-            
-            <!-- Goal Timing -->
-            <div class="stat-card">
-              <h3 class="card-title">Goal Timing</h3>
-              <div id="goalTiming" class="timing-chart"></div>
             </div>
           </div>
         </div>

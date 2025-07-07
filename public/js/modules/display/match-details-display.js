@@ -39,11 +39,36 @@ export class MatchDetailsDisplay {
     // Tab elements
     this.elements.navTabs = document.querySelectorAll('.nav-tab');
     this.elements.tabPanes = document.querySelectorAll('.tab-pane');
+    
+    // H2H Statistics elements
+    this.elements.h2hHomeTeamLogo = document.getElementById('h2hHomeTeamLogo');
+    this.elements.h2hHomeTeamName = document.getElementById('h2hHomeTeamName');
+    this.elements.h2hHomeWins = document.getElementById('h2hHomeWins');
+    this.elements.h2hAwayTeamLogo = document.getElementById('h2hAwayTeamLogo');
+    this.elements.h2hAwayTeamName = document.getElementById('h2hAwayTeamName');
+    this.elements.h2hAwayWins = document.getElementById('h2hAwayWins');
+    this.elements.h2hDraws = document.getElementById('h2hDraws');
+    this.elements.h2hTotalMatches = document.getElementById('h2hTotalMatches');
+    this.elements.h2hProgressHome = document.getElementById('h2hProgressHome');
+    this.elements.h2hProgressDraw = document.getElementById('h2hProgressDraw');
+    this.elements.h2hProgressAway = document.getElementById('h2hProgressAway');
+    this.elements.h2hProgressHomeLabel = document.getElementById('h2hProgressHomeLabel');
+    this.elements.h2hProgressDrawLabel = document.getElementById('h2hProgressDrawLabel');
+    this.elements.h2hProgressAwayLabel = document.getElementById('h2hProgressAwayLabel');
+    
+    // Initialize H2H stat positions (all visible by default)
+    this.positionH2HStats(33.33, 33.33, 33.33, 1, 1, 1);
   }
 
   attachEventListeners() {
     // Listen for match data updates
     this.eventBus.on('match-data-loaded', (data) => this.updateMatchDisplay(data));
+    
+    // Listen for H2H data updates from H2H module
+    this.eventBus.on('h2h-data-loaded', (h2hData) => this.updateH2HStatistics(h2hData));
+    
+    // Listen for H2H loading state
+    this.eventBus.on('h2h-loading', (isLoading) => this.setH2HLoadingState(isLoading));
     
     // Listen for tab switch events
     this.eventBus.on('switch-tab', (tabName) => {
@@ -79,6 +104,9 @@ export class MatchDetailsDisplay {
     
     // Update team PPG
     this.updateTeamPPG(matchData);
+    
+    // H2H statistics will be updated when h2h-data-loaded event is fired
+    // No longer updating H2H here with match data
     
     // Emit event for tab content update
     this.eventBus.emit('match-display-updated', matchData);
@@ -380,6 +408,196 @@ export class MatchDetailsDisplay {
   showError(message) {
     // Emit error event for other modules to handle
     this.eventBus.emit('display-error', { message, type: 'match-details' });
+  }
+  
+  updateH2HStatistics(h2hData) {
+    if (!h2hData) {
+      this.showNoH2HData();
+      return;
+    }
+    
+    const { summary, homeTeam, awayTeam, hasData } = h2hData;
+    
+    // If no real data available, show appropriate message
+    if (!hasData || !summary || summary.totalMatches === 0) {
+      this.showNoH2HData();
+      return;
+    }
+    
+    // Update team logos and names
+    if (homeTeam) {
+      if (this.elements.h2hHomeTeamLogo && homeTeam.logo) {
+        let logoUrl = homeTeam.logo;
+        if (!logoUrl.startsWith('http')) {
+          if (logoUrl.startsWith('teams/')) {
+            logoUrl = `https://cdn.footystats.org/img/${logoUrl}`;
+          } else {
+            logoUrl = `https://cdn.footystats.org/img/teams/${logoUrl}`;
+          }
+        }
+        this.elements.h2hHomeTeamLogo.src = logoUrl;
+        this.elements.h2hHomeTeamLogo.onerror = () => {
+          this.elements.h2hHomeTeamLogo.style.display = 'none';
+        };
+      }
+      if (this.elements.h2hHomeTeamName) {
+        this.elements.h2hHomeTeamName.textContent = homeTeam.name;
+      }
+    }
+    
+    if (awayTeam) {
+      if (this.elements.h2hAwayTeamLogo && awayTeam.logo) {
+        let logoUrl = awayTeam.logo;
+        if (!logoUrl.startsWith('http')) {
+          if (logoUrl.startsWith('teams/')) {
+            logoUrl = `https://cdn.footystats.org/img/${logoUrl}`;
+          } else {
+            logoUrl = `https://cdn.footystats.org/img/teams/${logoUrl}`;
+          }
+        }
+        this.elements.h2hAwayTeamLogo.src = logoUrl;
+        this.elements.h2hAwayTeamLogo.onerror = () => {
+          this.elements.h2hAwayTeamLogo.style.display = 'none';
+        };
+      }
+      if (this.elements.h2hAwayTeamName) {
+        this.elements.h2hAwayTeamName.textContent = awayTeam.name;
+      }
+    }
+    
+    // Update H2H statistics from API data only
+    const homeWins = summary.homeWins || 0;
+    const awayWins = summary.awayWins || 0;
+    const draws = summary.draws || 0;
+    const totalMatches = summary.totalMatches || (homeWins + awayWins + draws);
+    
+    // Update win counts
+    if (this.elements.h2hHomeWins) {
+      this.elements.h2hHomeWins.textContent = homeWins;
+    }
+    if (this.elements.h2hAwayWins) {
+      this.elements.h2hAwayWins.textContent = awayWins;
+    }
+    if (this.elements.h2hDraws) {
+      this.elements.h2hDraws.textContent = draws;
+    }
+    if (this.elements.h2hTotalMatches) {
+      this.elements.h2hTotalMatches.textContent = totalMatches;
+    }
+    
+    // Calculate percentages and handle 0 values
+    if (totalMatches > 0) {
+      const homePercentage = (homeWins / totalMatches) * 100;
+      const drawPercentage = (draws / totalMatches) * 100;
+      const awayPercentage = (awayWins / totalMatches) * 100;
+      
+      // Hide stat items with 0 values
+      const homeStatItem = document.getElementById('h2hHomeStatItem');
+      const drawStatItem = document.getElementById('h2hDrawStatItem');
+      const awayStatItem = document.getElementById('h2hAwayStatItem');
+      
+      if (homeStatItem) {
+        homeStatItem.style.display = homeWins > 0 ? 'block' : 'none';
+      }
+      if (drawStatItem) {
+        drawStatItem.style.display = draws > 0 ? 'block' : 'none';
+      }
+      if (awayStatItem) {
+        awayStatItem.style.display = awayWins > 0 ? 'block' : 'none';
+      }
+      
+      // Update progress bars - hide sections with 0 values
+      if (this.elements.h2hProgressHome) {
+        this.elements.h2hProgressHome.style.width = homeWins > 0 ? `${homePercentage}%` : '0%';
+        this.elements.h2hProgressHome.style.display = homeWins > 0 ? 'flex' : 'none';
+      }
+      if (this.elements.h2hProgressDraw) {
+        this.elements.h2hProgressDraw.style.width = draws > 0 ? `${drawPercentage}%` : '0%';
+        this.elements.h2hProgressDraw.style.display = draws > 0 ? 'flex' : 'none';
+      }
+      if (this.elements.h2hProgressAway) {
+        this.elements.h2hProgressAway.style.width = awayWins > 0 ? `${awayPercentage}%` : '0%';
+        this.elements.h2hProgressAway.style.display = awayWins > 0 ? 'flex' : 'none';
+      }
+      
+      // Update progress labels
+      if (this.elements.h2hProgressHomeLabel) {
+        this.elements.h2hProgressHomeLabel.textContent = homeWins > 0 ? `${Math.round(homePercentage)}%` : '';
+      }
+      if (this.elements.h2hProgressDrawLabel) {
+        this.elements.h2hProgressDrawLabel.textContent = draws > 0 ? `${Math.round(drawPercentage)}%` : '';
+      }
+      if (this.elements.h2hProgressAwayLabel) {
+        this.elements.h2hProgressAwayLabel.textContent = awayWins > 0 ? `${Math.round(awayPercentage)}%` : '';
+      }
+      
+      // Position stats above progress bars dynamically
+      this.positionH2HStats(homePercentage, drawPercentage, awayPercentage, homeWins, draws, awayWins);
+    }
+  }
+  
+  positionH2HStats(homePercentage, drawPercentage, awayPercentage, homeWins, draws, awayWins) {
+    const homeStatItem = document.getElementById('h2hHomeStatItem');
+    const drawStatItem = document.getElementById('h2hDrawStatItem');
+    const awayStatItem = document.getElementById('h2hAwayStatItem');
+    
+    // Only position visible stats
+    if (homeStatItem && homeWins > 0) {
+      const homeCenter = homePercentage / 2;
+      homeStatItem.style.left = `${homeCenter}%`;
+    }
+    
+    if (drawStatItem && draws > 0) {
+      const drawCenter = homePercentage + (drawPercentage / 2);
+      drawStatItem.style.left = `${drawCenter}%`;
+    }
+    
+    if (awayStatItem && awayWins > 0) {
+      const awayCenter = homePercentage + drawPercentage + (awayPercentage / 2);
+      awayStatItem.style.left = `${awayCenter}%`;
+    }
+  }
+  
+  showNoH2HData() {
+    // Reset all H2H values to show no data available
+    if (this.elements.h2hHomeWins) this.elements.h2hHomeWins.textContent = '-';
+    if (this.elements.h2hAwayWins) this.elements.h2hAwayWins.textContent = '-';
+    if (this.elements.h2hDraws) this.elements.h2hDraws.textContent = '-';
+    if (this.elements.h2hTotalMatches) this.elements.h2hTotalMatches.textContent = '0';
+    
+    // Hide progress bars
+    if (this.elements.h2hProgressHome) this.elements.h2hProgressHome.style.width = '0%';
+    if (this.elements.h2hProgressDraw) this.elements.h2hProgressDraw.style.width = '0%';
+    if (this.elements.h2hProgressAway) this.elements.h2hProgressAway.style.width = '0%';
+    
+    // Show "No data" in progress labels
+    if (this.elements.h2hProgressHomeLabel) this.elements.h2hProgressHomeLabel.textContent = 'No data';
+    if (this.elements.h2hProgressDrawLabel) this.elements.h2hProgressDrawLabel.textContent = '';
+    if (this.elements.h2hProgressAwayLabel) this.elements.h2hProgressAwayLabel.textContent = '';
+    
+    // Reset stat positions
+    this.positionH2HStats(33.33, 33.33, 33.33, 0, 0, 0);
+  }
+  
+  setH2HLoadingState(isLoading) {
+    const h2hCard = document.querySelector('.h2h-stats-card');
+    if (!h2hCard) return;
+    
+    if (isLoading) {
+      h2hCard.classList.add('loading');
+      // Optionally add a loading spinner
+      const existingSpinner = h2hCard.querySelector('.h2h-loading-spinner');
+      if (!existingSpinner) {
+        const spinner = document.createElement('div');
+        spinner.className = 'h2h-loading-spinner';
+        spinner.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading H2H data...';
+        h2hCard.querySelector('.h2h-stats-content').prepend(spinner);
+      }
+    } else {
+      h2hCard.classList.remove('loading');
+      const spinner = h2hCard.querySelector('.h2h-loading-spinner');
+      if (spinner) spinner.remove();
+    }
   }
 }
 
