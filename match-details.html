@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Match Analysis - H2H Statistics</title>
-    
+
     <!-- CSS -->
-    <link rel="stylesheet" href="team-stats.css">
-    <link rel="stylesheet" href="match-details.css">
-    
+    <link rel="stylesheet" href="team-stats.css" />
+    <link rel="stylesheet" href="match-details.css" />
+
     <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   </head>
   <body>
     <!-- Loading State -->
@@ -30,7 +30,7 @@
               <span>Back to Matches</span>
             </a>
           </div>
-          
+
           <div class="match-info">
             <div class="league-info">
               <img id="leagueLogo" class="league-logo" src="" alt="" />
@@ -49,7 +49,7 @@
             <p id="matchDateDisplay" class="match-date-text"></p>
             <p id="matchTimeDisplay" class="match-time-text"></p>
           </div>
-          
+
           <!-- Teams and Score -->
           <div class="teams-score-wrapper">
             <div class="team home-team">
@@ -68,7 +68,7 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="score-display">
               <div id="matchScore" class="score">
                 <span id="homeScore">-</span>
@@ -78,7 +78,7 @@
               <div id="matchStatus" class="match-status"></div>
               <div id="matchTime" class="match-time"></div>
             </div>
-            
+
             <div class="team away-team">
               <img id="awayTeamLogo" class="team-logo" src="" alt="" />
               <h2 id="awayTeamName" class="team-name"></h2>
@@ -145,17 +145,17 @@
                     <img id="h2hHomeTeamLogo" class="h2h-team-logo" src="" alt="" />
                     <h4 id="h2hHomeTeamName" class="h2h-team-name">-</h4>
                   </div>
-                  
+
                   <div class="h2h-vs-section">
                     <span class="vs-text">VS</span>
                   </div>
-                  
+
                   <div class="h2h-team-section">
                     <img id="h2hAwayTeamLogo" class="h2h-team-logo" src="" alt="" />
                     <h4 id="h2hAwayTeamName" class="h2h-team-name">-</h4>
                   </div>
                 </div>
-                
+
                 <!-- Progress Bar with Stats -->
                 <div class="h2h-progress-container">
                   <!-- Stats Overlay - Positioned above progress bar -->
@@ -164,12 +164,12 @@
                       <div class="h2h-wins-count" id="h2hHomeWins">0</div>
                       <div class="h2h-wins-label">Wins</div>
                     </div>
-                    
+
                     <div class="h2h-stat-item" id="h2hDrawStatItem">
                       <div class="h2h-draws-count" id="h2hDraws">0</div>
                       <div class="h2h-draws-label">Draws</div>
                     </div>
-                    
+
                     <div class="h2h-stat-item" id="h2hAwayStatItem">
                       <div class="h2h-wins-count" id="h2hAwayWins">0</div>
                       <div class="h2h-wins-label">Wins</div>
@@ -192,11 +192,98 @@
                     <span class="h2h-label-away">Away Wins</span>
                   </div>
                 </div>
-                
+
                 <!-- Total Matches -->
                 <div class="h2h-total-matches">
                   <span class="total-matches-label">Total Matches:</span>
                   <span class="total-matches-count" id="h2hTotalMatches">0</span>
+                </div>
+
+                <!-- H2H Over/Under Stats -->
+                <div class="h2h-stats-grid">
+                  <!-- H2H Over 1.5 -->
+                  <div class="h2h-over-card">
+                    <h4 class="h2h-stat-title">Over 1.5</h4>
+                    <div class="h2h-stat-content">
+                      <div class="stat-percentage" id="h2hOver15">
+                        <span class="percentage-value">-</span>
+                        <span class="percentage-label">%</span>
+                      </div>
+                      <div class="stat-details">
+                        <div class="stat-row">
+                          <span class="stat-label">Matches</span>
+                          <span class="stat-value" id="h2hOver15Count">-</span>
+                        </div>
+                        <div class="stat-row">
+                          <span class="stat-label">Total</span>
+                          <span class="stat-value" id="h2hOver15Total">-</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- H2H Over 2.5 -->
+                  <div class="h2h-over-card">
+                    <h4 class="h2h-stat-title">Over 2.5</h4>
+                    <div class="h2h-stat-content">
+                      <div class="stat-percentage" id="h2hOver25">
+                        <span class="percentage-value">-</span>
+                        <span class="percentage-label">%</span>
+                      </div>
+                      <div class="stat-details">
+                        <div class="stat-row">
+                          <span class="stat-label">Matches</span>
+                          <span class="stat-value" id="h2hOver25Count">-</span>
+                        </div>
+                        <div class="stat-row">
+                          <span class="stat-label">Total</span>
+                          <span class="stat-value" id="h2hOver25Total">-</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- H2H Over 3.5 -->
+                  <div class="h2h-over-card">
+                    <h4 class="h2h-stat-title">Over 3.5</h4>
+                    <div class="h2h-stat-content">
+                      <div class="stat-percentage" id="h2hOver35">
+                        <span class="percentage-value">-</span>
+                        <span class="percentage-label">%</span>
+                      </div>
+                      <div class="stat-details">
+                        <div class="stat-row">
+                          <span class="stat-label">Matches</span>
+                          <span class="stat-value" id="h2hOver35Count">-</span>
+                        </div>
+                        <div class="stat-row">
+                          <span class="stat-label">Total</span>
+                          <span class="stat-value" id="h2hOver35Total">-</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- H2H BTTS -->
+                  <div class="h2h-btts-card">
+                    <h4 class="h2h-stat-title">BTTS</h4>
+                    <div class="h2h-stat-content">
+                      <div class="stat-percentage" id="h2hBTTS">
+                        <span class="percentage-value">-</span>
+                        <span class="percentage-label">%</span>
+                      </div>
+                      <div class="stat-details">
+                        <div class="stat-row">
+                          <span class="stat-label">Yes</span>
+                          <span class="stat-value" id="h2hBTTSYes">-</span>
+                        </div>
+                        <div class="stat-row">
+                          <span class="stat-label">No</span>
+                          <span class="stat-value" id="h2hBTTSNo">-</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -211,7 +298,7 @@
               <h3 class="card-title">Head to Head Summary</h3>
               <div id="h2hSummary" class="h2h-summary"></div>
             </div>
-            
+
             <!-- H2H Matches -->
             <div class="stat-card">
               <h3 class="card-title">Previous Meetings</h3>
@@ -238,13 +325,13 @@
               <h3 class="card-title">Team Formations</h3>
               <div id="formations" class="formations-display"></div>
             </div>
-            
+
             <!-- Starting XI -->
             <div class="stat-card">
               <h3 class="card-title">Starting Lineups</h3>
               <div id="startingLineups" class="lineups-grid"></div>
             </div>
-            
+
             <!-- Substitutes -->
             <div class="stat-card">
               <h3 class="card-title">Substitutes</h3>

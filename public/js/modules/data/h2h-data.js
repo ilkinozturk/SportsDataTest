@@ -10,23 +10,23 @@ export class H2HData {
     this.apiClient = apiClient;
     this.cache = new Map();
     this.CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-    
+
     this.attachEventListeners();
   }
 
   attachEventListeners() {
     // Listen for H2H data requests
-    this.eventBus.on('request-h2h-data', (params) => {
+    this.eventBus.on('request-h2h-data', params => {
       this.fetchH2HData(params);
     });
-    
+
     // Listen for match data to extract team IDs
-    this.eventBus.on('match-data-loaded', (matchData) => {
+    this.eventBus.on('match-data-loaded', matchData => {
       if (matchData?.homeTeam?.id && matchData?.awayTeam?.id) {
         this.fetchH2HData({
           homeTeamId: matchData.homeTeam.id,
           awayTeamId: matchData.awayTeam.id,
-          matchId: matchData.id
+          matchId: matchData.id,
         });
       }
     });
@@ -35,7 +35,7 @@ export class H2HData {
   async fetchH2HData(params) {
     const { homeTeamId, awayTeamId, matchId } = params;
     const cacheKey = `h2h_${homeTeamId}_${awayTeamId}`;
-    
+
     // Check cache
     const cached = this.getFromCache(cacheKey);
     if (cached) {
@@ -43,16 +43,16 @@ export class H2HData {
       this.emitH2HData(cached);
       return;
     }
-    
+
     try {
       // Emit loading state
       this.eventBus.emit('h2h-loading', true);
-      
+
       // Fetch H2H data from the match details endpoint
       // The server already includes H2H data in the match details response
       if (matchId) {
         const response = await this.apiClient.get(`/api/matches/${matchId}/details`);
-        
+
         if (response.success && response.data?.h2h) {
           const h2hData = this.processH2HData(response.data.h2h, response.data);
           this.setCache(cacheKey, h2hData);
@@ -66,19 +66,18 @@ export class H2HData {
         this.setCache(cacheKey, h2hData);
         this.emitH2HData(h2hData);
       }
-      
     } catch (error) {
       console.error('Error fetching H2H data:', error);
       this.eventBus.emit('h2h-error', {
         message: 'Failed to load H2H data',
-        error
+        error,
       });
-      
+
       // Emit empty H2H data
       this.emitH2HData({
         summary: { homeWins: 0, awayWins: 0, draws: 0 },
         matches: [],
-        hasData: false
+        hasData: false,
       });
     } finally {
       this.eventBus.emit('h2h-loading', false);
@@ -91,21 +90,91 @@ export class H2HData {
       summary: {
         homeWins: h2hData?.summary?.homeWins || 0,
         awayWins: h2hData?.summary?.awayWins || 0,
-        draws: h2hData?.summary?.draws || 0
+        draws: h2hData?.summary?.draws || 0,
       },
       matches: h2hData?.matches || [],
       homeTeam: matchData?.homeTeam,
       awayTeam: matchData?.awayTeam,
-      hasData: true
+      hasData: true,
     };
-    
+
     // Calculate total matches
-    processed.summary.totalMatches = 
-      processed.summary.homeWins + 
-      processed.summary.awayWins + 
-      processed.summary.draws;
-    
+    processed.summary.totalMatches =
+      processed.summary.homeWins + processed.summary.awayWins + processed.summary.draws;
+
+    // Calculate Over/Under and BTTS statistics
+    if (processed.matches && processed.matches.length > 0) {
+      processed.overUnderStats = this.calculateOverUnderStats(processed.matches);
+      processed.bttsStats = this.calculateBTTSStats(processed.matches);
+    } else {
+      processed.overUnderStats = {
+        over15: { count: 0, percentage: 0, total: 0 },
+        over25: { count: 0, percentage: 0, total: 0 },
+        over35: { count: 0, percentage: 0, total: 0 },
+      };
+      processed.bttsStats = {
+        yes: 0,
+        no: 0,
+        percentage: 0,
+      };
+    }
+
     return processed;
+  }
+
+  calculateOverUnderStats(matches) {
+    const stats = {
+      over15: { count: 0, percentage: 0, total: matches.length },
+      over25: { count: 0, percentage: 0, total: matches.length },
+      over35: { count: 0, percentage: 0, total: matches.length },
+    };
+
+    matches.forEach(match => {
+      const totalGoals = (match.homeGoalCount || 0) + (match.awayGoalCount || 0);
+
+      if (totalGoals > 1.5) {
+        stats.over15.count++;
+      }
+      if (totalGoals > 2.5) {
+        stats.over25.count++;
+      }
+      if (totalGoals > 3.5) {
+        stats.over35.count++;
+      }
+    });
+
+    // Calculate percentages
+    if (matches.length > 0) {
+      stats.over15.percentage = Math.round((stats.over15.count / matches.length) * 100);
+      stats.over25.percentage = Math.round((stats.over25.count / matches.length) * 100);
+      stats.over35.percentage = Math.round((stats.over35.count / matches.length) * 100);
+    }
+
+    return stats;
+  }
+
+  calculateBTTSStats(matches) {
+    let bttsYes = 0;
+    let bttsNo = 0;
+
+    matches.forEach(match => {
+      const homeGoals = match.homeGoalCount || 0;
+      const awayGoals = match.awayGoalCount || 0;
+
+      if (homeGoals > 0 && awayGoals > 0) {
+        bttsYes++;
+      } else {
+        bttsNo++;
+      }
+    });
+
+    const percentage = matches.length > 0 ? Math.round((bttsYes / matches.length) * 100) : 0;
+
+    return {
+      yes: bttsYes,
+      no: bttsNo,
+      percentage,
+    };
   }
 
   calculateH2HFromTeamMatches(_homeTeamId, _awayTeamId) {
@@ -116,17 +185,17 @@ export class H2HData {
         homeWins: 0,
         awayWins: 0,
         draws: 0,
-        totalMatches: 0
+        totalMatches: 0,
       },
       matches: [],
-      hasData: false
+      hasData: false,
     };
   }
 
   emitH2HData(h2hData) {
     // Emit processed H2H data
     this.eventBus.emit('h2h-data-loaded', h2hData);
-    
+
     // Also emit specific events for different UI components
     this.eventBus.emit('h2h-summary-data', h2hData.summary);
     this.eventBus.emit('h2h-matches-data', h2hData.matches);
@@ -144,7 +213,7 @@ export class H2HData {
   setCache(key, data) {
     this.cache.set(key, {
       data,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 

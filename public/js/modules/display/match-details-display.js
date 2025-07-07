@@ -19,27 +19,27 @@ export class MatchDetailsDisplay {
     this.elements.homeTeamForm = document.getElementById('homeTeamForm');
     this.elements.homeTeamPPG = document.getElementById('homeTeamPPG');
     this.elements.homeScore = document.getElementById('homeScore');
-    
+
     this.elements.awayTeamLogo = document.getElementById('awayTeamLogo');
     this.elements.awayTeamName = document.getElementById('awayTeamName');
     this.elements.awayTeamForm = document.getElementById('awayTeamForm');
     this.elements.awayTeamPPG = document.getElementById('awayTeamPPG');
     this.elements.awayScore = document.getElementById('awayScore');
-    
+
     this.elements.matchStatus = document.getElementById('matchStatus');
     this.elements.matchTime = document.getElementById('matchTime');
     this.elements.matchDateDisplay = document.getElementById('matchDateDisplay');
     this.elements.matchTimeDisplay = document.getElementById('matchTimeDisplay');
-    
+
     // Header elements
     this.elements.leagueLogo = document.getElementById('leagueLogo');
     this.elements.leagueName = document.getElementById('leagueName');
     this.elements.matchDate = document.getElementById('matchDate');
-    
+
     // Tab elements
     this.elements.navTabs = document.querySelectorAll('.nav-tab');
     this.elements.tabPanes = document.querySelectorAll('.tab-pane');
-    
+
     // H2H Statistics elements
     this.elements.h2hHomeTeamLogo = document.getElementById('h2hHomeTeamLogo');
     this.elements.h2hHomeTeamName = document.getElementById('h2hHomeTeamName');
@@ -55,31 +55,48 @@ export class MatchDetailsDisplay {
     this.elements.h2hProgressHomeLabel = document.getElementById('h2hProgressHomeLabel');
     this.elements.h2hProgressDrawLabel = document.getElementById('h2hProgressDrawLabel');
     this.elements.h2hProgressAwayLabel = document.getElementById('h2hProgressAwayLabel');
-    
+
+    // H2H Over/Under and BTTS elements
+    this.elements.h2hOver15 = document.querySelector('#h2hOver15 .percentage-value');
+    this.elements.h2hOver15Count = document.getElementById('h2hOver15Count');
+    this.elements.h2hOver15Total = document.getElementById('h2hOver15Total');
+
+    this.elements.h2hOver25 = document.querySelector('#h2hOver25 .percentage-value');
+    this.elements.h2hOver25Count = document.getElementById('h2hOver25Count');
+    this.elements.h2hOver25Total = document.getElementById('h2hOver25Total');
+
+    this.elements.h2hOver35 = document.querySelector('#h2hOver35 .percentage-value');
+    this.elements.h2hOver35Count = document.getElementById('h2hOver35Count');
+    this.elements.h2hOver35Total = document.getElementById('h2hOver35Total');
+
+    this.elements.h2hBTTS = document.querySelector('#h2hBTTS .percentage-value');
+    this.elements.h2hBTTSYes = document.getElementById('h2hBTTSYes');
+    this.elements.h2hBTTSNo = document.getElementById('h2hBTTSNo');
+
     // Initialize H2H stat positions (all visible by default)
     this.positionH2HStats(33.33, 33.33, 33.33, 1, 1, 1);
   }
 
   attachEventListeners() {
     // Listen for match data updates
-    this.eventBus.on('match-data-loaded', (data) => this.updateMatchDisplay(data));
-    
+    this.eventBus.on('match-data-loaded', data => this.updateMatchDisplay(data));
+
     // Listen for H2H data updates from H2H module
-    this.eventBus.on('h2h-data-loaded', (h2hData) => this.updateH2HStatistics(h2hData));
-    
+    this.eventBus.on('h2h-data-loaded', h2hData => this.updateH2HStatistics(h2hData));
+
     // Listen for H2H loading state
-    this.eventBus.on('h2h-loading', (isLoading) => this.setH2HLoadingState(isLoading));
-    
+    this.eventBus.on('h2h-loading', isLoading => this.setH2HLoadingState(isLoading));
+
     // Listen for tab switch events
-    this.eventBus.on('switch-tab', (tabName) => {
+    this.eventBus.on('switch-tab', tabName => {
       console.log('Display module received switch-tab event:', tabName);
       this.switchTab(tabName);
     });
-    
+
     // Tab click listeners - using event delegation for reliability
     const navTabsContainer = document.querySelector('.nav-tabs');
     if (navTabsContainer) {
-      navTabsContainer.addEventListener('click', (e) => {
+      navTabsContainer.addEventListener('click', e => {
         const tab = e.target.closest('.nav-tab');
         if (tab) {
           const tabName = tab.dataset.tab;
@@ -91,30 +108,32 @@ export class MatchDetailsDisplay {
   }
 
   updateMatchDisplay(matchData) {
-    if (!matchData) return;
-    
+    if (!matchData) {
+      return;
+    }
+
     // Update header
     this.updateHeader(matchData);
-    
+
     // Update match score
     this.updateMatchScore(matchData);
-    
+
     // Update team forms
     this.updateTeamForms(matchData);
-    
+
     // Update team PPG
     this.updateTeamPPG(matchData);
-    
+
     // H2H statistics will be updated when h2h-data-loaded event is fired
     // No longer updating H2H here with match data
-    
+
     // Emit event for tab content update
     this.eventBus.emit('match-display-updated', matchData);
   }
 
   updateHeader(matchData) {
     const { league, date } = matchData;
-    
+
     if (league) {
       if (league.logo && this.elements.leagueLogo) {
         // Handle league logo path
@@ -136,7 +155,7 @@ export class MatchDetailsDisplay {
         this.elements.leagueName.textContent = league.name || 'Unknown League';
       }
     }
-    
+
     if (this.elements.matchDate && date) {
       this.elements.matchDate.textContent = this.formatDate(date);
     }
@@ -144,7 +163,7 @@ export class MatchDetailsDisplay {
 
   updateMatchScore(matchData) {
     const { homeTeam, awayTeam, homeScore, awayScore, status, minute, date } = matchData;
-    
+
     // Update date and time display
     if (date) {
       const matchDate = new Date(date);
@@ -153,17 +172,17 @@ export class MatchDetailsDisplay {
           weekday: 'long',
           year: 'numeric',
           month: 'long',
-          day: 'numeric'
+          day: 'numeric',
         });
       }
       if (this.elements.matchTimeDisplay) {
         this.elements.matchTimeDisplay.textContent = matchDate.toLocaleTimeString('tr-TR', {
           hour: '2-digit',
-          minute: '2-digit'
+          minute: '2-digit',
         });
       }
     }
-    
+
     // Update home team
     if (homeTeam) {
       if (this.elements.homeTeamLogo && homeTeam.logo) {
@@ -187,16 +206,16 @@ export class MatchDetailsDisplay {
       } else if (this.elements.homeTeamLogo) {
         this.elements.homeTeamLogo.style.display = 'none';
       }
-      
+
       if (this.elements.homeTeamName) {
         this.elements.homeTeamName.textContent = homeTeam.name;
       }
-      
+
       if (this.elements.homeScore) {
         this.elements.homeScore.textContent = homeScore !== null ? homeScore : '-';
       }
     }
-    
+
     // Update away team
     if (awayTeam) {
       if (this.elements.awayTeamLogo && awayTeam.logo) {
@@ -220,22 +239,22 @@ export class MatchDetailsDisplay {
       } else if (this.elements.awayTeamLogo) {
         this.elements.awayTeamLogo.style.display = 'none';
       }
-      
+
       if (this.elements.awayTeamName) {
         this.elements.awayTeamName.textContent = awayTeam.name;
       }
-      
+
       if (this.elements.awayScore) {
         this.elements.awayScore.textContent = awayScore !== null ? awayScore : '-';
       }
     }
-    
+
     // Update match status
     if (this.elements.matchStatus && status) {
       this.elements.matchStatus.textContent = this.getStatusText(status);
       this.elements.matchStatus.className = `match-status ${status.toLowerCase()}`;
     }
-    
+
     // Update match time
     if (this.elements.matchTime) {
       if (status === 'live' && minute) {
@@ -250,17 +269,21 @@ export class MatchDetailsDisplay {
 
   updateTeamForms(matchData) {
     const { homeTeam, awayTeam } = matchData;
-    
+
+    console.log('Match data received:', matchData);
+
     // Home team form
     if (this.elements.homeTeamForm && homeTeam) {
       const homeFormData = homeTeam.homeForm || 'WWDLW'; // Test data if no real data
+      console.log('Home team form:', homeFormData, 'Team:', homeTeam.name);
       this.renderFormString(this.elements.homeTeamForm, homeFormData);
       this.addFormLabel(this.elements.homeTeamForm, 'Home Form');
     }
-    
+
     // Away team form
     if (this.elements.awayTeamForm && awayTeam) {
       const awayFormData = awayTeam.awayForm || 'LDWLL'; // Test data if no real data
+      console.log('Away team form:', awayFormData, 'Team:', awayTeam.name);
       this.renderFormString(this.elements.awayTeamForm, awayFormData);
       this.addFormLabel(this.elements.awayTeamForm, 'Away Form');
     }
@@ -268,12 +291,12 @@ export class MatchDetailsDisplay {
 
   updateTeamPPG(matchData) {
     const { homeTeam, awayTeam } = matchData;
-    
+
     // Home team PPG
     if (this.elements.homeTeamPPG && homeTeam) {
       const homePPG = parseFloat(homeTeam.homePPG || '1.85');
       this.elements.homeTeamPPG.textContent = homePPG.toFixed(2);
-      
+
       // Add color class based on PPG value
       this.elements.homeTeamPPG.className = 'ppg-value';
       if (homePPG >= 2.0) {
@@ -283,7 +306,7 @@ export class MatchDetailsDisplay {
       } else {
         this.elements.homeTeamPPG.classList.add('low');
       }
-      
+
       // Update progress bar (max 3 points)
       const homeProgressBar = document.getElementById('homeTeamPPGBar');
       if (homeProgressBar) {
@@ -291,12 +314,12 @@ export class MatchDetailsDisplay {
         homeProgressBar.style.width = `${progressPercentage}%`;
       }
     }
-    
+
     // Away team PPG
     if (this.elements.awayTeamPPG && awayTeam) {
       const awayPPG = parseFloat(awayTeam.awayPPG || '1.42');
       this.elements.awayTeamPPG.textContent = awayPPG.toFixed(2);
-      
+
       // Add color class based on PPG value
       this.elements.awayTeamPPG.className = 'ppg-value';
       if (awayPPG >= 2.0) {
@@ -306,7 +329,7 @@ export class MatchDetailsDisplay {
       } else {
         this.elements.awayTeamPPG.classList.add('low');
       }
-      
+
       // Update progress bar (max 3 points)
       const awayProgressBar = document.getElementById('awayTeamPPGBar');
       if (awayProgressBar) {
@@ -317,10 +340,20 @@ export class MatchDetailsDisplay {
   }
 
   renderFormString(container, formString) {
-    container.innerHTML = formString.split('').map(result => {
-      const className = result === 'W' ? 'win' : result === 'D' ? 'draw' : 'loss';
-      return `<span class="form-result ${className}">${result}</span>`;
-    }).join('');
+    console.log('Form string received:', formString);
+
+    // Sadece son 5 karakteri al
+    const last5Form = formString.slice(-5);
+    console.log('Last 5 form:', last5Form);
+
+    container.innerHTML = last5Form
+      .split('')
+      .map(result => {
+        const upperResult = result.toUpperCase();
+        const className = upperResult === 'W' ? 'win' : upperResult === 'D' ? 'draw' : 'loss';
+        return `<span class="form-result ${className}">${upperResult}</span>`;
+      })
+      .join('');
   }
 
   addFormLabel(container, labelText) {
@@ -335,11 +368,11 @@ export class MatchDetailsDisplay {
 
   switchTab(tabName) {
     console.log('Switching tab to:', tabName);
-    
+
     // Re-query elements in case they were dynamically updated
     const navTabs = document.querySelectorAll('.nav-tab');
     const tabPanes = document.querySelectorAll('.tab-pane');
-    
+
     // Update tab buttons
     navTabs.forEach(tab => {
       if (tab.dataset.tab === tabName) {
@@ -348,7 +381,7 @@ export class MatchDetailsDisplay {
         tab.classList.remove('active');
       }
     });
-    
+
     // Update tab content
     tabPanes.forEach(pane => {
       if (pane.dataset.tab === tabName) {
@@ -359,7 +392,7 @@ export class MatchDetailsDisplay {
         pane.style.display = 'none';
       }
     });
-    
+
     // Emit event for content loading
     this.eventBus.emit('tab-content-requested', tabName);
   }
@@ -370,7 +403,7 @@ export class MatchDetailsDisplay {
     return date.toLocaleDateString('tr-TR', {
       day: 'numeric',
       month: 'long',
-      year: 'numeric'
+      year: 'numeric',
     });
   }
 
@@ -378,7 +411,7 @@ export class MatchDetailsDisplay {
     const date = new Date(dateString);
     return date.toLocaleTimeString('tr-TR', {
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   }
 
@@ -386,14 +419,14 @@ export class MatchDetailsDisplay {
     if (!status) {
       return 'UNKNOWN';
     }
-    
+
     const statusTexts = {
       scheduled: 'SCHEDULED',
       live: 'LIVE',
       finished: 'FINISHED',
       postponed: 'POSTPONED',
       cancelled: 'CANCELLED',
-      complete: 'FINISHED'
+      complete: 'FINISHED',
     };
     return statusTexts[status.toLowerCase()] || status.toUpperCase();
   }
@@ -409,21 +442,21 @@ export class MatchDetailsDisplay {
     // Emit error event for other modules to handle
     this.eventBus.emit('display-error', { message, type: 'match-details' });
   }
-  
+
   updateH2HStatistics(h2hData) {
     if (!h2hData) {
       this.showNoH2HData();
       return;
     }
-    
+
     const { summary, homeTeam, awayTeam, hasData } = h2hData;
-    
+
     // If no real data available, show appropriate message
     if (!hasData || !summary || summary.totalMatches === 0) {
       this.showNoH2HData();
       return;
     }
-    
+
     // Update team logos and names
     if (homeTeam) {
       if (this.elements.h2hHomeTeamLogo && homeTeam.logo) {
@@ -444,7 +477,7 @@ export class MatchDetailsDisplay {
         this.elements.h2hHomeTeamName.textContent = homeTeam.name;
       }
     }
-    
+
     if (awayTeam) {
       if (this.elements.h2hAwayTeamLogo && awayTeam.logo) {
         let logoUrl = awayTeam.logo;
@@ -464,13 +497,13 @@ export class MatchDetailsDisplay {
         this.elements.h2hAwayTeamName.textContent = awayTeam.name;
       }
     }
-    
+
     // Update H2H statistics from API data only
     const homeWins = summary.homeWins || 0;
     const awayWins = summary.awayWins || 0;
     const draws = summary.draws || 0;
-    const totalMatches = summary.totalMatches || (homeWins + awayWins + draws);
-    
+    const totalMatches = summary.totalMatches || homeWins + awayWins + draws;
+
     // Update win counts
     if (this.elements.h2hHomeWins) {
       this.elements.h2hHomeWins.textContent = homeWins;
@@ -484,18 +517,18 @@ export class MatchDetailsDisplay {
     if (this.elements.h2hTotalMatches) {
       this.elements.h2hTotalMatches.textContent = totalMatches;
     }
-    
+
     // Calculate percentages and handle 0 values
     if (totalMatches > 0) {
       const homePercentage = (homeWins / totalMatches) * 100;
       const drawPercentage = (draws / totalMatches) * 100;
       const awayPercentage = (awayWins / totalMatches) * 100;
-      
+
       // Hide stat items with 0 values
       const homeStatItem = document.getElementById('h2hHomeStatItem');
       const drawStatItem = document.getElementById('h2hDrawStatItem');
       const awayStatItem = document.getElementById('h2hAwayStatItem');
-      
+
       if (homeStatItem) {
         homeStatItem.style.display = homeWins > 0 ? 'block' : 'none';
       }
@@ -505,7 +538,7 @@ export class MatchDetailsDisplay {
       if (awayStatItem) {
         awayStatItem.style.display = awayWins > 0 ? 'block' : 'none';
       }
-      
+
       // Update progress bars - hide sections with 0 values
       if (this.elements.h2hProgressHome) {
         this.elements.h2hProgressHome.style.width = homeWins > 0 ? `${homePercentage}%` : '0%';
@@ -519,70 +552,203 @@ export class MatchDetailsDisplay {
         this.elements.h2hProgressAway.style.width = awayWins > 0 ? `${awayPercentage}%` : '0%';
         this.elements.h2hProgressAway.style.display = awayWins > 0 ? 'flex' : 'none';
       }
-      
+
       // Update progress labels
       if (this.elements.h2hProgressHomeLabel) {
-        this.elements.h2hProgressHomeLabel.textContent = homeWins > 0 ? `${Math.round(homePercentage)}%` : '';
+        this.elements.h2hProgressHomeLabel.textContent =
+          homeWins > 0 ? `${Math.round(homePercentage)}%` : '';
       }
       if (this.elements.h2hProgressDrawLabel) {
-        this.elements.h2hProgressDrawLabel.textContent = draws > 0 ? `${Math.round(drawPercentage)}%` : '';
+        this.elements.h2hProgressDrawLabel.textContent =
+          draws > 0 ? `${Math.round(drawPercentage)}%` : '';
       }
       if (this.elements.h2hProgressAwayLabel) {
-        this.elements.h2hProgressAwayLabel.textContent = awayWins > 0 ? `${Math.round(awayPercentage)}%` : '';
+        this.elements.h2hProgressAwayLabel.textContent =
+          awayWins > 0 ? `${Math.round(awayPercentage)}%` : '';
       }
-      
+
       // Position stats above progress bars dynamically
-      this.positionH2HStats(homePercentage, drawPercentage, awayPercentage, homeWins, draws, awayWins);
+      this.positionH2HStats(
+        homePercentage,
+        drawPercentage,
+        awayPercentage,
+        homeWins,
+        draws,
+        awayWins
+      );
+    }
+
+    // Update Over/Under and BTTS statistics
+    this.updateH2HOverUnderStats(h2hData.overUnderStats);
+    this.updateH2HBTTSStats(h2hData.bttsStats);
+  }
+
+  updateH2HOverUnderStats(overUnderStats) {
+    if (!overUnderStats) {
+      return;
+    }
+
+    // Update Over 1.5
+    if (this.elements.h2hOver15) {
+      this.elements.h2hOver15.textContent = overUnderStats.over15?.percentage || 0;
+    }
+    if (this.elements.h2hOver15Count) {
+      this.elements.h2hOver15Count.textContent = overUnderStats.over15?.count || 0;
+    }
+    if (this.elements.h2hOver15Total) {
+      this.elements.h2hOver15Total.textContent = overUnderStats.over15?.total || 0;
+    }
+
+    // Update Over 2.5
+    if (this.elements.h2hOver25) {
+      this.elements.h2hOver25.textContent = overUnderStats.over25?.percentage || 0;
+    }
+    if (this.elements.h2hOver25Count) {
+      this.elements.h2hOver25Count.textContent = overUnderStats.over25?.count || 0;
+    }
+    if (this.elements.h2hOver25Total) {
+      this.elements.h2hOver25Total.textContent = overUnderStats.over25?.total || 0;
+    }
+
+    // Update Over 3.5
+    if (this.elements.h2hOver35) {
+      this.elements.h2hOver35.textContent = overUnderStats.over35?.percentage || 0;
+    }
+    if (this.elements.h2hOver35Count) {
+      this.elements.h2hOver35Count.textContent = overUnderStats.over35?.count || 0;
+    }
+    if (this.elements.h2hOver35Total) {
+      this.elements.h2hOver35Total.textContent = overUnderStats.over35?.total || 0;
     }
   }
-  
+
+  updateH2HBTTSStats(bttsStats) {
+    if (!bttsStats) {
+      return;
+    }
+
+    if (this.elements.h2hBTTS) {
+      this.elements.h2hBTTS.textContent = bttsStats.percentage || 0;
+    }
+    if (this.elements.h2hBTTSYes) {
+      this.elements.h2hBTTSYes.textContent = bttsStats.yes || 0;
+    }
+    if (this.elements.h2hBTTSNo) {
+      this.elements.h2hBTTSNo.textContent = bttsStats.no || 0;
+    }
+  }
+
   positionH2HStats(homePercentage, drawPercentage, awayPercentage, homeWins, draws, awayWins) {
     const homeStatItem = document.getElementById('h2hHomeStatItem');
     const drawStatItem = document.getElementById('h2hDrawStatItem');
     const awayStatItem = document.getElementById('h2hAwayStatItem');
-    
+
     // Only position visible stats
     if (homeStatItem && homeWins > 0) {
       const homeCenter = homePercentage / 2;
       homeStatItem.style.left = `${homeCenter}%`;
     }
-    
+
     if (drawStatItem && draws > 0) {
-      const drawCenter = homePercentage + (drawPercentage / 2);
+      const drawCenter = homePercentage + drawPercentage / 2;
       drawStatItem.style.left = `${drawCenter}%`;
     }
-    
+
     if (awayStatItem && awayWins > 0) {
-      const awayCenter = homePercentage + drawPercentage + (awayPercentage / 2);
+      const awayCenter = homePercentage + drawPercentage + awayPercentage / 2;
       awayStatItem.style.left = `${awayCenter}%`;
     }
   }
-  
+
   showNoH2HData() {
     // Reset all H2H values to show no data available
-    if (this.elements.h2hHomeWins) this.elements.h2hHomeWins.textContent = '-';
-    if (this.elements.h2hAwayWins) this.elements.h2hAwayWins.textContent = '-';
-    if (this.elements.h2hDraws) this.elements.h2hDraws.textContent = '-';
-    if (this.elements.h2hTotalMatches) this.elements.h2hTotalMatches.textContent = '0';
-    
+    if (this.elements.h2hHomeWins) {
+      this.elements.h2hHomeWins.textContent = '-';
+    }
+    if (this.elements.h2hAwayWins) {
+      this.elements.h2hAwayWins.textContent = '-';
+    }
+    if (this.elements.h2hDraws) {
+      this.elements.h2hDraws.textContent = '-';
+    }
+    if (this.elements.h2hTotalMatches) {
+      this.elements.h2hTotalMatches.textContent = '0';
+    }
+
     // Hide progress bars
-    if (this.elements.h2hProgressHome) this.elements.h2hProgressHome.style.width = '0%';
-    if (this.elements.h2hProgressDraw) this.elements.h2hProgressDraw.style.width = '0%';
-    if (this.elements.h2hProgressAway) this.elements.h2hProgressAway.style.width = '0%';
-    
+    if (this.elements.h2hProgressHome) {
+      this.elements.h2hProgressHome.style.width = '0%';
+    }
+    if (this.elements.h2hProgressDraw) {
+      this.elements.h2hProgressDraw.style.width = '0%';
+    }
+    if (this.elements.h2hProgressAway) {
+      this.elements.h2hProgressAway.style.width = '0%';
+    }
+
     // Show "No data" in progress labels
-    if (this.elements.h2hProgressHomeLabel) this.elements.h2hProgressHomeLabel.textContent = 'No data';
-    if (this.elements.h2hProgressDrawLabel) this.elements.h2hProgressDrawLabel.textContent = '';
-    if (this.elements.h2hProgressAwayLabel) this.elements.h2hProgressAwayLabel.textContent = '';
-    
+    if (this.elements.h2hProgressHomeLabel) {
+      this.elements.h2hProgressHomeLabel.textContent = 'No data';
+    }
+    if (this.elements.h2hProgressDrawLabel) {
+      this.elements.h2hProgressDrawLabel.textContent = '';
+    }
+    if (this.elements.h2hProgressAwayLabel) {
+      this.elements.h2hProgressAwayLabel.textContent = '';
+    }
+
     // Reset stat positions
     this.positionH2HStats(33.33, 33.33, 33.33, 0, 0, 0);
+
+    // Reset Over/Under stats
+    if (this.elements.h2hOver15) {
+      this.elements.h2hOver15.textContent = '-';
+    }
+    if (this.elements.h2hOver15Count) {
+      this.elements.h2hOver15Count.textContent = '-';
+    }
+    if (this.elements.h2hOver15Total) {
+      this.elements.h2hOver15Total.textContent = '-';
+    }
+
+    if (this.elements.h2hOver25) {
+      this.elements.h2hOver25.textContent = '-';
+    }
+    if (this.elements.h2hOver25Count) {
+      this.elements.h2hOver25Count.textContent = '-';
+    }
+    if (this.elements.h2hOver25Total) {
+      this.elements.h2hOver25Total.textContent = '-';
+    }
+
+    if (this.elements.h2hOver35) {
+      this.elements.h2hOver35.textContent = '-';
+    }
+    if (this.elements.h2hOver35Count) {
+      this.elements.h2hOver35Count.textContent = '-';
+    }
+    if (this.elements.h2hOver35Total) {
+      this.elements.h2hOver35Total.textContent = '-';
+    }
+
+    // Reset BTTS stats
+    if (this.elements.h2hBTTS) {
+      this.elements.h2hBTTS.textContent = '-';
+    }
+    if (this.elements.h2hBTTSYes) {
+      this.elements.h2hBTTSYes.textContent = '-';
+    }
+    if (this.elements.h2hBTTSNo) {
+      this.elements.h2hBTTSNo.textContent = '-';
+    }
   }
-  
+
   setH2HLoadingState(isLoading) {
     const h2hCard = document.querySelector('.h2h-stats-card');
-    if (!h2hCard) return;
-    
+    if (!h2hCard) {
+      return;
+    }
+
     if (isLoading) {
       h2hCard.classList.add('loading');
       // Optionally add a loading spinner
@@ -596,7 +762,9 @@ export class MatchDetailsDisplay {
     } else {
       h2hCard.classList.remove('loading');
       const spinner = h2hCard.querySelector('.h2h-loading-spinner');
-      if (spinner) spinner.remove();
+      if (spinner) {
+        spinner.remove();
+      }
     }
   }
 }
