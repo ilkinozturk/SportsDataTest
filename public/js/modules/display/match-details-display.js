@@ -73,6 +73,9 @@ export class MatchDetailsDisplay {
     this.elements.h2hBTTSYes = document.getElementById('h2hBTTSYes');
     this.elements.h2hBTTSNo = document.getElementById('h2hBTTSNo');
 
+    // H2H Recent Matches element
+    this.elements.h2hRecentMatches = document.getElementById('h2hRecentMatches');
+
     // Initialize H2H stat positions (all visible by default)
     this.positionH2HStats(33.33, 33.33, 33.33, 1, 1, 1);
   }
@@ -581,6 +584,9 @@ export class MatchDetailsDisplay {
     // Update Over/Under and BTTS statistics
     this.updateH2HOverUnderStats(h2hData.overUnderStats);
     this.updateH2HBTTSStats(h2hData.bttsStats);
+
+    // Update Recent H2H Matches
+    this.updateH2HRecentMatches(h2hData.matches, homeTeam, awayTeam);
   }
 
   updateH2HOverUnderStats(overUnderStats) {
@@ -661,6 +667,69 @@ export class MatchDetailsDisplay {
       const awayCenter = homePercentage + drawPercentage + awayPercentage / 2;
       awayStatItem.style.left = `${awayCenter}%`;
     }
+  }
+
+  updateH2HRecentMatches(matches, homeTeam, awayTeam) {
+    if (!this.elements.h2hRecentMatches) {
+      return;
+    }
+
+    // If no matches available
+    if (!matches || matches.length === 0) {
+      this.elements.h2hRecentMatches.innerHTML = `
+        <div class="no-h2h-matches">
+          <p>No recent H2H matches available</p>
+        </div>
+      `;
+      return;
+    }
+
+    // Get last 5 matches
+    const recentMatches = matches.slice(0, 5);
+
+    // Render matches
+    const matchesHTML = recentMatches
+      .map(match => {
+        const homeGoals = match.homeGoalCount || match.home_scored || match.homeScore || 0;
+        const awayGoals = match.awayGoalCount || match.away_scored || match.awayScore || 0;
+        const matchDate = match.date ? new Date(match.date).toLocaleDateString() : 'Date N/A';
+
+        // Determine winner for styling
+        let resultClass = 'draw';
+        let winnerIndicator = '';
+        if (homeGoals > awayGoals) {
+          resultClass = match.homeID === homeTeam?.id ? 'home-win' : 'away-win';
+          winnerIndicator = match.homeID === homeTeam?.id ? 'W' : 'L';
+        } else if (awayGoals > homeGoals) {
+          resultClass = match.awayID === awayTeam?.id ? 'away-win' : 'home-win';
+          winnerIndicator = match.awayID === awayTeam?.id ? 'W' : 'L';
+        } else {
+          winnerIndicator = 'D';
+        }
+
+        return `
+          <div class="h2h-recent-match ${resultClass}">
+            <div class="h2h-match-date">${matchDate}</div>
+            <div class="h2h-match-teams">
+              <span class="h2h-match-home ${match.homeID === homeTeam?.id ? 'current-team' : ''}">
+                ${match.home_name || 'Home Team'}
+              </span>
+              <span class="h2h-match-score">
+                ${homeGoals} - ${awayGoals}
+              </span>
+              <span class="h2h-match-away ${match.awayID === awayTeam?.id ? 'current-team' : ''}">
+                ${match.away_name || 'Away Team'}
+              </span>
+            </div>
+            <div class="h2h-match-result">
+              <span class="result-indicator ${resultClass}">${winnerIndicator}</span>
+            </div>
+          </div>
+        `;
+      })
+      .join('');
+
+    this.elements.h2hRecentMatches.innerHTML = matchesHTML;
   }
 
   showNoH2HData() {
