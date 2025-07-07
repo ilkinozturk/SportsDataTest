@@ -44,15 +44,25 @@ export class MatchDetailsDisplay {
   attachEventListeners() {
     // Listen for match data updates
     this.eventBus.on('match-data-loaded', (data) => this.updateMatchDisplay(data));
-    this.eventBus.on('tab-switched', (tabName) => this.switchTab(tabName));
     
-    // Tab click listeners
-    this.elements.navTabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const tabName = tab.dataset.tab;
-        this.eventBus.emit('switch-tab', tabName);
-      });
+    // Listen for tab switch events
+    this.eventBus.on('switch-tab', (tabName) => {
+      console.log('Display module received switch-tab event:', tabName);
+      this.switchTab(tabName);
     });
+    
+    // Tab click listeners - using event delegation for reliability
+    const navTabsContainer = document.querySelector('.nav-tabs');
+    if (navTabsContainer) {
+      navTabsContainer.addEventListener('click', (e) => {
+        const tab = e.target.closest('.nav-tab');
+        if (tab) {
+          const tabName = tab.dataset.tab;
+          console.log('Tab clicked:', tabName);
+          this.eventBus.emit('switch-tab', tabName);
+        }
+      });
+    }
   }
 
   updateMatchDisplay(matchData) {
@@ -296,14 +306,30 @@ export class MatchDetailsDisplay {
   }
 
   switchTab(tabName) {
+    console.log('Switching tab to:', tabName);
+    
+    // Re-query elements in case they were dynamically updated
+    const navTabs = document.querySelectorAll('.nav-tab');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+    
     // Update tab buttons
-    this.elements.navTabs.forEach(tab => {
-      tab.classList.toggle('active', tab.dataset.tab === tabName);
+    navTabs.forEach(tab => {
+      if (tab.dataset.tab === tabName) {
+        tab.classList.add('active');
+      } else {
+        tab.classList.remove('active');
+      }
     });
     
     // Update tab content
-    this.elements.tabPanes.forEach(pane => {
-      pane.classList.toggle('active', pane.dataset.tab === tabName);
+    tabPanes.forEach(pane => {
+      if (pane.dataset.tab === tabName) {
+        pane.classList.add('active');
+        pane.style.display = 'block';
+      } else {
+        pane.classList.remove('active');
+        pane.style.display = 'none';
+      }
     });
     
     // Emit event for content loading

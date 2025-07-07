@@ -32,6 +32,7 @@ class MatchDetailsApp {
   setupGlobalHandlers() {
     // Global tab switching function
     window.switchTab = (tabName) => {
+      console.log('Switching to tab:', tabName);
       this.eventBus.emit('switch-tab', tabName);
     };
     
@@ -39,6 +40,9 @@ class MatchDetailsApp {
     this.eventBus.on('display-error', (error) => {
       console.error('Display error:', error);
     });
+    
+    // Log successful initialization
+    console.log('Match Details App initialized successfully');
   }
 }
 
