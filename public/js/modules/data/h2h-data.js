@@ -88,8 +88,6 @@ export class H2HData {
   }
 
   processH2HData(h2hData, matchData) {
-    console.log('Processing H2H data:', h2hData);
-
     // Check if h2h data has the API structure
     if (h2hData?.previous_matches_results) {
       // API format - extract summary from previous_matches_results
@@ -109,8 +107,6 @@ export class H2HData {
 
       // Process previous_matches_ids if available
       if (h2hData.previous_matches_ids && Array.isArray(h2hData.previous_matches_ids)) {
-        console.log(`Processing ${h2hData.previous_matches_ids.length} H2H matches from API`);
-
         // Get current team IDs from h2h data
         const currentTeamAId = h2hData.team_a_id;
         const currentTeamBId = h2hData.team_b_id;
@@ -176,7 +172,6 @@ export class H2HData {
         processed.matches.sort((a, b) => new Date(b.date) - new Date(a.date));
       }
 
-      console.log('Processed H2H from API format:', processed);
       return processed;
     }
 
@@ -197,19 +192,12 @@ export class H2HData {
     processed.summary.totalMatches =
       processed.summary.homeWins + processed.summary.awayWins + processed.summary.draws;
 
-    console.log('H2H matches count:', processed.matches.length);
-    console.log('First few matches:', processed.matches.slice(0, 3));
-
     // Calculate Over/Under and BTTS statistics
     if (processed.matches && processed.matches.length > 0) {
       processed.overUnderStats = this.calculateOverUnderStats(processed.matches);
       processed.bttsStats = this.calculateBTTSStats(processed.matches);
-
-      console.log('Calculated overUnderStats:', processed.overUnderStats);
-      console.log('Calculated bttsStats:', processed.bttsStats);
     } else if (h2hData?.betting_stats) {
       // Use betting_stats from API if no match details available
-      console.log('Using betting_stats from API:', h2hData.betting_stats);
       const stats = h2hData.betting_stats;
       const total = processed.summary.totalMatches || stats.total_games || 9;
 
@@ -236,10 +224,7 @@ export class H2HData {
         no: total - (stats.btts || 0),
         percentage: stats.bttsPercentage || 0,
       };
-
-      console.log('Processed betting stats:', processed.overUnderStats);
     } else {
-      console.log('No matches or betting stats to calculate from');
       processed.overUnderStats = {
         over15: { count: 0, percentage: 0, total: 0 },
         over25: { count: 0, percentage: 0, total: 0 },
