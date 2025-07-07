@@ -54,6 +54,7 @@ export class H2HData {
         const response = await this.apiClient.get(`/api/matches/${matchId}/details`);
 
         if (response.success && response.data?.h2h) {
+          console.log('H2H data from API:', response.data.h2h);
           const h2hData = this.processH2HData(response.data.h2h, response.data);
           this.setCache(cacheKey, h2hData);
           this.emitH2HData(h2hData);
@@ -85,6 +86,8 @@ export class H2HData {
   }
 
   processH2HData(h2hData, matchData) {
+    console.log('Processing H2H data:', h2hData);
+
     // Ensure we have valid data structure
     const processed = {
       summary: {
@@ -102,11 +105,49 @@ export class H2HData {
     processed.summary.totalMatches =
       processed.summary.homeWins + processed.summary.awayWins + processed.summary.draws;
 
+    console.log('H2H matches count:', processed.matches.length);
+    console.log('First few matches:', processed.matches.slice(0, 3));
+
     // Calculate Over/Under and BTTS statistics
     if (processed.matches && processed.matches.length > 0) {
       processed.overUnderStats = this.calculateOverUnderStats(processed.matches);
       processed.bttsStats = this.calculateBTTSStats(processed.matches);
+
+      console.log('Calculated overUnderStats:', processed.overUnderStats);
+      console.log('Calculated bttsStats:', processed.bttsStats);
+    } else if (h2hData?.betting_stats) {
+      // Use betting_stats from API if no match details available
+      console.log('Using betting_stats from API:', h2hData.betting_stats);
+      const stats = h2hData.betting_stats;
+      const total = processed.summary.totalMatches || stats.total_games || 9;
+
+      processed.overUnderStats = {
+        over15: {
+          count: stats.over15 || 0,
+          percentage: stats.over15Percentage || 0,
+          total: total,
+        },
+        over25: {
+          count: stats.over25 || 0,
+          percentage: stats.over25Percentage || 0,
+          total: total,
+        },
+        over35: {
+          count: stats.over35 || 0,
+          percentage: stats.over35Percentage || 0,
+          total: total,
+        },
+      };
+
+      processed.bttsStats = {
+        yes: stats.btts || 0,
+        no: total - (stats.btts || 0),
+        percentage: stats.bttsPercentage || 0,
+      };
+
+      console.log('Processed betting stats:', processed.overUnderStats);
     } else {
+      console.log('No matches or betting stats to calculate from');
       processed.overUnderStats = {
         over15: { count: 0, percentage: 0, total: 0 },
         over25: { count: 0, percentage: 0, total: 0 },
@@ -129,8 +170,22 @@ export class H2HData {
       over35: { count: 0, percentage: 0, total: matches.length },
     };
 
-    matches.forEach(match => {
-      const totalGoals = (match.homeGoalCount || 0) + (match.awayGoalCount || 0);
+    console.log('Calculating Over/Under stats for', matches.length, 'matches');
+
+    matches.forEach((match, index) => {
+      // Check different possible field names for goals
+      const homeGoals =
+        match.homeGoalCount || match.home_goal_count || match.homeScore || match.home_score || 0;
+      const awayGoals =
+        match.awayGoalCount || match.away_goal_count || match.awayScore || match.away_score || 0;
+      const totalGoals = homeGoals + awayGoals;
+
+      if (index < 3) {
+        console.log(
+          `Match ${index + 1}: Home ${homeGoals} - Away ${awayGoals} = Total ${totalGoals}`
+        );
+        console.log('Match data:', match);
+      }
 
       if (totalGoals > 1.5) {
         stats.over15.count++;
@@ -150,6 +205,7 @@ export class H2HData {
       stats.over35.percentage = Math.round((stats.over35.count / matches.length) * 100);
     }
 
+    console.log('Final Over/Under stats:', stats);
     return stats;
   }
 

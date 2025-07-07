@@ -584,7 +584,10 @@ export class MatchDetailsDisplay {
   }
 
   updateH2HOverUnderStats(overUnderStats) {
+    console.log('Updating H2H Over/Under stats:', overUnderStats);
+
     if (!overUnderStats) {
+      console.log('No overUnderStats provided');
       return;
     }
 
