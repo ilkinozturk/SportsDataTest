@@ -233,14 +233,48 @@ export class MatchDetailsDisplay {
     
     // Home team PPG
     if (this.elements.homeTeamPPG && homeTeam) {
-      const homePPG = homeTeam.homePPG || '1.85'; // Test data if no real data
-      this.elements.homeTeamPPG.textContent = parseFloat(homePPG).toFixed(2);
+      const homePPG = parseFloat(homeTeam.homePPG || '1.85');
+      this.elements.homeTeamPPG.textContent = homePPG.toFixed(2);
+      
+      // Add color class based on PPG value
+      this.elements.homeTeamPPG.className = 'ppg-value';
+      if (homePPG >= 2.0) {
+        this.elements.homeTeamPPG.classList.add('high');
+      } else if (homePPG >= 1.5) {
+        this.elements.homeTeamPPG.classList.add('medium');
+      } else {
+        this.elements.homeTeamPPG.classList.add('low');
+      }
+      
+      // Update progress bar (max 3 points)
+      const homeProgressBar = document.getElementById('homeTeamPPGBar');
+      if (homeProgressBar) {
+        const progressPercentage = Math.min((homePPG / 3) * 100, 100);
+        homeProgressBar.style.width = `${progressPercentage}%`;
+      }
     }
     
     // Away team PPG
     if (this.elements.awayTeamPPG && awayTeam) {
-      const awayPPG = awayTeam.awayPPG || '1.42'; // Test data if no real data
-      this.elements.awayTeamPPG.textContent = parseFloat(awayPPG).toFixed(2);
+      const awayPPG = parseFloat(awayTeam.awayPPG || '1.42');
+      this.elements.awayTeamPPG.textContent = awayPPG.toFixed(2);
+      
+      // Add color class based on PPG value
+      this.elements.awayTeamPPG.className = 'ppg-value';
+      if (awayPPG >= 2.0) {
+        this.elements.awayTeamPPG.classList.add('high');
+      } else if (awayPPG >= 1.5) {
+        this.elements.awayTeamPPG.classList.add('medium');
+      } else {
+        this.elements.awayTeamPPG.classList.add('low');
+      }
+      
+      // Update progress bar (max 3 points)
+      const awayProgressBar = document.getElementById('awayTeamPPGBar');
+      if (awayProgressBar) {
+        const progressPercentage = Math.min((awayPPG / 3) * 100, 100);
+        awayProgressBar.style.width = `${progressPercentage}%`;
+      }
     }
   }
 
