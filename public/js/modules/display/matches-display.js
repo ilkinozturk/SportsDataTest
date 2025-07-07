@@ -18,7 +18,6 @@
   const missingModules = requiredModules.filter(module => !global[module]);
   
   if (missingModules.length > 0) {
-    console.warn('[MatchesDisplay] Missing optional modules:', missingModules);
   }
 
   class MatchesDisplay {
@@ -46,33 +45,39 @@
      */
     initialize() {
       if (this.initialized) {
-        console.log('[MatchesDisplay] Already initialized');
         return;
       }
-
-      console.log('[MatchesDisplay] Initializing...');
 
       // Subscribe to events
       if (global.TeamStatsEventBus) {
         global.TeamStatsEventBus.on('data:loaded', (data) => this.handleDataLoaded(data));
         global.TeamStatsEventBus.on('filter:changed', (filter) => this.handleFilterChanged(filter));
+        global.TeamStatsEventBus.on('matches:loaded', (data) => this.handleMatchesLoaded(data));
       }
 
       this.initialized = true;
-      console.log('[MatchesDisplay] ✓ Initialized successfully');
     }
 
     /**
      * Handle data loaded event
      */
     handleDataLoaded(data) {
-      console.log('[MatchesDisplay] Data loaded, updating display...');
       
       // Handle nested data structure from API
       const actualData = data.data || data;
       
       if (actualData) {
-        this.updateDisplay(actualData, this.state.activeFilter);
+        // Extract team info for fetching matches
+        const teamId = actualData.teamInfo?.id || actualData.team?.id || actualData.teamId;
+        const seasonId = actualData.seasonId || actualData.teamInfo?.seasonId;
+        
+        // Use matches service if available
+        if (global.TeamStatsMatchesService && teamId) {
+          global.TeamStatsMatchesService.fetchMatches(teamId, seasonId);
+        } else {
+          // Fallback to data from main response
+          this.updateDisplay(actualData, this.state.activeFilter);
+        }
       }
     }
 
@@ -90,14 +95,32 @@
     }
 
     /**
+     * Handle matches loaded from service
+     */
+    handleMatchesLoaded(data) {
+      
+      if (data.matches && data.matches.length > 0) {
+        // Get team ID from state or detect from matches
+        const state = global.TeamStatsStateManager?.getState();
+        const teamId = state?.data?.teamInfo?.id || state?.data?.teamId || this.detectTeamId(data.matches);
+        
+        // Create a data structure similar to main data
+        const matchData = {
+          allMatches: data.matches,
+          teamId: teamId
+        };
+        
+        this.updateDisplay(matchData, this.state.activeFilter);
+      }
+    }
+
+    /**
      * Update the display with new data
      */
     updateDisplay(data, filter = 'all') {
-      console.log('[MatchesDisplay] Updating with filter:', filter);
       
       const container = document.getElementById('matchesList');
       if (!container) {
-        console.warn('[MatchesDisplay] Matches container not found');
         return;
       }
 
@@ -116,7 +139,6 @@
       const teamId = data.teamInfo?.id || data.team?.id || data.teamId || data.statistics?.teamId || (matches.length > 0 ? this.detectTeamId(matches) : null);
       
       if (!teamId) {
-        console.error('[MatchesDisplay] Cannot determine team ID');
         container.innerHTML = '<p class="no-data" style="color: #ef4444;">Error: Cannot determine team</p>';
         return;
       }
@@ -151,7 +173,6 @@
         container.innerHTML = '<p class="no-data">No matches found for the selected filter</p>';
       }
       
-      console.log('[MatchesDisplay] Rendered', pastMatches.length, 'past matches and', futureMatches.length, 'future matches');
     }
 
     /**
@@ -359,7 +380,6 @@
      * Destroy the module
      */
     destroy() {
-      console.log('[MatchesDisplay] Destroying module...');
       
       // Remove event listeners
       if (global.TeamStatsEventBus) {
@@ -374,7 +394,6 @@
       }
 
       this.initialized = false;
-      console.log('[MatchesDisplay] ✓ Module destroyed');
     }
   }
 
@@ -391,6 +410,5 @@
   // Export to global scope
   global.TeamStatsMatchesDisplay = matchesDisplay;
 
-  console.log('[MatchesDisplay] Module loaded successfully');
 
 })(window);

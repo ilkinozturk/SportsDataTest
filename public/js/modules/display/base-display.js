@@ -210,14 +210,11 @@
       const prefix = `[${this.name}]`;
       switch (level) {
         case 'error':
-          console.error(prefix, ...args);
           break;
         case 'warn':
-          console.warn(prefix, ...args);
           break;
         case 'info':
         default:
-          console.log(prefix, ...args);
       }
     }
 
@@ -272,6 +269,5 @@
   // Export to global scope
   global.TeamStatsBaseDisplay = BaseDisplay;
 
-  console.log('Base Display module loaded');
 
 })(window);

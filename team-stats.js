@@ -51,10 +51,6 @@ window.showTab = function (tabName, event) {
         category.style.display = 'block';
       } else {
         category.style.display = 'none';
-        // Debug log
-        console.log(
-          `Hiding category in All Stats: ${category.querySelector('.category-title')?.textContent} (data-tab="${categoryTab}")`
-        );
       }
     } else if (categoryTab.includes(tabName)) {
       // Show categories that include the tab name
@@ -105,6 +101,11 @@ window.showTab = function (tabName, event) {
   if (tabName === 'corners' && globalStatistics) {
     updateCornerStatistics(globalStatistics, currentCornersFilter);
     updateTeamCornersStatistics(globalStatistics, currentTeamCornersFilter);
+  }
+  
+  // Emit tab change event for modular system
+  if (window.TeamStatsEventBus) {
+    window.TeamStatsEventBus.emit('tab:change', tabName);
   }
 };
 
@@ -386,13 +387,7 @@ function updateGoalsTabStatistics(statistics) {
         ? statistics.cs_2hg_percentage_away || statistics.seasonCS2H_away
         : statistics.cs_2hg_percentage_overall || statistics.seasonCS2H_overall) || 0;
 
-  console.log('Clean sheet percentages:', {
-    cs1H: cleanSheet1HPercentage,
-    cs2H: cleanSheet2HPercentage,
-    cs_2hg_percentage_overall: statistics.cs_2hg_percentage_overall,
-    cs_2hg_percentage_home: statistics.cs_2hg_percentage_home,
-    cs_2hg_percentage_away: statistics.cs_2hg_percentage_away,
-  });
+  // Clean sheet percentages verified
 
   // Conceded in half percentages - calculate from clean sheet percentages
   const conceded1HPercentage = 100 - cleanSheet1HPercentage;
@@ -1665,12 +1660,25 @@ window.setTimingFilter = function (filter) {
     .classList.add('active');
 
   // Update timing statistics if data is loaded
-  if (globalStatistics) {
-    updateTimingStatistics(globalStatistics, filter);
+  // DISABLED: Now handled by modular system (goals-display.js)
+  // if (globalStatistics) {
+  //   updateTimingStatistics(globalStatistics, filter);
+  // }
+  
+  // Emit event for modular system
+  if (window.TeamStatsEventBus) {
+    window.TeamStatsEventBus.emit('filters:timing:change', filter);
+  }
+  
+  // Update state if StateManager exists
+  if (window.TeamStatsStateManager) {
+    window.TeamStatsStateManager.set('filters.timing', filter);
   }
 };
 
-function updateTimingStatistics(statistics, filter) {
+// DISABLED: This function is now handled by the modular system (goals-display.js)
+// to avoid conflicts with DOM updates
+function updateTimingStatistics_DISABLED(statistics, filter) {
   // Use REAL API data directly - no calculations needed
   const baseScoredPeriods = [
     statistics.goals0_15 || 0,
@@ -1875,6 +1883,18 @@ function displayDetailedTeamData(data) {
 
   // Store statistics globally for filtering
   globalStatistics = statistics;
+  
+  // Emit data loaded event for modular system
+  if (window.TeamStatsEventBus) {
+    console.log('[team-stats.js] Emitting data:team:loaded event');
+    window.TeamStatsEventBus.emit('data:team:loaded', {
+      data: { 
+        statistics: statistics,
+        teamInfo: teamInfo,
+        league: league
+      }
+    });
+  }
 
   // Hide loading, show team section
   document.getElementById('loadingSection').style.display = 'none';
@@ -2111,7 +2131,8 @@ function displayDetailedTeamData(data) {
   updateHalftimeStatistics(statistics, 'overall');
 
   // Timing statistics (initialize with overall)
-  updateTimingStatistics(statistics, 'overall');
+  // DISABLED: Now handled by modular system
+  // updateTimingStatistics(statistics, 'overall');
 
   // Match list
   populateMatchList(allMatches, teamInfo.id);
@@ -2532,9 +2553,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const teamId = urlParams.get('id') || urlParams.get('teamId');
 
-  if (teamId) {
-    loadTeamData(teamId);
-  }
+  // Commented out - loadTeamData is called in DOMContentLoaded
+  // if (teamId) {
+  //   loadTeamData(teamId);
+  // }
 
   // Initialize match details hover functionality
   initializeMatchDetailsHover();
@@ -3905,3 +3927,5 @@ document.addEventListener('DOMContentLoaded', function() {
     loadTeamData(teamId);
   }
 });
+
+

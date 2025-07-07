@@ -106,14 +106,11 @@
      */
     initialize() {
       if (this.initialized) {
-        console.warn('[CardsDisplay] Already initialized');
         return;
       }
 
-      console.log('[CardsDisplay] Initializing...');
       this.setupEventListeners();
       this.initialized = true;
-      console.log('[CardsDisplay] ✓ Initialized successfully');
     }
 
     /**
@@ -132,7 +129,6 @@
         
         // Listen for initial team data load
         this.eventBus.on('data:team:loaded', (data) => {
-          console.log('[CardsDisplay] Team data loaded:', data);
           if (data.data && data.data.statistics) {
             this.lastStatistics = data.data.statistics;
             // Update with current filter
@@ -148,7 +144,6 @@
      */
     renderCardsSection(container, statistics, options = {}) {
       if (!container || !statistics) {
-        console.error('[CardsDisplay] Invalid parameters for renderCardsSection');
         return;
       }
 
@@ -158,8 +153,6 @@
         showDetails = true,
         animated = true
       } = options;
-
-      console.log('[CardsDisplay] Rendering cards section with filter:', filter);
 
       // Clear container
       this.clearContainer(container);
@@ -218,7 +211,6 @@
      * Render overview cards
      */
     renderOverviewCards(container, statistics, filter) {
-      console.log('[CardsDisplay] renderOverviewCards - statistics:', statistics);
       
       // Extract data based on filter
       let totalCards, yellowCards, redCards, cardsPerMatch, matches;
@@ -1170,7 +1162,6 @@
      * Handle data update
      */
     handleDataUpdate(data) {
-      console.log('[CardsDisplay] Handling data update:', data);
       // Store for re-rendering
       this.lastStatistics = data.statistics;
       this.lastFilter = data.filter;
@@ -1180,7 +1171,6 @@
      * Handle filter change
      */
     handleFilterChange(filter) {
-      console.log('[CardsDisplay] Handling filter change:', filter);
       
       // Handle both direct filter value and object with value property
       const filterValue = typeof filter === 'string' ? filter : (filter.value || filter.venue || 'overall');
@@ -1196,7 +1186,6 @@
      * Update cards statistics based on filter
      */
     updateCardsStatistics(statistics, filter) {
-      console.log('[CardsDisplay] Updating cards statistics with filter:', filter);
       
       // Update Card & Discipline Statistics section
       this.updateCardDisciplineSection(statistics, filter);
@@ -1209,6 +1198,9 @@
       
       // Update Cards Over percentages
       this.updateCardsOverSection(statistics, filter);
+      
+      // Update Cards top stats
+      this.updateCardsTopStats(statistics, filter);
     }
 
     /**
@@ -1321,15 +1313,6 @@
      * Update Match Cards section
      */
     updateMatchCardsSection(statistics, filter) {
-      console.log('[CardsDisplay] Updating Match Cards section with filter:', filter);
-      console.log('[CardsDisplay] Statistics:', statistics);
-      
-      // Debug: Log specific card fields
-      console.log('[CardsDisplay] cardsPerMatch:', statistics.cardsPerMatch);
-      console.log('[CardsDisplay] cardsAVG_overall:', statistics.cardsAVG_overall);
-      console.log('[CardsDisplay] cardsAVG:', statistics.cardsAVG);
-      console.log('[CardsDisplay] matchCardsAVG:', statistics.matchCardsAVG);
-      console.log('[CardsDisplay] matchCardsAVG_overall:', statistics.matchCardsAVG_overall);
       
       // Update Match Cards AVG
       let matchCardsAvg = 0;
@@ -1342,7 +1325,6 @@
       } else if (filter === 'away') {
         matchCardsAvg = statistics.matchCardsAVG_away || statistics.awayCardsPerMatch || statistics.cardsAVG_away || 0;
       }
-      console.log('[CardsDisplay] calculated matchCardsAvg:', matchCardsAvg);
       this.updateElement('matchCardsAvg', matchCardsAvg.toFixed(2));
       
       // Update Highest/Lowest in a Match
@@ -1358,7 +1340,6 @@
         highestCards = statistics.cardsHighest_away || 0;
         lowestCards = statistics.cardsLowest_away || 0;
       }
-      console.log('[CardsDisplay] highestCards:', highestCards, 'lowestCards:', lowestCards);
       this.updateElement('matchCardsHighest', highestCards);
       this.updateElement('matchCardsLowest', lowestCards);
       
@@ -1378,14 +1359,209 @@
           this.updateElement(elementId, `${cardOverValue}%`);
         }
       });
+      
+      // Update 1st Half Cards
+      let cards1HAvg = 0;
+      if (filter === 'overall') {
+        cards1HAvg = statistics.cards1H_AVG_overall || statistics.cards1H_AVG || statistics.fh_cards_avg_overall || 0;
+      } else if (filter === 'home') {
+        cards1HAvg = statistics.cards1H_AVG_home || statistics.fh_cards_avg_home || 0;
+      } else if (filter === 'away') {
+        cards1HAvg = statistics.cards1H_AVG_away || statistics.fh_cards_avg_away || 0;
+      }
+      this.updateElement('cards1HAvg', cards1HAvg.toFixed(2));
+      
+      // Update 1st Half Cards percentages
+      let cards1HUnder2 = 0;
+      let cards1H2to3 = 0;
+      let cards1HOver3 = 0;
+      
+      if (filter === 'overall') {
+        cards1HUnder2 = statistics.cards1H_under2_percentage_overall || statistics.fh_total_cards_under2_percentage_overall || 0;
+        cards1H2to3 = statistics.cards1H_2to3_percentage_overall || statistics.fh_total_cards_2to3_percentage_overall || 0;
+        cards1HOver3 = statistics.cards1H_over3_percentage_overall || statistics.fh_total_cards_over3_percentage_overall || 0;
+      } else if (filter === 'home') {
+        cards1HUnder2 = statistics.cards1H_under2_percentage_home || statistics.fh_total_cards_under2_percentage_home || 0;
+        cards1H2to3 = statistics.cards1H_2to3_percentage_home || statistics.fh_total_cards_2to3_percentage_home || 0;
+        cards1HOver3 = statistics.cards1H_over3_percentage_home || statistics.fh_total_cards_over3_percentage_home || 0;
+      } else if (filter === 'away') {
+        cards1HUnder2 = statistics.cards1H_under2_percentage_away || statistics.fh_total_cards_under2_percentage_away || 0;
+        cards1H2to3 = statistics.cards1H_2to3_percentage_away || statistics.fh_total_cards_2to3_percentage_away || 0;
+        cards1HOver3 = statistics.cards1H_over3_percentage_away || statistics.fh_total_cards_over3_percentage_away || 0;
+      }
+      
+      this.updateElement('cards1HUnder2', `${cards1HUnder2}%`);
+      this.updateElement('cards1H2to3', `${cards1H2to3}%`);
+      this.updateElement('cards1HOver3', `${cards1HOver3}%`);
+      
+      // Update 2nd Half Cards
+      let cards2HAvg = 0;
+      if (filter === 'overall') {
+        cards2HAvg = statistics.cards2H_AVG_overall || statistics.cards2H_AVG || statistics['2h_cards_avg_overall'] || 0;
+      } else if (filter === 'home') {
+        cards2HAvg = statistics.cards2H_AVG_home || statistics['2h_cards_avg_home'] || 0;
+      } else if (filter === 'away') {
+        cards2HAvg = statistics.cards2H_AVG_away || statistics['2h_cards_avg_away'] || 0;
+      }
+      this.updateElement('cards2HAvg', cards2HAvg.toFixed(2));
+      
+      // Update 2nd Half Cards percentages
+      let cards2HUnder2 = 0;
+      let cards2H2to3 = 0;
+      let cards2HOver3 = 0;
+      
+      if (filter === 'overall') {
+        cards2HUnder2 = statistics.cards2H_under2_percentage_overall || statistics['2h_total_cards_under2_percentage_overall'] || 0;
+        cards2H2to3 = statistics.cards2H_2to3_percentage_overall || statistics['2h_total_cards_2to3_percentage_overall'] || 0;
+        cards2HOver3 = statistics.cards2H_over3_percentage_overall || statistics['2h_total_cards_over3_percentage_overall'] || 0;
+      } else if (filter === 'home') {
+        cards2HUnder2 = statistics.cards2H_under2_percentage_home || statistics['2h_total_cards_under2_percentage_home'] || 0;
+        cards2H2to3 = statistics.cards2H_2to3_percentage_home || statistics['2h_total_cards_2to3_percentage_home'] || 0;
+        cards2HOver3 = statistics.cards2H_over3_percentage_home || statistics['2h_total_cards_over3_percentage_home'] || 0;
+      } else if (filter === 'away') {
+        cards2HUnder2 = statistics.cards2H_under2_percentage_away || statistics['2h_total_cards_under2_percentage_away'] || 0;
+        cards2H2to3 = statistics.cards2H_2to3_percentage_away || statistics['2h_total_cards_2to3_percentage_away'] || 0;
+        cards2HOver3 = statistics.cards2H_over3_percentage_away || statistics['2h_total_cards_over3_percentage_away'] || 0;
+      }
+      
+      this.updateElement('cards2HUnder2', `${cards2HUnder2}%`);
+      this.updateElement('cards2H2to3', `${cards2H2to3}%`);
+      this.updateElement('cards2HOver3', `${cards2HOver3}%`);
     }
 
     /**
      * Update Team Cards section
      */
     updateTeamCardsSection(statistics, filter) {
-      // This would update team cards specific elements if they exist
-      // Implementation would be similar to other sections
+      
+      // Cards For values
+      let avgCardsFor = 0;
+      let totalCardsFor = 0;
+      let cardsForOver05 = 0;
+      let cardsForOver15 = 0;
+      let cardsForOver25 = 0;
+      let cardsForOver35 = 0;
+      let cardsForOver45 = 0;
+      let cardsForOver55 = 0;
+      let cardsForOver65 = 0;
+      let highestCardsFor = 0;
+      
+      // Cards Against values
+      let avgCardsAgainst = 0;
+      let totalCardsAgainst = 0;
+      let cardsAgainstOver05 = 0;
+      let cardsAgainstOver15 = 0;
+      let cardsAgainstOver25 = 0;
+      let cardsAgainstOver35 = 0;
+      let cardsAgainstOver45 = 0;
+      let cardsAgainstOver55 = 0;
+      let cardsAgainstOver65 = 0;
+      let highestCardsAgainst = 0;
+      
+      if (filter === 'overall') {
+        // Cards For
+        avgCardsFor = statistics.cardsForPerMatch || statistics.cardsFor_avg_overall || 0;
+        totalCardsFor = statistics.cardsFor || statistics.cardsFor_overall || 0;
+        cardsForOver05 = statistics.over05CardsForPercentage_overall || statistics.over05CardsForPercentage || 0;
+        cardsForOver15 = statistics.over15CardsForPercentage_overall || statistics.over15CardsForPercentage || 0;
+        cardsForOver25 = statistics.over25CardsForPercentage_overall || statistics.over25CardsForPercentage || 0;
+        cardsForOver35 = statistics.over35CardsForPercentage_overall || statistics.over35CardsForPercentage || 0;
+        cardsForOver45 = statistics.over45CardsForPercentage_overall || statistics.over45CardsForPercentage || 0;
+        cardsForOver55 = statistics.over55CardsForPercentage_overall || statistics.over55CardsForPercentage || 0;
+        cardsForOver65 = statistics.over65CardsForPercentage_overall || statistics.over65CardsForPercentage || 0;
+        highestCardsFor = statistics.cardsForHighest_overall || statistics.cardsForHighest || 0;
+        
+        // Cards Against
+        avgCardsAgainst = statistics.cardsAgainstPerMatch || statistics.cardsAgainst_avg_overall || 0;
+        totalCardsAgainst = statistics.cardsAgainst || statistics.cardsAgainst_overall || 0;
+        cardsAgainstOver05 = statistics.over05CardsAgainstPercentage_overall || statistics.over05CardsAgainstPercentage || 0;
+        cardsAgainstOver15 = statistics.over15CardsAgainstPercentage_overall || statistics.over15CardsAgainstPercentage || 0;
+        cardsAgainstOver25 = statistics.over25CardsAgainstPercentage_overall || statistics.over25CardsAgainstPercentage || 0;
+        cardsAgainstOver35 = statistics.over35CardsAgainstPercentage_overall || statistics.over35CardsAgainstPercentage || 0;
+        cardsAgainstOver45 = statistics.over45CardsAgainstPercentage_overall || statistics.over45CardsAgainstPercentage || 0;
+        cardsAgainstOver55 = statistics.over55CardsAgainstPercentage_overall || statistics.over55CardsAgainstPercentage || 0;
+        cardsAgainstOver65 = statistics.over65CardsAgainstPercentage_overall || statistics.over65CardsAgainstPercentage || 0;
+        highestCardsAgainst = statistics.cardsAgainstHighest_overall || statistics.cardsAgainstHighest || 0;
+        
+      } else if (filter === 'home') {
+        // Cards For
+        avgCardsFor = statistics.cardsForPerMatch_home || statistics.cards_for_avg_home || statistics.homeCardsForPerMatch || 
+                     (statistics.homeCardsFor && statistics.homeMatches ? statistics.homeCardsFor / statistics.homeMatches : 0) || 0;
+        totalCardsFor = statistics.homeCardsFor || statistics.cardsFor_home || statistics.cards_for_home || 0;
+        cardsForOver05 = statistics.homeOver05CardsForPercentage || statistics.over05CardsForPercentage_home || 0;
+        cardsForOver15 = statistics.homeOver15CardsForPercentage || statistics.over15CardsForPercentage_home || 0;
+        cardsForOver25 = statistics.homeOver25CardsForPercentage || statistics.over25CardsForPercentage_home || 0;
+        cardsForOver35 = statistics.homeOver35CardsForPercentage || statistics.over35CardsForPercentage_home || 0;
+        cardsForOver45 = statistics.homeOver45CardsForPercentage || statistics.over45CardsForPercentage_home || 0;
+        cardsForOver55 = statistics.homeOver55CardsForPercentage || statistics.over55CardsForPercentage_home || 0;
+        cardsForOver65 = statistics.homeOver65CardsForPercentage || statistics.over65CardsForPercentage_home || 0;
+        highestCardsFor = statistics.cardsForHighest_home || 0;
+        
+        // Cards Against
+        avgCardsAgainst = statistics.cardsAgainstPerMatch_home || statistics.cards_against_avg_home || statistics.homeCardsAgainstPerMatch || 
+                         (statistics.homeCardsAgainst && statistics.homeMatches ? statistics.homeCardsAgainst / statistics.homeMatches : 0) || 0;
+        totalCardsAgainst = statistics.homeCardsAgainst || statistics.cardsAgainst_home || statistics.cards_against_home || 0;
+        cardsAgainstOver05 = statistics.homeOver05CardsAgainstPercentage || statistics.over05CardsAgainstPercentage_home || 0;
+        cardsAgainstOver15 = statistics.homeOver15CardsAgainstPercentage || statistics.over15CardsAgainstPercentage_home || 0;
+        cardsAgainstOver25 = statistics.homeOver25CardsAgainstPercentage || statistics.over25CardsAgainstPercentage_home || 0;
+        cardsAgainstOver35 = statistics.homeOver35CardsAgainstPercentage || statistics.over35CardsAgainstPercentage_home || 0;
+        cardsAgainstOver45 = statistics.homeOver45CardsAgainstPercentage || statistics.over45CardsAgainstPercentage_home || 0;
+        cardsAgainstOver55 = statistics.homeOver55CardsAgainstPercentage || statistics.over55CardsAgainstPercentage_home || 0;
+        cardsAgainstOver65 = statistics.homeOver65CardsAgainstPercentage || statistics.over65CardsAgainstPercentage_home || 0;
+        highestCardsAgainst = statistics.cardsAgainstHighest_home || 0;
+        
+      } else if (filter === 'away') {
+        // Cards For
+        avgCardsFor = statistics.cardsForPerMatch_away || statistics.cards_for_avg_away || statistics.awayCardsForPerMatch || 
+                     (statistics.awayCardsFor && statistics.awayMatches ? statistics.awayCardsFor / statistics.awayMatches : 0) || 0;
+        totalCardsFor = statistics.awayCardsFor || statistics.cardsFor_away || statistics.cards_for_away || 0;
+        cardsForOver05 = statistics.awayOver05CardsForPercentage || statistics.over05CardsForPercentage_away || 0;
+        cardsForOver15 = statistics.awayOver15CardsForPercentage || statistics.over15CardsForPercentage_away || 0;
+        cardsForOver25 = statistics.awayOver25CardsForPercentage || statistics.over25CardsForPercentage_away || 0;
+        cardsForOver35 = statistics.awayOver35CardsForPercentage || statistics.over35CardsForPercentage_away || 0;
+        cardsForOver45 = statistics.awayOver45CardsForPercentage || statistics.over45CardsForPercentage_away || 0;
+        cardsForOver55 = statistics.awayOver55CardsForPercentage || statistics.over55CardsForPercentage_away || 0;
+        cardsForOver65 = statistics.awayOver65CardsForPercentage || statistics.over65CardsForPercentage_away || 0;
+        highestCardsFor = statistics.cardsForHighest_away || 0;
+        
+        // Cards Against
+        avgCardsAgainst = statistics.cardsAgainstPerMatch_away || statistics.cards_against_avg_away || statistics.awayCardsAgainstPerMatch || 
+                         (statistics.awayCardsAgainst && statistics.awayMatches ? statistics.awayCardsAgainst / statistics.awayMatches : 0) || 0;
+        totalCardsAgainst = statistics.awayCardsAgainst || statistics.cardsAgainst_away || statistics.cards_against_away || 0;
+        cardsAgainstOver05 = statistics.awayOver05CardsAgainstPercentage || statistics.over05CardsAgainstPercentage_away || 0;
+        cardsAgainstOver15 = statistics.awayOver15CardsAgainstPercentage || statistics.over15CardsAgainstPercentage_away || 0;
+        cardsAgainstOver25 = statistics.awayOver25CardsAgainstPercentage || statistics.over25CardsAgainstPercentage_away || 0;
+        cardsAgainstOver35 = statistics.awayOver35CardsAgainstPercentage || statistics.over35CardsAgainstPercentage_away || 0;
+        cardsAgainstOver45 = statistics.awayOver45CardsAgainstPercentage || statistics.over45CardsAgainstPercentage_away || 0;
+        cardsAgainstOver55 = statistics.awayOver55CardsAgainstPercentage || statistics.over55CardsAgainstPercentage_away || 0;
+        cardsAgainstOver65 = statistics.awayOver65CardsAgainstPercentage || statistics.over65CardsAgainstPercentage_away || 0;
+        highestCardsAgainst = statistics.cardsAgainstHighest_away || 0;
+      }
+      
+      
+      // Update Cards For elements
+      this.updateElement('teamCards-avgFor', avgCardsFor.toFixed(2));
+      this.updateElement('teamCards-totalFor', totalCardsFor);
+      this.updateElement('teamCards-forOver05', `${cardsForOver05}%`);
+      this.updateElement('teamCards-forOver15', `${cardsForOver15}%`);
+      this.updateElement('teamCards-forOver25', `${cardsForOver25}%`);
+      this.updateElement('teamCards-forOver35', `${cardsForOver35}%`);
+      this.updateElement('teamCards-forOver45', `${cardsForOver45}%`);
+      this.updateElement('teamCards-forOver55', `${cardsForOver55}%`);
+      this.updateElement('teamCards-forOver65', `${cardsForOver65}%`);
+      this.updateElement('teamCards-highestFor', highestCardsFor);
+      
+      // Update Cards Against elements
+      this.updateElement('teamCards-avgAgainst', avgCardsAgainst.toFixed(2));
+      this.updateElement('teamCards-totalAgainst', totalCardsAgainst);
+      this.updateElement('teamCards-againstOver05', `${cardsAgainstOver05}%`);
+      this.updateElement('teamCards-againstOver15', `${cardsAgainstOver15}%`);
+      this.updateElement('teamCards-againstOver25', `${cardsAgainstOver25}%`);
+      this.updateElement('teamCards-againstOver35', `${cardsAgainstOver35}%`);
+      this.updateElement('teamCards-againstOver45', `${cardsAgainstOver45}%`);
+      this.updateElement('teamCards-againstOver55', `${cardsAgainstOver55}%`);
+      this.updateElement('teamCards-againstOver65', `${cardsAgainstOver65}%`);
+      this.updateElement('teamCards-highestAgainst', highestCardsAgainst);
     }
 
     /**
@@ -1394,13 +1570,42 @@
     updateCardsOverSection(statistics, filter) {
       // Already handled in updateCardsOverPercentages
     }
+    
+    /**
+     * Update Cards top stats
+     */
+    updateCardsTopStats(statistics, filter) {
+      
+      // Get values based on filter
+      let cardsForOver15 = 0;
+      let teamBookedAvg = 0;
+      let opponentsBookedAvg = 0;
+      
+      if (filter === 'overall') {
+        cardsForOver15 = statistics.over15CardsForPercentage_overall || statistics.over15CardsForPercentage || 0;
+        teamBookedAvg = statistics.cardsForPerMatch || statistics.cardsFor_avg_overall || 0;
+        opponentsBookedAvg = statistics.cardsAgainstPerMatch || statistics.cardsAgainst_avg_overall || 0;
+      } else if (filter === 'home') {
+        cardsForOver15 = statistics.over15CardsForPercentage_home || 0;
+        teamBookedAvg = statistics.cardsForPerMatch_home || statistics.cardsFor_avg_home || 0;
+        opponentsBookedAvg = statistics.cardsAgainstPerMatch_home || statistics.cardsAgainst_avg_home || 0;
+      } else if (filter === 'away') {
+        cardsForOver15 = statistics.over15CardsForPercentage_away || 0;
+        teamBookedAvg = statistics.cardsForPerMatch_away || statistics.cardsFor_avg_away || 0;
+        opponentsBookedAvg = statistics.cardsAgainstPerMatch_away || statistics.cardsAgainst_avg_away || 0;
+      }
+      
+      
+      // Update elements
+      this.updateElement('cardsForOver15Value', `${cardsForOver15}%`);
+      this.updateElement('teamBookedAvgValue', teamBookedAvg.toFixed(2));
+      this.updateElement('opponentsBookedAvgValue', opponentsBookedAvg.toFixed(2));
+    }
 
     /**
      * Destroy the module
      */
     destroy() {
-      console.log('[CardsDisplay] Destroying module...');
-      
       // Remove event listeners
       if (this.eventBus) {
         this.eventBus.off('data:cards:updated');
@@ -1416,7 +1621,6 @@
       };
 
       this.initialized = false;
-      console.log('[CardsDisplay] ✓ Module destroyed');
     }
 
     /**
@@ -1457,6 +1661,5 @@
   // Export to global scope
   global.TeamStatsCardsDisplay = cardsDisplay;
 
-  console.log('[CardsDisplay] Module loaded successfully');
 
 })(window);

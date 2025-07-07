@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Timing Analytics Fix Summary</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .success {
+            color: #4caf50;
+        }
+        .error {
+            color: #f44336;
+        }
+        .info {
+            color: #2196f3;
+        }
+        .code {
+            background: #333;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        h2 {
+            border-bottom: 2px solid #444;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Timing Analytics Fix Summary</h1>
+    
+    <div class="section">
+        <h2>🐛 The Problem</h2>
+        <p>When clicking Home/Away filters in the Timing Analytics section of the Goals tab, the data was not updating.</p>
+    </div>
+    
+    <div class="section">
+        <h2>🔍 Root Causes Found</h2>
+        <ol>
+            <li class="error"><strong>Missing Event:</strong> The <code>data:team:loaded</code> event was never emitted, so the goals-display module never received the statistics data.</li>
+            <li class="error"><strong>Wrong Filter:</strong> The <code>updateGoalsStatistics</code> function was passing the general venue filter instead of the timing-specific filter.</li>
+        </ol>
+    </div>
+    
+    <div class="section">
+        <h2>✅ Fixes Applied</h2>
+        
+        <h3>1. Added data:team:loaded Event Emission</h3>
+        <p>In <code>team-stats.js</code> after line 1897:</p>
+        <div class="code">
+// Emit data loaded event for modular system
+if (window.TeamStatsEventBus) {
+    console.log('[team-stats.js] Emitting data:team:loaded event');
+    window.TeamStatsEventBus.emit('data:team:loaded', {
+        data: { 
+            statistics: statistics,
+            teamInfo: teamInfo,
+            league: league
+        }
+    });
+}
+        </div>
+        
+        <h3>2. Fixed Timing Filter in updateGoalsStatistics</h3>
+        <p>In <code>goals-display.js</code> line 893:</p>
+        <div class="code">
+// Before:
+this.updateTimingAnalytics(statistics, filter);
+
+// After:
+const timingFilter = global.TeamStatsStateManager?.get('filters.timing') || 'overall';
+this.updateTimingAnalytics(statistics, timingFilter);
+        </div>
+        
+        <h3>3. Added Debug Logging</h3>
+        <p>Added console.log statements to trace the event flow.</p>
+    </div>
+    
+    <div class="section">
+        <h2>🔄 How It Works Now</h2>
+        <ol>
+            <li>Page loads → team data is fetched</li>
+            <li><code>globalStatistics</code> is set → <code>data:team:loaded</code> event is emitted</li>
+            <li>goals-display.js receives the event → stores statistics in <code>lastStatistics</code></li>
+            <li>User clicks Home/Away button → <code>setTimingFilter</code> is called</li>
+            <li><code>filters:timing:change</code> event is emitted</li>
+            <li>goals-display.js receives the event → updates timing analytics with correct filter</li>
+        </ol>
+    </div>
+    
+    <div class="section">
+        <h2>🧪 Testing</h2>
+        <p>To verify the fix:</p>
+        <div class="code">
+1. Open http://localhost:3005/team-stats.html?teamId=836
+2. Open browser console (F12)
+3. Navigate to Goals tab
+4. Click Home/Away buttons in Timing Analytics
+5. Check console for these logs:
+   - [team-stats.js] setTimingFilter called with: home
+   - [team-stats.js] Emitting filters:timing:change event
+   - [GoalsDisplay] Timing filter change event received: home
+   - [GoalsDisplay] updateTimingAnalytics called with filter: home
+   - [GoalsDisplay] Home timing data: {...}
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>📝 Files Modified</h2>
+        <ul>
+            <li class="success">✓ <code>/mnt/d/SportsData.Ai/team-stats.js</code> - Added data:team:loaded event emission and debug logging</li>
+            <li class="success">✓ <code>/mnt/d/SportsData.Ai/public/js/modules/display/goals-display.js</code> - Fixed timing filter usage and added debug logging</li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h2>🎯 Result</h2>
+        <p class="success">The Timing Analytics section now properly updates when switching between Overall/Home/Away/Scored/Conceded filters!</p>
+    </div>
+</body>
+</html>

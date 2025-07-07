@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify Timing Fix</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .success {
+            color: #4caf50;
+        }
+        .error {
+            color: #f44336;
+        }
+        .info {
+            color: #2196f3;
+        }
+        pre {
+            background: #333;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Verify Timing Analytics Fix</h1>
+    
+    <div class="test-section">
+        <h2>Fix Summary</h2>
+        <ul>
+            <li class="success">✓ Modified updateGoalsStatistics to use timing-specific filter</li>
+            <li class="success">✓ Added console logging for debugging</li>
+            <li class="success">✓ Event listener already properly configured</li>
+            <li class="success">✓ Field names match API response (prefix format)</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>Testing Instructions</h2>
+        <ol>
+            <li>Open your browser's Developer Console (F12)</li>
+            <li>Navigate to <a href="http://localhost:3005/team-stats.html?teamId=836" target="_blank">team-stats.html?teamId=836</a></li>
+            <li>Click on the "Goals" tab</li>
+            <li>Look for console logs starting with "[GoalsDisplay]"</li>
+            <li>Click on Home/Away filters in Timing Analytics section</li>
+            <li>Check console for:
+                <ul>
+                    <li>"[GoalsDisplay] Timing filter change event received: home"</li>
+                    <li>"[GoalsDisplay] updateTimingAnalytics called with filter: home"</li>
+                    <li>"[GoalsDisplay] Home timing data: {...}"</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h2>Expected Console Output</h2>
+        <pre>
+[GoalsDisplay] Timing filter change event received: home
+[GoalsDisplay] Updating timing analytics with lastStatistics
+[GoalsDisplay] updateTimingAnalytics called with filter: home
+[GoalsDisplay] Home timing data: {
+  homeGoals0_15: 1,
+  homeGoals16_30: 0,
+  homeGoals31_45: 2,
+  homeGoals46_60: 4,
+  homeGoals61_75: 1,
+  homeGoals76_90: 1
+}
+        </pre>
+    </div>
+    
+    <div class="test-section">
+        <h2>What Was Fixed</h2>
+        <p>The issue was that <code>updateGoalsStatistics</code> was passing the general venue filter (overall/home/away) to <code>updateTimingAnalytics</code> instead of the timing-specific filter.</p>
+        <p>Now it correctly retrieves the timing filter from StateManager:</p>
+        <pre>
+// Before:
+this.updateTimingAnalytics(statistics, filter);
+
+// After:
+const timingFilter = global.TeamStatsStateManager?.get('filters.timing') || 'overall';
+this.updateTimingAnalytics(statistics, timingFilter);
+        </pre>
+    </div>
+    
+    <div class="test-section">
+        <h2>Troubleshooting</h2>
+        <p>If the timing analytics still don't update:</p>
+        <ol>
+            <li>Check if EventBus is initialized: Type <code>window.TeamStatsEventBus</code> in console</li>
+            <li>Check if StateManager is initialized: Type <code>window.TeamStatsStateManager</code> in console</li>
+            <li>Verify modules are loaded: Type <code>window.TeamStatsGoalsDisplay</code> in console</li>
+            <li>Check for errors in console</li>
+        </ol>
+    </div>
+</body>
+</html>

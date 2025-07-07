@@ -107,17 +107,13 @@
      */
     init() {
       if (this.initialized) {
-        console.warn('[CornersDisplay] Module already initialized');
         return;
       }
 
-      console.log('[CornersDisplay] Initializing module...');
-      
       // Setup event listeners
       this.setupEventListeners();
       
       this.initialized = true;
-      console.log('[CornersDisplay] Module initialized successfully');
     }
 
     /**
@@ -131,7 +127,6 @@
         
         // Listen for initial team data load
         this.eventBus.on('data:team:loaded', (data) => {
-          console.log('[CornersDisplay] Team data loaded:', data);
           if (data.data && data.data.statistics) {
             this.lastStatistics = data.data.statistics;
             // Update with current filter
@@ -146,7 +141,6 @@
      * Handle filter change
      */
     handleFilterChange(filter) {
-      console.log('[CornersDisplay] Handling filter change:', filter);
       
       // Handle both direct filter value and object with value property
       const filterValue = typeof filter === 'string' ? filter : (filter.value || filter.venue || 'overall');
@@ -164,7 +158,6 @@
      * Handle data update
      */
     handleDataUpdate(data) {
-      console.log('[CornersDisplay] Data updated:', data);
       this.lastStatistics = data.statistics;
     }
     
@@ -172,7 +165,6 @@
      * Update corners statistics based on filter
      */
     updateCornersStatistics(statistics, filter) {
-      console.log('[CornersDisplay] Updating corners statistics with filter:', filter);
       
       const suffix = filter === 'overall' ? '_overall' : `_${filter}`;
       
@@ -282,7 +274,6 @@
      * Update Team Corners section specifically
      */
     updateTeamCornersSection(statistics, filter) {
-      console.log('[CornersDisplay] Updating Team Corners section with filter:', filter);
       
       // Update corners earned stats
       let cornersEarnedPerMatch, cornersAgainstPerMatch;

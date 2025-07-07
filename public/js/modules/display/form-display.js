@@ -20,7 +20,6 @@
   const missingModules = requiredModules.filter(module => !global[module]);
   
   if (missingModules.length > 0) {
-    console.warn('[FormDisplay] Missing optional modules:', missingModules);
   }
 
   class FormDisplay {
@@ -104,17 +103,14 @@
      */
     init() {
       if (this.initialized) {
-        console.warn('[FormDisplay] Module already initialized');
         return;
       }
 
-      console.log('[FormDisplay] Initializing module...');
       
       // Setup event listeners
       this.setupEventListeners();
       
       this.initialized = true;
-      console.log('[FormDisplay] Module initialized successfully');
     }
 
     /**
@@ -142,7 +138,6 @@
      * Handle data update
      */
     handleDataUpdate(data) {
-      console.log('[FormDisplay] Data updated:', data);
     }
 
     /**
@@ -157,7 +152,6 @@
      */
     renderFormSection(container, statistics, options = {}) {
       if (!container) {
-        console.error('[FormDisplay] Container is required');
         return null;
       }
 
@@ -1222,7 +1216,6 @@
       }
 
       this.initialized = false;
-      console.log('[FormDisplay] Module destroyed');
     }
   }
 

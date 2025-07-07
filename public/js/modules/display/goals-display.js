@@ -16,7 +16,7 @@
   'use strict';
 
   // Debug mode - set to false for production
-  const DEBUG = false;
+  const DEBUG = window.GOALS_DISPLAY_DEBUG || false;
   const log = DEBUG ? console.log.bind(console) : () => {};
 
   // Module dependencies check
@@ -171,14 +171,62 @@
           this.handleFilterChange(filter);
         });
         
+        // Listen for timing filter changes
+        global.TeamStatsEventBus.on('filters:timing:change', (filter) => {
+          log('[GoalsDisplay] Timing filter changed:', filter);
+          console.log('[GoalsDisplay] Timing filter change event received:', filter);
+          if (this.lastStatistics) {
+            console.log('[GoalsDisplay] DEBUG - lastStatistics check:', {
+              hasLastStatistics: true,
+              sampleKeys: Object.keys(this.lastStatistics).slice(0, 10),
+              homeGoals0_15: this.lastStatistics.homeGoals0_15,
+              awayGoals0_15: this.lastStatistics.awayGoals0_15,
+              goals0_15: this.lastStatistics.goals0_15
+            });
+            console.log('[GoalsDisplay] Updating timing analytics with lastStatistics');
+            this.updateTimingAnalytics(this.lastStatistics, filter);
+          } else {
+            console.log('[GoalsDisplay] ERROR - No lastStatistics available');
+            console.log('[GoalsDisplay] DEBUG - Checking globalStatistics:', {
+              hasGlobalStatistics: !!window.globalStatistics,
+              globalSampleKeys: window.globalStatistics ? Object.keys(window.globalStatistics).slice(0, 10) : []
+            });
+          }
+        });
+        
         // Listen for initial team data load
         global.TeamStatsEventBus.on('data:team:loaded', (data) => {
           log('[GoalsDisplay] Team data loaded:', data);
+          console.log('[GoalsDisplay] data:team:loaded event received');
+          console.log('[GoalsDisplay] Data structure:', {
+            hasData: !!data,
+            hasDataData: !!(data && data.data),
+            hasStatistics: !!(data && data.data && data.data.statistics),
+            statisticsType: data && data.data && data.data.statistics ? typeof data.data.statistics : 'undefined'
+          });
+          
           if (data.data && data.data.statistics) {
             this.lastStatistics = data.data.statistics;
+            console.log('[GoalsDisplay] lastStatistics set, sample data:', {
+              homeGoals0_15: this.lastStatistics.homeGoals0_15,
+              awayGoals0_15: this.lastStatistics.awayGoals0_15,
+              goals0_15: this.lastStatistics.goals0_15
+            });
             // Update with current filter
             const currentFilter = global.TeamStatsStateManager?.get('filters.current') || 'overall';
             this.updateGoalsStatistics(data.data.statistics, currentFilter);
+          } else {
+            console.error('[GoalsDisplay] Invalid data structure in data:team:loaded event');
+          }
+        });
+        
+        // Listen for tab changes
+        global.TeamStatsEventBus.on('tab:change', (tabName) => {
+          log('[GoalsDisplay] Tab changed to:', tabName);
+          if (tabName === 'goals' && this.lastStatistics) {
+            // Update timing analytics when Goals tab is shown
+            const timingFilter = global.TeamStatsStateManager?.get('filters.timing') || 'overall';
+            this.updateTimingAnalytics(this.lastStatistics, timingFilter);
           }
         });
       }
@@ -842,12 +890,9 @@
       // Update Goals top stats cards
       this.updateElement('scoredPerMatchGoals', scoredPerMatch.toFixed(2));
       
-      // Update scored and conceded top stats cards if in goals tab
-      const activeTab = global.TeamStatsStateManager?.get('ui.activeTab') || 'all';
-      if (activeTab === 'goals') {
-        this.updateScoredTopStats(statistics, filter);
-        this.updateConcededTopStats(statistics, filter);
-      }
+      // Update scored and conceded top stats cards always (they are hidden by CSS if not in goals tab)
+      this.updateScoredTopStats(statistics, filter);
+      this.updateConcededTopStats(statistics, filter);
       
       // Update 1st Half Scored - use correct API fields
       const scored1H = filter === 'overall' 
@@ -870,6 +915,10 @@
       
       // Update all goal-related elements
       this.updateGoalElements(statistics, filter);
+      
+      // Update timing analytics with the timing-specific filter
+      const timingFilter = global.TeamStatsStateManager?.get('filters.timing') || 'overall';
+      this.updateTimingAnalytics(statistics, timingFilter);
     }
 
     /**
@@ -960,6 +1009,17 @@
 
       // Update 1H/2H detailed stats
       this.updateScoredHalfTimeStats(statistics, filter);
+      
+      // Update timing analytics with the timing-specific filter
+      const timingFilter = global.TeamStatsStateManager?.get('filters.timing') || 'overall';
+      console.log('[GoalsDisplay] DEBUG - Updating timing analytics in updateGoalsStatistics:', {
+        currentFilter: filter,
+        timingFilter: timingFilter
+      });
+      this.updateTimingAnalytics(statistics, timingFilter);
+      
+      // Store last statistics for later use
+      this.lastStatistics = statistics;
     }
 
     /**
@@ -1134,13 +1194,7 @@
     updateElement(id, value) {
       const element = document.getElementById(id);
       if (element) {
-        const oldValue = element.textContent;
         element.textContent = value;
-        if (id === 'concededPerMatch') {
-          console.log(`[GoalsDisplay] updateElement: ${id} changed from "${oldValue}" to "${value}"`);
-        }
-      } else if (id === 'concededPerMatch') {
-        console.error(`[GoalsDisplay] Element not found: ${id}`);
       }
     }
     
@@ -1258,19 +1312,6 @@
       const scoredIn1HPercentage = 100 - failedToScore1HPercentage;
       this.updateElement('scoredIn1H', scoredIn1HPercentage.toFixed(0) + '%');
       
-      // Debug logging
-      log('[GoalsDisplay] 1H Stats Debug:', {
-        filter,
-        suffix,
-        matches,
-        failedToScore1HCount,
-        failedToScore1HPercentage,
-        scoredIn1HPercentage,
-        seasonFTSHT_overall: statistics.seasonFTSHT_overall,
-        seasonFTSHT_home: statistics.seasonFTSHT_home,
-        seasonFTSHT_away: statistics.seasonFTSHT_away,
-        allStats: statistics
-      });
       
       // Get matches with goals in 1H from API data
       let matchesWithGoals1H;
@@ -1321,14 +1362,6 @@
         failedToScore2HCount = statistics[`seasonFTS2H${suffix}`] || 0;
       }
       
-      // Debug logging
-      log('[GoalsDisplay] 2H Stats Debug:', {
-        filter,
-        matches,
-        failedToScore2HCount,
-        failedToScore2HPercentage,
-        scoredIn2HPercentage
-      });
       
       // Get matches with goals in 2H from API data
       let matchesWithGoals2H;
@@ -2133,6 +2166,188 @@
       }
       
       this.updateElement('concededAvg2HCard', conceded2H.toFixed(2));
+    }
+
+    /**
+     * Update timing analytics based on filter
+     */
+    updateTimingAnalytics(statistics, filter = 'overall') {
+      log('[GoalsDisplay] Updating timing analytics with filter:', filter);
+      
+      // Use REAL API data directly - no calculations needed
+      const baseScoredPeriods = [
+        statistics.goals0_15 || 0,
+        statistics.goals16_30 || 0,
+        statistics.goals31_45 || 0,
+        statistics.goals46_60 || 0,
+        statistics.goals61_75 || 0,
+        statistics.goals76_90 || 0,
+      ];
+
+      // Generate conceded goals pattern from API data
+      const baseConcededPeriods = [
+        statistics.goalsConc0_15 || 0,
+        statistics.goalsConc16_30 || 0,
+        statistics.goalsConc31_45 || 0,
+        statistics.goalsConc46_60 || 0,
+        statistics.goalsConc61_75 || 0,
+        statistics.goalsConc76_90 || 0,
+      ];
+
+      let scoredPeriods = [...baseScoredPeriods];
+      let concededPeriods = [...baseConcededPeriods];
+      let titleText = 'Goal Distribution by Time Periods';
+      let showBothTypes = true;
+
+      // Apply filter-specific modifications
+      switch (filter) {
+        case 'home':
+          scoredPeriods = [
+            statistics.homeGoals0_15 || 0,
+            statistics.homeGoals16_30 || 0,
+            statistics.homeGoals31_45 || 0,
+            statistics.homeGoals46_60 || 0,
+            statistics.homeGoals61_75 || 0,
+            statistics.homeGoals76_90 || 0,
+          ];
+          concededPeriods = [
+            statistics.homeGoalsConc0_15 || 0,
+            statistics.homeGoalsConc16_30 || 0,
+            statistics.homeGoalsConc31_45 || 0,
+            statistics.homeGoalsConc46_60 || 0,
+            statistics.homeGoalsConc61_75 || 0,
+            statistics.homeGoalsConc76_90 || 0,
+          ];
+          titleText = 'Home Goals Distribution by Time Periods';
+          break;
+        case 'away':
+          scoredPeriods = [
+            statistics.awayGoals0_15 || 0,
+            statistics.awayGoals16_30 || 0,
+            statistics.awayGoals31_45 || 0,
+            statistics.awayGoals46_60 || 0,
+            statistics.awayGoals61_75 || 0,
+            statistics.awayGoals76_90 || 0,
+          ];
+          concededPeriods = [
+            statistics.awayGoalsConc0_15 || 0,
+            statistics.awayGoalsConc16_30 || 0,
+            statistics.awayGoalsConc31_45 || 0,
+            statistics.awayGoalsConc46_60 || 0,
+            statistics.awayGoalsConc61_75 || 0,
+            statistics.awayGoalsConc76_90 || 0,
+          ];
+          titleText = 'Away Goals Distribution by Time Periods';
+          break;
+        case 'scored':
+          concededPeriods = [0, 0, 0, 0, 0, 0]; // Hide conceded
+          titleText = 'Goals Scored Distribution by Time Periods';
+          showBothTypes = false;
+          break;
+        case 'conceded':
+          scoredPeriods = [0, 0, 0, 0, 0, 0]; // Hide scored
+          titleText = 'Goals Conceded Distribution by Time Periods';
+          showBothTypes = false;
+          break;
+      }
+
+      // Calculate totals from the arrays
+      const totalScored = scoredPeriods.reduce((sum, goals) => sum + goals, 0);
+      const totalConceded = concededPeriods.reduce((sum, goals) => sum + goals, 0);
+      
+      
+      // Update header info
+      const timingTitle = document.getElementById('timingTitle');
+      if (timingTitle) {
+        timingTitle.textContent = titleText;
+      }
+
+      // Update timing chart with dual bars
+      const periodIds = [
+        'goals0_15',
+        'goals16_30',
+        'goals31_45',
+        'goals46_60',
+        'goals61_75',
+        'goals76_90',
+      ];
+
+      scoredPeriods.forEach((scoredGoals, index) => {
+        const concededGoals = concededPeriods[index];
+
+        // Calculate percentages
+        const scoredPerc = totalScored > 0 ? Math.round((scoredGoals / totalScored) * 100) : 0;
+        const concededPerc = totalConceded > 0 ? Math.round((concededGoals / totalConceded) * 100) : 0;
+
+        // Calculate widths based on percentage for full width utilization
+        const scoredWidth = scoredPerc; // Use percentage directly for width
+        const concededWidth = concededPerc; // Use percentage directly for width
+
+        // Update scored bar
+        const scoredBarElement = document.getElementById(`${periodIds[index]}ScoredBar`);
+        const scoredValueElement = document.getElementById(`${periodIds[index]}ScoredText`);
+        
+        // Debug first period only
+        if (index === 0 && filter !== 'overall') {
+          console.log(`[GoalsDisplay] Updating ${periodIds[index]} for filter ${filter}:`, {
+            scoredGoals,
+            concededGoals,
+            scoredPerc,
+            concededPerc,
+            scoredBarElement: !!scoredBarElement,
+            scoredValueElement: !!scoredValueElement,
+            currentWidth: scoredBarElement?.style.width,
+            currentText: scoredValueElement?.textContent
+          });
+        }
+        
+        // Update conceded bar
+        const concededBarElement = document.getElementById(`${periodIds[index]}ConcededBar`);
+        const concededValueElement = document.getElementById(`${periodIds[index]}ConcededText`);
+        
+
+        // Always show both bars first
+        if (scoredBarElement && scoredBarElement.parentElement) {
+          scoredBarElement.parentElement.style.display = 'block';
+        }
+        if (concededBarElement && concededBarElement.parentElement) {
+          concededBarElement.parentElement.style.display = 'block';
+        }
+
+        // Handle filters
+        if (filter === 'scored') {
+          // Show only scored - hide conceded bar completely
+          if (scoredBarElement) scoredBarElement.style.width = `${scoredWidth}%`;
+          if (scoredValueElement) scoredValueElement.textContent = `${scoredGoals} (${scoredPerc}%)`;
+          if (concededBarElement && concededBarElement.parentElement) {
+            concededBarElement.parentElement.style.display = 'none';
+          }
+        } else if (filter === 'conceded') {
+          // Show only conceded - hide scored bar completely
+          if (scoredBarElement && scoredBarElement.parentElement) {
+            scoredBarElement.parentElement.style.display = 'none';
+          }
+          if (concededBarElement) concededBarElement.style.width = `${concededWidth}%`;
+          if (concededValueElement) concededValueElement.textContent = `${concededGoals} (${concededPerc}%)`;
+        } else {
+          // Show both for overall, home, away
+          if (scoredBarElement) scoredBarElement.style.width = `${scoredWidth}%`;
+          if (scoredValueElement) scoredValueElement.textContent = `${scoredGoals} (${scoredPerc}%)`;
+          if (concededBarElement) concededBarElement.style.width = `${concededWidth}%`;
+          if (concededValueElement) concededValueElement.textContent = `${concededGoals} (${concededPerc}%)`;
+          
+          // Debug DOM update for first period
+          if (index === 0 && filter !== 'overall') {
+            console.log(`[GoalsDisplay] After DOM update for ${filter}:`, {
+              scoredBarWidth: scoredBarElement?.style.width,
+              scoredText: scoredValueElement?.textContent,
+              concededBarWidth: concededBarElement?.style.width,
+              concededText: concededValueElement?.textContent
+            });
+          }
+        }
+      });
+      
     }
 
     /**

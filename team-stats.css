@@ -148,7 +148,7 @@ body {
 
 /* Ensure All Stats tab top stats uses 3-column grid */
 .top-stats[data-tab="all"] {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr) !important;
 }
 
 @media (max-width: 768px) {
@@ -164,9 +164,27 @@ body {
   margin-bottom: 30px !important;
 }
 
+/* When the All tab is active, show top-stats as grid */
+[data-active-tab='all'] .top-stats[data-tab='all'] {
+  display: grid !important;
+}
+
 /* When the Goals tab is active, show as grid */
 [data-active-tab='goals'] .conceded-stats-cards {
   display: grid !important;
+}
+
+[data-active-tab='goals'] .scored-stats-cards {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 20px !important;
+}
+
+/* When the Corners tab is active, show as grid */
+[data-active-tab='corners'] .corners-stats-cards {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 20px !important;
 }
 
 /* When the Cards tab is active, show only cards top-stats as grid */
@@ -1911,14 +1929,7 @@ body {
 }
 
 /* Modern font styles for Expected Goals (xG) Analysis */
-.main-stats-section h2.section-title {
-  font-family: 'Inter', sans-serif;
-  font-size: 1.5em;
-  font-weight: 600;
-  color: #fff;
-  letter-spacing: -0.02em;
-  margin-bottom: 24px;
-}
+/* Removed override to match Card & Discipline Statistics style */
 
 /* Target xG section by its title content */
 .main-stats-section:has(h2:contains("Expected Goals")) .stats-category,
@@ -2082,20 +2093,12 @@ body {
 /* Team name highlighting - only for the analyzed team */
 #matchesList td.team-highlight {
   font-weight: 700;
-  color: #ffeb3b;
+  color: #ffffff;
   position: relative;
 }
 
 #matchesList td.team-highlight::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 70%;
-  background: #ffeb3b;
-  border-radius: 0 2px 2px 0;
+  display: none;
 }
 
 /* Score cell styling */
@@ -2500,13 +2503,13 @@ body {
 
 #matchesList td.team-highlight {
   font-weight: 700;
-  color: #ffeb3b;
-  text-shadow: 0 0 8px rgba(255, 235, 59, 0.3);
+  color: #ffffff;
+  text-shadow: none;
 }
 
 #matchesList td.score-cell {
   font-weight: 600;
-  font-size: 1.05em;
+  font-size: 1.26em; /* 1.05em * 1.2 */
   color: #fff;
   text-align: center;
   letter-spacing: 0.05em;
@@ -2515,7 +2518,7 @@ body {
 #matchesList td.result-W {
   color: #4caf50;
   font-weight: 700;
-  font-size: 0.9em;
+  font-size: 1.08em; /* 0.9em * 1.2 */
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -2523,7 +2526,7 @@ body {
 #matchesList td.result-D {
   color: #ff9800;
   font-weight: 700;
-  font-size: 0.9em;
+  font-size: 1.08em; /* 0.9em * 1.2 */
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -2531,7 +2534,7 @@ body {
 #matchesList td.result-L {
   color: #f44336;
   font-weight: 700;
-  font-size: 0.9em;
+  font-size: 1.08em; /* 0.9em * 1.2 */
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -2548,4 +2551,104 @@ body {
 /* Ensure Timing Analytics is hidden by default and only shown in Goals tab */
 #timing-analytics-section {
   display: none;
+}
+
+/* Matches Display Styling */
+#matchesList h3 {
+  color: #ffeb3b;
+  font-size: 1.56em; /* 1.3em * 1.2 */
+  margin: 25px 0 15px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(255, 235, 59, 0.3);
+}
+
+#matchesList table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+#matchesList thead {
+  background: rgba(255, 235, 59, 0.1);
+}
+
+#matchesList th {
+  padding: 12px 10px;
+  text-align: left;
+  font-weight: 700;
+  color: #ffeb3b;
+  font-size: 1.08em; /* 0.9em * 1.2 */
+  border-bottom: 2px solid rgba(255, 235, 59, 0.3);
+}
+
+#matchesList td {
+  padding: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 1.08em; /* 0.9em * 1.2 */
+  color: #ffffff;
+}
+
+#matchesList .team-highlight {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+#matchesList .score-cell {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.32em; /* 1.1em * 1.2 */
+}
+
+#matchesList .score-cell.w {
+  color: #10b981;
+}
+
+#matchesList .score-cell.d {
+  color: #f59e0b;
+}
+
+#matchesList .score-cell.l {
+  color: #ef4444;
+}
+
+#matchesList .result-badge {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 1.02em; /* 0.85em * 1.2 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#matchesList .result-W {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+#matchesList .result-D {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+#matchesList .result-L {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+#matchesList .venue-indicator {
+  text-align: center;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+#matchesList .competition-info {
+  color: #94a3b8;
+  font-size: 1.02em; /* 0.85em * 1.2 */
+}
+
+#matchesList .no-data {
+  text-align: center;
+  padding: 40px;
+  color: #94a3b8;
+  font-style: italic;
 }

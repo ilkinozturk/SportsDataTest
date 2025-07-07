@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug Timing Modules</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .success {
+            color: #4caf50;
+        }
+        .error {
+            color: #f44336;
+        }
+        .info {
+            color: #2196f3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Debug Timing Modules</h1>
+    
+    <div class="test-section">
+        <h2>Module Status Check</h2>
+        <div id="moduleStatus"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Manual Test</h2>
+        <button onclick="testTimingChange('home')">Test Home Filter</button>
+        <button onclick="testTimingChange('away')">Test Away Filter</button>
+        <button onclick="testTimingChange('overall')">Test Overall Filter</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Console Inspection</h2>
+        <p>Open the browser console and run these commands:</p>
+        <pre>
+// Check if modules are loaded
+window.TeamStatsEventBus
+window.TeamStatsStateManager
+window.TeamStatsGoalsDisplay
+
+// Check event listeners
+window.TeamStatsEventBus._events
+
+// Test event emission
+window.TeamStatsEventBus.emit('filters:timing:change', 'home')
+
+// Check state
+window.TeamStatsStateManager.get('filters.timing')
+        </pre>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('moduleStatus');
+        
+        // Check modules after page load
+        window.addEventListener('load', () => {
+            checkModules();
+        });
+        
+        function checkModules() {
+            const modules = [
+                { name: 'TeamStatsEventBus', obj: window.TeamStatsEventBus },
+                { name: 'TeamStatsStateManager', obj: window.TeamStatsStateManager },
+                { name: 'TeamStatsGoalsDisplay', obj: window.TeamStatsGoalsDisplay },
+                { name: 'setTimingFilter', obj: window.setTimingFilter }
+            ];
+            
+            modules.forEach(module => {
+                const status = module.obj ? 'success' : 'error';
+                const icon = module.obj ? '✓' : '✗';
+                statusDiv.innerHTML += `<p class="${status}">${icon} ${module.name}: ${module.obj ? 'Loaded' : 'Not Found'}</p>`;
+            });
+            
+            // Check event listeners
+            if (window.TeamStatsEventBus && window.TeamStatsEventBus._events) {
+                const timingEvents = window.TeamStatsEventBus._events['filters:timing:change'];
+                if (timingEvents) {
+                    statusDiv.innerHTML += `<p class="success">✓ Timing filter event listeners: ${timingEvents.length}</p>`;
+                } else {
+                    statusDiv.innerHTML += `<p class="error">✗ No timing filter event listeners found</p>`;
+                }
+            }
+        }
+        
+        function testTimingChange(filter) {
+            console.log('=== Testing timing filter change ===');
+            console.log('Filter:', filter);
+            
+            if (window.TeamStatsEventBus) {
+                console.log('Emitting event...');
+                window.TeamStatsEventBus.emit('filters:timing:change', filter);
+            }
+            
+            if (window.setTimingFilter) {
+                console.log('Calling setTimingFilter...');
+                window.setTimingFilter(filter);
+            }
+            
+            console.log('=== Test complete ===');
+        }
+    </script>
+</body>
+</html>

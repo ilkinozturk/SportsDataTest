@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug Timing Display</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .debug-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .timing-bar-bg {
+            background: #333;
+            height: 30px;
+            margin: 10px 0;
+            position: relative;
+            border-radius: 4px;
+        }
+        .timing-bar-fill {
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+        .scored-bar {
+            background: #4caf50;
+        }
+        .conceded-bar {
+            background: #f44336;
+        }
+        .timing-bar-value {
+            color: #fff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Timing Analytics Debug</h1>
+    
+    <div class="debug-section">
+        <h2>Test Timing Bars</h2>
+        
+        <div>
+            <h3>0-15 minutes</h3>
+            <div class="timing-bar-bg">
+                <div class="timing-bar-fill scored-bar" id="testScoredBar" style="width: 0%">
+                    <div class="timing-bar-value" id="testScoredText">0</div>
+                </div>
+            </div>
+            <div class="timing-bar-bg">
+                <div class="timing-bar-fill conceded-bar" id="testConcededBar" style="width: 0%">
+                    <div class="timing-bar-value" id="testConcededText">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <button onclick="testUpdate()">Test Update Bars</button>
+    </div>
+    
+    <div class="debug-section">
+        <h2>Element Check</h2>
+        <div id="elementCheck"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>Data Check</h2>
+        <div id="dataCheck"></div>
+    </div>
+
+    <script>
+        // Test data
+        const testData = {
+            goals0_15: 5,
+            goals16_30: 4,
+            goals31_45: 11,
+            goals46_60: 5,
+            goals61_75: 4,
+            goals76_90: 7,
+            goalsConc0_15: 4,
+            goalsConc16_30: 2,
+            goalsConc31_45: 2,
+            goalsConc46_60: 2,
+            goalsConc61_75: 3,
+            goalsConc76_90: 7
+        };
+        
+        function testUpdate() {
+            console.log('Testing update...');
+            
+            // Update test bars
+            const scoredBar = document.getElementById('testScoredBar');
+            const scoredText = document.getElementById('testScoredText');
+            const concededBar = document.getElementById('testConcededBar');
+            const concededText = document.getElementById('testConcededText');
+            
+            if (scoredBar) {
+                scoredBar.style.width = '30%';
+                scoredText.textContent = '5 (30%)';
+                console.log('Updated scored bar');
+            }
+            
+            if (concededBar) {
+                concededBar.style.width = '25%';
+                concededText.textContent = '4 (25%)';
+                console.log('Updated conceded bar');
+            }
+        }
+        
+        // Check for timing elements
+        function checkElements() {
+            const elementIds = [
+                'goals0_15ScoredBar',
+                'goals0_15ScoredText',
+                'goals0_15ConcededBar',
+                'goals0_15ConcededText',
+                'goals16_30ScoredBar',
+                'goals31_45ScoredBar',
+                'goals46_60ScoredBar',
+                'goals61_75ScoredBar',
+                'goals76_90ScoredBar'
+            ];
+            
+            const checkDiv = document.getElementById('elementCheck');
+            let html = '<h3>Element Status:</h3>';
+            
+            elementIds.forEach(id => {
+                const element = document.getElementById(id);
+                const status = element ? '✅ Found' : '❌ Not Found';
+                html += `<p>${id}: ${status}</p>`;
+            });
+            
+            checkDiv.innerHTML = html;
+        }
+        
+        // Check API data
+        async function checkData() {
+            try {
+                const response = await fetch('/api/teams/data?teamId=836');
+                const data = await response.json();
+                
+                if (data.success && data.data && data.data.statistics) {
+                    const stats = data.data.statistics;
+                    const dataDiv = document.getElementById('dataCheck');
+                    
+                    let html = '<h3>API Data:</h3>';
+                    html += `<p>goals0_15: ${stats.goals0_15 || 'NOT FOUND'}</p>`;
+                    html += `<p>goals16_30: ${stats.goals16_30 || 'NOT FOUND'}</p>`;
+                    html += `<p>goals31_45: ${stats.goals31_45 || 'NOT FOUND'}</p>`;
+                    html += `<p>goalsConc0_15: ${stats.goalsConc0_15 || 'NOT FOUND'}</p>`;
+                    html += `<p>goalsConc16_30: ${stats.goalsConc16_30 || 'NOT FOUND'}</p>`;
+                    
+                    dataDiv.innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+        
+        // Run checks on load
+        window.addEventListener('DOMContentLoaded', () => {
+            checkElements();
+            checkData();
+        });
+    </script>
+</body>
+</html>

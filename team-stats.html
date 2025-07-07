@@ -41,7 +41,7 @@
         </div>
 
         <!-- Top Statistics Cards -->
-        <div class="top-stats" data-tab="all">
+        <div class="top-stats" data-tab="all" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
           <div class="top-stat-card">
             <h3 id="ppgValue">1.68</h3>
             <div class="label">Points Per Game</div>
@@ -858,6 +858,27 @@
           </div>
         </div>
 
+        <!-- Top Statistics Cards for Cards Tab -->
+        <div class="top-stats" data-tab="cards" style="display: none">
+          <div class="top-stat-card">
+            <h3 id="cardsForOver15Value">0%</h3>
+            <div class="label">Cards For Over 1.5</div>
+            <div class="performance-text">Team receives 2+ cards</div>
+          </div>
+
+          <div class="top-stat-card">
+            <h3 id="teamBookedAvgValue">0.00</h3>
+            <div class="label">Team Booked / Match</div>
+            <div class="performance-text">Average cards for team</div>
+          </div>
+
+          <div class="top-stat-card">
+            <h3 id="opponentsBookedAvgValue">0.00</h3>
+            <div class="label">Opponents Booked / Match</div>
+            <div class="performance-text">Average cards against team</div>
+          </div>
+        </div>
+
         <!-- Match Cards Statistics -->
         <div class="main-stats-section filterable-section" data-tab="cards">
           <h2 class="section-title">🟨🟥 Match Cards</h2>
@@ -985,27 +1006,6 @@
           </div>
         </div>
 
-        <!-- Top Statistics Cards for Cards Tab -->
-        <div class="top-stats" data-tab="cards" style="display: none">
-          <div class="top-stat-card">
-            <h3 id="cardsForOver15Value">0%</h3>
-            <div class="label">Cards For Over 1.5</div>
-            <div class="performance-text">Team receives 2+ cards</div>
-          </div>
-
-          <div class="top-stat-card">
-            <h3 id="teamBookedAvgValue">0.00</h3>
-            <div class="label">Team Booked / Match</div>
-            <div class="performance-text">Average cards for team</div>
-          </div>
-
-          <div class="top-stat-card">
-            <h3 id="opponentsBookedAvgValue">0.00</h3>
-            <div class="label">Opponents Booked / Match</div>
-            <div class="performance-text">Average cards against team</div>
-          </div>
-        </div>
-
         <!-- Team Cards Section -->
         <div class="main-stats-section filterable-section" data-tab="cards" style="display: none">
           <h2 class="section-title">🎯 Team Cards</h2>
@@ -1117,7 +1117,7 @@
         </div>
 
         <!-- Over/Under Goals Statistics -->
-        <div class="main-stats-section filterable-section" data-tab="goals">
+        <div class="main-stats-section filterable-section" data-tab="goals" style="display: none">
           <h2 class="section-title">📊 Over / Under Goals</h2>
 
           <!-- Over/Under Filter Tabs -->
@@ -1285,7 +1285,7 @@
         </div>
 
         <!-- Both Teams To Score Stats -->
-        <div class="main-stats-section filterable-section" data-tab="goals">
+        <div class="main-stats-section filterable-section" data-tab="goals" style="display: none">
           <h2 class="section-title">⚽ Both Teams To Score (BTTS)</h2>
 
           <!-- BTTS Filter Tabs -->
@@ -1388,7 +1388,7 @@
         </div>
 
         <!-- Goal Timings by 15 Minutes -->
-        <div class="main-stats-section filterable-section" data-tab="goals">
+        <div class="main-stats-section filterable-section" data-tab="all">
           <h2 class="section-title">⏱️ Goal Timings by 15 Minutes</h2>
 
           <!-- Goal Timings Filter Tabs -->
@@ -1522,7 +1522,7 @@
         </div>
 
         <!-- Shots, xG & Offsides Section -->
-        <div class="main-stats-section filterable-section" data-tab="goals">
+        <div class="main-stats-section filterable-section" data-tab="goals" style="display: none">
           <h2 class="section-title">🎯 Shots, xG & Offsides</h2>
 
           <!-- Shots Filter Tabs -->
@@ -1794,7 +1794,7 @@
         </div>
 
         <!-- Goal Timing Analysis -->
-        <div class="main-stats-section filterable-section" data-tab="all">
+        <div class="main-stats-section filterable-section" data-tab="goals" id="timing-analytics-section">
           <h2 class="section-title">⏰ Timing Analytics</h2>
 
           <!-- Timing Filter Tabs -->
@@ -1955,6 +1955,9 @@
     <script src="public/js/modules/data/export-manager.js"></script>
     <script src="public/js/modules/data/import-manager.js"></script>
     
+    <!-- Service Modules -->
+    <script src="public/js/modules/services/matches-service.js"></script>
+    
     <!-- Statistics Modules -->
     <script src="public/js/modules/statistics/base-statistics.js"></script>
     <script src="public/js/modules/statistics/goals-statistics.js"></script>
@@ -1974,6 +1977,7 @@
     <script src="public/js/modules/display/corners-display.js"></script>
     <script src="public/js/modules/display/form-display.js"></script>
     <script src="public/js/modules/display/statistics-display.js"></script>
+    <script src="public/js/modules/display/matches-display.js"></script>
     
     <!-- Utility Modules -->
     <script src="public/js/modules/utility/logger.js"></script>
@@ -1984,40 +1988,33 @@
     <!-- API Configuration -->
     <script src="public/js/modules/core/api-config-fix.js"></script>
     
+    <!-- Temporary log filter -->
+    
     <!-- ======================================== -->
     <!-- MAIN MODULAR INTEGRATION                 -->
     <!-- ======================================== -->
     <script src="public/js/team-stats-modular.js"></script>
     
     <!-- Legacy Support (Optional - can be removed later) -->
-    <!-- <script src="team-stats.js"></script> -->
+    <script src="team-stats.js"></script>
     
     <script>
-      // Tab functionality using new modules
+      // Tab functionality wrapper - calls both legacy and modular systems
+      const originalShowTab = window.showTab;
       window.showTab = function(tabName, event) {
+        // First call the legacy showTab from team-stats.js
+        if (originalShowTab) {
+          originalShowTab(tabName, event);
+        }
+        
+        // Then notify the modular system
         if (window.TeamStatsTabManager) {
           window.TeamStatsTabManager.switchTab(tabName);
-          
-          // Update button states
-          document.querySelectorAll('.tab-button').forEach(btn => {
-            btn.classList.remove('active');
-          });
-          
-          if (event && event.target) {
-            event.target.closest('.tab-button').classList.add('active');
-          } else {
-            document.querySelectorAll('.tab-button').forEach(btn => {
-              const btnTab = btn.getAttribute('data-tab');
-              if (btnTab === tabName) {
-                btn.classList.add('active');
-              }
-            });
-          }
-          
-          // Emit tab change event
-          if (window.TeamStatsEventBus) {
-            window.TeamStatsEventBus.emit('tab:changed', { tab: tabName });
-          }
+        }
+        
+        // Emit tab change event
+        if (window.TeamStatsEventBus) {
+          window.TeamStatsEventBus.emit('tab:changed', { tab: tabName });
         }
       };
       
@@ -2030,6 +2027,16 @@
           });
         });
         
+        // Add event listeners for timing filter buttons
+        document.querySelectorAll('[data-filter-type="timing"]').forEach(button => {
+          button.addEventListener('click', function(e) {
+            const filterValue = this.getAttribute('data-filter-value');
+            if (window.setTimingFilter) {
+              window.setTimingFilter(filterValue);
+            }
+          });
+        });
+        
         // Check if modular system is ready
         if (window.TeamStatsEventBus) {
           window.TeamStatsEventBus.on('app:ready', function() {
@@ -2038,11 +2045,12 @@
             // Hide loading, show content
             document.getElementById('loadingSection').style.display = 'none';
             document.getElementById('teamSection').style.display = 'block';
+            
+            // App is ready - timing listeners already attached in DOMContentLoaded
           });
           
           // Listen for team data loaded event
           window.TeamStatsEventBus.on('data:team:loaded', function(data) {
-            console.log('Team data loaded:', data);
             populateTeamInfo(data.data);
           });
         }

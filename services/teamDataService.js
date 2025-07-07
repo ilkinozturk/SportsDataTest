@@ -1694,6 +1694,16 @@ class TeamDataService {
       homeCardsAgainst: additionalInfo.cards_against_home || 0,
       awayCardsFor: additionalInfo.cards_for_away || 0,
       awayCardsAgainst: additionalInfo.cards_against_away || 0,
+      
+      // Highest Cards For/Against
+      cardsForHighest: additionalInfo.cards_for_highest || additionalInfo.cards_for_highest_overall || 0,
+      cardsForHighest_overall: additionalInfo.cards_for_highest_overall || additionalInfo.cards_for_highest || 0,
+      cardsForHighest_home: additionalInfo.cards_for_highest_home || 0,
+      cardsForHighest_away: additionalInfo.cards_for_highest_away || 0,
+      cardsAgainstHighest: additionalInfo.cards_against_highest || additionalInfo.cards_against_highest_overall || 0,
+      cardsAgainstHighest_overall: additionalInfo.cards_against_highest_overall || additionalInfo.cards_against_highest || 0,
+      cardsAgainstHighest_home: additionalInfo.cards_against_highest_home || 0,
+      cardsAgainstHighest_away: additionalInfo.cards_against_highest_away || 0,
 
       // Cards For Over Percentages
       over05CardsForPercentage:
@@ -2026,12 +2036,14 @@ class TeamDataService {
         0,
 
       // 1st Half & 2nd Half Cards
-      cards1H_AVG_overall: additionalInfo.fh_cards_total_avg_overall || stats.cards_1h_avg_overall || stats.cards1H_AVG_overall || 0,
-      cards1H_AVG_home: additionalInfo.fh_cards_total_avg_home || stats.cards_1h_avg_home || stats.cards1H_AVG_home || 0,
-      cards1H_AVG_away: additionalInfo.fh_cards_total_avg_away || stats.cards_1h_avg_away || stats.cards1H_AVG_away || 0,
-      cards2H_AVG_overall: additionalInfo['2h_cards_total_avg_overall'] || stats.cards_2h_avg_overall || stats.cards2H_AVG_overall || 0,
-      cards2H_AVG_home: additionalInfo['2h_cards_total_avg_home'] || stats.cards_2h_avg_home || stats.cards2H_AVG_home || 0,
-      cards2H_AVG_away: additionalInfo['2h_cards_total_avg_away'] || stats.cards_2h_avg_away || stats.cards2H_AVG_away || 0,
+      cards1H_AVG: additionalInfo.fh_cards_total_avg_overall || stats.cards_1h_avg_overall || stats.cards1H_AVG_overall || stats.fh_cards_avg_overall || 0,
+      cards1H_AVG_overall: additionalInfo.fh_cards_total_avg_overall || stats.cards_1h_avg_overall || stats.cards1H_AVG_overall || stats.fh_cards_avg_overall || 0,
+      cards1H_AVG_home: additionalInfo.fh_cards_total_avg_home || stats.cards_1h_avg_home || stats.cards1H_AVG_home || stats.fh_cards_avg_home || 0,
+      cards1H_AVG_away: additionalInfo.fh_cards_total_avg_away || stats.cards_1h_avg_away || stats.cards1H_AVG_away || stats.fh_cards_avg_away || 0,
+      cards2H_AVG: additionalInfo['2h_cards_total_avg_overall'] || stats.cards_2h_avg_overall || stats.cards2H_AVG_overall || stats['2h_cards_avg_overall'] || 0,
+      cards2H_AVG_overall: additionalInfo['2h_cards_total_avg_overall'] || stats.cards_2h_avg_overall || stats.cards2H_AVG_overall || stats['2h_cards_avg_overall'] || 0,
+      cards2H_AVG_home: additionalInfo['2h_cards_total_avg_home'] || stats.cards_2h_avg_home || stats.cards2H_AVG_home || stats['2h_cards_avg_home'] || 0,
+      cards2H_AVG_away: additionalInfo['2h_cards_total_avg_away'] || stats.cards_2h_avg_away || stats.cards2H_AVG_away || stats['2h_cards_avg_away'] || 0,
 
       // 1st Half Cards Over percentages (DEPRECATED - Using under2/2to3/over3 format now)
       // cards1H_over05_percentage_overall: stats.cards_1h_over05_percentage_overall || 0,

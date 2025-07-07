@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manual Test Timing Analytics</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .code {
+            background: #333;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        h2 {
+            color: #2196f3;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: #3a3a3a;
+            border-radius: 4px;
+        }
+        .warning {
+            color: #ff9800;
+        }
+        .success {
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <h1>Manual Test for Timing Analytics</h1>
+    
+    <div class="section">
+        <h2>📋 Test Procedure</h2>
+        <p>Follow these steps in order on the team-stats.html page:</p>
+        
+        <div class="step">
+            <h3>Step 1: Open team-stats.html</h3>
+            <p>Navigate to: <strong>http://localhost:3005/team-stats.html?teamId=836</strong></p>
+        </div>
+        
+        <div class="step">
+            <h3>Step 2: Open Console (F12)</h3>
+            <p>Open browser developer console</p>
+        </div>
+        
+        <div class="step">
+            <h3>Step 3: Wait for page to load</h3>
+            <p>Look for this console log:</p>
+            <div class="code">[team-stats.js] Emitting data:team:loaded event
+[GoalsDisplay] data:team:loaded event received
+[GoalsDisplay] lastStatistics set, sample data: {
+  homeGoals0_15: 4,
+  awayGoals0_15: 1,
+  goals0_15: 5
+}</div>
+        </div>
+        
+        <div class="step">
+            <h3>Step 4: Navigate to Goals tab</h3>
+            <p>Click on the "Goals" tab</p>
+        </div>
+        
+        <div class="step">
+            <h3>Step 5: Test manual update</h3>
+            <p>Run this in console:</p>
+            <div class="code">// Force manual update with home filter
+if (window.TeamStatsGoalsDisplay && window.globalStatistics) {
+    console.log('=== Manual Update Test ===');
+    
+    // Set lastStatistics if not set
+    if (!window.TeamStatsGoalsDisplay.lastStatistics) {
+        window.TeamStatsGoalsDisplay.lastStatistics = window.globalStatistics;
+        console.log('✓ lastStatistics was set manually');
+    }
+    
+    // Check data exists
+    const stats = window.TeamStatsGoalsDisplay.lastStatistics;
+    console.log('Home data check:', {
+        homeGoals0_15: stats.homeGoals0_15,
+        homeGoals16_30: stats.homeGoals16_30,
+        homeGoals31_45: stats.homeGoals31_45,
+        homeGoals46_60: stats.homeGoals46_60,
+        homeGoals61_75: stats.homeGoals61_75,
+        homeGoals76_90: stats.homeGoals76_90
+    });
+    
+    // Call update directly
+    console.log('Calling updateTimingAnalytics with home filter...');
+    window.TeamStatsGoalsDisplay.updateTimingAnalytics(stats, 'home');
+    
+    // Check DOM
+    setTimeout(() => {
+        const bar = document.getElementById('goals0_15ScoredBar');
+        console.log('Bar width after update:', bar ? bar.style.width : 'BAR NOT FOUND');
+    }, 100);
+} else {
+    console.error('GoalsDisplay or globalStatistics not found!');
+}</div>
+        </div>
+        
+        <div class="step">
+            <h3>Step 6: Check timing filter buttons</h3>
+            <p>Click on Home/Away buttons in Timing Analytics section and check console for:</p>
+            <div class="code">[team-stats.js] setTimingFilter called with: home
+[GoalsDisplay] Timing filter change event received: home
+[GoalsDisplay] Home timing data: {...}
+[GoalsDisplay] Timing totals: {...}</div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>🔍 Debug Information</h2>
+        <p>If timing data shows zeros, check these:</p>
+        
+        <div class="code">// 1. Check if GoalsDisplay is initialized
+console.log('GoalsDisplay:', window.TeamStatsGoalsDisplay);
+
+// 2. Check if lastStatistics exists
+console.log('Has lastStatistics:', !!window.TeamStatsGoalsDisplay?.lastStatistics);
+
+// 3. Check statistics structure
+if (window.globalStatistics) {
+    console.log('Sample stats:', {
+        type: typeof window.globalStatistics,
+        hasHomeData: 'homeGoals0_15' in window.globalStatistics,
+        homeValue: window.globalStatistics.homeGoals0_15
+    });
+}
+
+// 4. Check EventBus listeners
+if (window.TeamStatsEventBus?._events) {
+    console.log('Timing filter listeners:', 
+        window.TeamStatsEventBus._events['filters:timing:change']?.length || 0
+    );
+}</div>
+    </div>
+    
+    <div class="section">
+        <h2 class="warning">⚠️ Important Notes</h2>
+        <ul>
+            <li>Make sure you're on the Goals tab to see Timing Analytics</li>
+            <li>The data:team:loaded event must fire for lastStatistics to be set</li>
+            <li>Home/Away data exists in the API response (confirmed)</li>
+            <li>Field names are correct (homeGoals0_15, awayGoals0_15, etc.)</li>
+        </ul>
+    </div>
+</body>
+</html>

@@ -20,7 +20,6 @@
   const missingModules = requiredModules.filter(module => !global[module]);
   
   if (missingModules.length > 0) {
-    console.warn('[StatisticsDisplay] Missing optional modules:', missingModules);
   }
 
   class StatisticsDisplay {
@@ -118,7 +117,6 @@
       }
 
       this.initialized = true;
-      console.log('[StatisticsDisplay] Module initialized');
     }
 
     /**
@@ -126,7 +124,6 @@
      */
     renderStatisticsSection(container, statistics, options = {}) {
       if (!container) {
-        console.error('[StatisticsDisplay] Container is required');
         return;
       }
 
@@ -1153,7 +1150,6 @@
     handleFilterChange(data) {
       if (data.filterType === 'statistics') {
         this.state.activeFilter = data.value;
-        console.log('[StatisticsDisplay] Filter changed:', data.value);
       }
     }
 
@@ -1161,7 +1157,6 @@
      * Handle data update
      */
     handleDataUpdate(data) {
-      console.log('[StatisticsDisplay] Data updated');
       // Re-render if we have an active container
       if (this.state.activeContainer && data.statistics) {
         this.renderStatisticsSection(
@@ -1177,7 +1172,6 @@
      */
     handleMetricChange(data) {
       this.state.selectedMetric = data.metric;
-      console.log('[StatisticsDisplay] Metric changed:', data.metric);
     }
 
     /**
@@ -1220,7 +1214,6 @@
       this.state.activeContainer = null;
       this.initialized = false;
       
-      console.log('[StatisticsDisplay] Module destroyed');
     }
   }
 
@@ -1235,6 +1228,5 @@
   // Export to global scope
   global.TeamStatsStatisticsDisplay = statisticsDisplay;
 
-  console.log('Statistics Display module loaded');
 
 })(window);

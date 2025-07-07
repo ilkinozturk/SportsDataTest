@@ -417,8 +417,54 @@ const TeamStatsSchema = {
       sources: ['cardsHighest', 'cards_highest', 'max_cards'],
       default: 0,
     },
+    cardsForHighest: {
+      sources: ['cards_for_highest', 'max_cards_for', 'highest_cards_for'],
+      default: 0,
+      additionalInfo: true,
+    },
+    cardsAgainstHighest: {
+      sources: ['cards_against_highest', 'max_cards_against', 'highest_cards_against'],
+      default: 0,
+      additionalInfo: true,
+    },
     cardsLowest: {
       sources: ['cardsLowest', 'cards_lowest', 'min_cards'],
+      default: 0,
+    },
+    
+    // 1st Half Cards
+    cards1H_AVG: {
+      sources: ['cards1H_AVG', 'fh_cards_avg', 'first_half_cards_avg'],
+      default: 0,
+    },
+    cards1H_under2_percentage: {
+      sources: ['cards1H_under2_percentage', 'fh_total_cards_under2_percentage'],
+      default: 0,
+    },
+    cards1H_2to3_percentage: {
+      sources: ['cards1H_2to3_percentage', 'fh_total_cards_2to3_percentage'],
+      default: 0,
+    },
+    cards1H_over3_percentage: {
+      sources: ['cards1H_over3_percentage', 'fh_total_cards_over3_percentage'],
+      default: 0,
+    },
+    
+    // 2nd Half Cards
+    cards2H_AVG: {
+      sources: ['cards2H_AVG', '2h_cards_avg', 'second_half_cards_avg'],
+      default: 0,
+    },
+    cards2H_under2_percentage: {
+      sources: ['cards2H_under2_percentage', '2h_total_cards_under2_percentage'],
+      default: 0,
+    },
+    cards2H_2to3_percentage: {
+      sources: ['cards2H_2to3_percentage', '2h_total_cards_2to3_percentage'],
+      default: 0,
+    },
+    cards2H_over3_percentage: {
+      sources: ['cards2H_over3_percentage', '2h_total_cards_over3_percentage'],
       default: 0,
     },
 
@@ -713,6 +759,16 @@ const SpecialMappings = {
     'cardsAgainstPerMatch',
     'cardsHighest',
     'cardsLowest',
+    'cardsForHighest',
+    'cardsAgainstHighest',
+    'cards1H_AVG',
+    'cards1H_under2_percentage',
+    'cards1H_2to3_percentage',
+    'cards1H_over3_percentage',
+    'cards2H_AVG',
+    'cards2H_under2_percentage',
+    'cards2H_2to3_percentage',
+    'cards2H_over3_percentage',
     'over05Cards',
     'over05CardsPercentage',
     'over15Cards',
