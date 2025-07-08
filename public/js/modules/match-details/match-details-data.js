@@ -9,9 +9,28 @@ export class MatchDetailsData {
     this.eventBus = eventBus;
     this.matchId = null;
     this.matchData = null;
+    this.teamDataCache = new Map(); // Cache for team data
+    // Get API delay from environment configuration
+    this.apiCallDelay =
+      (window.ENV && window.ENV.API_RATE_LIMIT_DELAY) || window.API_RATE_LIMIT_DELAY || 1500; // 1.5 seconds default
+    this.lastApiCall = 0;
+
+    // Cache TTL from environment
+    this.cacheTTL = (window.ENV && window.ENV.CACHE_TTL) || 300000; // 5 minutes default
+
     this.apiClient = window.TeamStatsAPIClient ||
       window.APIClient || {
         get: async url => {
+          // Rate limiting - wait if necessary
+          const now = Date.now();
+          const timeSinceLastCall = now - this.lastApiCall;
+          if (timeSinceLastCall < this.apiCallDelay) {
+            await new Promise(resolve =>
+              setTimeout(resolve, this.apiCallDelay - timeSinceLastCall)
+            );
+          }
+          this.lastApiCall = Date.now();
+
           const response = await fetch(url);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -76,6 +95,17 @@ export class MatchDetailsData {
       if (this.matchData.homeTeam && !this.matchData.homeTeam.homeForm) {
         await this.fetchTeamForm(this.matchData.homeTeam.id, 'home');
       }
+
+      // Add delay between team form requests
+      if (
+        this.matchData.awayTeam &&
+        !this.matchData.awayTeam.awayForm &&
+        this.matchData.homeTeam &&
+        !this.matchData.homeTeam.homeForm
+      ) {
+        await new Promise(resolve => setTimeout(resolve, this.apiCallDelay));
+      }
+
       if (this.matchData.awayTeam && !this.matchData.awayTeam.awayForm) {
         await this.fetchTeamForm(this.matchData.awayTeam.id, 'away');
       }
@@ -97,7 +127,18 @@ export class MatchDetailsData {
 
   async fetchTeamForm(teamId, venue) {
     try {
-      const response = await this.apiClient.get(`/api/teams/data?teamId=${teamId}`);
+      // Check cache first
+      const cachedData = this.teamDataCache.get(teamId);
+      let response;
+
+      if (cachedData) {
+        response = cachedData;
+      } else {
+        response = await this.apiClient.get(`/api/teams/data?teamId=${teamId}`);
+        if (response.success) {
+          this.teamDataCache.set(teamId, response);
+        }
+      }
 
       if (response.success && response.data) {
         const teamData = response.data;
@@ -301,11 +342,35 @@ export class MatchDetailsData {
    */
   async fetchTeamStatistics(homeTeamId, awayTeamId) {
     try {
-      // Fetch both teams' statistics in parallel
-      const [homeResponse, awayResponse] = await Promise.all([
-        this.apiClient.get(`/api/teams/data?teamId=${homeTeamId}`),
-        this.apiClient.get(`/api/teams/data?teamId=${awayTeamId}`),
-      ]);
+      // Check cache first
+      const cachedHomeData = this.teamDataCache.get(homeTeamId);
+      const cachedAwayData = this.teamDataCache.get(awayTeamId);
+
+      let homeResponse, awayResponse;
+
+      // Fetch data sequentially to avoid rate limits
+      if (cachedHomeData) {
+        homeResponse = cachedHomeData;
+      } else {
+        homeResponse = await this.apiClient.get(`/api/teams/data?teamId=${homeTeamId}`);
+        if (homeResponse.success) {
+          this.teamDataCache.set(homeTeamId, homeResponse);
+        }
+      }
+
+      // Add delay between requests
+      if (!cachedHomeData && !cachedAwayData) {
+        await new Promise(resolve => setTimeout(resolve, this.apiCallDelay));
+      }
+
+      if (cachedAwayData) {
+        awayResponse = cachedAwayData;
+      } else {
+        awayResponse = await this.apiClient.get(`/api/teams/data?teamId=${awayTeamId}`);
+        if (awayResponse.success) {
+          this.teamDataCache.set(awayTeamId, awayResponse);
+        }
+      }
 
       const teamData = {
         homeTeam: null,
@@ -315,6 +380,33 @@ export class MatchDetailsData {
       // Process home team data
       if (homeResponse.success && homeResponse.data) {
         const homeData = homeResponse.data;
+
+        // Debug: Log statistics to see actual field names
+        if (homeData.statistics) {
+          console.log('Home Team Statistics:', homeData.statistics);
+          console.log('CS Fields:', {
+            seasonCleanSheetPercentage_overall:
+              homeData.statistics.seasonCleanSheetPercentage_overall,
+            seasonCleanSheetPercentage: homeData.statistics.seasonCleanSheetPercentage,
+            seasonCSPercentage_overall: homeData.statistics.seasonCSPercentage_overall,
+            cleanSheetPercentage: homeData.statistics.cleanSheetPercentage,
+            cleanSheetPercentage_overall: homeData.statistics.cleanSheetPercentage_overall,
+            clean_sheet_percentage: homeData.statistics.clean_sheet_percentage,
+            cs_percentage: homeData.statistics.cs_percentage,
+            csPercentage: homeData.statistics.csPercentage,
+          });
+          console.log('FTS Fields:', {
+            seasonFailedToScorePercentage_overall:
+              homeData.statistics.seasonFailedToScorePercentage_overall,
+            seasonFailedToScorePercentage: homeData.statistics.seasonFailedToScorePercentage,
+            seasonFTSPercentage_overall: homeData.statistics.seasonFTSPercentage_overall,
+            seasonFTSPercentage: homeData.statistics.seasonFTSPercentage,
+            failedToScorePercentage: homeData.statistics.failedToScorePercentage,
+            failed_to_score_percentage: homeData.statistics.failed_to_score_percentage,
+            fts_percentage: homeData.statistics.fts_percentage,
+            ftsPercentage: homeData.statistics.ftsPercentage,
+          });
+        }
 
         // Calculate form from matches if not available
         let overallForm =
@@ -371,6 +463,33 @@ export class MatchDetailsData {
       // Process away team data
       if (awayResponse.success && awayResponse.data) {
         const awayData = awayResponse.data;
+
+        // Debug: Log statistics to see actual field names
+        if (awayData.statistics) {
+          console.log('Away Team Statistics:', awayData.statistics);
+          console.log('Away CS Fields:', {
+            seasonCleanSheetPercentage_overall:
+              awayData.statistics.seasonCleanSheetPercentage_overall,
+            seasonCleanSheetPercentage: awayData.statistics.seasonCleanSheetPercentage,
+            seasonCSPercentage_overall: awayData.statistics.seasonCSPercentage_overall,
+            cleanSheetPercentage: awayData.statistics.cleanSheetPercentage,
+            cleanSheetPercentage_overall: awayData.statistics.cleanSheetPercentage_overall,
+            clean_sheet_percentage: awayData.statistics.clean_sheet_percentage,
+            cs_percentage: awayData.statistics.cs_percentage,
+            csPercentage: awayData.statistics.csPercentage,
+          });
+          console.log('Away FTS Fields:', {
+            seasonFailedToScorePercentage_overall:
+              awayData.statistics.seasonFailedToScorePercentage_overall,
+            seasonFailedToScorePercentage: awayData.statistics.seasonFailedToScorePercentage,
+            seasonFTSPercentage_overall: awayData.statistics.seasonFTSPercentage_overall,
+            seasonFTSPercentage: awayData.statistics.seasonFTSPercentage,
+            failedToScorePercentage: awayData.statistics.failedToScorePercentage,
+            failed_to_score_percentage: awayData.statistics.failed_to_score_percentage,
+            fts_percentage: awayData.statistics.fts_percentage,
+            ftsPercentage: awayData.statistics.ftsPercentage,
+          });
+        }
 
         // Calculate form from matches if not available
         let overallForm =
@@ -441,7 +560,7 @@ export class MatchDetailsData {
    * @returns {Object} - Processed statistics
    */
   extractTeamStatistics(stats) {
-    return {
+    const extractedStats = {
       // Win percentages - Calculate from wins/totalMatches if percentage not available
       winPercentage:
         stats.winPercentage_overall ||
@@ -535,43 +654,67 @@ export class MatchDetailsData {
         stats.bttsPercentage_away ||
         0,
 
-      // Clean sheet percentages
+      // Clean sheet percentages - API field names (prioritize non-zero values)
       cleanSheetPercentage:
-        stats.cleanSheets ||
         stats.cleanSheetPercentage ||
+        stats.cleanSheetsPercentage_overall ||
+        stats.seasonCleanSheetPercentage_overall ||
+        stats.seasonCleanSheetPercentage ||
         stats.seasonCSPercentage_overall ||
         stats.cleanSheetPercentage_overall ||
         stats.clean_sheet_percentage ||
+        stats.cs_percentage ||
+        stats.csPercentage ||
         0,
       homeCleanSheetPercentage:
-        stats.homeCleanSheets ||
-        stats.cleanSheetPercentage_home ||
+        stats.homeCleanSheetPercentage ||
+        stats.cleanSheetsPercentage_home ||
+        stats.seasonCleanSheetPercentage_home ||
         stats.seasonCSPercentage_home ||
+        stats.cleanSheetPercentage_home ||
         stats.home_clean_sheet_percentage ||
+        stats.cs_percentage_home ||
+        stats.csPercentageHome ||
         0,
       awayCleanSheetPercentage:
-        stats.awayCleanSheets ||
-        stats.cleanSheetPercentage_away ||
+        stats.awayCleanSheetPercentage ||
+        stats.cleanSheetsPercentage_away ||
+        stats.seasonCleanSheetPercentage_away ||
         stats.seasonCSPercentage_away ||
+        stats.cleanSheetPercentage_away ||
         stats.away_clean_sheet_percentage ||
+        stats.cs_percentage_away ||
+        stats.csPercentageAway ||
         0,
 
-      // Failed to score percentages
+      // Failed to score percentages - API field names (prioritize non-zero values)
       failedToScorePercentage:
-        stats.failedToScore ||
-        stats.seasonFTSPercentage ||
+        stats.failedToScorePercentage ||
+        stats.seasonFailedToScorePercentage_overall ||
+        stats.seasonFailedToScorePercentage ||
         stats.seasonFTSPercentage_overall ||
+        stats.seasonFTSPercentage ||
         stats.failed_to_score_percentage ||
+        stats.fts_percentage ||
+        stats.ftsPercentage ||
         0,
       homeFailedToScorePercentage:
-        stats.homeFailedToScore ||
+        stats.homeFailedToScorePercentage ||
+        stats.seasonFailedToScorePercentage_home ||
         stats.seasonFTSPercentage_home ||
+        stats.failedToScorePercentage_home ||
         stats.home_failed_to_score_percentage ||
+        stats.fts_percentage_home ||
+        stats.ftsPercentageHome ||
         0,
       awayFailedToScorePercentage:
-        stats.awayFailedToScore ||
+        stats.awayFailedToScorePercentage ||
+        stats.seasonFailedToScorePercentage_away ||
         stats.seasonFTSPercentage_away ||
+        stats.failedToScorePercentage_away ||
         stats.away_failed_to_score_percentage ||
+        stats.fts_percentage_away ||
+        stats.ftsPercentageAway ||
         0,
 
       // xG statistics
@@ -615,7 +758,99 @@ export class MatchDetailsData {
         stats.homePointsPerGame || stats.seasonPPG_home || stats.homePPG || stats.home_ppg || 0,
       awayPPG:
         stats.awayPointsPerGame || stats.seasonPPG_away || stats.awayPPG || stats.away_ppg || 0,
+
+      // First Half Goals Average
+      scoredAVGHT_overall: stats.scoredAVGHT_overall || stats.firstHalfGoalsAVG_overall || 0,
+      scoredAVGHT_home: stats.scoredAVGHT_home || stats.firstHalfGoalsAVG_home || 0,
+      scoredAVGHT_away: stats.scoredAVGHT_away || stats.firstHalfGoalsAVG_away || 0,
+      firstHalfGoalsAVG_overall: stats.firstHalfGoalsAVG_overall || stats.scoredAVGHT_overall || 0,
+      firstHalfGoalsAVG_home: stats.firstHalfGoalsAVG_home || stats.scoredAVGHT_home || 0,
+      firstHalfGoalsAVG_away: stats.firstHalfGoalsAVG_away || stats.scoredAVGHT_away || 0,
+
+      // Second Half Goals Average
+      scored_2hg_avg_overall:
+        stats.scored_2hg_avg_overall ||
+        stats.secondHalfGoalsAVG_overall ||
+        stats.scoredAVG2H_overall ||
+        0,
+      scored_2hg_avg_home:
+        stats.scored_2hg_avg_home || stats.secondHalfGoalsAVG_home || stats.scoredAVG2H_home || 0,
+      scored_2hg_avg_away:
+        stats.scored_2hg_avg_away || stats.secondHalfGoalsAVG_away || stats.scoredAVG2H_away || 0,
+      secondHalfGoalsAVG_overall:
+        stats.secondHalfGoalsAVG_overall ||
+        stats.scored_2hg_avg_overall ||
+        stats.scoredAVG2H_overall ||
+        0,
+      secondHalfGoalsAVG_home:
+        stats.secondHalfGoalsAVG_home || stats.scored_2hg_avg_home || stats.scoredAVG2H_home || 0,
+      secondHalfGoalsAVG_away:
+        stats.secondHalfGoalsAVG_away || stats.scored_2hg_avg_away || stats.scoredAVG2H_away || 0,
+      scoredAVG2H_overall:
+        stats.scoredAVG2H_overall ||
+        stats.secondHalfGoalsAVG_overall ||
+        stats.scored_2hg_avg_overall ||
+        0,
+      scoredAVG2H_home:
+        stats.scoredAVG2H_home || stats.secondHalfGoalsAVG_home || stats.scored_2hg_avg_home || 0,
+      scoredAVG2H_away:
+        stats.scoredAVG2H_away || stats.secondHalfGoalsAVG_away || stats.scored_2hg_avg_away || 0,
+
+      // Over/Under Goals Percentages
+      over05GoalsPercentage:
+        stats.seasonOver05Percentage_overall || stats.over05GoalsPercentage || 0,
+      homeOver05GoalsPercentage:
+        stats.seasonOver05Percentage_home || stats.over05GoalsPercentage_home || 0,
+      awayOver05GoalsPercentage:
+        stats.seasonOver05Percentage_away || stats.over05GoalsPercentage_away || 0,
+
+      over15GoalsPercentage:
+        stats.seasonOver15Percentage_overall || stats.over15GoalsPercentage || 0,
+      homeOver15GoalsPercentage:
+        stats.seasonOver15Percentage_home || stats.over15GoalsPercentage_home || 0,
+      awayOver15GoalsPercentage:
+        stats.seasonOver15Percentage_away || stats.over15GoalsPercentage_away || 0,
+
+      over25GoalsPercentage:
+        stats.seasonOver25Percentage_overall || stats.over25GoalsPercentage || 0,
+      homeOver25GoalsPercentage:
+        stats.seasonOver25Percentage_home || stats.over25GoalsPercentage_home || 0,
+      awayOver25GoalsPercentage:
+        stats.seasonOver25Percentage_away || stats.over25GoalsPercentage_away || 0,
+
+      over35GoalsPercentage:
+        stats.seasonOver35Percentage_overall || stats.over35GoalsPercentage || 0,
+      homeOver35GoalsPercentage:
+        stats.seasonOver35Percentage_home || stats.over35GoalsPercentage_home || 0,
+      awayOver35GoalsPercentage:
+        stats.seasonOver35Percentage_away || stats.over35GoalsPercentage_away || 0,
     };
+
+    // Debug: Log extracted CS and FTS values
+    console.log('Extracted CS values:', {
+      overall: extractedStats.cleanSheetPercentage,
+      home: extractedStats.homeCleanSheetPercentage,
+      away: extractedStats.awayCleanSheetPercentage,
+    });
+    console.log('Extracted FTS values:', {
+      overall: extractedStats.failedToScorePercentage,
+      home: extractedStats.homeFailedToScorePercentage,
+      away: extractedStats.awayFailedToScorePercentage,
+    });
+    console.log('Extracted Half-Time Goals values:', {
+      firstHalf: {
+        overall: extractedStats.scoredAVGHT_overall,
+        home: extractedStats.scoredAVGHT_home,
+        away: extractedStats.scoredAVGHT_away,
+      },
+      secondHalf: {
+        overall: extractedStats.scored_2hg_avg_overall,
+        home: extractedStats.scored_2hg_avg_home,
+        away: extractedStats.scored_2hg_avg_away,
+      },
+    });
+
+    return extractedStats;
   }
 
   /**

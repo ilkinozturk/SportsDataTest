@@ -91,7 +91,19 @@ export class MatchDetailsDisplay {
     this.eventBus.on('h2h-loading', isLoading => this.setH2HLoadingState(isLoading));
 
     // Listen for team statistics data
-    this.eventBus.on('team-stats-loaded', teamData => this.updateTeamComparisonCards(teamData));
+    this.eventBus.on('team-stats-loaded', teamData => {
+      this.updateTeamComparisonCards(teamData);
+    });
+
+    // Listen for form prediction data
+    this.eventBus.on('form-prediction-calculated', prediction => {
+      this.updateFormPrediction(prediction);
+    });
+
+    // Listen for goals comparison data
+    this.eventBus.on('goals-comparison-calculated', comparison => {
+      this.updateGoalsComparison(comparison);
+    });
 
     // Listen for tab switch events
     this.eventBus.on('switch-tab', tabName => {
@@ -115,6 +127,9 @@ export class MatchDetailsDisplay {
     if (!matchData) {
       return;
     }
+
+    // Store match data for later use
+    this.eventBus._lastMatchData = matchData;
 
     // Update header
     this.updateHeader(matchData);
@@ -1108,6 +1123,7 @@ export class MatchDetailsDisplay {
     this.updateTeamFormData(prefix, teamData);
 
     // Update statistics
+    console.log(`Updating ${side} team statistics:`, teamData.stats);
     this.updateTeamStatistics(prefix, teamData.stats || {});
   }
 
@@ -1207,18 +1223,51 @@ export class MatchDetailsDisplay {
         const value = stats[fields[0]] || 0;
         overallEl.textContent = this.formatStatValue(value, suffix);
         this.applyStatClass(overallEl, stat, value);
+        // Debug CS and FTS
+        if (stat === 'CS' || stat === 'FTS') {
+          console.log(
+            `Setting ${prefix}${stat}Overall:`,
+            value,
+            'from field:',
+            fields[0],
+            'value in stats:',
+            stats[fields[0]]
+          );
+        }
       }
 
       if (homeEl) {
         const value = stats[fields[1]] || 0;
         homeEl.textContent = this.formatStatValue(value, suffix);
         this.applyStatClass(homeEl, stat, value);
+        // Debug CS and FTS
+        if (stat === 'CS' || stat === 'FTS') {
+          console.log(
+            `Setting ${prefix}${stat}Home:`,
+            value,
+            'from field:',
+            fields[1],
+            'value in stats:',
+            stats[fields[1]]
+          );
+        }
       }
 
       if (awayEl) {
         const value = stats[fields[2]] || 0;
         awayEl.textContent = this.formatStatValue(value, suffix);
         this.applyStatClass(awayEl, stat, value);
+        // Debug CS and FTS
+        if (stat === 'CS' || stat === 'FTS') {
+          console.log(
+            `Setting ${prefix}${stat}Away:`,
+            value,
+            'from field:',
+            fields[2],
+            'value in stats:',
+            stats[fields[2]]
+          );
+        }
       }
     });
   }
@@ -1357,6 +1406,466 @@ export class MatchDetailsDisplay {
         </div>
       `;
     }
+  }
+
+  /**
+   * Update form prediction display
+   * @param {Object} prediction - Form prediction data
+   */
+  updateFormPrediction(prediction) {
+    const container = document.getElementById('formPredictionContent');
+    if (!container) {
+      return;
+    }
+
+    if (!prediction) {
+      container.innerHTML = `
+        <div class="no-data-message">
+          <i class="fas fa-info-circle"></i>
+          <p>Form verisi bekleniyor...</p>
+        </div>
+      `;
+      return;
+    }
+
+    const { homeTeam, awayTeam, drawProbability, confidence, analysis } = prediction;
+
+    container.innerHTML = `
+      <!-- Win Probability Circles -->
+      <div class="prediction-circles-container">
+        <div class="prediction-circle-group">
+          <div class="circle-progress-wrapper">
+            <svg class="circle-progress" viewBox="0 0 120 120">
+              <circle class="circle-bg" cx="60" cy="60" r="54"></circle>
+              <circle class="circle-fill home-circle" cx="60" cy="60" r="54" 
+                style="stroke-dashoffset: ${339.292 - (339.292 * homeTeam.winProbability) / 100}"></circle>
+            </svg>
+            <div class="circle-content">
+              <span class="circle-percentage">${homeTeam.winProbability}%</span>
+              <span class="circle-label">Kazanır</span>
+            </div>
+          </div>
+          <div class="circle-team-info">
+            <h5>${homeTeam.name}</h5>
+            <span class="team-type">Ev Sahibi</span>
+          </div>
+        </div>
+
+        <div class="prediction-circle-group draw-group">
+          <div class="circle-progress-wrapper small">
+            <svg class="circle-progress" viewBox="0 0 120 120">
+              <circle class="circle-bg" cx="60" cy="60" r="54"></circle>
+              <circle class="circle-fill draw-circle" cx="60" cy="60" r="54" 
+                style="stroke-dashoffset: ${339.292 - (339.292 * drawProbability) / 100}"></circle>
+            </svg>
+            <div class="circle-content">
+              <span class="circle-percentage">${drawProbability}%</span>
+            </div>
+          </div>
+          <div class="circle-team-info">
+            <span class="team-type">Beraberlik</span>
+          </div>
+        </div>
+
+        <div class="prediction-circle-group">
+          <div class="circle-progress-wrapper">
+            <svg class="circle-progress" viewBox="0 0 120 120">
+              <circle class="circle-bg" cx="60" cy="60" r="54"></circle>
+              <circle class="circle-fill away-circle" cx="60" cy="60" r="54" 
+                style="stroke-dashoffset: ${339.292 - (339.292 * awayTeam.winProbability) / 100}"></circle>
+            </svg>
+            <div class="circle-content">
+              <span class="circle-percentage">${awayTeam.winProbability}%</span>
+              <span class="circle-label">Kazanır</span>
+            </div>
+          </div>
+          <div class="circle-team-info">
+            <h5>${awayTeam.name}</h5>
+            <span class="team-type">Deplasman</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Comparison -->
+      <div class="form-comparison-container">
+        <div class="form-comparison-header">
+          <h4>Form Durumu Analizi</h4>
+          <div class="confidence-badge confidence-${confidence}">
+            <i class="fas fa-shield-alt"></i>
+            <span>Güvenilirlik: ${this.getConfidenceText(confidence)}</span>
+          </div>
+        </div>
+        
+        <div class="form-comparison-grid">
+          <!-- Home Team Form -->
+          <div class="form-team-card">
+            <div class="form-team-header">
+              <div class="form-team-title">
+                <img class="form-team-logo" src="${this.getTeamLogo(homeTeam)}" alt="${homeTeam.name}" 
+                  onerror="this.style.display='none'">
+                <h5>${homeTeam.name}</h5>
+              </div>
+              <span class="form-ppg">${homeTeam.formPercentage}%</span>
+            </div>
+            <div class="form-info">
+              <div class="form-row">
+                <span class="form-label">Son 5 Ev Maçı:</span>
+                <div class="form-badges">${this.renderFormBadgesHTML(homeTeam.form)}</div>
+              </div>
+              <div class="form-stats">
+                <span class="form-stat">
+                  <i class="fas fa-trophy"></i>
+                  ${homeTeam.formPoints} puan
+                </span>
+                <span class="form-stat">
+                  <i class="fas fa-home"></i>
+                  Ev formu
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- VS Divider -->
+          <div class="vs-divider">
+            <div class="vs-circle">VS</div>
+          </div>
+
+          <!-- Away Team Form -->
+          <div class="form-team-card">
+            <div class="form-team-header">
+              <div class="form-team-title">
+                <img class="form-team-logo" src="${this.getTeamLogo(awayTeam)}" alt="${awayTeam.name}" 
+                  onerror="this.style.display='none'">
+                <h5>${awayTeam.name}</h5>
+              </div>
+              <span class="form-ppg">${awayTeam.formPercentage}%</span>
+            </div>
+            <div class="form-info">
+              <div class="form-row">
+                <span class="form-label">Son 5 Deplasman Maçı:</span>
+                <div class="form-badges">${this.renderFormBadgesHTML(awayTeam.form)}</div>
+              </div>
+              <div class="form-stats">
+                <span class="form-stat">
+                  <i class="fas fa-trophy"></i>
+                  ${awayTeam.formPoints} puan
+                </span>
+                <span class="form-stat">
+                  <i class="fas fa-plane"></i>
+                  Deplasman formu
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analysis Summary -->
+        <div class="prediction-summary">
+          <div class="summary-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="summary-content">
+            <p class="summary-text">${analysis.summary}</p>
+            <div class="summary-factors">
+              ${analysis.keyFactors
+                .map(
+                  factor => `
+                <span class="factor-badge">
+                  <i class="fas fa-check-circle"></i>
+                  ${factor}
+                </span>
+              `
+                )
+                .join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Add animation after render - Circle animation is handled by CSS transition
+  }
+
+  /**
+   * Render form badges as HTML string
+   * @param {string} formString - Form string like "WWDLW"
+   * @returns {string} HTML string
+   */
+  renderFormBadgesHTML(formString) {
+    if (!formString) {
+      return '<span class="no-form">Veri yok</span>';
+    }
+
+    const last5 = formString.replace(/[-\s]/g, '').slice(-5);
+
+    return last5
+      .split('')
+      .map(result => {
+        const upperResult = result.toUpperCase();
+        const className = upperResult === 'W' ? 'win' : upperResult === 'D' ? 'draw' : 'loss';
+        return `<span class="form-result ${className}">${upperResult}</span>`;
+      })
+      .join('');
+  }
+
+  /**
+   * Get confidence text in Turkish
+   * @param {string} confidence - Confidence level
+   * @returns {string} Turkish text
+   */
+  getConfidenceText(confidence) {
+    const texts = {
+      high: 'Yüksek',
+      medium: 'Orta',
+      low: 'Düşük',
+    };
+    return texts[confidence] || 'Bilinmiyor';
+  }
+
+  /**
+   * Get team logo URL from prediction data
+   * @param {Object} team - Team object from prediction
+   * @returns {string} Logo URL
+   */
+  getTeamLogo(team) {
+    // Try to get logo from match data first
+    const matchData = this.eventBus._lastMatchData;
+    if (matchData) {
+      if (team.name === matchData.homeTeam?.name) {
+        return this.getTeamLogoUrl(matchData.homeTeam.logo);
+      } else if (team.name === matchData.awayTeam?.name) {
+        return this.getTeamLogoUrl(matchData.awayTeam.logo);
+      }
+    }
+    return '';
+  }
+
+  /**
+   * Update goals comparison display
+   * @param {Object} comparison - Goals comparison data
+   */
+  updateGoalsComparison(comparison) {
+    const container = document.getElementById('goalsComparisonContent');
+    if (!container) {
+      return;
+    }
+
+    if (!comparison || !comparison.homeTeam || !comparison.awayTeam) {
+      container.innerHTML = `
+        <div class="no-data-message">
+          <i class="fas fa-info-circle"></i>
+          <p>Gol istatistikleri bekleniyor...</p>
+        </div>
+      `;
+      return;
+    }
+
+    const { homeTeam, awayTeam } = comparison;
+
+    container.innerHTML = `
+      <!-- Goals Comparison Grid -->
+      <div class="goals-comparison-grid">
+        <!-- Home Team Goals -->
+        <div class="goals-team-section">
+          <div class="goals-team-header">
+            ${homeTeam.logo ? `<img src="${this.getTeamLogoUrl(homeTeam.logo)}" alt="${homeTeam.name}" class="goals-team-logo">` : ''}
+            <h4>${homeTeam.name}</h4>
+            <span class="venue-badge home">Ev Sahibi</span>
+          </div>
+          
+          <!-- Average Goals Per Match -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">Maç Başı Gol</div>
+            <div class="goals-stat-value">${homeTeam.stats.goalsPerMatch}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(homeTeam.stats.goalsPerMatch, 4)}%"></div>
+            </div>
+          </div>
+          
+          <!-- Total Goals -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">Toplam Gol</div>
+            <div class="goals-stat-value">${homeTeam.stats.totalGoals}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(homeTeam.stats.totalGoals, 100)}%"></div>
+            </div>
+          </div>
+          
+          <!-- First Half Average -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">İlk Yarı Ort.</div>
+            <div class="goals-stat-value">${homeTeam.stats.firstHalfAvg}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(homeTeam.stats.firstHalfAvg, 2)}%"></div>
+            </div>
+          </div>
+          
+          <!-- Second Half Average -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">İkinci Yarı Ort.</div>
+            <div class="goals-stat-value">${homeTeam.stats.secondHalfAvg}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(homeTeam.stats.secondHalfAvg, 2)}%"></div>
+            </div>
+          </div>
+          
+          <!-- Over/Under Stats -->
+          <div class="goals-over-under-section">
+            <h5>Üst/Alt İstatistikleri</h5>
+            <div class="goals-over-under-grid">
+              <div class="over-under-stat">
+                <span class="ou-label">0.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over05)}">${homeTeam.stats.over05}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">1.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over15)}">${homeTeam.stats.over15}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">2.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over25)}">${homeTeam.stats.over25}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">3.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over35)}">${homeTeam.stats.over35}%</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Failed to Score -->
+          <div class="goals-stat-row fts-row">
+            <div class="goals-stat-label">Gol Atamama</div>
+            <div class="goals-stat-value ${this.getFTSClass(homeTeam.stats.failedToScore)}">${homeTeam.stats.failedToScore}%</div>
+            <div class="goals-progress-bar fts-bar">
+              <div class="goals-progress-fill" style="width: ${homeTeam.stats.failedToScore}%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- VS Divider -->
+        <div class="goals-vs-section">
+          <div class="goals-vs-circle">VS</div>
+        </div>
+        
+        <!-- Away Team Goals -->
+        <div class="goals-team-section">
+          <div class="goals-team-header">
+            ${awayTeam.logo ? `<img src="${this.getTeamLogoUrl(awayTeam.logo)}" alt="${awayTeam.name}" class="goals-team-logo">` : ''}
+            <h4>${awayTeam.name}</h4>
+            <span class="venue-badge away">Deplasman</span>
+          </div>
+          
+          <!-- Average Goals Per Match -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">Maç Başı Gol</div>
+            <div class="goals-stat-value">${awayTeam.stats.goalsPerMatch}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(awayTeam.stats.goalsPerMatch, 4)}%"></div>
+            </div>
+          </div>
+          
+          <!-- Total Goals -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">Toplam Gol</div>
+            <div class="goals-stat-value">${awayTeam.stats.totalGoals}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(awayTeam.stats.totalGoals, 100)}%"></div>
+            </div>
+          </div>
+          
+          <!-- First Half Average -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">İlk Yarı Ort.</div>
+            <div class="goals-stat-value">${awayTeam.stats.firstHalfAvg}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(awayTeam.stats.firstHalfAvg, 2)}%"></div>
+            </div>
+          </div>
+          
+          <!-- Second Half Average -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">İkinci Yarı Ort.</div>
+            <div class="goals-stat-value">${awayTeam.stats.secondHalfAvg}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(awayTeam.stats.secondHalfAvg, 2)}%"></div>
+            </div>
+          </div>
+          
+          <!-- Over/Under Stats -->
+          <div class="goals-over-under-section">
+            <h5>Üst/Alt İstatistikleri</h5>
+            <div class="goals-over-under-grid">
+              <div class="over-under-stat">
+                <span class="ou-label">0.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over05)}">${awayTeam.stats.over05}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">1.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over15)}">${awayTeam.stats.over15}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">2.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over25)}">${awayTeam.stats.over25}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">3.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over35)}">${awayTeam.stats.over35}%</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Failed to Score -->
+          <div class="goals-stat-row fts-row">
+            <div class="goals-stat-label">Gol Atamama</div>
+            <div class="goals-stat-value ${this.getFTSClass(awayTeam.stats.failedToScore)}">${awayTeam.stats.failedToScore}%</div>
+            <div class="goals-progress-bar fts-bar">
+              <div class="goals-progress-fill" style="width: ${awayTeam.stats.failedToScore}%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Calculate percentage for progress bar
+   * @param {number} value - Current value
+   * @param {number} max - Maximum value
+   * @returns {number} Percentage
+   */
+  calculateGoalsPercentage(value, max) {
+    const percentage = (parseFloat(value) / max) * 100;
+    return Math.min(percentage, 100);
+  }
+
+  /**
+   * Get class for over/under values
+   * @param {number} value - Percentage value
+   * @returns {string} CSS class
+   */
+  getOverUnderClass(value) {
+    if (value >= 70) {
+      return 'high';
+    }
+    if (value >= 50) {
+      return 'medium';
+    }
+    return 'low';
+  }
+
+  /**
+   * Get class for failed to score values
+   * @param {number} value - Percentage value
+   * @returns {string} CSS class
+   */
+  getFTSClass(value) {
+    if (value >= 40) {
+      return 'poor';
+    }
+    if (value >= 25) {
+      return 'average';
+    }
+    return 'good';
   }
 }
 
