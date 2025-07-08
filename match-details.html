@@ -133,164 +133,374 @@
       <div class="tab-content">
         <!-- Overview Tab -->
         <div id="overviewTab" class="tab-pane active" data-tab="overview">
-          <div class="overview-grid">
-            <!-- Head to Head Statistics -->
-            <div class="stat-card h2h-stats-card">
-              <h3 class="card-title">Head to Head Statistics</h3>
-              <div class="h2h-stats-content">
-                <!-- Teams Display -->
-                <!-- Teams Display -->
-                <div class="h2h-teams-display">
-                  <div class="h2h-team-section">
-                    <img id="h2hHomeTeamLogo" class="h2h-team-logo" src="" alt="" />
-                    <h4 id="h2hHomeTeamName" class="h2h-team-name">-</h4>
-                  </div>
-
-                  <div class="h2h-vs-section">
-                    <span class="vs-text">VS</span>
-                  </div>
-
-                  <div class="h2h-team-section">
-                    <img id="h2hAwayTeamLogo" class="h2h-team-logo" src="" alt="" />
-                    <h4 id="h2hAwayTeamName" class="h2h-team-name">-</h4>
-                  </div>
+          <!-- Head to Head Statistics -->
+          <div class="stat-card h2h-stats-card">
+            <h3 class="card-title">Head to Head Statistics</h3>
+            <div class="h2h-stats-content">
+              <!-- Teams Display -->
+              <!-- Teams Display -->
+              <div class="h2h-teams-display">
+                <div class="h2h-team-section">
+                  <img id="h2hHomeTeamLogo" class="h2h-team-logo" src="" alt="" />
+                  <h4 id="h2hHomeTeamName" class="h2h-team-name">-</h4>
                 </div>
 
-                <!-- Progress Bar with Stats -->
-                <div class="h2h-progress-container">
-                  <!-- Stats Overlay - Positioned above progress bar -->
-                  <div class="h2h-stats-overlay">
-                    <div class="h2h-stat-item" id="h2hHomeStatItem">
-                      <div class="h2h-wins-count" id="h2hHomeWins">0</div>
-                      <div class="h2h-wins-label">Wins</div>
-                    </div>
-
-                    <div class="h2h-stat-item" id="h2hDrawStatItem">
-                      <div class="h2h-draws-count" id="h2hDraws">0</div>
-                      <div class="h2h-draws-label">Draws</div>
-                    </div>
-
-                    <div class="h2h-stat-item" id="h2hAwayStatItem">
-                      <div class="h2h-wins-count" id="h2hAwayWins">0</div>
-                      <div class="h2h-wins-label">Wins</div>
-                    </div>
-                  </div>
-                  <div class="h2h-progress-bar">
-                    <div class="h2h-progress-home" id="h2hProgressHome" style="width: 33.33%">
-                      <span class="h2h-progress-label" id="h2hProgressHomeLabel">33%</span>
-                    </div>
-                    <div class="h2h-progress-draw" id="h2hProgressDraw" style="width: 33.33%">
-                      <span class="h2h-progress-label" id="h2hProgressDrawLabel">33%</span>
-                    </div>
-                    <div class="h2h-progress-away" id="h2hProgressAway" style="width: 33.33%">
-                      <span class="h2h-progress-label" id="h2hProgressAwayLabel">33%</span>
-                    </div>
-                  </div>
-                  <div class="h2h-progress-labels">
-                    <span class="h2h-label-home">Home Wins</span>
-                    <span class="h2h-label-draw">Draws</span>
-                    <span class="h2h-label-away">Away Wins</span>
-                  </div>
+                <div class="h2h-vs-section">
+                  <span class="vs-text">VS</span>
                 </div>
 
-                <!-- Total Matches -->
-                <div class="h2h-total-matches">
-                  <span class="total-matches-label">Total Matches:</span>
-                  <span class="total-matches-count" id="h2hTotalMatches">0</span>
+                <div class="h2h-team-section">
+                  <img id="h2hAwayTeamLogo" class="h2h-team-logo" src="" alt="" />
+                  <h4 id="h2hAwayTeamName" class="h2h-team-name">-</h4>
                 </div>
+              </div>
 
-                <!-- H2H Over/Under Stats -->
-                <div class="h2h-stats-grid">
-                  <!-- H2H Over 1.5 -->
-                  <div class="h2h-over-card">
-                    <h4 class="h2h-stat-title">Over 1.5</h4>
-                    <div class="h2h-stat-content">
-                      <div class="stat-percentage" id="h2hOver15">
-                        <span class="percentage-value">-</span>
-                        <span class="percentage-label">%</span>
-                      </div>
-                      <div class="stat-details">
-                        <div class="stat-row">
-                          <span class="stat-label">Matches</span>
-                          <span class="stat-value" id="h2hOver15Count">-</span>
-                        </div>
-                        <div class="stat-row">
-                          <span class="stat-label">Total</span>
-                          <span class="stat-value" id="h2hOver15Total">-</span>
-                        </div>
-                      </div>
-                    </div>
+              <!-- Progress Bar with Stats -->
+              <div class="h2h-progress-container">
+                <!-- Stats Overlay - Positioned above progress bar -->
+                <div class="h2h-stats-overlay">
+                  <div class="h2h-stat-item" id="h2hHomeStatItem">
+                    <div class="h2h-wins-count" id="h2hHomeWins">0</div>
+                    <div class="h2h-wins-label">Wins</div>
                   </div>
 
-                  <!-- H2H Over 2.5 -->
-                  <div class="h2h-over-card">
-                    <h4 class="h2h-stat-title">Over 2.5</h4>
-                    <div class="h2h-stat-content">
-                      <div class="stat-percentage" id="h2hOver25">
-                        <span class="percentage-value">-</span>
-                        <span class="percentage-label">%</span>
-                      </div>
-                      <div class="stat-details">
-                        <div class="stat-row">
-                          <span class="stat-label">Matches</span>
-                          <span class="stat-value" id="h2hOver25Count">-</span>
-                        </div>
-                        <div class="stat-row">
-                          <span class="stat-label">Total</span>
-                          <span class="stat-value" id="h2hOver25Total">-</span>
-                        </div>
-                      </div>
-                    </div>
+                  <div class="h2h-stat-item" id="h2hDrawStatItem">
+                    <div class="h2h-draws-count" id="h2hDraws">0</div>
+                    <div class="h2h-draws-label">Draws</div>
                   </div>
 
-                  <!-- H2H Over 3.5 -->
-                  <div class="h2h-over-card">
-                    <h4 class="h2h-stat-title">Over 3.5</h4>
-                    <div class="h2h-stat-content">
-                      <div class="stat-percentage" id="h2hOver35">
-                        <span class="percentage-value">-</span>
-                        <span class="percentage-label">%</span>
-                      </div>
-                      <div class="stat-details">
-                        <div class="stat-row">
-                          <span class="stat-label">Matches</span>
-                          <span class="stat-value" id="h2hOver35Count">-</span>
-                        </div>
-                        <div class="stat-row">
-                          <span class="stat-label">Total</span>
-                          <span class="stat-value" id="h2hOver35Total">-</span>
-                        </div>
-                      </div>
-                    </div>
+                  <div class="h2h-stat-item" id="h2hAwayStatItem">
+                    <div class="h2h-wins-count" id="h2hAwayWins">0</div>
+                    <div class="h2h-wins-label">Wins</div>
                   </div>
+                </div>
+                <div class="h2h-progress-bar">
+                  <div class="h2h-progress-home" id="h2hProgressHome" style="width: 33.33%">
+                    <span class="h2h-progress-label" id="h2hProgressHomeLabel">33%</span>
+                  </div>
+                  <div class="h2h-progress-draw" id="h2hProgressDraw" style="width: 33.33%">
+                    <span class="h2h-progress-label" id="h2hProgressDrawLabel">33%</span>
+                  </div>
+                  <div class="h2h-progress-away" id="h2hProgressAway" style="width: 33.33%">
+                    <span class="h2h-progress-label" id="h2hProgressAwayLabel">33%</span>
+                  </div>
+                </div>
+                <div class="h2h-progress-labels">
+                  <span class="h2h-label-home">Home Wins</span>
+                  <span class="h2h-label-draw">Draws</span>
+                  <span class="h2h-label-away">Away Wins</span>
+                </div>
+              </div>
 
-                  <!-- H2H BTTS -->
-                  <div class="h2h-btts-card">
-                    <h4 class="h2h-stat-title">BTTS</h4>
-                    <div class="h2h-stat-content">
-                      <div class="stat-percentage" id="h2hBTTS">
-                        <span class="percentage-value">-</span>
-                        <span class="percentage-label">%</span>
+              <!-- Total Matches -->
+              <div class="h2h-total-matches">
+                <span class="total-matches-label">Total Matches:</span>
+                <span class="total-matches-count" id="h2hTotalMatches">0</span>
+              </div>
+
+              <!-- H2H Over/Under Stats -->
+              <div class="h2h-stats-grid">
+                <!-- H2H Over 1.5 -->
+                <div class="h2h-over-card">
+                  <h4 class="h2h-stat-title">Over 1.5</h4>
+                  <div class="h2h-stat-content">
+                    <div class="stat-percentage" id="h2hOver15">
+                      <span class="percentage-value">-</span>
+                      <span class="percentage-label">%</span>
+                    </div>
+                    <div class="stat-details">
+                      <div class="stat-row">
+                        <span class="stat-label">Matches</span>
+                        <span class="stat-value" id="h2hOver15Count">-</span>
                       </div>
-                      <div class="stat-details">
-                        <div class="stat-row">
-                          <span class="stat-label">Yes</span>
-                          <span class="stat-value" id="h2hBTTSYes">-</span>
-                        </div>
-                        <div class="stat-row">
-                          <span class="stat-label">No</span>
-                          <span class="stat-value" id="h2hBTTSNo">-</span>
-                        </div>
+                      <div class="stat-row">
+                        <span class="stat-label">Total</span>
+                        <span class="stat-value" id="h2hOver15Total">-</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- H2H Recent Matches -->
-                <div class="h2h-recent-matches-section">
-                  <h4 class="h2h-section-title">Recent H2H Matches</h4>
-                  <div id="h2hRecentMatches" class="h2h-recent-matches">
-                    <!-- Recent matches will be populated here -->
+                <!-- H2H Over 2.5 -->
+                <div class="h2h-over-card">
+                  <h4 class="h2h-stat-title">Over 2.5</h4>
+                  <div class="h2h-stat-content">
+                    <div class="stat-percentage" id="h2hOver25">
+                      <span class="percentage-value">-</span>
+                      <span class="percentage-label">%</span>
+                    </div>
+                    <div class="stat-details">
+                      <div class="stat-row">
+                        <span class="stat-label">Matches</span>
+                        <span class="stat-value" id="h2hOver25Count">-</span>
+                      </div>
+                      <div class="stat-row">
+                        <span class="stat-label">Total</span>
+                        <span class="stat-value" id="h2hOver25Total">-</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- H2H Over 3.5 -->
+                <div class="h2h-over-card">
+                  <h4 class="h2h-stat-title">Over 3.5</h4>
+                  <div class="h2h-stat-content">
+                    <div class="stat-percentage" id="h2hOver35">
+                      <span class="percentage-value">-</span>
+                      <span class="percentage-label">%</span>
+                    </div>
+                    <div class="stat-details">
+                      <div class="stat-row">
+                        <span class="stat-label">Matches</span>
+                        <span class="stat-value" id="h2hOver35Count">-</span>
+                      </div>
+                      <div class="stat-row">
+                        <span class="stat-label">Total</span>
+                        <span class="stat-value" id="h2hOver35Total">-</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- H2H BTTS -->
+                <div class="h2h-btts-card">
+                  <h4 class="h2h-stat-title">BTTS</h4>
+                  <div class="h2h-stat-content">
+                    <div class="stat-percentage" id="h2hBTTS">
+                      <span class="percentage-value">-</span>
+                      <span class="percentage-label">%</span>
+                    </div>
+                    <div class="stat-details">
+                      <div class="stat-row">
+                        <span class="stat-label">Yes</span>
+                        <span class="stat-value" id="h2hBTTSYes">-</span>
+                      </div>
+                      <div class="stat-row">
+                        <span class="stat-label">No</span>
+                        <span class="stat-value" id="h2hBTTSNo">-</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- H2H Recent Matches -->
+              <div class="h2h-recent-matches-section">
+                <h4 class="h2h-section-title">Recent H2H Matches</h4>
+                <div id="h2hRecentMatches" class="h2h-recent-matches">
+                  <!-- Recent matches will be populated here -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Team Statistics Comparison -->
+          <div class="stat-card team-comparison-card">
+            <h3 class="card-title">Team Statistics Comparison</h3>
+            <div class="team-comparison-grid">
+              <!-- Home Team Card -->
+              <div class="team-stat-card home-team-card" id="homeTeamStatCard">
+                <!-- Team Header -->
+                <div class="team-card-header">
+                  <div class="team-card-logo-wrapper">
+                    <img class="team-card-logo" id="homeTeamCardLogo" src="" alt="" />
+                  </div>
+                  <div class="team-card-info">
+                    <h4 class="team-card-name" id="homeTeamCardName">-</h4>
+                    <div class="team-card-league" id="homeTeamCardLeague">-</div>
+                    <div class="team-card-position" id="homeTeamCardPosition">-</div>
+                  </div>
+                </div>
+
+                <!-- Form Section -->
+                <div class="team-card-form-section">
+                  <div class="form-row">
+                    <span class="form-label">Form</span>
+                    <span class="form-label">Results</span>
+                    <span class="form-label">PPG</span>
+                  </div>
+                  <div class="form-row">
+                    <span class="form-venue">Overall</span>
+                    <div class="form-results" id="homeTeamOverallForm">-</div>
+                    <span class="form-ppg" id="homeTeamOverallPPG">0.00</span>
+                  </div>
+                  <div class="form-row">
+                    <span class="form-venue">Home</span>
+                    <div class="form-results" id="homeTeamHomeForm">-</div>
+                    <span class="form-ppg" id="homeTeamHomePPG">0.00</span>
+                  </div>
+                  <div class="form-row">
+                    <span class="form-venue">Away</span>
+                    <div class="form-results" id="homeTeamAwayForm">-</div>
+                    <span class="form-ppg" id="homeTeamAwayPPG">0.00</span>
+                  </div>
+                </div>
+
+                <!-- Stats Table -->
+                <div class="team-card-stats-table">
+                  <div class="stats-header">
+                    <span>Stats</span>
+                    <span>Overall</span>
+                    <span>Home</span>
+                    <span>Away</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">Win %</span>
+                    <span class="stat-value" id="homeTeamWinOverall">-</span>
+                    <span class="stat-value" id="homeTeamWinHome">-</span>
+                    <span class="stat-value" id="homeTeamWinAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">AVG</span>
+                    <span class="stat-value" id="homeTeamAvgOverall">-</span>
+                    <span class="stat-value" id="homeTeamAvgHome">-</span>
+                    <span class="stat-value" id="homeTeamAvgAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">Scored</span>
+                    <span class="stat-value" id="homeTeamScoredOverall">-</span>
+                    <span class="stat-value" id="homeTeamScoredHome">-</span>
+                    <span class="stat-value" id="homeTeamScoredAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">Conceded</span>
+                    <span class="stat-value" id="homeTeamConcededOverall">-</span>
+                    <span class="stat-value" id="homeTeamConcededHome">-</span>
+                    <span class="stat-value" id="homeTeamConcededAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">BTTS</span>
+                    <span class="stat-value" id="homeTeamBTTSOverall">-</span>
+                    <span class="stat-value" id="homeTeamBTTSHome">-</span>
+                    <span class="stat-value" id="homeTeamBTTSAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">CS</span>
+                    <span class="stat-value" id="homeTeamCSOverall">-</span>
+                    <span class="stat-value" id="homeTeamCSHome">-</span>
+                    <span class="stat-value" id="homeTeamCSAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">FTS</span>
+                    <span class="stat-value" id="homeTeamFTSOverall">-</span>
+                    <span class="stat-value" id="homeTeamFTSHome">-</span>
+                    <span class="stat-value" id="homeTeamFTSAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">xG</span>
+                    <span class="stat-value" id="homeTeamXGOverall">-</span>
+                    <span class="stat-value" id="homeTeamXGHome">-</span>
+                    <span class="stat-value" id="homeTeamXGAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">xGA</span>
+                    <span class="stat-value" id="homeTeamXGAOverall">-</span>
+                    <span class="stat-value" id="homeTeamXGAHome">-</span>
+                    <span class="stat-value" id="homeTeamXGAAway">-</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Away Team Card -->
+              <div class="team-stat-card away-team-card" id="awayTeamStatCard">
+                <!-- Team Header -->
+                <div class="team-card-header">
+                  <div class="team-card-logo-wrapper">
+                    <img class="team-card-logo" id="awayTeamCardLogo" src="" alt="" />
+                  </div>
+                  <div class="team-card-info">
+                    <h4 class="team-card-name" id="awayTeamCardName">-</h4>
+                    <div class="team-card-league" id="awayTeamCardLeague">-</div>
+                    <div class="team-card-position" id="awayTeamCardPosition">-</div>
+                  </div>
+                </div>
+
+                <!-- Form Section -->
+                <div class="team-card-form-section">
+                  <div class="form-row">
+                    <span class="form-label">Form</span>
+                    <span class="form-label">Results</span>
+                    <span class="form-label">PPG</span>
+                  </div>
+                  <div class="form-row">
+                    <span class="form-venue">Overall</span>
+                    <div class="form-results" id="awayTeamOverallForm">-</div>
+                    <span class="form-ppg" id="awayTeamOverallPPG">0.00</span>
+                  </div>
+                  <div class="form-row">
+                    <span class="form-venue">Home</span>
+                    <div class="form-results" id="awayTeamHomeForm">-</div>
+                    <span class="form-ppg" id="awayTeamHomePPG">0.00</span>
+                  </div>
+                  <div class="form-row">
+                    <span class="form-venue">Away</span>
+                    <div class="form-results" id="awayTeamAwayForm">-</div>
+                    <span class="form-ppg" id="awayTeamAwayPPG">0.00</span>
+                  </div>
+                </div>
+
+                <!-- Stats Table -->
+                <div class="team-card-stats-table">
+                  <div class="stats-header">
+                    <span>Stats</span>
+                    <span>Overall</span>
+                    <span>Home</span>
+                    <span>Away</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">Win %</span>
+                    <span class="stat-value" id="awayTeamWinOverall">-</span>
+                    <span class="stat-value" id="awayTeamWinHome">-</span>
+                    <span class="stat-value" id="awayTeamWinAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">AVG</span>
+                    <span class="stat-value" id="awayTeamAvgOverall">-</span>
+                    <span class="stat-value" id="awayTeamAvgHome">-</span>
+                    <span class="stat-value" id="awayTeamAvgAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">Scored</span>
+                    <span class="stat-value" id="awayTeamScoredOverall">-</span>
+                    <span class="stat-value" id="awayTeamScoredHome">-</span>
+                    <span class="stat-value" id="awayTeamScoredAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">Conceded</span>
+                    <span class="stat-value" id="awayTeamConcededOverall">-</span>
+                    <span class="stat-value" id="awayTeamConcededHome">-</span>
+                    <span class="stat-value" id="awayTeamConcededAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">BTTS</span>
+                    <span class="stat-value" id="awayTeamBTTSOverall">-</span>
+                    <span class="stat-value" id="awayTeamBTTSHome">-</span>
+                    <span class="stat-value" id="awayTeamBTTSAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">CS</span>
+                    <span class="stat-value" id="awayTeamCSOverall">-</span>
+                    <span class="stat-value" id="awayTeamCSHome">-</span>
+                    <span class="stat-value" id="awayTeamCSAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">FTS</span>
+                    <span class="stat-value" id="awayTeamFTSOverall">-</span>
+                    <span class="stat-value" id="awayTeamFTSHome">-</span>
+                    <span class="stat-value" id="awayTeamFTSAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">xG</span>
+                    <span class="stat-value" id="awayTeamXGOverall">-</span>
+                    <span class="stat-value" id="awayTeamXGHome">-</span>
+                    <span class="stat-value" id="awayTeamXGAway">-</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-name">xGA</span>
+                    <span class="stat-value" id="awayTeamXGAOverall">-</span>
+                    <span class="stat-value" id="awayTeamXGAHome">-</span>
+                    <span class="stat-value" id="awayTeamXGAAway">-</span>
                   </div>
                 </div>
               </div>

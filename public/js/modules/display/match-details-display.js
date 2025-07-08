@@ -90,6 +90,9 @@ export class MatchDetailsDisplay {
     // Listen for H2H loading state
     this.eventBus.on('h2h-loading', isLoading => this.setH2HLoadingState(isLoading));
 
+    // Listen for team statistics data
+    this.eventBus.on('team-stats-loaded', teamData => this.updateTeamComparisonCards(teamData));
+
     // Listen for tab switch events
     this.eventBus.on('switch-tab', tabName => {
       this.switchTab(tabName);
@@ -130,6 +133,14 @@ export class MatchDetailsDisplay {
 
     // Emit event for tab content update
     this.eventBus.emit('match-display-updated', matchData);
+
+    // Request team statistics for comparison
+    if (matchData.homeTeam && matchData.awayTeam) {
+      this.eventBus.emit('request-team-stats', {
+        homeTeamId: matchData.homeTeam.id,
+        awayTeamId: matchData.awayTeam.id,
+      });
+    }
   }
 
   updateHeader(matchData) {
@@ -1036,6 +1047,315 @@ export class MatchDetailsDisplay {
       if (spinner) {
         spinner.remove();
       }
+    }
+  }
+
+  /**
+   * Update team comparison cards
+   * @param {Object} teamData - Team statistics data
+   */
+  updateTeamComparisonCards(teamData) {
+    if (!teamData || !teamData.homeTeam || !teamData.awayTeam) {
+      this.showNoTeamDataMessage();
+      return;
+    }
+
+    // Update home team card
+    this.updateTeamCard('home', teamData.homeTeam);
+
+    // Update away team card
+    this.updateTeamCard('away', teamData.awayTeam);
+  }
+
+  /**
+   * Update individual team card
+   * @param {string} side - 'home' or 'away'
+   * @param {Object} teamData - Team data object
+   */
+  updateTeamCard(side, teamData) {
+    const prefix = side === 'home' ? 'homeTeam' : 'awayTeam';
+
+    // Update team header
+    const logoEl = document.getElementById(`${prefix}CardLogo`);
+    const nameEl = document.getElementById(`${prefix}CardName`);
+    const leagueEl = document.getElementById(`${prefix}CardLeague`);
+    const positionEl = document.getElementById(`${prefix}CardPosition`);
+
+    if (logoEl && teamData.logo) {
+      const logoUrl = this.getTeamLogoUrl(teamData.logo);
+      logoEl.src = logoUrl;
+      logoEl.style.display = 'block';
+      logoEl.onerror = () => {
+        logoEl.style.display = 'none';
+      };
+    } else if (logoEl) {
+      logoEl.style.display = 'none';
+    }
+
+    if (nameEl) {
+      nameEl.textContent = teamData.name || '-';
+    }
+
+    if (leagueEl) {
+      leagueEl.textContent = teamData.league || '-';
+    }
+
+    if (positionEl && teamData.position) {
+      positionEl.textContent = `Position: ${teamData.position}`;
+    }
+
+    // Update form data
+    this.updateTeamFormData(prefix, teamData);
+
+    // Update statistics
+    this.updateTeamStatistics(prefix, teamData.stats || {});
+  }
+
+  /**
+   * Update team form data
+   * @param {string} prefix - Element ID prefix
+   * @param {Object} teamData - Team data
+   */
+  updateTeamFormData(prefix, teamData) {
+    // Overall form
+    const overallFormEl = document.getElementById(`${prefix}OverallForm`);
+    const overallPPGEl = document.getElementById(`${prefix}OverallPPG`);
+
+    if (overallFormEl && teamData.form) {
+      this.renderFormBadges(overallFormEl, teamData.form);
+    }
+
+    if (overallPPGEl) {
+      const ppg = teamData.stats?.ppg || teamData.ppg || 0;
+      overallPPGEl.textContent = parseFloat(ppg).toFixed(2);
+      this.applyPPGClass(overallPPGEl, ppg);
+    }
+
+    // Home form
+    const homeFormEl = document.getElementById(`${prefix}HomeForm`);
+    const homePPGEl = document.getElementById(`${prefix}HomePPG`);
+
+    if (homeFormEl && teamData.homeForm) {
+      this.renderFormBadges(homeFormEl, teamData.homeForm);
+    }
+
+    if (homePPGEl) {
+      const homePPG = teamData.stats?.homePPG || teamData.homePPG || 0;
+      homePPGEl.textContent = parseFloat(homePPG).toFixed(2);
+      this.applyPPGClass(homePPGEl, homePPG);
+    }
+
+    // Away form
+    const awayFormEl = document.getElementById(`${prefix}AwayForm`);
+    const awayPPGEl = document.getElementById(`${prefix}AwayPPG`);
+
+    if (awayFormEl && teamData.awayForm) {
+      this.renderFormBadges(awayFormEl, teamData.awayForm);
+    }
+
+    if (awayPPGEl) {
+      const awayPPG = teamData.stats?.awayPPG || teamData.awayPPG || 0;
+      awayPPGEl.textContent = parseFloat(awayPPG).toFixed(2);
+      this.applyPPGClass(awayPPGEl, awayPPG);
+    }
+  }
+
+  /**
+   * Update team statistics
+   * @param {string} prefix - Element ID prefix
+   * @param {Object} stats - Statistics object
+   */
+  updateTeamStatistics(prefix, stats) {
+    const statMappings = [
+      {
+        stat: 'Win',
+        fields: ['winPercentage', 'homeWinPercentage', 'awayWinPercentage'],
+        suffix: '%',
+      },
+      { stat: 'Avg', fields: ['goalsPerMatch', 'homeGoalsPerMatch', 'awayGoalsPerMatch'] },
+      { stat: 'Scored', fields: ['goalsScored', 'homeGoalsScored', 'awayGoalsScored'] },
+      { stat: 'Conceded', fields: ['goalsConceded', 'homeGoalsConceded', 'awayGoalsConceded'] },
+      {
+        stat: 'BTTS',
+        fields: ['bttsPercentage', 'homeBTTSPercentage', 'awayBTTSPercentage'],
+        suffix: '%',
+      },
+      {
+        stat: 'CS',
+        fields: ['cleanSheetPercentage', 'homeCleanSheetPercentage', 'awayCleanSheetPercentage'],
+        suffix: '%',
+      },
+      {
+        stat: 'FTS',
+        fields: [
+          'failedToScorePercentage',
+          'homeFailedToScorePercentage',
+          'awayFailedToScorePercentage',
+        ],
+        suffix: '%',
+      },
+      { stat: 'XG', fields: ['xGFor', 'homeXGFor', 'awayXGFor'] },
+      { stat: 'XGA', fields: ['xGAgainst', 'homeXGAgainst', 'awayXGAgainst'] },
+    ];
+
+    statMappings.forEach(({ stat, fields, suffix = '' }) => {
+      const overallEl = document.getElementById(`${prefix}${stat}Overall`);
+      const homeEl = document.getElementById(`${prefix}${stat}Home`);
+      const awayEl = document.getElementById(`${prefix}${stat}Away`);
+
+      if (overallEl) {
+        const value = stats[fields[0]] || 0;
+        overallEl.textContent = this.formatStatValue(value, suffix);
+        this.applyStatClass(overallEl, stat, value);
+      }
+
+      if (homeEl) {
+        const value = stats[fields[1]] || 0;
+        homeEl.textContent = this.formatStatValue(value, suffix);
+        this.applyStatClass(homeEl, stat, value);
+      }
+
+      if (awayEl) {
+        const value = stats[fields[2]] || 0;
+        awayEl.textContent = this.formatStatValue(value, suffix);
+        this.applyStatClass(awayEl, stat, value);
+      }
+    });
+  }
+
+  /**
+   * Render form badges
+   * @param {HTMLElement} container - Container element
+   * @param {string} formString - Form string (e.g., "WWDLW")
+   */
+  renderFormBadges(container, formString) {
+    container.innerHTML = '';
+    const results = formString.split('').slice(-5); // Last 5 matches
+
+    results.forEach(result => {
+      const badge = document.createElement('span');
+      badge.className = `form-badge ${result.toLowerCase()}`;
+      badge.textContent = result;
+      container.appendChild(badge);
+    });
+  }
+
+  /**
+   * Apply PPG class based on value
+   * @param {HTMLElement} element - Element to apply class to
+   * @param {number} ppg - Points per game value
+   */
+  applyPPGClass(element, ppg) {
+    element.classList.remove('high', 'medium', 'low');
+
+    if (ppg >= 2.0) {
+      element.classList.add('high');
+    } else if (ppg >= 1.5) {
+      element.classList.add('medium');
+    } else {
+      element.classList.add('low');
+    }
+  }
+
+  /**
+   * Apply stat class based on value and type
+   * @param {HTMLElement} element - Element to apply class to
+   * @param {string} statType - Type of statistic
+   * @param {number} value - Statistic value
+   */
+  applyStatClass(element, statType, value) {
+    element.classList.remove('good', 'average', 'poor');
+
+    const thresholds = {
+      Win: { good: 50, average: 33 },
+      Avg: { good: 2.0, average: 1.5 },
+      Scored: { good: 2.0, average: 1.5 },
+      Conceded: { good: 1.0, average: 1.5, inverse: true },
+      BTTS: { good: 60, average: 40 },
+      CS: { good: 40, average: 25 },
+      FTS: { good: 20, average: 35, inverse: true },
+      XG: { good: 2.0, average: 1.5 },
+      XGA: { good: 1.0, average: 1.5, inverse: true },
+    };
+
+    const threshold = thresholds[statType];
+    if (!threshold) {
+      return;
+    }
+
+    if (threshold.inverse) {
+      if (value <= threshold.good) {
+        element.classList.add('good');
+      } else if (value <= threshold.average) {
+        element.classList.add('average');
+      } else {
+        element.classList.add('poor');
+      }
+    } else {
+      if (value >= threshold.good) {
+        element.classList.add('good');
+      } else if (value >= threshold.average) {
+        element.classList.add('average');
+      } else {
+        element.classList.add('poor');
+      }
+    }
+  }
+
+  /**
+   * Format statistic value
+   * @param {number} value - Value to format
+   * @param {string} suffix - Suffix to add
+   * @returns {string} - Formatted value
+   */
+  formatStatValue(value, suffix = '') {
+    const numValue = parseFloat(value) || 0;
+
+    if (suffix === '%') {
+      return `${numValue.toFixed(0)}${suffix}`;
+    }
+
+    // For averages and xG values, show 2 decimal places
+    if (numValue % 1 !== 0) {
+      return numValue.toFixed(2);
+    }
+
+    return numValue.toString();
+  }
+
+  /**
+   * Get team logo URL
+   * @param {string} logo - Logo path or URL
+   * @returns {string} - Full logo URL
+   */
+  getTeamLogoUrl(logo) {
+    if (!logo) {
+      return '';
+    }
+
+    if (logo.startsWith('http')) {
+      return logo;
+    }
+
+    if (logo.startsWith('teams/')) {
+      return `https://cdn.footystats.org/img/${logo}`;
+    }
+
+    return `https://cdn.footystats.org/img/teams/${logo}`;
+  }
+
+  /**
+   * Show no team data message
+   */
+  showNoTeamDataMessage() {
+    const container = document.querySelector('.team-comparison-grid');
+    if (container) {
+      container.innerHTML = `
+        <div class="no-data-message">
+          <i class="fas fa-info-circle"></i>
+          <p>Team statistics data is not available yet.</p>
+        </div>
+      `;
     }
   }
 }
