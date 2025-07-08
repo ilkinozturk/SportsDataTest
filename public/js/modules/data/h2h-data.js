@@ -41,7 +41,6 @@ export class H2HData {
     // Check cache
     const cached = this.getFromCache(cacheKey);
     if (cached) {
-      console.log('H2H data from cache');
       this.emitH2HData(cached);
       return;
     }
@@ -56,7 +55,6 @@ export class H2HData {
         const response = await this.apiClient.get(`/api/matches/${matchId}/details`);
 
         if (response.success && response.data?.h2h) {
-          console.log('H2H data from API:', response.data.h2h);
           const h2hData = this.processH2HData(response.data.h2h, response.data);
           this.setCache(cacheKey, h2hData);
           this.emitH2HData(h2hData);
@@ -70,7 +68,6 @@ export class H2HData {
         this.emitH2HData(h2hData);
       }
     } catch (error) {
-      console.error('Error fetching H2H data:', error);
       this.eventBus.emit('h2h-error', {
         message: 'Failed to load H2H data',
         error,
@@ -103,48 +100,66 @@ export class H2HData {
         homeTeam: matchData?.homeTeam,
         awayTeam: matchData?.awayTeam,
         hasData: true,
+        teamNames: h2hData.teamNames || {
+          teamA: matchData?.homeTeam?.name || 'Home Team',
+          teamB: matchData?.awayTeam?.name || 'Away Team'
+        },
       };
 
       // Process previous_matches_ids if available
       if (h2hData.previous_matches_ids && Array.isArray(h2hData.previous_matches_ids)) {
-        // Get current team IDs from h2h data
-        const currentTeamAId = h2hData.team_a_id;
-        const currentTeamBId = h2hData.team_b_id;
+        // Get current team IDs from h2h data, fallback to matchData
+        const currentTeamAId = h2hData.team_a_id || matchData?.homeTeam?.id;
+        const currentTeamBId = h2hData.team_b_id || matchData?.awayTeam?.id;
 
-        // Get current team names from match data
-        const teamAName = matchData?.homeTeam?.name || 'Team A';
-        const teamBName = matchData?.awayTeam?.name || 'Team B';
+        // Get current team names from match data or API response
+        const teamAName = h2hData.teamNames?.teamA || matchData?.homeTeam?.name || 'Team A';
+        const teamBName = h2hData.teamNames?.teamB || matchData?.awayTeam?.name || 'Team B';
+        
+        // Store team names in processed object
+        processed.teamNames = {
+          teamA: teamAName,
+          teamB: teamBName
+        };
+        
 
-        processed.matches = h2hData.previous_matches_ids.map(match => {
+        processed.matches = h2hData.previous_matches_ids.map((match) => {
           // Convert Unix timestamp to date
           const date = new Date(match.date_unix * 1000).toISOString();
 
-          // In each historical match, determine which current team was home/away
-          // This is complex because team IDs may have changed over seasons
-          let homeName, awayName;
-
-          // Try to match based on current team IDs first
-          if (match.team_a_id === currentTeamAId || match.team_b_id === currentTeamBId) {
-            // If we can match at least one team ID
-            if (match.team_a_id === currentTeamAId) {
-              homeName = teamAName;
-              awayName = match.team_b_id === currentTeamBId ? teamBName : 'Unknown Team';
-            } else if (match.team_b_id === currentTeamAId) {
-              awayName = teamAName;
-              homeName = match.team_a_id === currentTeamBId ? teamBName : 'Unknown Team';
-            } else if (match.team_a_id === currentTeamBId) {
-              homeName = teamBName;
-              awayName = match.team_b_id === currentTeamAId ? teamAName : 'Unknown Team';
-            } else if (match.team_b_id === currentTeamBId) {
-              awayName = teamBName;
-              homeName = match.team_a_id === currentTeamAId ? teamAName : 'Unknown Team';
-            }
-          } else {
-            // Can't match IDs - use generic names or position-based logic
-            // Since these are H2H matches, we know both teams played
-            homeName = `${teamAName} (Historical)`;
-            awayName = `${teamBName} (Historical)`;
+          // In previous_matches_ids:
+          // team_a_id is the HOME team in that specific match
+          // team_b_id is the AWAY team in that specific match
+          
+          // Since team IDs change across seasons, we cannot reliably determine
+          // which current team corresponds to which historical team ID.
+          // Instead, we'll show the actual home/away teams from each match.
+          
+          // For display purposes, try to match by partial name if possible
+          let homeName = `Team ${match.team_a_id}`;
+          let awayName = `Team ${match.team_b_id}`;
+          
+          // Check if we have team ID to name mapping from the API
+          if (h2hData.teamIdMapping) {
+            homeName = h2hData.teamIdMapping[match.team_a_id] || homeName;
+            awayName = h2hData.teamIdMapping[match.team_b_id] || awayName;
           }
+          
+          // Use current match team names for known IDs
+          // These are the IDs from the current match
+          if (match.team_a_id === currentTeamAId) {
+            homeName = teamAName;
+          } else if (match.team_a_id === currentTeamBId) {
+            homeName = teamBName;
+          }
+          
+          if (match.team_b_id === currentTeamAId) {
+            awayName = teamAName;
+          } else if (match.team_b_id === currentTeamBId) {
+            awayName = teamBName;
+          }
+          
+          
 
           return {
             id: match.id,
@@ -159,12 +174,15 @@ export class H2HData {
             // Add additional fields for better display
             homeScore: match.team_a_goals || 0,
             awayScore: match.team_b_goals || 0,
+            team_a_goals: match.team_a_goals || 0,
+            team_b_goals: match.team_b_goals || 0,
+            // Current match team info
+            currentTeamA: teamAName,
+            currentTeamB: teamBName,
+            currentTeamAId: currentTeamAId,
+            currentTeamBId: currentTeamBId,
             // Flag if this is a historical match with different IDs
-            isHistorical:
-              match.team_a_id !== currentTeamAId &&
-              match.team_b_id !== currentTeamAId &&
-              match.team_a_id !== currentTeamBId &&
-              match.team_b_id !== currentTeamBId,
+            isHistorical: true, // Always true for previous_matches_ids
           };
         });
 
@@ -186,6 +204,10 @@ export class H2HData {
       homeTeam: matchData?.homeTeam,
       awayTeam: matchData?.awayTeam,
       hasData: true,
+      teamNames: h2hData?.teamNames || {
+        teamA: matchData?.homeTeam?.name || 'Home Team',
+        teamB: matchData?.awayTeam?.name || 'Away Team'
+      },
     };
 
     // Calculate total matches
@@ -247,22 +269,16 @@ export class H2HData {
       over35: { count: 0, percentage: 0, total: matches.length },
     };
 
-    console.log('Calculating Over/Under stats for', matches.length, 'matches');
-
-    matches.forEach((match, index) => {
+    matches.forEach((match) => {
       // Check different possible field names for goals
       const homeGoals =
-        match.homeGoalCount || match.home_goal_count || match.homeScore || match.home_score || 0;
+        match.homeGoalCount || match.home_goal_count || match.homeScore || match.home_score || 
+        match.team_a_goals || match.homeGoals || 0;
       const awayGoals =
-        match.awayGoalCount || match.away_goal_count || match.awayScore || match.away_score || 0;
+        match.awayGoalCount || match.away_goal_count || match.awayScore || match.away_score || 
+        match.team_b_goals || match.awayGoals || 0;
       const totalGoals = homeGoals + awayGoals;
 
-      if (index < 3) {
-        console.log(
-          `Match ${index + 1}: Home ${homeGoals} - Away ${awayGoals} = Total ${totalGoals}`
-        );
-        console.log('Match data:', match);
-      }
 
       if (totalGoals > 1.5) {
         stats.over15.count++;
@@ -282,7 +298,6 @@ export class H2HData {
       stats.over35.percentage = Math.round((stats.over35.count / matches.length) * 100);
     }
 
-    console.log('Final Over/Under stats:', stats);
     return stats;
   }
 
@@ -291,8 +306,8 @@ export class H2HData {
     let bttsNo = 0;
 
     matches.forEach(match => {
-      const homeGoals = match.homeGoalCount || 0;
-      const awayGoals = match.awayGoalCount || 0;
+      const homeGoals = match.homeGoalCount || match.team_a_goals || match.homeGoals || 0;
+      const awayGoals = match.awayGoalCount || match.team_b_goals || match.awayGoals || 0;
 
       if (homeGoals > 0 && awayGoals > 0) {
         bttsYes++;
@@ -340,8 +355,6 @@ export class H2HData {
   }
 
   async calculateH2HFromTeamMatches(homeTeamId, awayTeamId) {
-    console.log(`Fetching H2H matches for teams ${homeTeamId} vs ${awayTeamId}`);
-
     try {
       // First try the H2H endpoint
       const h2hResponse = await this.apiClient.get(`/api/matches/h2h/${homeTeamId}/${awayTeamId}`);
@@ -352,20 +365,16 @@ export class H2HData {
         h2hResponse.data.matches &&
         h2hResponse.data.matches.length > 0
       ) {
-        console.log(`H2H endpoint returned ${h2hResponse.data.matches.length} matches`);
         return this.processH2HData(h2hResponse.data, {
           homeTeam: { id: homeTeamId },
           awayTeam: { id: awayTeamId },
         });
       }
 
-      console.log('H2H endpoint returned no matches, trying alternative approach...');
-
       // Use stored match data
       const matchData = this.currentMatchData;
 
       if (!matchData) {
-        console.log('No match data available');
         return {
           summary: { homeWins: 0, awayWins: 0, draws: 0, totalMatches: 0 },
           matches: [],
@@ -378,7 +387,6 @@ export class H2HData {
       const awayTeamData = matchData.awayTeam;
 
       if (!homeTeamData || !awayTeamData) {
-        console.log('No team data available for H2H calculation');
         return {
           summary: { homeWins: 0, awayWins: 0, draws: 0, totalMatches: 0 },
           matches: [],
@@ -390,9 +398,6 @@ export class H2HData {
       const homeMatches = homeTeamData.recentMatches || [];
       const awayMatches = awayTeamData.recentMatches || [];
 
-      console.log(
-        `Home team has ${homeMatches.length} recent matches, Away team has ${awayMatches.length} recent matches`
-      );
 
       // Find H2H matches by matching IDs
       const h2hMatches = [];
@@ -430,8 +435,6 @@ export class H2HData {
 
       // Sort by date (newest first)
       h2hMatches.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-      console.log(`Found ${h2hMatches.length} H2H matches from team data`);
 
       // Calculate summary
       const summary = {
@@ -472,7 +475,6 @@ export class H2HData {
 
       return processedData;
     } catch (error) {
-      console.error('Error calculating H2H from team matches:', error);
       return {
         summary: { homeWins: 0, awayWins: 0, draws: 0, totalMatches: 0 },
         matches: [],
@@ -488,12 +490,10 @@ export class H2HData {
       const response = await this.apiClient.get(`/api/teams/${teamId}/matches`);
 
       if (response.success && response.data) {
-        console.log(`Fetched ${response.data.length} matches for team ${teamId}`);
         return response.data;
       }
       return [];
     } catch (error) {
-      console.error(`Error fetching matches for team ${teamId}:`, error);
       // If team matches endpoint fails, return empty array
       return [];
     }

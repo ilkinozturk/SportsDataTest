@@ -92,7 +92,6 @@ export class MatchDetailsDisplay {
 
     // Listen for tab switch events
     this.eventBus.on('switch-tab', tabName => {
-      console.log('Display module received switch-tab event:', tabName);
       this.switchTab(tabName);
     });
 
@@ -103,7 +102,6 @@ export class MatchDetailsDisplay {
         const tab = e.target.closest('.nav-tab');
         if (tab) {
           const tabName = tab.dataset.tab;
-          console.log('Tab clicked:', tabName);
           this.eventBus.emit('switch-tab', tabName);
         }
       });
@@ -203,7 +201,6 @@ export class MatchDetailsDisplay {
         this.elements.homeTeamLogo.src = logoUrl;
         this.elements.homeTeamLogo.style.display = 'block';
         this.elements.homeTeamLogo.onerror = () => {
-          console.error('Failed to load home team logo:', logoUrl);
           this.elements.homeTeamLogo.style.display = 'none';
         };
       } else if (this.elements.homeTeamLogo) {
@@ -236,7 +233,6 @@ export class MatchDetailsDisplay {
         this.elements.awayTeamLogo.src = logoUrl;
         this.elements.awayTeamLogo.style.display = 'block';
         this.elements.awayTeamLogo.onerror = () => {
-          console.error('Failed to load away team logo:', logoUrl);
           this.elements.awayTeamLogo.style.display = 'none';
         };
       } else if (this.elements.awayTeamLogo) {
@@ -273,12 +269,10 @@ export class MatchDetailsDisplay {
   updateTeamForms(matchData) {
     const { homeTeam, awayTeam } = matchData;
 
-    console.log('Match data received:', matchData);
 
     // Home team form
     if (this.elements.homeTeamForm && homeTeam) {
       const homeFormData = homeTeam.homeForm || 'WWDLW'; // Test data if no real data
-      console.log('Home team form:', homeFormData, 'Team:', homeTeam.name);
       this.renderFormString(this.elements.homeTeamForm, homeFormData);
       this.addFormLabel(this.elements.homeTeamForm, 'Home Form');
     }
@@ -286,7 +280,6 @@ export class MatchDetailsDisplay {
     // Away team form
     if (this.elements.awayTeamForm && awayTeam) {
       const awayFormData = awayTeam.awayForm || 'LDWLL'; // Test data if no real data
-      console.log('Away team form:', awayFormData, 'Team:', awayTeam.name);
       this.renderFormString(this.elements.awayTeamForm, awayFormData);
       this.addFormLabel(this.elements.awayTeamForm, 'Away Form');
     }
@@ -343,11 +336,9 @@ export class MatchDetailsDisplay {
   }
 
   renderFormString(container, formString) {
-    console.log('Form string received:', formString);
 
     // Sadece son 5 karakteri al
     const last5Form = formString.slice(-5);
-    console.log('Last 5 form:', last5Form);
 
     container.innerHTML = last5Form
       .split('')
@@ -370,7 +361,6 @@ export class MatchDetailsDisplay {
   }
 
   switchTab(tabName) {
-    console.log('Switching tab to:', tabName);
 
     // Re-query elements in case they were dynamically updated
     const navTabs = document.querySelectorAll('.nav-tab');
@@ -447,7 +437,7 @@ export class MatchDetailsDisplay {
   }
 
   updateH2HStatistics(h2hData) {
-    console.log('updateH2HStatistics called with h2hData:', h2hData);
+    console.log('updateH2HStatistics - h2hData:', h2hData);
 
     if (!h2hData) {
       this.showNoH2HData();
@@ -588,14 +578,11 @@ export class MatchDetailsDisplay {
     this.updateH2HBTTSStats(h2hData.bttsStats);
 
     // Update Recent H2H Matches
-    this.updateH2HRecentMatches(h2hData.matches, homeTeam, awayTeam);
+    this.updateH2HRecentMatches(h2hData.matches, homeTeam, awayTeam, h2hData.teamNames);
   }
 
   updateH2HOverUnderStats(overUnderStats) {
-    console.log('Updating H2H Over/Under stats:', overUnderStats);
-
     if (!overUnderStats) {
-      console.log('No overUnderStats provided');
       return;
     }
 
@@ -676,6 +663,7 @@ export class MatchDetailsDisplay {
       return;
     }
 
+
     // If no matches available
     if (!matches || matches.length === 0) {
       this.elements.h2hRecentMatches.innerHTML = `
@@ -692,20 +680,68 @@ export class MatchDetailsDisplay {
     // Render matches
     const matchesHTML = recentMatches
       .map(match => {
-        const homeGoals = match.homeGoalCount || match.home_scored || match.homeScore || 0;
-        const awayGoals = match.awayGoalCount || match.away_scored || match.awayScore || 0;
-        const matchDate = match.date ? new Date(match.date).toLocaleDateString() : 'Date N/A';
+        const homeGoals = match.homeGoalCount || match.home_scored || match.homeScore || 
+                          match.team_a_goals || match.homeGoals || 0;
+        const awayGoals = match.awayGoalCount || match.away_scored || match.awayScore || 
+                          match.team_b_goals || match.awayGoals || 0;
+        const matchDate = match.date 
+          ? new Date(match.date).toLocaleDateString() 
+          : match.date_unix 
+            ? new Date(match.date_unix * 1000).toLocaleDateString()
+            : 'Date N/A';
 
         // Determine winner for styling
         // Since team IDs can change across seasons, we'll use name matching as fallback
         let resultClass = 'draw';
         let winnerIndicator = '';
 
-        // Check if this match involves the current teams
+        // Get current team names from parameters
         const homeTeamName = homeTeam?.name || '';
         const awayTeamName = awayTeam?.name || '';
-        const matchHomeName = match.home_name || '';
-        const matchAwayName = match.away_name || '';
+        
+        // For previous_matches_ids, use the team IDs to show which team played where
+        let matchHomeName = match.home_name || `Team ${match.homeID || match.team_a_id}`;
+        let matchAwayName = match.away_name || `Team ${match.awayID || match.team_b_id}`;
+        
+        // If we have current team info from the match data, use it
+        if (match.currentTeamA && match.currentTeamB) {
+          if (match.homeID === match.currentTeamAId) {
+            matchHomeName = match.currentTeamA;
+          } else if (match.homeID === match.currentTeamBId) {
+            matchHomeName = match.currentTeamB;
+          }
+          
+          if (match.awayID === match.currentTeamAId) {
+            matchAwayName = match.currentTeamA;
+          } else if (match.awayID === match.currentTeamBId) {
+            matchAwayName = match.currentTeamB;
+          }
+        }
+        
+        // Final fallback - if still showing "Team ID", try to match with current teams
+        if (matchHomeName.startsWith('Team ') && homeTeam && awayTeam) {
+          // Get the team ID from the string "Team 123"
+          const homeId = parseInt(match.homeID || match.team_a_id, 10);
+          const awayId = parseInt(match.awayID || match.team_b_id, 10);
+          
+          // Check if these IDs match our current teams
+          if (homeId === homeTeam.id) {
+            matchHomeName = homeTeamName;
+          } else if (homeId === awayTeam.id) {
+            matchHomeName = awayTeamName;
+          }
+        }
+        
+        if (matchAwayName.startsWith('Team ') && homeTeam && awayTeam) {
+          const homeId = parseInt(match.homeID || match.team_a_id, 10);
+          const awayId = parseInt(match.awayID || match.team_b_id, 10);
+          
+          if (awayId === homeTeam.id) {
+            matchAwayName = homeTeamName;
+          } else if (awayId === awayTeam.id) {
+            matchAwayName = awayTeamName;
+          }
+        }
 
         // Try to determine which team is which by name or ID
         const isHomeTeamPlayingHome =
@@ -750,13 +786,13 @@ export class MatchDetailsDisplay {
             <div class="h2h-match-date">${matchDate}</div>
             <div class="h2h-match-teams">
               <span class="h2h-match-home ${match.homeID === homeTeam?.id ? 'current-team' : ''}">
-                ${match.home_name || 'Home Team'}
+                ${matchHomeName}
               </span>
               <span class="h2h-match-score">
                 ${homeGoals} - ${awayGoals}
               </span>
               <span class="h2h-match-away ${match.awayID === awayTeam?.id ? 'current-team' : ''}">
-                ${match.away_name || 'Away Team'}
+                ${matchAwayName}
               </span>
             </div>
             <div class="h2h-match-result">

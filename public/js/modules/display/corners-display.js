@@ -20,7 +20,7 @@
   const missingModules = requiredModules.filter(module => !global[module]);
   
   if (missingModules.length > 0) {
-    console.warn('[CornersDisplay] Missing optional modules:', missingModules);
+    // Missing optional modules
   }
 
   class CornersDisplay {

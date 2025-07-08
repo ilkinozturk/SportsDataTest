@@ -34,10 +34,27 @@ class H2HService {
     try {
       this.logger.info(`🌐 Fetching H2H matches for teams ${teamId1} vs ${teamId2}`);
       
-      // Get recent matches for both teams
+      // Try direct H2H endpoint first
+      try {
+        const h2hResponse = await this.apiClient.get(`/h2h/${teamId1}/${teamId2}`, {
+          params: { limit }
+        });
+        
+        if (h2hResponse.data?.data?.matches && h2hResponse.data.data.matches.length > 0) {
+          const h2hMatches = h2hResponse.data.data.matches;
+          this.setCached(cacheKey, h2hMatches);
+          this.logger.info(`✅ Found ${h2hMatches.length} H2H matches from direct endpoint`);
+          return h2hMatches;
+        }
+      } catch (error) {
+        this.logger.info(`Direct H2H endpoint failed, trying alternative method...`);
+      }
+      
+      // Fallback: Get recent matches for both teams
+      // Use higher limit to find older H2H matches
       const [team1Matches, team2Matches] = await Promise.all([
-        this.getTeamMatches(teamId1, { limit: 100 }),
-        this.getTeamMatches(teamId2, { limit: 100 })
+        this.getTeamMatches(teamId1, { limit: 200 }),
+        this.getTeamMatches(teamId2, { limit: 200 })
       ]);
       
       // Filter H2H matches
@@ -49,9 +66,12 @@ class H2HService {
       
       allMatches.forEach(match => {
         // Check if this is a match between the two teams
+        const homeId = match.homeID || match.homeTeam?.id;
+        const awayId = match.awayID || match.awayTeam?.id;
+        
         const isH2HMatch = 
-          (match.homeID === teamId1 && match.awayID === teamId2) ||
-          (match.homeID === teamId2 && match.awayID === teamId1);
+          (homeId === teamId1 && awayId === teamId2) ||
+          (homeId === teamId2 && awayId === teamId1);
           
         if (isH2HMatch && !processedMatchIds.has(match.id)) {
           processedMatchIds.add(match.id);
@@ -60,17 +80,17 @@ class H2HService {
           const normalizedMatch = {
             id: match.id,
             date: match.date,
-            date_unix: match.date_unix,
+            date_unix: match.date_unix || (match.date ? new Date(match.date).getTime() / 1000 : null),
             status: match.status || 'complete',
-            homeID: match.homeID,
-            awayID: match.awayID,
-            home_name: match.home_name,
-            away_name: match.away_name,
-            homeGoalCount: match.homeGoalCount || match.home_scored || 0,
-            awayGoalCount: match.awayGoalCount || match.away_scored || 0,
-            home_image: match.home_image,
-            away_image: match.away_image,
-            league_name: match.league_name || match.competition_name,
+            homeID: homeId,
+            awayID: awayId,
+            home_name: match.home_name || match.homeTeam?.name,
+            away_name: match.away_name || match.awayTeam?.name,
+            homeGoalCount: match.homeGoalCount || match.homeScore || match.home_scored || 0,
+            awayGoalCount: match.awayGoalCount || match.awayScore || match.away_scored || 0,
+            home_image: match.home_image || match.homeTeam?.logo,
+            away_image: match.away_image || match.awayTeam?.logo,
+            league_name: match.league_name || match.competition_name || match.competition,
             league_id: match.league_id || match.competition_id
           };
           
@@ -151,22 +171,32 @@ class H2HService {
     const { limit = 50 } = options;
     
     try {
-      // Use matchesService if available
+      // Try to get from teamDataService if available
+      if (this.teamDataService && typeof this.teamDataService.getTeamData === 'function') {
+        const teamData = await this.teamDataService.getTeamData(teamId);
+        if (teamData && teamData.allMatches && teamData.allMatches.length > 0) {
+          this.logger.info(`Got ${teamData.allMatches.length} matches from teamDataService`);
+          return teamData.allMatches.slice(0, limit);
+        }
+      }
+      
+      // Try internal API endpoint as fallback
+      const axios = require('axios');
+      const teamResponse = await axios.get(`http://localhost:${process.env.PORT || 3005}/api/teams/data`, {
+        params: { teamId }
+      });
+      
+      if (teamResponse.data?.success && teamResponse.data?.data?.allMatches) {
+        this.logger.info(`Got ${teamResponse.data.data.allMatches.length} matches from team data API`);
+        return teamResponse.data.data.allMatches.slice(0, limit);
+      }
+      
+      // Fallback to matchesService
       if (this.matchesService && typeof this.matchesService.getTeamMatches === 'function') {
         return await this.matchesService.getTeamMatches(teamId, { limit });
       }
       
-      // Fallback to direct API call - use FootyStats matches endpoint
-      const response = await this.apiClient.get('/matches', {
-        params: {
-          team_id: teamId,
-          page: 1,
-          page_size: limit,
-          status: 'complete'
-        }
-      });
-      
-      return response.data?.data || [];
+      return [];
       
     } catch (error) {
       this.logger.error(`Error fetching team matches: ${error.message}`);

@@ -23,6 +23,9 @@ const teamDataService = new TeamDataService(config.API.FOOTBALL_API_KEY, config.
 const H2HService = require('./services/H2HService');
 const h2hService = new H2HService(footyStatsAPI, matchesService);
 
+// Make teamDataService available to H2HService
+h2hService.teamDataService = teamDataService;
+
 // Initialize Repository Pattern
 const teamRepository = require('./src/repositories/TeamRepositorySimple');
 teamRepository.setTeamDataService(teamDataService);
@@ -45,11 +48,7 @@ require('./routes/api-docs'); // Load API documentation
 const { 
   httpMetricsMiddleware, 
   getMetricsHandler, 
-  startMetricsCollection,
-  trackTeamDataRequest,
-  trackMatchDataRequest,
-  trackApiCall,
-  trackError
+  startMetricsCollection
 } = require('./utils/prometheusMetrics');
 
 // Enhanced caching with Redis support
@@ -60,13 +59,8 @@ const { setupGlobalErrorTracking, errorTrackingMiddleware } = require('./middlew
 const errorTrackingRoutes = require('./routes/errorTracking');
 
 // Professional error handling
-const { AppError, ValidationError, NotFoundError, ExternalAPIError } = require('./src/errors/AppError');
+const { ValidationError, NotFoundError, ExternalAPIError } = require('./src/errors/AppError');
 const { errorHandler, asyncHandler, notFoundHandler } = require('./src/middleware/errorHandler');
-
-// DTOs
-const TeamStatisticsDTO = require('./src/dtos/TeamStatisticsDTO');
-const MatchDTO = require('./src/dtos/MatchDTO');
-const ComparisonDTO = require('./src/dtos/ComparisonDTO');
 
 // Routes
 const teamRoutes = require('./src/routes/teamRoutes');
@@ -98,8 +92,6 @@ if (config.REDIS.ENABLED && (config.REDIS.URL || config.REDIS.HOST)) {
   }
 }
 
-// CORS Configuration
-const { corsMiddleware, strictCorsMiddleware } = require('./middleware/corsConfig');
 
 // Performance Monitoring
 const {
@@ -171,8 +163,6 @@ app.use('/api/teams/:teamId/matches', security.strictLimiter);
 
 app.use('/utils', express.static(path.join(__dirname, 'utils')));
 
-// Import validators
-const { validators } = require('./middleware/validator');
 
 // Initialize cache (will use Redis if available, otherwise memory)
 const cache = new RedisCache(redisClient);
@@ -235,7 +225,7 @@ const makeApiRequest = async (endpoint, params = {}) => {
 
     // Record failed API call
     if (global.metricsStore) {
-      const apiDuration = Date.now() - apiStartTime;
+      const apiDuration = 100; // Default error duration
       global.metricsStore.recordApiCall(apiDuration, false);
     }
 
@@ -624,6 +614,14 @@ app.get('/api/matches/:matchId/details', asyncHandler(async (req, res, next) => 
     if (matchDetails.h2h) {
       // Process H2H data from API
       const apiH2h = matchDetails.h2h;
+      
+      // Log if previous_matches_ids exists
+      if (apiH2h.previous_matches_ids) {
+        logger.info(`📊 API returned previous_matches_ids with ${apiH2h.previous_matches_ids.length} matches`);
+      } else {
+        logger.info(`❌ API did not return previous_matches_ids field`);
+      }
+      
       h2hData = {
         summary: {
           homeWins: apiH2h.previous_matches_results?.team_a_wins || 0,
@@ -631,11 +629,42 @@ app.get('/api/matches/:matchId/details', asyncHandler(async (req, res, next) => 
           draws: apiH2h.previous_matches_results?.draw || 0,
           totalMatches: apiH2h.previous_matches_results?.totalMatches || 0
         },
-        matches: apiH2h.previous_matches_ids || [],
+        matches: [], // Will be populated below
         betting_stats: apiH2h.betting_stats || {},
-        team_a_id: apiH2h.team_a_id,
-        team_b_id: apiH2h.team_b_id
+        team_a_id: matchDetails.homeTeam?.id || apiH2h.team_a_id,
+        team_b_id: matchDetails.awayTeam?.id || apiH2h.team_b_id,
+        previous_matches_ids: apiH2h.previous_matches_ids || null
       };
+      
+      // Check if we have previous_matches_ids from API
+      if (apiH2h.previous_matches_ids && apiH2h.previous_matches_ids.length > 0) {
+        // Use previous_matches_ids directly
+        h2hData.matches = apiH2h.previous_matches_ids;
+        logger.info(`✅ Using ${apiH2h.previous_matches_ids.length} H2H matches from previous_matches_ids`);
+        
+        // Add team names to H2H data for display
+        h2hData.teamNames = {
+          teamA: matchDetails.homeTeam?.name || 'Home Team',
+          teamB: matchDetails.awayTeam?.name || 'Away Team'
+        };
+      } else if (h2hService && h2hData.summary.totalMatches > 0) {
+        // Fallback: Try to get H2H matches from team histories
+        try {
+          logger.info(`Fetching H2H match details for ${h2hData.summary.totalMatches} known matches`);
+          const homeId = matchDetails.homeTeam?.id || apiH2h.team_a_id;
+          const awayId = matchDetails.awayTeam?.id || apiH2h.team_b_id;
+          
+          if (homeId && awayId) {
+            // Use H2H service to get full match data
+            const h2hMatches = await h2hService.getH2HMatches(homeId, awayId, { limit: 10 });
+            h2hData.matches = h2hMatches;
+            logger.info(`✅ Fetched ${h2hMatches.length} H2H matches with details`);
+          }
+        } catch (error) {
+          logger.warn(`Failed to fetch H2H match details: ${error.message}`);
+          // Keep empty matches array if fetch fails
+        }
+      }
       
       logger.info(`H2H data from API: ${h2hData.summary.totalMatches} matches found`);
     } else {
@@ -661,6 +690,13 @@ app.get('/api/matches/:matchId/details', asyncHandler(async (req, res, next) => 
         away: matchDetails.stats || {}
       }
     };
+    
+    // Debug log to check if teamNames is included
+    if (h2hData && h2hData.teamNames) {
+      logger.info(`✅ H2H teamNames included: ${JSON.stringify(h2hData.teamNames)}`);
+    } else {
+      logger.warn(`❌ H2H teamNames missing in response`);
+    }
     
     res.json({
       success: true,
@@ -883,15 +919,15 @@ app.use('*.js', (req, res, next) => {
 
 // Serve static files with proper MIME types
 app.use(express.static(path.join(__dirname, 'public'), {
-  setHeaders: (res, path) => {
-    if (path.endsWith('.js')) {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.js')) {
       res.setHeader('Content-Type', 'text/javascript');
     }
   }
 }));
 app.use(express.static(path.join(__dirname), {
-  setHeaders: (res, path) => {
-    if (path.endsWith('.js')) {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.js')) {
       res.setHeader('Content-Type', 'text/javascript');
     }
   }

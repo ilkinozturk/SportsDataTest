@@ -81,7 +81,6 @@ export class MatchDetailsData {
       // Load initial tab data
       this.loadTabData('overview');
     } catch (error) {
-      console.error('Error loading match data:', error);
       this.eventBus.emit('data-error', {
         message: 'Failed to load match details. Please try again.',
         error,
@@ -93,12 +92,10 @@ export class MatchDetailsData {
 
   async fetchTeamForm(teamId, venue) {
     try {
-      console.log(`Fetching ${venue} team form for ID: ${teamId}`);
       const response = await this.apiClient.get(`/api/teams/data?teamId=${teamId}`);
 
       if (response.success && response.data) {
         const teamData = response.data;
-        console.log(`Team data received for ${venue}:`, teamData);
 
         let formData = '';
 
@@ -130,7 +127,6 @@ export class MatchDetailsData {
         if (this.matchData) {
           if (venue === 'home' && this.matchData.homeTeam) {
             if (formData) {
-              console.log(`Setting ${venue} form:`, formData);
               this.matchData.homeTeam.homeForm = formData;
             }
             // Add recent matches data
@@ -141,7 +137,6 @@ export class MatchDetailsData {
             }
           } else if (venue === 'away' && this.matchData.awayTeam) {
             if (formData) {
-              console.log(`Setting ${venue} form:`, formData);
               this.matchData.awayTeam.awayForm = formData;
             }
             // Add recent matches data
@@ -154,11 +149,10 @@ export class MatchDetailsData {
         }
 
         if (!formData) {
-          console.log(`No form data found for ${venue} team`);
+          // Form data not found
         }
       }
     } catch (error) {
-      console.error(`Error fetching ${venue} team form:`, error);
       // Continue without form data
     }
   }
