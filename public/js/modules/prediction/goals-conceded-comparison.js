@@ -30,13 +30,9 @@ export class GoalsConcededComparison {
   processGoalsConcededComparison(teamData) {
     const { homeTeam, awayTeam } = teamData;
 
-    // Get raw team data (not just stats)
-    const homeTeamRaw = this.getRawTeamData(homeTeam);
-    const awayTeamRaw = this.getRawTeamData(awayTeam);
-
-    // Use modular extraction
-    const homeStats = this.extractGoalsConcededStatsFromRaw(homeTeamRaw, 'home');
-    const awayStats = this.extractGoalsConcededStatsFromRaw(awayTeamRaw, 'away');
+    // Extract stats directly from team data which already has processed statistics
+    const homeStats = this.extractGoalsConcededStatsFromTeam(homeTeam, 'home');
+    const awayStats = this.extractGoalsConcededStatsFromTeam(awayTeam, 'away');
 
     return {
       homeTeam: {
@@ -53,42 +49,46 @@ export class GoalsConcededComparison {
   }
 
   /**
-   * Get raw team data structure
+   * Extract goals conceded statistics directly from team data
    * @param {Object} team - Team data from team-stats-loaded event
-   * @returns {Object} Raw team data structure
-   */
-  getRawTeamData(team) {
-    // Return structure that matches API response
-    return {
-      statistics: team.stats || {},
-      additional_info: team.additional_info || {}
-    };
-  }
-
-  /**
-   * Extract goals conceded statistics from raw team data
-   * @param {Object} rawTeamData - Raw team data
    * @param {string} venue - 'home' or 'away'
    * @returns {Object} Extracted statistics
    */
-  extractGoalsConcededStatsFromRaw(rawTeamData, venue) {
-    // Use TeamStatisticsExtractor for modular data extraction
-    const concededStats = TeamStatisticsExtractor.extractGoalsConcededStats(rawTeamData, venue);
-    const overPercentages = TeamStatisticsExtractor.extractConcededOverPercentages(rawTeamData, venue);
-    const csFts = TeamStatisticsExtractor.extractCSandFTSPercentages(rawTeamData, venue);
-
-    return {
-      goalsConcededPerMatch: concededStats.goalsConcededPerMatch,
-      totalGoalsConceded: concededStats.totalGoalsConceded,
-      firstHalfConcededAvg: concededStats.firstHalfConcededAvg,
-      secondHalfConcededAvg: concededStats.secondHalfConcededAvg,
-      over05Conceded: parseInt(overPercentages.over05, 10),
-      over15Conceded: parseInt(overPercentages.over15, 10),
-      over25Conceded: parseInt(overPercentages.over25, 10),
-      over35Conceded: parseInt(overPercentages.over35, 10),
-      cleanSheetPercentage: csFts.cleanSheetPercentage,
-    };
+  extractGoalsConcededStatsFromTeam(team, venue) {
+    const stats = team.stats || {};
+    
+    // Extract the already processed data based on venue
+    let result = {};
+    
+    if (venue === 'home') {
+      result = {
+        goalsConcededPerMatch: stats.homeGoalsConcededPerMatch || stats.goalsConcededPerMatch || '0.00',
+        totalGoalsConceded: stats.homeGoalsConceded || stats.goalsConceded || 0,
+        firstHalfConcededAvg: stats.homeFirstHalfConcededAvg || stats.firstHalfConcededAvg || '0.00',
+        secondHalfConcededAvg: stats.homeSecondHalfConcededAvg || stats.secondHalfConcededAvg || '0.00',
+        over05Conceded: parseInt(stats.homeOver05Conceded || stats.over05Conceded || 0, 10),
+        over15Conceded: parseInt(stats.homeOver15Conceded || stats.over15Conceded || 0, 10),
+        over25Conceded: parseInt(stats.homeOver25Conceded || stats.over25Conceded || 0, 10),
+        over35Conceded: parseInt(stats.homeOver35Conceded || stats.over35Conceded || 0, 10),
+        cleanSheetPercentage: stats.homeCleanSheetPercentage || stats.cleanSheetPercentage || '0',
+      };
+    } else {
+      result = {
+        goalsConcededPerMatch: stats.awayGoalsConcededPerMatch || stats.goalsConcededPerMatch || '0.00',
+        totalGoalsConceded: stats.awayGoalsConceded || stats.goalsConceded || 0,
+        firstHalfConcededAvg: stats.awayFirstHalfConcededAvg || stats.firstHalfConcededAvg || '0.00',
+        secondHalfConcededAvg: stats.awaySecondHalfConcededAvg || stats.secondHalfConcededAvg || '0.00',
+        over05Conceded: parseInt(stats.awayOver05Conceded || stats.over05Conceded || 0, 10),
+        over15Conceded: parseInt(stats.awayOver15Conceded || stats.over15Conceded || 0, 10),
+        over25Conceded: parseInt(stats.awayOver25Conceded || stats.over25Conceded || 0, 10),
+        over35Conceded: parseInt(stats.awayOver35Conceded || stats.over35Conceded || 0, 10),
+        cleanSheetPercentage: stats.awayCleanSheetPercentage || stats.cleanSheetPercentage || '0',
+      };
+    }
+    
+    return result;
   }
+
 
 }
 
