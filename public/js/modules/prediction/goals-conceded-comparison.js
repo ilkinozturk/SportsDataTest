@@ -28,6 +28,10 @@ export class GoalsConcededComparison {
   processGoalsConcededComparison(teamData) {
     const { homeTeam, awayTeam } = teamData;
 
+    console.log('=== Goals Conceded Comparison Debug ===');
+    console.log('Home team data:', homeTeam);
+    console.log('Away team data:', awayTeam);
+
     // Extract stats directly from team data which already has processed statistics
     const homeStats = this.extractGoalsConcededStatsFromTeam(homeTeam, 'home');
     const awayStats = this.extractGoalsConcededStatsFromTeam(awayTeam, 'away');

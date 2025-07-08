@@ -1041,6 +1041,24 @@ export class MatchDetailsData {
         0,
     };
 
+    // Temporary debug for JIPPO and JäPS
+    if (
+      teamData?.teamInfo?.name &&
+      (teamData.teamInfo.name.includes('JIPPO') || teamData.teamInfo.name.includes('JäPS'))
+    ) {
+      console.log('=== Team Data Debug ===');
+      console.log('Team:', teamData.teamInfo.name);
+      console.log('Raw stats object:', stats);
+      console.log('Raw additional_info object:', additionalInfo);
+      console.log('Extracted conceded values:', {
+        homeOver05Conceded: extractedStats.homeOver05Conceded,
+        homeOver15Conceded: extractedStats.homeOver15Conceded,
+        homeOver25Conceded: extractedStats.homeOver25Conceded,
+        homeOver35Conceded: extractedStats.homeOver35Conceded,
+        homeCleanSheetPercentage: extractedStats.homeCleanSheetPercentage,
+      });
+    }
+
     return extractedStats;
   }
 
