@@ -963,125 +963,83 @@ export class MatchDetailsData {
         0,
 
       // Over/Under Conceded Percentages (for Goals Conceded Comparison)
+      // Use seasonConcededOver*Percentage_* from stats, not additional_info
       over05Conceded:
+        stats.seasonConcededOver05Percentage_overall ||
         additionalInfo.seasonConcededOver05Percentage_overall ||
         additionalInfo.over05_conceded_percentage_overall ||
-        stats.seasonConcededOver05Percentage_overall ||
         stats.concededOver05Percentage ||
         0,
       homeOver05Conceded:
+        stats.seasonConcededOver05Percentage_home ||
         additionalInfo.seasonConcededOver05Percentage_home ||
         additionalInfo.over05_conceded_percentage_home ||
-        stats.seasonConcededOver05Percentage_home ||
         stats.concededOver05Percentage_home ||
         0,
       awayOver05Conceded:
+        stats.seasonConcededOver05Percentage_away ||
         additionalInfo.seasonConcededOver05Percentage_away ||
         additionalInfo.over05_conceded_percentage_away ||
-        stats.seasonConcededOver05Percentage_away ||
         stats.concededOver05Percentage_away ||
         0,
 
       over15Conceded:
+        stats.seasonConcededOver15Percentage_overall ||
         additionalInfo.seasonConcededOver15Percentage_overall ||
         additionalInfo.over15_conceded_percentage_overall ||
-        stats.seasonConcededOver15Percentage_overall ||
         stats.concededOver15Percentage ||
         0,
       homeOver15Conceded:
+        stats.seasonConcededOver15Percentage_home ||
         additionalInfo.seasonConcededOver15Percentage_home ||
         additionalInfo.over15_conceded_percentage_home ||
-        stats.seasonConcededOver15Percentage_home ||
         stats.concededOver15Percentage_home ||
         0,
       awayOver15Conceded:
+        stats.seasonConcededOver15Percentage_away ||
         additionalInfo.seasonConcededOver15Percentage_away ||
         additionalInfo.over15_conceded_percentage_away ||
-        stats.seasonConcededOver15Percentage_away ||
         stats.concededOver15Percentage_away ||
         0,
 
       over25Conceded:
+        stats.seasonConcededOver25Percentage_overall ||
         additionalInfo.seasonConcededOver25Percentage_overall ||
         additionalInfo.over25_conceded_percentage_overall ||
-        stats.seasonConcededOver25Percentage_overall ||
         stats.concededOver25Percentage ||
         0,
       homeOver25Conceded:
+        stats.seasonConcededOver25Percentage_home ||
         additionalInfo.seasonConcededOver25Percentage_home ||
         additionalInfo.over25_conceded_percentage_home ||
-        stats.seasonConcededOver25Percentage_home ||
         stats.concededOver25Percentage_home ||
         0,
       awayOver25Conceded:
+        stats.seasonConcededOver25Percentage_away ||
         additionalInfo.seasonConcededOver25Percentage_away ||
         additionalInfo.over25_conceded_percentage_away ||
-        stats.seasonConcededOver25Percentage_away ||
         stats.concededOver25Percentage_away ||
         0,
 
       over35Conceded:
+        stats.seasonConcededOver35Percentage_overall ||
         additionalInfo.seasonConcededOver35Percentage_overall ||
         additionalInfo.over35_conceded_percentage_overall ||
-        stats.seasonConcededOver35Percentage_overall ||
         stats.concededOver35Percentage ||
         0,
       homeOver35Conceded:
+        stats.seasonConcededOver35Percentage_home ||
         additionalInfo.seasonConcededOver35Percentage_home ||
         additionalInfo.over35_conceded_percentage_home ||
-        stats.seasonConcededOver35Percentage_home ||
         stats.concededOver35Percentage_home ||
         0,
       awayOver35Conceded:
+        stats.seasonConcededOver35Percentage_away ||
         additionalInfo.seasonConcededOver35Percentage_away ||
         additionalInfo.over35_conceded_percentage_away ||
-        stats.seasonConcededOver35Percentage_away ||
         stats.concededOver35Percentage_away ||
         0,
     };
-
-    // Debug conceded values
-    if (
-      teamData?.teamInfo?.name &&
-      (teamData.teamInfo.name.includes('JäPS') || teamData.teamInfo.name.includes('JIPPO'))
-    ) {
-      console.log('=== CONCEDED OVER/UNDER DEBUG ===');
-      console.log('Team:', teamData.teamInfo.name);
-      console.log('Additional Info object:', additionalInfo);
-
-      // Find all conceded-related fields in stats
-      const concededFields = Object.keys(stats).filter(
-        key =>
-          key.toLowerCase().includes('conceded') && (key.includes('over') || key.includes('Over'))
-      );
-      console.log('All conceded over/under fields in stats:', concededFields);
-
-      // Show values for found fields
-      const concededValues = {};
-      concededFields.forEach(field => {
-        concededValues[field] = stats[field];
-      });
-      console.log('Conceded field values:', concededValues);
-
-      // Also check additional_info for conceded fields
-      const additionalConcededFields = Object.keys(additionalInfo).filter(
-        key =>
-          key.toLowerCase().includes('conceded') && (key.includes('over') || key.includes('Over'))
-      );
-      console.log('All conceded over/under fields in additional_info:', additionalConcededFields);
-      console.log('Extracted home conceded values:', {
-        over05: extractedStats.homeOver05Conceded,
-        over15: extractedStats.homeOver15Conceded,
-        over25: extractedStats.homeOver25Conceded,
-        over35: extractedStats.homeOver35Conceded,
-      });
-      console.log('Extracted away conceded values:', {
-        over05: extractedStats.awayOver05Conceded,
-        over15: extractedStats.awayOver15Conceded,
-        over25: extractedStats.awayOver25Conceded,
-        over35: extractedStats.awayOver35Conceded,
-      });
-    }
 
     return extractedStats;
   }

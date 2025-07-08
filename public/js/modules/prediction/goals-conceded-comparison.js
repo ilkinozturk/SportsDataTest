@@ -74,19 +74,6 @@ export class GoalsConcededComparison {
         secondHalfCleanSheet:
           stats.homeSecondHalfCleanSheet || stats.secondHalfCleanSheetPercentage_home || '0',
       };
-
-      // Debug logging
-      console.log('Home team conceded stats:', {
-        teamName: team.name,
-        venue: venue,
-        stats: {
-          homeOver05Conceded: stats.homeOver05Conceded,
-          homeOver15Conceded: stats.homeOver15Conceded,
-          homeOver25Conceded: stats.homeOver25Conceded,
-          homeOver35Conceded: stats.homeOver35Conceded,
-        },
-        result: result,
-      });
     } else {
       result = {
         firstHalfConcededAvg:
@@ -103,19 +90,6 @@ export class GoalsConcededComparison {
         secondHalfCleanSheet:
           stats.awaySecondHalfCleanSheet || stats.secondHalfCleanSheetPercentage_away || '0',
       };
-
-      // Debug logging
-      console.log('Away team conceded stats:', {
-        teamName: team.name,
-        venue: venue,
-        stats: {
-          awayOver05Conceded: stats.awayOver05Conceded,
-          awayOver15Conceded: stats.awayOver15Conceded,
-          awayOver25Conceded: stats.awayOver25Conceded,
-          awayOver35Conceded: stats.awayOver35Conceded,
-        },
-        result: result,
-      });
     }
 
     return result;
