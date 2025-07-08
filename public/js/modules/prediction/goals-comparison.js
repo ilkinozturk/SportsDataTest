@@ -28,9 +28,6 @@ export class GoalsComparison {
   processGoalsComparison(teamData) {
     const { homeTeam, awayTeam } = teamData;
 
-    // Debug: Log the team data to see what's available
-    console.log('Goals Comparison - Home Team Data:', homeTeam);
-    console.log('Goals Comparison - Away Team Data:', awayTeam);
 
     // Extract statistics from API response
     const homeStats = this.extractGoalsStats(homeTeam, 'home');
@@ -59,8 +56,6 @@ export class GoalsComparison {
   extractGoalsStats(team, venue) {
     const stats = team.stats || {};
 
-    // Debug: Log available stats
-    console.log(`Extracting stats for ${venue} team:`, stats);
 
     // Get venue-specific data
     const goalsPerMatch =
@@ -77,10 +72,6 @@ export class GoalsComparison {
     const firstHalfAvg = this.extractHalfTimeAverage(stats, venue, 'first');
     const secondHalfAvg = this.extractHalfTimeAverage(stats, venue, 'second');
 
-    // Debug: Log half-time averages
-    console.log(
-      `${venue} team - First Half Avg: ${firstHalfAvg}, Second Half Avg: ${secondHalfAvg}`
-    );
 
     // Extract over/under percentages from stats
     const overUnder = this.extractOverUnderStats(stats, venue);
@@ -171,16 +162,21 @@ export class GoalsComparison {
       over35: 0,
     };
 
+
     if (venue === 'home') {
-      result.over05 = stats.homeOver05GoalsPercentage || stats.over05GoalsPercentage || 0;
-      result.over15 = stats.homeOver15GoalsPercentage || stats.over15GoalsPercentage || 0;
-      result.over25 = stats.homeOver25GoalsPercentage || stats.over25GoalsPercentage || 0;
-      result.over35 = stats.homeOver35GoalsPercentage || stats.over35GoalsPercentage || 0;
+      // CRITICAL FIX: Use TEAM SCORED over/under percentages ONLY (not match over/under)
+      // For a home team, we want their HOME venue-specific SCORED statistics
+      result.over05 = stats.homeScoredOver05Percentage || stats.seasonScoredOver05Percentage_home || 0;
+      result.over15 = stats.homeScoredOver15Percentage || stats.seasonScoredOver15Percentage_home || 0;
+      result.over25 = stats.homeScoredOver25Percentage || stats.seasonScoredOver25Percentage_home || 0;
+      result.over35 = stats.homeScoredOver35Percentage || stats.seasonScoredOver35Percentage_home || 0;
     } else {
-      result.over05 = stats.awayOver05GoalsPercentage || stats.over05GoalsPercentage || 0;
-      result.over15 = stats.awayOver15GoalsPercentage || stats.over15GoalsPercentage || 0;
-      result.over25 = stats.awayOver25GoalsPercentage || stats.over25GoalsPercentage || 0;
-      result.over35 = stats.awayOver35GoalsPercentage || stats.over35GoalsPercentage || 0;
+      // CRITICAL FIX: Use TEAM SCORED over/under percentages ONLY (not match over/under)
+      // For an away team, we want their AWAY venue-specific SCORED statistics
+      result.over05 = stats.awayScoredOver05Percentage || stats.seasonScoredOver05Percentage_away || 0;
+      result.over15 = stats.awayScoredOver15Percentage || stats.seasonScoredOver15Percentage_away || 0;
+      result.over25 = stats.awayScoredOver25Percentage || stats.seasonScoredOver25Percentage_away || 0;
+      result.over35 = stats.awayScoredOver35Percentage || stats.seasonScoredOver35Percentage_away || 0;
     }
 
     // Convert to integers

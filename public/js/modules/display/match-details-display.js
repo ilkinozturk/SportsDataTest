@@ -82,7 +82,9 @@ export class MatchDetailsDisplay {
 
   attachEventListeners() {
     // Listen for match data updates
-    this.eventBus.on('match-data-loaded', data => this.updateMatchDisplay(data));
+    this.eventBus.on('match-data-loaded', data => {
+      this.updateMatchDisplay(data);
+    });
 
     // Listen for H2H data updates from H2H module
     this.eventBus.on('h2h-data-loaded', h2hData => this.updateH2HStatistics(h2hData));
@@ -151,6 +153,7 @@ export class MatchDetailsDisplay {
 
     // Request team statistics for comparison
     if (matchData.homeTeam && matchData.awayTeam) {
+      console.log('🔥 REQUESTING team stats for:', matchData.homeTeam.id, matchData.awayTeam.id);
       this.eventBus.emit('request-team-stats', {
         homeTeamId: matchData.homeTeam.id,
         awayTeamId: matchData.awayTeam.id,
@@ -460,7 +463,6 @@ export class MatchDetailsDisplay {
   }
 
   updateH2HStatistics(h2hData) {
-    console.log('updateH2HStatistics - h2hData:', h2hData);
 
     if (!h2hData) {
       this.showNoH2HData();
@@ -1123,7 +1125,6 @@ export class MatchDetailsDisplay {
     this.updateTeamFormData(prefix, teamData);
 
     // Update statistics
-    console.log(`Updating ${side} team statistics:`, teamData.stats);
     this.updateTeamStatistics(prefix, teamData.stats || {});
   }
 
@@ -1223,51 +1224,18 @@ export class MatchDetailsDisplay {
         const value = stats[fields[0]] || 0;
         overallEl.textContent = this.formatStatValue(value, suffix);
         this.applyStatClass(overallEl, stat, value);
-        // Debug CS and FTS
-        if (stat === 'CS' || stat === 'FTS') {
-          console.log(
-            `Setting ${prefix}${stat}Overall:`,
-            value,
-            'from field:',
-            fields[0],
-            'value in stats:',
-            stats[fields[0]]
-          );
-        }
       }
 
       if (homeEl) {
         const value = stats[fields[1]] || 0;
         homeEl.textContent = this.formatStatValue(value, suffix);
         this.applyStatClass(homeEl, stat, value);
-        // Debug CS and FTS
-        if (stat === 'CS' || stat === 'FTS') {
-          console.log(
-            `Setting ${prefix}${stat}Home:`,
-            value,
-            'from field:',
-            fields[1],
-            'value in stats:',
-            stats[fields[1]]
-          );
-        }
       }
 
       if (awayEl) {
         const value = stats[fields[2]] || 0;
         awayEl.textContent = this.formatStatValue(value, suffix);
         this.applyStatClass(awayEl, stat, value);
-        // Debug CS and FTS
-        if (stat === 'CS' || stat === 'FTS') {
-          console.log(
-            `Setting ${prefix}${stat}Away:`,
-            value,
-            'from field:',
-            fields[2],
-            'value in stats:',
-            stats[fields[2]]
-          );
-        }
       }
     });
   }
@@ -1711,7 +1679,7 @@ export class MatchDetailsDisplay {
           
           <!-- Over/Under Stats -->
           <div class="goals-over-under-section">
-            <h5>Üst/Alt İstatistikleri</h5>
+            <h5>Takım Attığı Gol - Üst/Alt</h5>
             <div class="goals-over-under-grid">
               <div class="over-under-stat">
                 <span class="ou-label">0.5+</span>
@@ -1793,7 +1761,7 @@ export class MatchDetailsDisplay {
           
           <!-- Over/Under Stats -->
           <div class="goals-over-under-section">
-            <h5>Üst/Alt İstatistikleri</h5>
+            <h5>Takım Attığı Gol - Üst/Alt</h5>
             <div class="goals-over-under-grid">
               <div class="over-under-stat">
                 <span class="ou-label">0.5+</span>
@@ -1809,7 +1777,7 @@ export class MatchDetailsDisplay {
               </div>
               <div class="over-under-stat">
                 <span class="ou-label">3.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over35)}">${awayTeam.stats.over35}%</span>
+                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over35)}">${awayTeam.stats.over35 || 0}%</span>
               </div>
             </div>
           </div>

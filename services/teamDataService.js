@@ -2525,6 +2525,20 @@ class TeamDataService {
         stats.seasonScoredOver25Percentage_away ||
         additionalInfo.seasonScoredOver25Percentage_away ||
         0,
+      
+      // Scored Over 3.5 Percentages
+      seasonScoredOver35Percentage_overall:
+        stats.seasonScoredOver35Percentage_overall ||
+        additionalInfo.seasonScoredOver35Percentage_overall ||
+        0,
+      seasonScoredOver35Percentage_home:
+        stats.seasonScoredOver35Percentage_home ||
+        additionalInfo.seasonScoredOver35Percentage_home ||
+        0,
+      seasonScoredOver35Percentage_away:
+        stats.seasonScoredOver35Percentage_away ||
+        additionalInfo.seasonScoredOver35Percentage_away ||
+        0,
 
       scoredBothHalvesPercentage_overall:
         stats.scoredBothHalvesPercentage_overall ||
