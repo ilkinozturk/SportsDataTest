@@ -570,7 +570,7 @@ app.get('/api/matches/:matchId/details', asyncHandler(async (req, res, next) => 
     // Enhance with additional team data if available
     if (matchDetails.homeTeam && matchDetails.homeTeam.id) {
       try {
-        const homeTeamData = await teamService.getTeamData(matchDetails.homeTeam.id);
+        const homeTeamData = await teamDataService.getTeamData(matchDetails.homeTeam.id);
         if (homeTeamData && homeTeamData.statistics) {
           // Add home PPG from team statistics
           matchDetails.homeTeam.homePPG = homeTeamData.statistics.homePPG || 
@@ -590,7 +590,7 @@ app.get('/api/matches/:matchId/details', asyncHandler(async (req, res, next) => 
     
     if (matchDetails.awayTeam && matchDetails.awayTeam.id) {
       try {
-        const awayTeamData = await teamService.getTeamData(matchDetails.awayTeam.id);
+        const awayTeamData = await teamDataService.getTeamData(matchDetails.awayTeam.id);
         if (awayTeamData && awayTeamData.statistics) {
           // Add away PPG from team statistics
           matchDetails.awayTeam.awayPPG = awayTeamData.statistics.awayPPG || 
@@ -940,7 +940,7 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 // Start server
-app.listen(config.PORT, () => {
+app.listen(config.PORT, '0.0.0.0', () => {
   logger.success('FullyDynamicTeamService initialized');
   logger.success('UniversalMappingService: FullyDynamicTeamService entegre edildi');
   const host = process.env.HOST || 'localhost';

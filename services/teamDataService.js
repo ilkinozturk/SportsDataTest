@@ -2727,14 +2727,17 @@ class TeamDataService {
       over05Conceded_overall: stats.over05Conceded_overall || additionalInfo.over05Conceded_overall || additionalInfo.over05_conceded_percentage_overall || 0,
       over15Conceded_overall: stats.over15Conceded_overall || additionalInfo.over15Conceded_overall || additionalInfo.over15_conceded_percentage_overall || 0,
       over25Conceded_overall: stats.over25Conceded_overall || additionalInfo.over25Conceded_overall || additionalInfo.over25_conceded_percentage_overall || 0,
+      over35Conceded_overall: stats.over35Conceded_overall || additionalInfo.over35Conceded_overall || additionalInfo.over35_conceded_percentage_overall || 0,
       
       over05Conceded_home: stats.over05Conceded_home || additionalInfo.over05Conceded_home || additionalInfo.over05_conceded_percentage_home || 0,
       over15Conceded_home: stats.over15Conceded_home || additionalInfo.over15Conceded_home || additionalInfo.over15_conceded_percentage_home || 0,
       over25Conceded_home: stats.over25Conceded_home || additionalInfo.over25Conceded_home || additionalInfo.over25_conceded_percentage_home || 0,
+      over35Conceded_home: stats.over35Conceded_home || additionalInfo.over35Conceded_home || additionalInfo.over35_conceded_percentage_home || 0,
       
       over05Conceded_away: stats.over05Conceded_away || additionalInfo.over05Conceded_away || additionalInfo.over05_conceded_percentage_away || 0,
       over15Conceded_away: stats.over15Conceded_away || additionalInfo.over15Conceded_away || additionalInfo.over15_conceded_percentage_away || 0,
       over25Conceded_away: stats.over25Conceded_away || additionalInfo.over25Conceded_away || additionalInfo.over25_conceded_percentage_away || 0,
+      over35Conceded_away: stats.over35Conceded_away || additionalInfo.over35Conceded_away || additionalInfo.over35_conceded_percentage_away || 0,
       
       // Highest conceded
       highestConceded_overall: stats.highestConceded_overall || additionalInfo.highestConceded_overall || additionalInfo.highest_conceded_overall || 0,

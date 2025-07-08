@@ -111,7 +111,6 @@ export class MatchDetailsData {
       }
 
       // Emit data loaded event
-      console.log('🔥 MATCH DATA LOADED - Emitting match-data-loaded event');
       this.eventBus.emit('match-data-loaded', this.matchData);
 
       // Load initial tab data
@@ -343,7 +342,6 @@ export class MatchDetailsData {
    */
   async fetchTeamStatistics(homeTeamId, awayTeamId) {
     try {
-      console.log('🔥 FETCHING team statistics for:', homeTeamId, awayTeamId);
       // Check cache first
       const cachedHomeData = this.teamDataCache.get(homeTeamId);
       const cachedAwayData = this.teamDataCache.get(awayTeamId);
@@ -352,12 +350,9 @@ export class MatchDetailsData {
 
       // Fetch data sequentially to avoid rate limits
       if (cachedHomeData) {
-        console.log('🔥 Using cached home data for:', homeTeamId);
         homeResponse = cachedHomeData;
       } else {
-        console.log('🔥 Fetching home team data from API for:', homeTeamId);
         homeResponse = await this.apiClient.get(`/api/teams/data?teamId=${homeTeamId}`);
-        console.log('🔥 Home team API response:', homeResponse);
         if (homeResponse.success) {
           this.teamDataCache.set(homeTeamId, homeResponse);
         }
@@ -374,9 +369,7 @@ export class MatchDetailsData {
         // If same team ID, we need to use the same response but should not happen in normal cases
         awayResponse = homeResponse;
       } else {
-        console.log('🔥 Fetching away team data from API for:', awayTeamId);
         awayResponse = await this.apiClient.get(`/api/teams/data?teamId=${awayTeamId}`);
-        console.log('🔥 Away team API response:', awayResponse);
         if (awayResponse.success) {
           this.teamDataCache.set(awayTeamId, awayResponse);
         }
@@ -441,6 +434,7 @@ export class MatchDetailsData {
             homeData.statistics?.away_ppg ||
             0,
           stats: this.extractTeamStatistics(homeData.statistics || {}, homeData),
+          additional_info: homeData.additional_info
         };
       }
 
@@ -463,15 +457,6 @@ export class MatchDetailsData {
           overallForm = this.calculateFormFromMatches(awayData.allMatches, awayTeamId);
         }
 
-        // Debug JäPS data
-        if (awayData.teamInfo?.name?.includes('Järvenpään')) {
-          console.log('=== JäPS API DATA DEBUG ===');
-          console.log('Additional Info:', awayData.additional_info);
-          if (awayData.additional_info) {
-            console.log('seasonScoredOver35Percentage_away:', awayData.additional_info.seasonScoredOver35Percentage_away);
-          }
-          console.log('Statistics seasonScoredOver35Percentage_away:', awayData.statistics?.seasonScoredOver35Percentage_away);
-        }
         
         teamData.awayTeam = {
           id: awayTeamId,
@@ -512,12 +497,10 @@ export class MatchDetailsData {
         };
       }
 
-      
-      console.log('🔥 EMITTING team-stats-loaded event with data:', teamData);
       // Emit team statistics data
       this.eventBus.emit('team-stats-loaded', teamData);
     } catch (error) {
-      console.error('🔥 ERROR in fetchTeamStatistics:', error);
+      console.error('Error in fetchTeamStatistics:', error);
       // If there's an error, emit empty team data
       this.eventBus.emit('team-stats-loaded', {
         homeTeam: null,
@@ -595,18 +578,62 @@ export class MatchDetailsData {
         stats.away_goals_scored ||
         0,
 
-      // Goals conceded
+      // Goals conceded - prioritize actual API field names
       goalsConceded:
         stats.goalsAgainst ||
-        stats.seasonConceded ||
-        stats.seasonConcededNum ||
         stats.seasonConcededNum_overall ||
+        stats.seasonConcededNum ||
+        stats.seasonConceded ||
         stats.goals_conceded ||
         0,
       homeGoalsConceded:
-        stats.homeGoalsAgainst || stats.seasonConcededNum_home || stats.home_goals_conceded || 0,
+        stats.homeGoalsAgainst || 
+        stats.seasonConcededNum_home || 
+        stats.home_goals_conceded || 
+        0,
       awayGoalsConceded:
-        stats.awayGoalsAgainst || stats.seasonConcededNum_away || stats.away_goals_conceded || 0,
+        stats.awayGoalsAgainst || 
+        stats.seasonConcededNum_away || 
+        stats.away_goals_conceded || 
+        0,
+        
+      // Goals conceded per match (for Goals Conceded Comparison display)
+      goalsConcededPerMatch:
+        stats.seasonConcededAVG_overall ||
+        stats.seasonConcededAVG ||
+        stats.goalsConcededAVG ||
+        stats.goalsAgainstPerMatch ||
+        stats.averageGoalsAgainst ||
+        0,
+      homeGoalsConcededPerMatch:
+        stats.seasonConcededAVG_home ||
+        stats.homeGoalsConcededAVG ||
+        stats.homeGoalsAgainstPerMatch ||
+        0,
+      awayGoalsConcededPerMatch:
+        stats.seasonConcededAVG_away ||
+        stats.awayGoalsConcededAVG ||
+        stats.awayGoalsAgainstPerMatch ||
+        0,
+        
+      // Total goals conceded (alias for goalsConceded)
+      totalGoalsConceded:
+        stats.goalsAgainst ||
+        stats.seasonConcededNum_overall ||
+        stats.seasonConcededNum ||
+        stats.seasonConceded ||
+        stats.goals_conceded ||
+        0,
+      homeTotalGoalsConceded:
+        stats.homeGoalsAgainst || 
+        stats.seasonConcededNum_home || 
+        stats.home_goals_conceded || 
+        0,
+      awayTotalGoalsConceded:
+        stats.awayGoalsAgainst || 
+        stats.seasonConcededNum_away || 
+        stats.away_goals_conceded || 
+        0,
 
       // BTTS percentages - API uses 'bothTeamsScoredPercentage' fields
       bttsPercentage:
@@ -770,6 +797,40 @@ export class MatchDetailsData {
         stats.scoredAVG2H_home || stats.secondHalfGoalsAVG_home || stats.scored_2hg_avg_home || 0,
       scoredAVG2H_away:
         stats.scoredAVG2H_away || stats.secondHalfGoalsAVG_away || stats.scored_2hg_avg_away || 0,
+        
+      // First Half Conceded Average
+      firstHalfConcededAvg:
+        stats.concededAVGHT_overall || 
+        stats.firstHalfConcededAVG_overall || 
+        stats.conceded_1hg_avg_overall ||
+        0,
+      homeFirstHalfConcededAvg:
+        stats.concededAVGHT_home || 
+        stats.firstHalfConcededAVG_home || 
+        stats.conceded_1hg_avg_home ||
+        0,
+      awayFirstHalfConcededAvg:
+        stats.concededAVGHT_away || 
+        stats.firstHalfConcededAVG_away || 
+        stats.conceded_1hg_avg_away ||
+        0,
+        
+      // Second Half Conceded Average
+      secondHalfConcededAvg:
+        stats.concededAVG2H_overall || 
+        stats.secondHalfConcededAVG_overall || 
+        stats.conceded_2hg_avg_overall ||
+        0,
+      homeSecondHalfConcededAvg:
+        stats.concededAVG2H_home || 
+        stats.secondHalfConcededAVG_home || 
+        stats.conceded_2hg_avg_home ||
+        0,
+      awaySecondHalfConcededAvg:
+        stats.concededAVG2H_away || 
+        stats.secondHalfConcededAVG_away || 
+        stats.conceded_2hg_avg_away ||
+        0,
 
       // Over/Under Goals Percentages
       over05GoalsPercentage:
@@ -828,6 +889,83 @@ export class MatchDetailsData {
         stats.seasonScoredOver35Percentage_home || additionalInfo.seasonScoredOver35Percentage_home || stats.scoredOver35Percentage_home || 0,
       awayScoredOver35Percentage:
         stats.seasonScoredOver35Percentage_away || additionalInfo.seasonScoredOver35Percentage_away || stats.scoredOver35Percentage_away || 0,
+        
+      // Over/Under Conceded Percentages (for Goals Conceded Comparison)
+      over05Conceded:
+        stats.seasonConcededOver05Percentage_overall || 
+        additionalInfo.seasonConcededOver05Percentage_overall ||
+        additionalInfo.over05_conceded_percentage_overall ||
+        stats.concededOver05Percentage || 
+        0,
+      homeOver05Conceded:
+        stats.seasonConcededOver05Percentage_home || 
+        additionalInfo.seasonConcededOver05Percentage_home ||
+        additionalInfo.over05_conceded_percentage_home ||
+        stats.concededOver05Percentage_home || 
+        0,
+      awayOver05Conceded:
+        stats.seasonConcededOver05Percentage_away || 
+        additionalInfo.seasonConcededOver05Percentage_away ||
+        additionalInfo.over05_conceded_percentage_away ||
+        stats.concededOver05Percentage_away || 
+        0,
+        
+      over15Conceded:
+        stats.seasonConcededOver15Percentage_overall || 
+        additionalInfo.seasonConcededOver15Percentage_overall ||
+        additionalInfo.over15_conceded_percentage_overall ||
+        stats.concededOver15Percentage || 
+        0,
+      homeOver15Conceded:
+        stats.seasonConcededOver15Percentage_home || 
+        additionalInfo.seasonConcededOver15Percentage_home ||
+        additionalInfo.over15_conceded_percentage_home ||
+        stats.concededOver15Percentage_home || 
+        0,
+      awayOver15Conceded:
+        stats.seasonConcededOver15Percentage_away || 
+        additionalInfo.seasonConcededOver15Percentage_away ||
+        additionalInfo.over15_conceded_percentage_away ||
+        stats.concededOver15Percentage_away || 
+        0,
+        
+      over25Conceded:
+        stats.seasonConcededOver25Percentage_overall || 
+        additionalInfo.seasonConcededOver25Percentage_overall ||
+        additionalInfo.over25_conceded_percentage_overall ||
+        stats.concededOver25Percentage || 
+        0,
+      homeOver25Conceded:
+        stats.seasonConcededOver25Percentage_home || 
+        additionalInfo.seasonConcededOver25Percentage_home ||
+        additionalInfo.over25_conceded_percentage_home ||
+        stats.concededOver25Percentage_home || 
+        0,
+      awayOver25Conceded:
+        stats.seasonConcededOver25Percentage_away || 
+        additionalInfo.seasonConcededOver25Percentage_away ||
+        additionalInfo.over25_conceded_percentage_away ||
+        stats.concededOver25Percentage_away || 
+        0,
+        
+      over35Conceded:
+        stats.seasonConcededOver35Percentage_overall || 
+        additionalInfo.seasonConcededOver35Percentage_overall ||
+        additionalInfo.over35_conceded_percentage_overall ||
+        stats.concededOver35Percentage || 
+        0,
+      homeOver35Conceded:
+        stats.seasonConcededOver35Percentage_home || 
+        additionalInfo.seasonConcededOver35Percentage_home ||
+        additionalInfo.over35_conceded_percentage_home ||
+        stats.concededOver35Percentage_home || 
+        0,
+      awayOver35Conceded:
+        stats.seasonConcededOver35Percentage_away || 
+        additionalInfo.seasonConcededOver35Percentage_away ||
+        additionalInfo.over35_conceded_percentage_away ||
+        stats.concededOver35Percentage_away || 
+        0,
     };
 
 

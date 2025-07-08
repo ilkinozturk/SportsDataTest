@@ -4,12 +4,13 @@
  */
 
 import EventBus from '../events/EventBus.js';
-import MatchDetailsData from './match-details-data.js';
-import MatchDetailsDisplay from '../display/match-details-display.js';
-import MatchTabsDisplay from '../display/match-tabs-display.js';
-import H2HData from '../data/h2h-data.js';
-import FormPrediction from '../prediction/form-prediction.js';
-import GoalsComparison from '../prediction/goals-comparison.js';
+import { MatchDetailsData } from './match-details-data.js';
+import { MatchDetailsDisplay } from '../display/match-details-display.js';
+import { MatchTabsDisplay } from '../display/match-tabs-display.js';
+import { H2HData } from '../data/h2h-data.js';
+import { FormPrediction } from '../prediction/form-prediction.js';
+import { GoalsComparison } from '../prediction/goals-comparison.js';
+import { GoalsConcededComparison } from '../prediction/goals-conceded-comparison.js';
 
 class MatchDetailsApp {
   constructor() {
@@ -44,17 +45,12 @@ class MatchDetailsApp {
     // Initialize prediction modules
     this.modules.formPrediction = new FormPrediction(this.eventBus);
     this.modules.goalsComparison = new GoalsComparison(this.eventBus);
-
-    // Log initialization
-    console.log(
-      'Match Details modules initialized (including H2H, Form Prediction, and Goals Comparison modules)'
-    );
+    this.modules.goalsConcededComparison = new GoalsConcededComparison(this.eventBus);
   }
 
   setupGlobalHandlers() {
     // Global tab switching function
     window.switchTab = tabName => {
-      console.log('Switching to tab:', tabName);
       this.eventBus.emit('switch-tab', tabName);
     };
 
@@ -62,9 +58,6 @@ class MatchDetailsApp {
     this.eventBus.on('display-error', error => {
       console.error('Display error:', error);
     });
-
-    // Log successful initialization
-    console.log('Match Details App initialized successfully');
   }
 }
 

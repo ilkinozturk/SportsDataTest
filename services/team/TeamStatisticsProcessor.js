@@ -16,6 +16,17 @@ class TeamStatisticsProcessor {
     const stats = apiStats.stats || {};
     const additionalInfo = stats.additional_info || apiStats.additional_info || {};
     
+    // Debug logging for Over/Under fields
+    this.logger.info('Processing statistics - Over/Under fields:', {
+      teamId,
+      'seasonOver35Percentage_overall': stats.seasonOver35Percentage_overall,
+      'seasonOver35Percentage_home': stats.seasonOver35Percentage_home,
+      'seasonOver35Percentage_away': stats.seasonOver35Percentage_away,
+      'seasonScoredOver35Percentage_overall': stats.seasonScoredOver35Percentage_overall || additionalInfo.seasonScoredOver35Percentage_overall,
+      'seasonScoredOver35Percentage_home': stats.seasonScoredOver35Percentage_home || additionalInfo.seasonScoredOver35Percentage_home,
+      'seasonScoredOver35Percentage_away': stats.seasonScoredOver35Percentage_away || additionalInfo.seasonScoredOver35Percentage_away,
+    });
+    
     // IMPORTANT: This is the exact same logic as processStatisticsLegacy
     // We're not changing ANY logic to ensure data integrity
     return {
@@ -101,6 +112,7 @@ class TeamStatisticsProcessor {
       awayFailedToScorePercentage: stats.seasonFTSPercentage_away || 0,
 
       // Over/Under goals
+      over05GoalsPercentage: stats.seasonOver05Percentage_overall || 0,
       over15GoalsPercentage: stats.seasonOver15Percentage_overall || 0,
       over25GoalsPercentage: stats.seasonOver25Percentage_overall || 0,
       over35GoalsPercentage: stats.seasonOver35Percentage_overall || 0,
@@ -111,6 +123,7 @@ class TeamStatisticsProcessor {
       bttsAndLosePercentage: stats.BTTS_and_lose_percentage_overall || 0,
 
       // Home Over/Under
+      homeOver05GoalsPercentage: stats.seasonOver05Percentage_home || 0,
       homeOver15GoalsPercentage: stats.seasonOver15Percentage_home || 0,
       homeOver25GoalsPercentage: stats.seasonOver25Percentage_home || 0,
       homeOver35GoalsPercentage: stats.seasonOver35Percentage_home || 0,
@@ -121,6 +134,7 @@ class TeamStatisticsProcessor {
       homeBttsAndLosePercentage: stats.BTTS_and_lose_percentage_home || 0,
 
       // Away Over/Under
+      awayOver05GoalsPercentage: stats.seasonOver05Percentage_away || 0,
       awayOver15GoalsPercentage: stats.seasonOver15Percentage_away || 0,
       awayOver25GoalsPercentage: stats.seasonOver25Percentage_away || 0,
       awayOver35GoalsPercentage: stats.seasonOver35Percentage_away || 0,
@@ -882,6 +896,18 @@ class TeamStatisticsProcessor {
         stats.seasonScoredOver25Percentage_away ||
         additionalInfo.seasonScoredOver25Percentage_away ||
         0,
+      seasonScoredOver35Percentage_overall:
+        stats.seasonScoredOver35Percentage_overall ||
+        additionalInfo.seasonScoredOver35Percentage_overall ||
+        0,
+      seasonScoredOver35Percentage_home:
+        stats.seasonScoredOver35Percentage_home ||
+        additionalInfo.seasonScoredOver35Percentage_home ||
+        0,
+      seasonScoredOver35Percentage_away:
+        stats.seasonScoredOver35Percentage_away ||
+        additionalInfo.seasonScoredOver35Percentage_away ||
+        0,
 
       scoredBothHalvesPercentage_overall:
         stats.scoredBothHalvesPercentage_overall ||
@@ -1489,7 +1515,27 @@ class TeamStatisticsProcessor {
       awayMatchShotsOnTargetOver12_5:
         stats.match_shots_on_target_over125_percentage_away ||
         additionalInfo.match_shots_on_target_over125_percentage_away ||
-        0
+        0,
+        
+      // Raw API field mappings for Over/Under Goals
+      seasonOver05Percentage_overall: stats.seasonOver05Percentage_overall || 0,
+      seasonOver05Percentage_home: stats.seasonOver05Percentage_home || 0,
+      seasonOver05Percentage_away: stats.seasonOver05Percentage_away || 0,
+      seasonOver15Percentage_overall: stats.seasonOver15Percentage_overall || 0,
+      seasonOver15Percentage_home: stats.seasonOver15Percentage_home || 0,
+      seasonOver15Percentage_away: stats.seasonOver15Percentage_away || 0,
+      seasonOver25Percentage_overall: stats.seasonOver25Percentage_overall || 0,
+      seasonOver25Percentage_home: stats.seasonOver25Percentage_home || 0,
+      seasonOver25Percentage_away: stats.seasonOver25Percentage_away || 0,
+      seasonOver35Percentage_overall: stats.seasonOver35Percentage_overall || 0,
+      seasonOver35Percentage_home: stats.seasonOver35Percentage_home || 0,
+      seasonOver35Percentage_away: stats.seasonOver35Percentage_away || 0,
+      seasonOver45Percentage_overall: stats.seasonOver45Percentage_overall || 0,
+      seasonOver45Percentage_home: stats.seasonOver45Percentage_home || 0,
+      seasonOver45Percentage_away: stats.seasonOver45Percentage_away || 0,
+      seasonOver55Percentage_overall: stats.seasonOver55Percentage_overall || 0,
+      seasonOver55Percentage_home: stats.seasonOver55Percentage_home || 0,
+      seasonOver55Percentage_away: stats.seasonOver55Percentage_away || 0
     };
   }
 }
