@@ -687,6 +687,58 @@ export class MatchDetailsData {
         stats.cs_percentage_away ||
         stats.csPercentageAway ||
         0,
+        
+      // First Half Clean Sheet percentages
+      firstHalfCleanSheetPercentage_home:
+        stats.firstHalfCleanSheetPercentage_home ||
+        stats.homeFirstHalfCleanSheet ||
+        stats.seasonFirstHalfCSPercentage_home ||
+        additionalInfo.firstHalfCleanSheetPercentage_home ||
+        0,
+      homeFirstHalfCleanSheet:
+        stats.firstHalfCleanSheetPercentage_home ||
+        stats.homeFirstHalfCleanSheet ||
+        stats.seasonFirstHalfCSPercentage_home ||
+        additionalInfo.firstHalfCleanSheetPercentage_home ||
+        0,
+      firstHalfCleanSheetPercentage_away:
+        stats.firstHalfCleanSheetPercentage_away ||
+        stats.awayFirstHalfCleanSheet ||
+        stats.seasonFirstHalfCSPercentage_away ||
+        additionalInfo.firstHalfCleanSheetPercentage_away ||
+        0,
+      awayFirstHalfCleanSheet:
+        stats.firstHalfCleanSheetPercentage_away ||
+        stats.awayFirstHalfCleanSheet ||
+        stats.seasonFirstHalfCSPercentage_away ||
+        additionalInfo.firstHalfCleanSheetPercentage_away ||
+        0,
+        
+      // Second Half Clean Sheet percentages
+      secondHalfCleanSheetPercentage_home:
+        stats.secondHalfCleanSheetPercentage_home ||
+        stats.homeSecondHalfCleanSheet ||
+        stats.seasonSecondHalfCSPercentage_home ||
+        additionalInfo.secondHalfCleanSheetPercentage_home ||
+        0,
+      homeSecondHalfCleanSheet:
+        stats.secondHalfCleanSheetPercentage_home ||
+        stats.homeSecondHalfCleanSheet ||
+        stats.seasonSecondHalfCSPercentage_home ||
+        additionalInfo.secondHalfCleanSheetPercentage_home ||
+        0,
+      secondHalfCleanSheetPercentage_away:
+        stats.secondHalfCleanSheetPercentage_away ||
+        stats.awaySecondHalfCleanSheet ||
+        stats.seasonSecondHalfCSPercentage_away ||
+        additionalInfo.secondHalfCleanSheetPercentage_away ||
+        0,
+      awaySecondHalfCleanSheet:
+        stats.secondHalfCleanSheetPercentage_away ||
+        stats.awaySecondHalfCleanSheet ||
+        stats.seasonSecondHalfCSPercentage_away ||
+        additionalInfo.secondHalfCleanSheetPercentage_away ||
+        0,
 
       // Failed to score percentages - API field names (prioritize non-zero values)
       failedToScorePercentage:

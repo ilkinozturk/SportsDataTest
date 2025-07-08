@@ -62,8 +62,6 @@ export class GoalsConcededComparison {
     
     if (venue === 'home') {
       result = {
-        goalsConcededPerMatch: stats.homeGoalsConcededPerMatch || stats.goalsConcededPerMatch || '0.00',
-        totalGoalsConceded: stats.homeGoalsConceded || stats.goalsConceded || 0,
         firstHalfConcededAvg: stats.homeFirstHalfConcededAvg || stats.firstHalfConcededAvg || '0.00',
         secondHalfConcededAvg: stats.homeSecondHalfConcededAvg || stats.secondHalfConcededAvg || '0.00',
         over05Conceded: parseInt(stats.homeOver05Conceded || stats.over05Conceded || 0, 10),
@@ -71,11 +69,11 @@ export class GoalsConcededComparison {
         over25Conceded: parseInt(stats.homeOver25Conceded || stats.over25Conceded || 0, 10),
         over35Conceded: parseInt(stats.homeOver35Conceded || stats.over35Conceded || 0, 10),
         cleanSheetPercentage: stats.homeCleanSheetPercentage || stats.cleanSheetPercentage || '0',
+        firstHalfCleanSheet: stats.homeFirstHalfCleanSheet || stats.firstHalfCleanSheetPercentage_home || '0',
+        secondHalfCleanSheet: stats.homeSecondHalfCleanSheet || stats.secondHalfCleanSheetPercentage_home || '0',
       };
     } else {
       result = {
-        goalsConcededPerMatch: stats.awayGoalsConcededPerMatch || stats.goalsConcededPerMatch || '0.00',
-        totalGoalsConceded: stats.awayGoalsConceded || stats.goalsConceded || 0,
         firstHalfConcededAvg: stats.awayFirstHalfConcededAvg || stats.firstHalfConcededAvg || '0.00',
         secondHalfConcededAvg: stats.awaySecondHalfConcededAvg || stats.secondHalfConcededAvg || '0.00',
         over05Conceded: parseInt(stats.awayOver05Conceded || stats.over05Conceded || 0, 10),
@@ -83,6 +81,8 @@ export class GoalsConcededComparison {
         over25Conceded: parseInt(stats.awayOver25Conceded || stats.over25Conceded || 0, 10),
         over35Conceded: parseInt(stats.awayOver35Conceded || stats.over35Conceded || 0, 10),
         cleanSheetPercentage: stats.awayCleanSheetPercentage || stats.cleanSheetPercentage || '0',
+        firstHalfCleanSheet: stats.awayFirstHalfCleanSheet || stats.firstHalfCleanSheetPercentage_away || '0',
+        secondHalfCleanSheet: stats.awaySecondHalfCleanSheet || stats.secondHalfCleanSheetPercentage_away || '0',
       };
     }
     

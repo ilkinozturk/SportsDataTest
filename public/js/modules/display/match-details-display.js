@@ -1868,71 +1868,71 @@ export class MatchDetailsDisplay {
             <span class="venue-badge home">Ev Sahibi</span>
           </div>
           
-          <!-- Average Goals Conceded Per Match -->
-          <div class="goals-stat-row">
-            <div class="goals-stat-label">Maç Başı Yenilen Gol</div>
-            <div class="goals-stat-value">${homeTeam.stats.goalsConcededPerMatch}</div>
-            <div class="goals-progress-bar">
-              <div class="goals-progress-fill conceded" style="width: ${this.calculateGoalsPercentage(homeTeam.stats.goalsConcededPerMatch, 4)}%"></div>
+          <!-- Over/Under Conceded Stats -->
+          <div class="goals-over-under-section">
+            <h5>Yenilen Gol - Üst</h5>
+            <div class="goals-over-under-grid">
+              <div class="over-under-stat">
+                <span class="ou-label">Conceded 0.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over05Conceded)}">${homeTeam.stats.over05Conceded}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">Conceded 1.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over15Conceded)}">${homeTeam.stats.over15Conceded}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">Conceded 2.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over25Conceded)}">${homeTeam.stats.over25Conceded}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">Conceded 3.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over35Conceded)}">${homeTeam.stats.over35Conceded}%</span>
+              </div>
             </div>
           </div>
           
-          <!-- Total Goals Conceded -->
-          <div class="goals-stat-row">
-            <div class="goals-stat-label">Toplam Yenilen Gol</div>
-            <div class="goals-stat-value">${homeTeam.stats.totalGoalsConceded}</div>
-            <div class="goals-progress-bar">
-              <div class="goals-progress-fill conceded" style="width: ${this.calculateGoalsPercentage(homeTeam.stats.totalGoalsConceded, 100)}%"></div>
+          <!-- Clean Sheet Stats -->
+          <div class="goals-stat-row cs-row">
+            <div class="goals-stat-label">Clean Sheets</div>
+            <div class="goals-stat-value ${this.getCSClass(homeTeam.stats.cleanSheetPercentage)}">${homeTeam.stats.cleanSheetPercentage}%</div>
+            <div class="goals-progress-bar cs-bar">
+              <div class="goals-progress-fill" style="width: ${homeTeam.stats.cleanSheetPercentage}%"></div>
             </div>
           </div>
           
-          <!-- First Half Average Conceded -->
+          <!-- 1H Clean Sheet -->
           <div class="goals-stat-row">
-            <div class="goals-stat-label">İlk Yarı Ort. Yenilen</div>
+            <div class="goals-stat-label">1H Clean Sheet</div>
+            <div class="goals-stat-value">${homeTeam.stats.firstHalfCleanSheet || '0'}%</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${homeTeam.stats.firstHalfCleanSheet || 0}%"></div>
+            </div>
+          </div>
+          
+          <!-- 2H Clean Sheet -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">2H Clean Sheet</div>
+            <div class="goals-stat-value">${homeTeam.stats.secondHalfCleanSheet || '0'}%</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${homeTeam.stats.secondHalfCleanSheet || 0}%"></div>
+            </div>
+          </div>
+          
+          <!-- Conceded Average 1H -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">Conceded Average 1H</div>
             <div class="goals-stat-value">${homeTeam.stats.firstHalfConcededAvg}</div>
             <div class="goals-progress-bar">
               <div class="goals-progress-fill conceded" style="width: ${this.calculateGoalsPercentage(homeTeam.stats.firstHalfConcededAvg, 2)}%"></div>
             </div>
           </div>
           
-          <!-- Second Half Average Conceded -->
+          <!-- Conceded Average 2H -->
           <div class="goals-stat-row">
-            <div class="goals-stat-label">İkinci Yarı Ort. Yenilen</div>
+            <div class="goals-stat-label">Conceded Average 2H</div>
             <div class="goals-stat-value">${homeTeam.stats.secondHalfConcededAvg}</div>
             <div class="goals-progress-bar">
               <div class="goals-progress-fill conceded" style="width: ${this.calculateGoalsPercentage(homeTeam.stats.secondHalfConcededAvg, 2)}%"></div>
-            </div>
-          </div>
-          
-          <!-- Over/Under Conceded Stats -->
-          <div class="goals-over-under-section">
-            <h5>Yenilen Gol - Üst/Alt</h5>
-            <div class="goals-over-under-grid">
-              <div class="over-under-stat">
-                <span class="ou-label">0.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over05Conceded)}">${homeTeam.stats.over05Conceded}%</span>
-              </div>
-              <div class="over-under-stat">
-                <span class="ou-label">1.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over15Conceded)}">${homeTeam.stats.over15Conceded}%</span>
-              </div>
-              <div class="over-under-stat">
-                <span class="ou-label">2.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over25Conceded)}">${homeTeam.stats.over25Conceded}%</span>
-              </div>
-              <div class="over-under-stat">
-                <span class="ou-label">3.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over35Conceded)}">${homeTeam.stats.over35Conceded}%</span>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Clean Sheet -->
-          <div class="goals-stat-row cs-row">
-            <div class="goals-stat-label">Gol Yememe (CS)</div>
-            <div class="goals-stat-value ${this.getCSClass(homeTeam.stats.cleanSheetPercentage)}">${homeTeam.stats.cleanSheetPercentage}%</div>
-            <div class="goals-progress-bar cs-bar">
-              <div class="goals-progress-fill" style="width: ${homeTeam.stats.cleanSheetPercentage}%"></div>
             </div>
           </div>
         </div>
@@ -1945,71 +1945,71 @@ export class MatchDetailsDisplay {
             <span class="venue-badge away">Deplasman</span>
           </div>
           
-          <!-- Average Goals Conceded Per Match -->
-          <div class="goals-stat-row">
-            <div class="goals-stat-label">Maç Başı Yenilen Gol</div>
-            <div class="goals-stat-value">${awayTeam.stats.goalsConcededPerMatch}</div>
-            <div class="goals-progress-bar">
-              <div class="goals-progress-fill conceded" style="width: ${this.calculateGoalsPercentage(awayTeam.stats.goalsConcededPerMatch, 4)}%"></div>
+          <!-- Over/Under Conceded Stats -->
+          <div class="goals-over-under-section">
+            <h5>Yenilen Gol - Üst</h5>
+            <div class="goals-over-under-grid">
+              <div class="over-under-stat">
+                <span class="ou-label">Conceded 0.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over05Conceded)}">${awayTeam.stats.over05Conceded}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">Conceded 1.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over15Conceded)}">${awayTeam.stats.over15Conceded}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">Conceded 2.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over25Conceded)}">${awayTeam.stats.over25Conceded}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">Conceded 3.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over35Conceded)}">${awayTeam.stats.over35Conceded}%</span>
+              </div>
             </div>
           </div>
           
-          <!-- Total Goals Conceded -->
-          <div class="goals-stat-row">
-            <div class="goals-stat-label">Toplam Yenilen Gol</div>
-            <div class="goals-stat-value">${awayTeam.stats.totalGoalsConceded}</div>
-            <div class="goals-progress-bar">
-              <div class="goals-progress-fill conceded" style="width: ${this.calculateGoalsPercentage(awayTeam.stats.totalGoalsConceded, 100)}%"></div>
+          <!-- Clean Sheet Stats -->
+          <div class="goals-stat-row cs-row">
+            <div class="goals-stat-label">Clean Sheets</div>
+            <div class="goals-stat-value ${this.getCSClass(awayTeam.stats.cleanSheetPercentage)}">${awayTeam.stats.cleanSheetPercentage}%</div>
+            <div class="goals-progress-bar cs-bar">
+              <div class="goals-progress-fill" style="width: ${awayTeam.stats.cleanSheetPercentage}%"></div>
             </div>
           </div>
           
-          <!-- First Half Average Conceded -->
+          <!-- 1H Clean Sheet -->
           <div class="goals-stat-row">
-            <div class="goals-stat-label">İlk Yarı Ort. Yenilen</div>
+            <div class="goals-stat-label">1H Clean Sheet</div>
+            <div class="goals-stat-value">${awayTeam.stats.firstHalfCleanSheet || '0'}%</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${awayTeam.stats.firstHalfCleanSheet || 0}%"></div>
+            </div>
+          </div>
+          
+          <!-- 2H Clean Sheet -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">2H Clean Sheet</div>
+            <div class="goals-stat-value">${awayTeam.stats.secondHalfCleanSheet || '0'}%</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${awayTeam.stats.secondHalfCleanSheet || 0}%"></div>
+            </div>
+          </div>
+          
+          <!-- Conceded Average 1H -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">Conceded Average 1H</div>
             <div class="goals-stat-value">${awayTeam.stats.firstHalfConcededAvg}</div>
             <div class="goals-progress-bar">
               <div class="goals-progress-fill conceded" style="width: ${this.calculateGoalsPercentage(awayTeam.stats.firstHalfConcededAvg, 2)}%"></div>
             </div>
           </div>
           
-          <!-- Second Half Average Conceded -->
+          <!-- Conceded Average 2H -->
           <div class="goals-stat-row">
-            <div class="goals-stat-label">İkinci Yarı Ort. Yenilen</div>
+            <div class="goals-stat-label">Conceded Average 2H</div>
             <div class="goals-stat-value">${awayTeam.stats.secondHalfConcededAvg}</div>
             <div class="goals-progress-bar">
               <div class="goals-progress-fill conceded" style="width: ${this.calculateGoalsPercentage(awayTeam.stats.secondHalfConcededAvg, 2)}%"></div>
-            </div>
-          </div>
-          
-          <!-- Over/Under Conceded Stats -->
-          <div class="goals-over-under-section">
-            <h5>Yenilen Gol - Üst/Alt</h5>
-            <div class="goals-over-under-grid">
-              <div class="over-under-stat">
-                <span class="ou-label">0.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over05Conceded)}">${awayTeam.stats.over05Conceded}%</span>
-              </div>
-              <div class="over-under-stat">
-                <span class="ou-label">1.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over15Conceded)}">${awayTeam.stats.over15Conceded}%</span>
-              </div>
-              <div class="over-under-stat">
-                <span class="ou-label">2.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over25Conceded)}">${awayTeam.stats.over25Conceded}%</span>
-              </div>
-              <div class="over-under-stat">
-                <span class="ou-label">3.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over35Conceded)}">${awayTeam.stats.over35Conceded}%</span>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Clean Sheet -->
-          <div class="goals-stat-row cs-row">
-            <div class="goals-stat-label">Gol Yememe (CS)</div>
-            <div class="goals-stat-value ${this.getCSClass(awayTeam.stats.cleanSheetPercentage)}">${awayTeam.stats.cleanSheetPercentage}%</div>
-            <div class="goals-progress-bar cs-bar">
-              <div class="goals-progress-fill" style="width: ${awayTeam.stats.cleanSheetPercentage}%"></div>
             </div>
           </div>
         </div>
