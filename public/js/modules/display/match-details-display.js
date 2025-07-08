@@ -269,7 +269,6 @@ export class MatchDetailsDisplay {
   updateTeamForms(matchData) {
     const { homeTeam, awayTeam } = matchData;
 
-
     // Home team form
     if (this.elements.homeTeamForm && homeTeam) {
       const homeFormData = homeTeam.homeForm || 'WWDLW'; // Test data if no real data
@@ -336,7 +335,6 @@ export class MatchDetailsDisplay {
   }
 
   renderFormString(container, formString) {
-
     // Sadece son 5 karakteri al
     const last5Form = formString.slice(-5);
 
@@ -361,7 +359,6 @@ export class MatchDetailsDisplay {
   }
 
   switchTab(tabName) {
-
     // Re-query elements in case they were dynamically updated
     const navTabs = document.querySelectorAll('.nav-tab');
     const tabPanes = document.querySelectorAll('.tab-pane');
@@ -663,7 +660,6 @@ export class MatchDetailsDisplay {
       return;
     }
 
-
     // If no matches available
     if (!matches || matches.length === 0) {
       this.elements.h2hRecentMatches.innerHTML = `
@@ -674,35 +670,68 @@ export class MatchDetailsDisplay {
       return;
     }
 
-    // Get last 5 matches
-    const recentMatches = matches.slice(0, 5);
+    // Create carousel structure
+    const carouselHTML = `
+      <div class="h2h-carousel-container">
+        <button class="h2h-carousel-btn h2h-carousel-prev" aria-label="Previous matches">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <div class="h2h-carousel-wrapper">
+          <div class="h2h-carousel-track">
+            ${this.renderH2HMatches(matches, homeTeam, awayTeam)}
+          </div>
+        </div>
+        <button class="h2h-carousel-btn h2h-carousel-next" aria-label="Next matches">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+    `;
 
-    // Render matches
-    const matchesHTML = recentMatches
+    this.elements.h2hRecentMatches.innerHTML = carouselHTML;
+
+    // Initialize carousel functionality
+    this.initializeH2HCarousel();
+  }
+
+  renderH2HMatches(matches, homeTeam, awayTeam) {
+    return matches
       .map(match => {
-        const homeGoals = match.homeGoalCount || match.home_scored || match.homeScore || 
-                          match.team_a_goals || match.homeGoals || 0;
-        const awayGoals = match.awayGoalCount || match.away_scored || match.awayScore || 
-                          match.team_b_goals || match.awayGoals || 0;
-        const matchDate = match.date 
-          ? new Date(match.date).toLocaleDateString() 
-          : match.date_unix 
+        const homeGoals =
+          match.homeGoalCount ||
+          match.home_scored ||
+          match.homeScore ||
+          match.team_a_goals ||
+          match.homeGoals ||
+          0;
+        const awayGoals =
+          match.awayGoalCount ||
+          match.away_scored ||
+          match.awayScore ||
+          match.team_b_goals ||
+          match.awayGoals ||
+          0;
+        const matchDate = match.date
+          ? new Date(match.date).toLocaleDateString()
+          : match.date_unix
             ? new Date(match.date_unix * 1000).toLocaleDateString()
             : 'Date N/A';
 
         // Determine winner for styling
         // Since team IDs can change across seasons, we'll use name matching as fallback
         let resultClass = 'draw';
-        let winnerIndicator = '';
 
         // Get current team names from parameters
         const homeTeamName = homeTeam?.name || '';
         const awayTeamName = awayTeam?.name || '';
-        
+
         // For previous_matches_ids, use the team IDs to show which team played where
         let matchHomeName = match.home_name || `Team ${match.homeID || match.team_a_id}`;
         let matchAwayName = match.away_name || `Team ${match.awayID || match.team_b_id}`;
-        
+
         // If we have current team info from the match data, use it
         if (match.currentTeamA && match.currentTeamB) {
           if (match.homeID === match.currentTeamAId) {
@@ -710,35 +739,33 @@ export class MatchDetailsDisplay {
           } else if (match.homeID === match.currentTeamBId) {
             matchHomeName = match.currentTeamB;
           }
-          
+
           if (match.awayID === match.currentTeamAId) {
             matchAwayName = match.currentTeamA;
           } else if (match.awayID === match.currentTeamBId) {
             matchAwayName = match.currentTeamB;
           }
         }
-        
+
         // Final fallback - if still showing "Team ID", try to match with current teams
         if (matchHomeName.startsWith('Team ') && homeTeam && awayTeam) {
           // Get the team ID from the string "Team 123"
-          const homeId = parseInt(match.homeID || match.team_a_id, 10);
-          const awayId = parseInt(match.awayID || match.team_b_id, 10);
-          
+          const _homeId = parseInt(match.homeID || match.team_a_id, 10);
+
           // Check if these IDs match our current teams
-          if (homeId === homeTeam.id) {
+          if (_homeId === homeTeam.id) {
             matchHomeName = homeTeamName;
-          } else if (homeId === awayTeam.id) {
+          } else if (_homeId === awayTeam.id) {
             matchHomeName = awayTeamName;
           }
         }
-        
+
         if (matchAwayName.startsWith('Team ') && homeTeam && awayTeam) {
-          const homeId = parseInt(match.homeID || match.team_a_id, 10);
-          const awayId = parseInt(match.awayID || match.team_b_id, 10);
-          
-          if (awayId === homeTeam.id) {
+          const _awayId = parseInt(match.awayID || match.team_b_id, 10);
+
+          if (_awayId === homeTeam.id) {
             matchAwayName = homeTeamName;
-          } else if (awayId === awayTeam.id) {
+          } else if (_awayId === awayTeam.id) {
             matchAwayName = awayTeamName;
           }
         }
@@ -757,53 +784,151 @@ export class MatchDetailsDisplay {
           // Home team won the match
           if (isHomeTeamPlayingHome) {
             resultClass = 'home-win';
-            winnerIndicator = 'W';
           } else if (isAwayTeamPlayingAway) {
             resultClass = 'away-loss';
-            winnerIndicator = 'L';
           } else {
             resultClass = 'neutral';
-            winnerIndicator = 'H'; // Home win
           }
         } else if (awayGoals > homeGoals) {
           // Away team won the match
           if (isAwayTeamPlayingAway) {
             resultClass = 'away-win';
-            winnerIndicator = 'W';
           } else if (isHomeTeamPlayingHome) {
             resultClass = 'home-loss';
-            winnerIndicator = 'L';
           } else {
             resultClass = 'neutral';
-            winnerIndicator = 'A'; // Away win
           }
-        } else {
-          winnerIndicator = 'D';
         }
 
         return `
-          <div class="h2h-recent-match ${resultClass}">
+          <div class="h2h-match-card ${resultClass}">
             <div class="h2h-match-date">${matchDate}</div>
-            <div class="h2h-match-teams">
-              <span class="h2h-match-home ${match.homeID === homeTeam?.id ? 'current-team' : ''}">
-                ${matchHomeName}
-              </span>
-              <span class="h2h-match-score">
-                ${homeGoals} - ${awayGoals}
-              </span>
-              <span class="h2h-match-away ${match.awayID === awayTeam?.id ? 'current-team' : ''}">
-                ${matchAwayName}
-              </span>
-            </div>
-            <div class="h2h-match-result">
-              <span class="result-indicator ${resultClass}">${winnerIndicator}</span>
+            <div class="h2h-match-content">
+              <div class="h2h-team-row">
+                <span class="h2h-team-name ${match.homeID === homeTeam?.id ? 'current-team' : ''}">
+                  ${matchHomeName}
+                </span>
+                <span class="h2h-team-score">${homeGoals}</span>
+              </div>
+              <div class="h2h-team-row">
+                <span class="h2h-team-name ${match.awayID === awayTeam?.id ? 'current-team' : ''}">
+                  ${matchAwayName}
+                </span>
+                <span class="h2h-team-score">${awayGoals}</span>
+              </div>
             </div>
           </div>
         `;
       })
       .join('');
+  }
 
-    this.elements.h2hRecentMatches.innerHTML = matchesHTML;
+  initializeH2HCarousel() {
+    const container = document.querySelector('.h2h-carousel-container');
+    if (!container) {
+      return;
+    }
+
+    const track = container.querySelector('.h2h-carousel-track');
+    const prevBtn = container.querySelector('.h2h-carousel-prev');
+    const nextBtn = container.querySelector('.h2h-carousel-next');
+    const cards = track.querySelectorAll('.h2h-match-card');
+
+    if (cards.length === 0) {
+      return;
+    }
+
+    let currentIndex = 0;
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    // Responsive cards per view
+    const getCardsPerView = () => {
+      const width = window.innerWidth;
+      if (width < 600) {
+        return 1;
+      }
+      if (width < 900) {
+        return 2;
+      }
+      return 3;
+    };
+
+    let cardsPerView = getCardsPerView();
+    const cardWidth = 220; // card width + gap
+    let maxIndex = Math.max(0, cards.length - cardsPerView);
+
+    // Update carousel position
+    const updateCarousel = () => {
+      const offset = -currentIndex * cardWidth;
+      track.style.transform = `translateX(${offset}px)`;
+
+      // Update button states
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex >= maxIndex;
+    };
+
+    // Handle swipe gestures
+    const handleSwipe = () => {
+      const swipeThreshold = 50;
+      const diff = touchStartX - touchEndX;
+
+      if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0 && currentIndex < maxIndex) {
+          // Swipe left - next
+          currentIndex++;
+          updateCarousel();
+        } else if (diff < 0 && currentIndex > 0) {
+          // Swipe right - prev
+          currentIndex--;
+          updateCarousel();
+        }
+      }
+    };
+
+    // Update on window resize
+    window.addEventListener('resize', () => {
+      cardsPerView = getCardsPerView();
+      maxIndex = Math.max(0, cards.length - cardsPerView);
+      currentIndex = Math.min(currentIndex, maxIndex);
+      updateCarousel();
+    });
+
+    // Button click handlers
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateCarousel();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < maxIndex) {
+        currentIndex++;
+        updateCarousel();
+      }
+    });
+
+    // Touch/swipe support
+    track.addEventListener(
+      'touchstart',
+      e => {
+        touchStartX = e.changedTouches[0].screenX;
+      },
+      { passive: true }
+    );
+
+    track.addEventListener(
+      'touchend',
+      e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      },
+      { passive: true }
+    );
+
+    // Initialize
+    updateCarousel();
   }
 
   showNoH2HData() {
