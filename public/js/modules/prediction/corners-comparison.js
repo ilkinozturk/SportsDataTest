@@ -107,7 +107,10 @@ class CornersComparison {
 
       // Additional stats for context
       totalCornersFor: parseInt(stats[`${venue}CornersFor`] || stats.cornersFor || 0, 10),
-      totalCornersAgainst: parseInt(stats[`${venue}CornersAgainst`] || stats.cornersAgainst || 0, 10),
+      totalCornersAgainst: parseInt(
+        stats[`${venue}CornersAgainst`] || stats.cornersAgainst || 0,
+        10
+      ),
       matchesPlayed: parseInt(stats.matchesPlayed || 1, 10),
     };
   }
