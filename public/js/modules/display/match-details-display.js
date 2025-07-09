@@ -127,6 +127,11 @@ export class MatchDetailsDisplay {
       this.updateCardsComparison(comparison);
     });
 
+    // Listen for offside comparison data
+    this.eventBus.on('offside-comparison-calculated', comparison => {
+      this.updateOffsideComparison(comparison);
+    });
+
     // Listen for tab switch events
     this.eventBus.on('switch-tab', tabName => {
       this.switchTab(tabName);
@@ -1414,7 +1419,7 @@ export class MatchDetailsDisplay {
       return;
     }
 
-    const { homeTeam, awayTeam, drawProbability, confidence, analysis } = prediction;
+    const { homeTeam, awayTeam, drawProbability, confidence } = prediction;
 
     container.innerHTML = `
       <!-- Win Probability Circles -->
@@ -2360,42 +2365,6 @@ export class MatchDetailsDisplay {
   }
 
   /**
-   * Get class for corners values
-   * @param {number} value - Corners value
-   * @returns {string} CSS class
-   */
-  getCornersClass(value) {
-    if (value >= 70) {
-      return 'very-high';
-    }
-    if (value >= 50) {
-      return 'high';
-    }
-    if (value >= 30) {
-      return 'medium';
-    }
-    return 'low';
-  }
-
-  /**
-   * Get class for corners per match values
-   * @param {number} value - Corners per match value
-   * @returns {string} CSS class
-   */
-  getCornersPerMatchClass(value) {
-    if (value >= 6) {
-      return 'very-high';
-    }
-    if (value >= 4.5) {
-      return 'high';
-    }
-    if (value >= 3) {
-      return 'medium';
-    }
-    return 'low';
-  }
-
-  /**
    * Update corners comparison display
    * @param {Object} comparison - Corners comparison data
    */
@@ -2806,9 +2775,15 @@ export class MatchDetailsDisplay {
    * @returns {string} CSS class name
    */
   getCardsPerMatchClass(value) {
-    if (value >= 3) return 'very-high';
-    if (value >= 2) return 'high';
-    if (value >= 1) return 'medium';
+    if (value >= 3) {
+      return 'very-high';
+    }
+    if (value >= 2) {
+      return 'high';
+    }
+    if (value >= 1) {
+      return 'medium';
+    }
     return 'low';
   }
 
@@ -2818,9 +2793,159 @@ export class MatchDetailsDisplay {
    * @returns {string} CSS class name
    */
   getCardsClass(percentage) {
-    if (percentage >= 70) return 'very-high';
-    if (percentage >= 50) return 'high';
-    if (percentage >= 30) return 'medium';
+    if (percentage >= 70) {
+      return 'very-high';
+    }
+    if (percentage >= 50) {
+      return 'high';
+    }
+    if (percentage >= 30) {
+      return 'medium';
+    }
+    return 'low';
+  }
+
+  /**
+   * Update offside comparison display
+   * @param {Object} comparison - Offside comparison data
+   */
+  updateOffsideComparison(comparison) {
+    const container = document.getElementById('offsideComparisonContent');
+    if (!container) {
+      return;
+    }
+
+    if (!comparison || !comparison.homeTeam || !comparison.awayTeam || !comparison.averages) {
+      container.innerHTML = `
+        <div class="no-data-message">
+          <i class="fas fa-info-circle"></i>
+          <p>Offside istatistikleri bekleniyor...</p>
+        </div>
+      `;
+      return;
+    }
+
+    const { homeTeam, awayTeam, averages } = comparison;
+
+    // Debug: Log the values being displayed
+    console.log('[MatchDetailsDisplay] Offside comparison data:', {
+      homeTeam: {
+        name: homeTeam.name,
+        offsidePerMatch: homeTeam.stats.offsidePerMatch,
+        over25Offsides: homeTeam.stats.over25Offsides,
+        over35Offsides: homeTeam.stats.over35Offsides,
+      },
+      awayTeam: {
+        name: awayTeam.name,
+        offsidePerMatch: awayTeam.stats.offsidePerMatch,
+        over25Offsides: awayTeam.stats.over25Offsides,
+        over35Offsides: awayTeam.stats.over35Offsides,
+      },
+      averages,
+    });
+
+    container.innerHTML = `
+      <!-- Offside Modern Design -->
+      <div class="over-btts-modern">
+        <!-- Statistics Table -->
+        <div class="stats-table-container">
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th class="stat-name-col">İstatistik</th>
+                <th class="team-col home-col">${homeTeam.name}</th>
+                <th class="team-col away-col">${awayTeam.name}</th>
+                <th class="average-col">Ortalama</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Offsides per Match -->
+              <tr>
+                <td class="stat-name">Offsides / Match</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value">${homeTeam.stats.offsidePerMatch.toFixed(2)}</span>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value">${awayTeam.stats.offsidePerMatch.toFixed(2)}</span>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value">${averages.offsidePerMatch}</span>
+                </td>
+              </tr>
+              
+              <!-- Over 2.5 Offsides -->
+              <tr>
+                <td class="stat-name">Over 2.5 Offsides</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getOffsideClass(homeTeam.stats.over25Offsides)}">${Math.round(homeTeam.stats.over25Offsides)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getOffsideClass(homeTeam.stats.over25Offsides)}" style="width: ${homeTeam.stats.over25Offsides}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getOffsideClass(awayTeam.stats.over25Offsides)}">${Math.round(awayTeam.stats.over25Offsides)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getOffsideClass(awayTeam.stats.over25Offsides)}" style="width: ${awayTeam.stats.over25Offsides}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getOffsideClass(averages.over25Offsides)}">${Math.round(averages.over25Offsides)}%</span>
+                </td>
+              </tr>
+              
+              <!-- Over 3.5 Offsides -->
+              <tr>
+                <td class="stat-name">Over 3.5 Offsides</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getOffsideClass(homeTeam.stats.over35Offsides)}">${Math.round(homeTeam.stats.over35Offsides)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getOffsideClass(homeTeam.stats.over35Offsides)}" style="width: ${homeTeam.stats.over35Offsides}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getOffsideClass(awayTeam.stats.over35Offsides)}">${Math.round(awayTeam.stats.over35Offsides)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getOffsideClass(awayTeam.stats.over35Offsides)}" style="width: ${awayTeam.stats.over35Offsides}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getOffsideClass(averages.over35Offsides)}">${Math.round(averages.over35Offsides)}%</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Get CSS class for offside percentage
+   * @param {number} percentage - Percentage value
+   * @returns {string} CSS class name
+   */
+  getOffsideClass(percentage) {
+    if (percentage >= 70) {
+      return 'very-high';
+    }
+    if (percentage >= 50) {
+      return 'high';
+    }
+    if (percentage >= 30) {
+      return 'medium';
+    }
     return 'low';
   }
 }

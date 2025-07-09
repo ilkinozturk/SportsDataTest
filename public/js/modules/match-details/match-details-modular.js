@@ -14,6 +14,7 @@ import { GoalsConcededComparison } from '../prediction/goals-conceded-comparison
 import { OverBTTSComparison } from '../prediction/over-btts-comparison.js';
 import { CornersComparison } from '../prediction/corners-comparison.js';
 import { CardsComparison } from '../prediction/cards-comparison.js';
+import { OffsideComparison } from '../prediction/offside-comparison.js';
 
 class MatchDetailsApp {
   constructor() {
@@ -52,6 +53,7 @@ class MatchDetailsApp {
     this.modules.overBTTSComparison = new OverBTTSComparison(this.eventBus);
     this.modules.cornersComparison = new CornersComparison(this.eventBus);
     this.modules.cardsComparison = new CardsComparison(this.eventBus);
+    this.modules.offsideComparison = new OffsideComparison(this.eventBus);
   }
 
   setupGlobalHandlers() {
