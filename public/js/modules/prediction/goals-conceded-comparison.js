@@ -28,14 +28,6 @@ export class GoalsConcededComparison {
   processGoalsConcededComparison(teamData) {
     const { homeTeam, awayTeam } = teamData;
 
-    console.log('=== Goals Conceded Comparison Debug ===');
-    console.log('Home team:', homeTeam.name);
-    console.log('Home team stats:', homeTeam.stats);
-    console.log('Home team additional_info:', homeTeam.additional_info);
-    console.log('Away team:', awayTeam.name);
-    console.log('Away team stats:', awayTeam.stats);
-    console.log('Away team additional_info:', awayTeam.additional_info);
-
     // Extract stats directly from team data which already has processed statistics
     const homeStats = this.extractGoalsConcededStatsFromTeam(homeTeam, 'home');
     const awayStats = this.extractGoalsConcededStatsFromTeam(awayTeam, 'away');
@@ -68,30 +60,58 @@ export class GoalsConcededComparison {
 
     if (venue === 'home') {
       result = {
-        firstHalfConcededAvg: stats.homeFirstHalfConcededAvg || stats.firstHalfConcededAvg || '0.00',
-        secondHalfConcededAvg: stats.homeSecondHalfConcededAvg || stats.secondHalfConcededAvg || '0.00',
+        concededPerMatch:
+          stats.homeConcededPerMatch ||
+          stats.homeGoalsAgainstPerMatch ||
+          stats.concededPerMatch ||
+          stats.goalsAgainstPerMatch ||
+          '0.00',
+        goalsAgainstPerMatch:
+          stats.homeGoalsAgainstPerMatch || stats.goalsAgainstPerMatch || '0.00',
+        totalGoalsConceded:
+          stats.homeGoalsConceded || stats.totalGoalsConceded || stats.goalsConceded || 0,
+        firstHalfConcededAvg:
+          stats.homeFirstHalfConcededAvg || stats.firstHalfConcededAvg || '0.00',
+        secondHalfConcededAvg:
+          stats.homeSecondHalfConcededAvg || stats.secondHalfConcededAvg || '0.00',
         over05Conceded: parseInt(stats.homeOver05Conceded || stats.over05Conceded || 0, 10),
         over15Conceded: parseInt(stats.homeOver15Conceded || stats.over15Conceded || 0, 10),
         over25Conceded: parseInt(stats.homeOver25Conceded || stats.over25Conceded || 0, 10),
         over35Conceded: parseInt(stats.homeOver35Conceded || stats.over35Conceded || 0, 10),
         cleanSheetPercentage: stats.homeCleanSheetPercentage || stats.cleanSheetPercentage || '0',
-        firstHalfCleanSheet: stats.homeFirstHalfCleanSheet || stats.firstHalfCleanSheetPercentage_home || '0',
-        secondHalfCleanSheet: stats.homeSecondHalfCleanSheet || stats.secondHalfCleanSheetPercentage_home || '0',
+        firstHalfCleanSheet:
+          stats.homeFirstHalfCleanSheet || stats.firstHalfCleanSheetPercentage_home || '0',
+        secondHalfCleanSheet:
+          stats.homeSecondHalfCleanSheet || stats.secondHalfCleanSheetPercentage_home || '0',
       };
     } else {
       result = {
-        firstHalfConcededAvg: stats.awayFirstHalfConcededAvg || stats.firstHalfConcededAvg || '0.00',
-        secondHalfConcededAvg: stats.awaySecondHalfConcededAvg || stats.secondHalfConcededAvg || '0.00',
+        concededPerMatch:
+          stats.awayConcededPerMatch ||
+          stats.awayGoalsAgainstPerMatch ||
+          stats.concededPerMatch ||
+          stats.goalsAgainstPerMatch ||
+          '0.00',
+        goalsAgainstPerMatch:
+          stats.awayGoalsAgainstPerMatch || stats.goalsAgainstPerMatch || '0.00',
+        totalGoalsConceded:
+          stats.awayGoalsConceded || stats.totalGoalsConceded || stats.goalsConceded || 0,
+        firstHalfConcededAvg:
+          stats.awayFirstHalfConcededAvg || stats.firstHalfConcededAvg || '0.00',
+        secondHalfConcededAvg:
+          stats.awaySecondHalfConcededAvg || stats.secondHalfConcededAvg || '0.00',
         over05Conceded: parseInt(stats.awayOver05Conceded || stats.over05Conceded || 0, 10),
         over15Conceded: parseInt(stats.awayOver15Conceded || stats.over15Conceded || 0, 10),
         over25Conceded: parseInt(stats.awayOver25Conceded || stats.over25Conceded || 0, 10),
         over35Conceded: parseInt(stats.awayOver35Conceded || stats.over35Conceded || 0, 10),
         cleanSheetPercentage: stats.awayCleanSheetPercentage || stats.cleanSheetPercentage || '0',
-        firstHalfCleanSheet: stats.awayFirstHalfCleanSheet || stats.firstHalfCleanSheetPercentage_away || '0',
-        secondHalfCleanSheet: stats.awaySecondHalfCleanSheet || stats.secondHalfCleanSheetPercentage_away || '0',
+        firstHalfCleanSheet:
+          stats.awayFirstHalfCleanSheet || stats.firstHalfCleanSheetPercentage_away || '0',
+        secondHalfCleanSheet:
+          stats.awaySecondHalfCleanSheet || stats.secondHalfCleanSheetPercentage_away || '0',
       };
     }
-    
+
     console.log(`Extracted ${venue} conceded stats:`, result);
     return result;
   }

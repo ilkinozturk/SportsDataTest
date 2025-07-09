@@ -383,13 +383,19 @@ export class MatchDetailsData {
       // Process home team data
       if (homeResponse.success && homeResponse.data) {
         const homeData = homeResponse.data;
-        
+
         // Debug API response
         console.log('=== Home Team API Response Debug ===');
         console.log('Team:', homeData.teamInfo?.name);
         console.log('Has additional_info:', !!homeData.additional_info);
-        console.log('additional_info keys:', homeData.additional_info ? Object.keys(homeData.additional_info).slice(0, 10) : 'NONE');
-        console.log('Has statistics.additional_info:', !!(homeData.statistics && homeData.statistics.additional_info));
+        console.log(
+          'additional_info keys:',
+          homeData.additional_info ? Object.keys(homeData.additional_info).slice(0, 10) : 'NONE'
+        );
+        console.log(
+          'Has statistics.additional_info:',
+          !!(homeData.statistics && homeData.statistics.additional_info)
+        );
 
         // Calculate form from matches if not available
         let overallForm =
@@ -407,7 +413,7 @@ export class MatchDetailsData {
 
         teamData.homeTeam = {
           id: homeTeamId,
-          name: homeData.teamInfo?.name || this.matchData?.homeTeam?.name || 'Home Team',
+          name: this.matchData?.homeTeam?.name || homeData.teamInfo?.name || 'Home Team',
           logo:
             homeData.teamInfo?.image ||
             homeData.teamInfo?.logo ||
@@ -447,13 +453,19 @@ export class MatchDetailsData {
       // Process away team data
       if (awayResponse.success && awayResponse.data) {
         const awayData = awayResponse.data;
-        
+
         // Debug API response
         console.log('=== Away Team API Response Debug ===');
         console.log('Team:', awayData.teamInfo?.name);
         console.log('Has additional_info:', !!awayData.additional_info);
-        console.log('additional_info keys:', awayData.additional_info ? Object.keys(awayData.additional_info).slice(0, 10) : 'NONE');
-        console.log('Has statistics.additional_info:', !!(awayData.statistics && awayData.statistics.additional_info));
+        console.log(
+          'additional_info keys:',
+          awayData.additional_info ? Object.keys(awayData.additional_info).slice(0, 10) : 'NONE'
+        );
+        console.log(
+          'Has statistics.additional_info:',
+          !!(awayData.statistics && awayData.statistics.additional_info)
+        );
 
         // Calculate form from matches if not available
         let overallForm =
@@ -471,7 +483,7 @@ export class MatchDetailsData {
 
         teamData.awayTeam = {
           id: awayTeamId,
-          name: awayData.teamInfo?.name || this.matchData?.awayTeam?.name || 'Away Team',
+          name: this.matchData?.awayTeam?.name || awayData.teamInfo?.name || 'Away Team',
           logo:
             awayData.teamInfo?.image ||
             awayData.teamInfo?.logo ||
@@ -528,6 +540,50 @@ export class MatchDetailsData {
    */
   extractTeamStatistics(stats, teamData = null) {
     const additionalInfo = stats.additional_info || teamData?.additional_info || {};
+
+    // Debug logging for conceded fields
+    console.log('=== extractTeamStatistics Debug ===');
+    console.log('Team:', teamData?.teamInfo?.name);
+    console.log('Has stats:', Object.keys(stats).length > 0);
+    console.log('Has additionalInfo:', Object.keys(additionalInfo).length > 0);
+
+    // Log conceded-related fields in stats
+    const statsConcededFields = Object.keys(stats).filter(key =>
+      key.toLowerCase().includes('conceded')
+    );
+    console.log('Stats conceded fields:', statsConcededFields);
+    if (statsConcededFields.length > 0) {
+      statsConcededFields.forEach(field => {
+        console.log(`  stats.${field} = ${stats[field]}`);
+      });
+    }
+
+    // Log conceded-related fields in additionalInfo
+    const concededFields = Object.keys(additionalInfo).filter(key =>
+      key.toLowerCase().includes('conceded')
+    );
+    console.log('AdditionalInfo conceded fields:', concededFields);
+    if (concededFields.length > 0) {
+      concededFields.forEach(field => {
+        console.log(`  additionalInfo.${field} = ${additionalInfo[field]}`);
+      });
+    }
+
+    // Log specific lookups to trace data flow
+    console.log('Field lookup results:');
+    console.log(
+      '  seasonConcededOver05Percentage_home from stats:',
+      stats.seasonConcededOver05Percentage_home
+    );
+    console.log(
+      '  seasonConcededOver05Percentage_home from additionalInfo:',
+      additionalInfo.seasonConcededOver05Percentage_home
+    );
+    console.log(
+      '  over05_conceded_percentage_home from additionalInfo:',
+      additionalInfo.over05_conceded_percentage_home
+    );
+
     const extractedStats = {
       // Win percentages - Calculate from wins/totalMatches if percentage not available
       winPercentage:
@@ -616,6 +672,42 @@ export class MatchDetailsData {
         stats.homeGoalsAgainstPerMatch ||
         0,
       awayGoalsConcededPerMatch:
+        stats.seasonConcededAVG_away ||
+        stats.awayGoalsConcededAVG ||
+        stats.awayGoalsAgainstPerMatch ||
+        0,
+
+      // Additional aliases for Goals Conceded module
+      concededPerMatch:
+        stats.seasonConcededAVG_overall ||
+        stats.seasonConcededAVG ||
+        stats.goalsConcededAVG ||
+        stats.goalsAgainstPerMatch ||
+        stats.averageGoalsAgainst ||
+        0,
+      goalsAgainstPerMatch:
+        stats.seasonConcededAVG_overall ||
+        stats.seasonConcededAVG ||
+        stats.goalsConcededAVG ||
+        stats.goalsAgainstPerMatch ||
+        stats.averageGoalsAgainst ||
+        0,
+      homeConcededPerMatch:
+        stats.seasonConcededAVG_home ||
+        stats.homeGoalsConcededAVG ||
+        stats.homeGoalsAgainstPerMatch ||
+        0,
+      homeGoalsAgainstPerMatch:
+        stats.seasonConcededAVG_home ||
+        stats.homeGoalsConcededAVG ||
+        stats.homeGoalsAgainstPerMatch ||
+        0,
+      awayConcededPerMatch:
+        stats.seasonConcededAVG_away ||
+        stats.awayGoalsConcededAVG ||
+        stats.awayGoalsAgainstPerMatch ||
+        0,
+      awayGoalsAgainstPerMatch:
         stats.seasonConcededAVG_away ||
         stats.awayGoalsConcededAVG ||
         stats.awayGoalsAgainstPerMatch ||
@@ -1054,36 +1146,6 @@ export class MatchDetailsData {
         stats.concededOver35Percentage_away ||
         0,
     };
-
-    // Enhanced debug logging for conceded data
-    console.log('=== Conceded Data Extraction Debug ===');
-    console.log('Team:', teamData?.teamInfo?.name);
-    console.log('Has stats object:', !!stats);
-    console.log('Has additionalInfo object:', !!additionalInfo);
-    
-    // Log available conceded fields in stats
-    const statsConcededFields = Object.keys(stats).filter(k => k.toLowerCase().includes('conceded'));
-    console.log('Stats conceded fields:', statsConcededFields);
-    
-    // Log available conceded fields in additionalInfo
-    const additionalConcededFields = Object.keys(additionalInfo).filter(k => k.toLowerCase().includes('conceded'));
-    console.log('AdditionalInfo conceded fields:', additionalConcededFields);
-    
-    // Log extracted values
-    console.log('Extracted conceded values:', {
-      over05Conceded: extractedStats.over05Conceded,
-      homeOver05Conceded: extractedStats.homeOver05Conceded,
-      awayOver05Conceded: extractedStats.awayOver05Conceded,
-      over15Conceded: extractedStats.over15Conceded,
-      homeOver15Conceded: extractedStats.homeOver15Conceded,
-      awayOver15Conceded: extractedStats.awayOver15Conceded,
-      over25Conceded: extractedStats.over25Conceded,
-      homeOver25Conceded: extractedStats.homeOver25Conceded,
-      awayOver25Conceded: extractedStats.awayOver25Conceded,
-      over35Conceded: extractedStats.over35Conceded,
-      homeOver35Conceded: extractedStats.homeOver35Conceded,
-      awayOver35Conceded: extractedStats.awayOver35Conceded,
-    });
 
     return extractedStats;
   }

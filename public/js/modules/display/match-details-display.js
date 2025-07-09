@@ -106,10 +106,15 @@ export class MatchDetailsDisplay {
     this.eventBus.on('goals-comparison-calculated', comparison => {
       this.updateGoalsComparison(comparison);
     });
-    
+
     // Listen for goals conceded comparison data
     this.eventBus.on('goals-conceded-comparison-calculated', comparison => {
       this.updateGoalsConcededComparison(comparison);
+    });
+
+    // Listen for over 2.5 & BTTS comparison data
+    this.eventBus.on('over-btts-comparison-calculated', comparison => {
+      this.updateOverBTTSComparison(comparison);
     });
 
     // Listen for tab switch events
@@ -467,7 +472,6 @@ export class MatchDetailsDisplay {
   }
 
   updateH2HStatistics(h2hData) {
-
     if (!h2hData) {
       this.showNoH2HData();
       return;
@@ -1681,6 +1685,15 @@ export class MatchDetailsDisplay {
             </div>
           </div>
           
+          <!-- Failed to Score -->
+          <div class="goals-stat-row fts-row">
+            <div class="goals-stat-label">Gol Atamama</div>
+            <div class="goals-stat-value ${this.getFTSClass(homeTeam.stats.failedToScore)}">${homeTeam.stats.failedToScore}%</div>
+            <div class="goals-progress-bar fts-bar">
+              <div class="goals-progress-fill" style="width: ${homeTeam.stats.failedToScore}%"></div>
+            </div>
+          </div>
+          
           <!-- Over/Under Stats -->
           <div class="goals-over-under-section">
             <h5>Takım Attığı Gol - Üst/Alt</h5>
@@ -1701,15 +1714,6 @@ export class MatchDetailsDisplay {
                 <span class="ou-label">3.5+</span>
                 <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over35)}">${homeTeam.stats.over35}%</span>
               </div>
-            </div>
-          </div>
-          
-          <!-- Failed to Score -->
-          <div class="goals-stat-row fts-row">
-            <div class="goals-stat-label">Gol Atamama</div>
-            <div class="goals-stat-value ${this.getFTSClass(homeTeam.stats.failedToScore)}">${homeTeam.stats.failedToScore}%</div>
-            <div class="goals-progress-bar fts-bar">
-              <div class="goals-progress-fill" style="width: ${homeTeam.stats.failedToScore}%"></div>
             </div>
           </div>
         </div>
@@ -1758,6 +1762,15 @@ export class MatchDetailsDisplay {
             </div>
           </div>
           
+          <!-- Failed to Score -->
+          <div class="goals-stat-row fts-row">
+            <div class="goals-stat-label">Gol Atamama</div>
+            <div class="goals-stat-value ${this.getFTSClass(awayTeam.stats.failedToScore)}">${awayTeam.stats.failedToScore}%</div>
+            <div class="goals-progress-bar fts-bar">
+              <div class="goals-progress-fill" style="width: ${awayTeam.stats.failedToScore}%"></div>
+            </div>
+          </div>
+          
           <!-- Over/Under Stats -->
           <div class="goals-over-under-section">
             <h5>Takım Attığı Gol - Üst/Alt</h5>
@@ -1776,17 +1789,8 @@ export class MatchDetailsDisplay {
               </div>
               <div class="over-under-stat">
                 <span class="ou-label">3.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over35)}">${awayTeam.stats.over35 || 0}%</span>
+                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over35 || 0)}">${awayTeam.stats.over35 || 0}%</span>
               </div>
-            </div>
-          </div>
-          
-          <!-- Failed to Score -->
-          <div class="goals-stat-row fts-row">
-            <div class="goals-stat-label">Gol Atamama</div>
-            <div class="goals-stat-value ${this.getFTSClass(awayTeam.stats.failedToScore)}">${awayTeam.stats.failedToScore}%</div>
-            <div class="goals-progress-bar fts-bar">
-              <div class="goals-progress-fill" style="width: ${awayTeam.stats.failedToScore}%"></div>
             </div>
           </div>
         </div>
@@ -1834,7 +1838,7 @@ export class MatchDetailsDisplay {
     }
     return 'good';
   }
-  
+
   /**
    * Update goals conceded comparison display
    * @param {Object} comparison - Goals conceded comparison data
@@ -1856,13 +1860,6 @@ export class MatchDetailsDisplay {
     }
 
     const { homeTeam, awayTeam } = comparison;
-    
-    // Debug the data being displayed
-    console.log('=== Goals Conceded Display Debug ===');
-    console.log('Home Team:', homeTeam.name);
-    console.log('Home Stats:', homeTeam.stats);
-    console.log('Away Team:', awayTeam.name);
-    console.log('Away Stats:', awayTeam.stats);
 
     container.innerHTML = `
       <!-- Goals Conceded Comparison Grid -->
@@ -1875,71 +1872,71 @@ export class MatchDetailsDisplay {
             <span class="venue-badge home">Ev Sahibi</span>
           </div>
           
-          <!-- Over/Under Conceded Stats -->
-          <div class="goals-over-under-section">
-            <h5>Yenilen Gol - Üst</h5>
-            <div class="goals-over-under-grid">
-              <div class="over-under-stat">
-                <span class="ou-label">Conceded 0.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over05Conceded)}">${homeTeam.stats.over05Conceded}%</span>
-              </div>
-              <div class="over-under-stat">
-                <span class="ou-label">Conceded 1.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over15Conceded)}">${homeTeam.stats.over15Conceded}%</span>
-              </div>
-              <div class="over-under-stat">
-                <span class="ou-label">Conceded 2.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over25Conceded)}">${homeTeam.stats.over25Conceded}%</span>
-              </div>
-              <div class="over-under-stat">
-                <span class="ou-label">Conceded 3.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over35Conceded)}">${homeTeam.stats.over35Conceded}%</span>
-              </div>
+          <!-- Goals Conceded Per Match -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">Maç Başı Yenilen Gol</div>
+            <div class="goals-stat-value">${homeTeam.stats.concededPerMatch || homeTeam.stats.goalsAgainstPerMatch || '0.00'}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(homeTeam.stats.concededPerMatch || homeTeam.stats.goalsAgainstPerMatch || 0, 4)}%"></div>
             </div>
           </div>
           
-          <!-- Clean Sheet Stats -->
+          <!-- Total Goals Conceded -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">Toplam Yenilen Gol</div>
+            <div class="goals-stat-value">${homeTeam.stats.totalGoalsConceded || 0}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(homeTeam.stats.totalGoalsConceded || 0, 100)}%"></div>
+            </div>
+          </div>
+          
+          <!-- First Half Conceded Average -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">İlk Yarı Yenilen Ort.</div>
+            <div class="goals-stat-value">${homeTeam.stats.firstHalfConcededAvg || '0.00'}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(homeTeam.stats.firstHalfConcededAvg || 0, 2)}%"></div>
+            </div>
+          </div>
+          
+          <!-- Second Half Conceded Average -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">İkinci Yarı Yenilen Ort.</div>
+            <div class="goals-stat-value">${homeTeam.stats.secondHalfConcededAvg || '0.00'}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(homeTeam.stats.secondHalfConcededAvg || 0, 2)}%"></div>
+            </div>
+          </div>
+          
+          <!-- Clean Sheet Percentage -->
           <div class="goals-stat-row cs-row">
-            <div class="goals-stat-label">Clean Sheets</div>
+            <div class="goals-stat-label">Clean Sheet</div>
             <div class="goals-stat-value ${this.getCSClass(homeTeam.stats.cleanSheetPercentage)}">${homeTeam.stats.cleanSheetPercentage}%</div>
             <div class="goals-progress-bar cs-bar">
               <div class="goals-progress-fill" style="width: ${homeTeam.stats.cleanSheetPercentage}%"></div>
             </div>
           </div>
           
-          <!-- 1H Clean Sheet -->
-          <div class="goals-stat-row">
-            <div class="goals-stat-label">1H Clean Sheet</div>
-            <div class="goals-stat-value">${homeTeam.stats.firstHalfCleanSheet || '0'}%</div>
-            <div class="goals-progress-bar">
-              <div class="goals-progress-fill" style="width: ${homeTeam.stats.firstHalfCleanSheet || 0}%"></div>
-            </div>
-          </div>
-          
-          <!-- 2H Clean Sheet -->
-          <div class="goals-stat-row">
-            <div class="goals-stat-label">2H Clean Sheet</div>
-            <div class="goals-stat-value">${homeTeam.stats.secondHalfCleanSheet || '0'}%</div>
-            <div class="goals-progress-bar">
-              <div class="goals-progress-fill" style="width: ${homeTeam.stats.secondHalfCleanSheet || 0}%"></div>
-            </div>
-          </div>
-          
-          <!-- Conceded Average 1H -->
-          <div class="goals-stat-row">
-            <div class="goals-stat-label">Conceded Average 1H</div>
-            <div class="goals-stat-value">${homeTeam.stats.firstHalfConcededAvg}</div>
-            <div class="goals-progress-bar">
-              <div class="goals-progress-fill conceded" style="width: ${this.calculateGoalsPercentage(homeTeam.stats.firstHalfConcededAvg, 2)}%"></div>
-            </div>
-          </div>
-          
-          <!-- Conceded Average 2H -->
-          <div class="goals-stat-row">
-            <div class="goals-stat-label">Conceded Average 2H</div>
-            <div class="goals-stat-value">${homeTeam.stats.secondHalfConcededAvg}</div>
-            <div class="goals-progress-bar">
-              <div class="goals-progress-fill conceded" style="width: ${this.calculateGoalsPercentage(homeTeam.stats.secondHalfConcededAvg, 2)}%"></div>
+          <!-- Over/Under Conceded Stats -->
+          <div class="goals-over-under-section">
+            <h5>Takım Yediği Gol - Üst/Alt</h5>
+            <div class="goals-over-under-grid">
+              <div class="over-under-stat">
+                <span class="ou-label">0.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over05Conceded)}">${homeTeam.stats.over05Conceded}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">1.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over15Conceded)}">${homeTeam.stats.over15Conceded}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">2.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over25Conceded)}">${homeTeam.stats.over25Conceded}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">3.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(homeTeam.stats.over35Conceded)}">${homeTeam.stats.over35Conceded}%</span>
+              </div>
             </div>
           </div>
         </div>
@@ -1952,78 +1949,78 @@ export class MatchDetailsDisplay {
             <span class="venue-badge away">Deplasman</span>
           </div>
           
-          <!-- Over/Under Conceded Stats -->
-          <div class="goals-over-under-section">
-            <h5>Yenilen Gol - Üst</h5>
-            <div class="goals-over-under-grid">
-              <div class="over-under-stat">
-                <span class="ou-label">Conceded 0.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over05Conceded)}">${awayTeam.stats.over05Conceded}%</span>
-              </div>
-              <div class="over-under-stat">
-                <span class="ou-label">Conceded 1.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over15Conceded)}">${awayTeam.stats.over15Conceded}%</span>
-              </div>
-              <div class="over-under-stat">
-                <span class="ou-label">Conceded 2.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over25Conceded)}">${awayTeam.stats.over25Conceded}%</span>
-              </div>
-              <div class="over-under-stat">
-                <span class="ou-label">Conceded 3.5+</span>
-                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over35Conceded)}">${awayTeam.stats.over35Conceded}%</span>
-              </div>
+          <!-- Goals Conceded Per Match -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">Maç Başı Yenilen Gol</div>
+            <div class="goals-stat-value">${awayTeam.stats.concededPerMatch || awayTeam.stats.goalsAgainstPerMatch || '0.00'}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(awayTeam.stats.concededPerMatch || awayTeam.stats.goalsAgainstPerMatch || 0, 4)}%"></div>
             </div>
           </div>
           
-          <!-- Clean Sheet Stats -->
+          <!-- Total Goals Conceded -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">Toplam Yenilen Gol</div>
+            <div class="goals-stat-value">${awayTeam.stats.totalGoalsConceded || 0}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(awayTeam.stats.totalGoalsConceded || 0, 100)}%"></div>
+            </div>
+          </div>
+          
+          <!-- First Half Conceded Average -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">İlk Yarı Yenilen Ort.</div>
+            <div class="goals-stat-value">${awayTeam.stats.firstHalfConcededAvg || '0.00'}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(awayTeam.stats.firstHalfConcededAvg || 0, 2)}%"></div>
+            </div>
+          </div>
+          
+          <!-- Second Half Conceded Average -->
+          <div class="goals-stat-row">
+            <div class="goals-stat-label">İkinci Yarı Yenilen Ort.</div>
+            <div class="goals-stat-value">${awayTeam.stats.secondHalfConcededAvg || '0.00'}</div>
+            <div class="goals-progress-bar">
+              <div class="goals-progress-fill" style="width: ${this.calculateGoalsPercentage(awayTeam.stats.secondHalfConcededAvg || 0, 2)}%"></div>
+            </div>
+          </div>
+          
+          <!-- Clean Sheet Percentage -->
           <div class="goals-stat-row cs-row">
-            <div class="goals-stat-label">Clean Sheets</div>
+            <div class="goals-stat-label">Clean Sheet</div>
             <div class="goals-stat-value ${this.getCSClass(awayTeam.stats.cleanSheetPercentage)}">${awayTeam.stats.cleanSheetPercentage}%</div>
             <div class="goals-progress-bar cs-bar">
               <div class="goals-progress-fill" style="width: ${awayTeam.stats.cleanSheetPercentage}%"></div>
             </div>
           </div>
           
-          <!-- 1H Clean Sheet -->
-          <div class="goals-stat-row">
-            <div class="goals-stat-label">1H Clean Sheet</div>
-            <div class="goals-stat-value">${awayTeam.stats.firstHalfCleanSheet || '0'}%</div>
-            <div class="goals-progress-bar">
-              <div class="goals-progress-fill" style="width: ${awayTeam.stats.firstHalfCleanSheet || 0}%"></div>
-            </div>
-          </div>
-          
-          <!-- 2H Clean Sheet -->
-          <div class="goals-stat-row">
-            <div class="goals-stat-label">2H Clean Sheet</div>
-            <div class="goals-stat-value">${awayTeam.stats.secondHalfCleanSheet || '0'}%</div>
-            <div class="goals-progress-bar">
-              <div class="goals-progress-fill" style="width: ${awayTeam.stats.secondHalfCleanSheet || 0}%"></div>
-            </div>
-          </div>
-          
-          <!-- Conceded Average 1H -->
-          <div class="goals-stat-row">
-            <div class="goals-stat-label">Conceded Average 1H</div>
-            <div class="goals-stat-value">${awayTeam.stats.firstHalfConcededAvg}</div>
-            <div class="goals-progress-bar">
-              <div class="goals-progress-fill conceded" style="width: ${this.calculateGoalsPercentage(awayTeam.stats.firstHalfConcededAvg, 2)}%"></div>
-            </div>
-          </div>
-          
-          <!-- Conceded Average 2H -->
-          <div class="goals-stat-row">
-            <div class="goals-stat-label">Conceded Average 2H</div>
-            <div class="goals-stat-value">${awayTeam.stats.secondHalfConcededAvg}</div>
-            <div class="goals-progress-bar">
-              <div class="goals-progress-fill conceded" style="width: ${this.calculateGoalsPercentage(awayTeam.stats.secondHalfConcededAvg, 2)}%"></div>
+          <!-- Over/Under Conceded Stats -->
+          <div class="goals-over-under-section">
+            <h5>Takım Yediği Gol - Üst/Alt</h5>
+            <div class="goals-over-under-grid">
+              <div class="over-under-stat">
+                <span class="ou-label">0.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over05Conceded)}">${awayTeam.stats.over05Conceded}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">1.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over15Conceded)}">${awayTeam.stats.over15Conceded}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">2.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over25Conceded)}">${awayTeam.stats.over25Conceded}%</span>
+              </div>
+              <div class="over-under-stat">
+                <span class="ou-label">3.5+</span>
+                <span class="ou-value ${this.getOverUnderClass(awayTeam.stats.over35Conceded)}">${awayTeam.stats.over35Conceded}%</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     `;
   }
-  
+
   /**
    * Get class for clean sheet values
    * @param {number} value - Percentage value
@@ -2037,6 +2034,226 @@ export class MatchDetailsDisplay {
       return 'good';
     }
     return 'poor';
+  }
+
+  /**
+   * Update Over 2.5 & BTTS comparison display
+   * @param {Object} comparison - Over 2.5 & BTTS comparison data
+   */
+  updateOverBTTSComparison(comparison) {
+    const container = document.getElementById('overBTTSComparisonContent');
+    if (!container) {
+      return;
+    }
+
+    if (!comparison || !comparison.homeTeam || !comparison.awayTeam || !comparison.predictions) {
+      container.innerHTML = `
+        <div class="no-data-message">
+          <i class="fas fa-info-circle"></i>
+          <p>Üst/Alt ve BTTS istatistikleri bekleniyor...</p>
+        </div>
+      `;
+      return;
+    }
+
+    const { homeTeam, awayTeam, predictions } = comparison;
+
+    container.innerHTML = `
+      <!-- Over 2.5 & BTTS Comparison Grid -->
+      <div class="over-btts-grid">
+        <!-- Over 2.5 Goals Section -->
+        <div class="over-section">
+          <h4 class="section-title">
+            <i class="fas fa-chart-line"></i>
+            Üst 2.5 Gol Analizi
+          </h4>
+          
+          <!-- Combined Prediction -->
+          <div class="combined-prediction">
+            <div class="prediction-circle-wrapper large">
+              <svg class="prediction-circle" viewBox="0 0 120 120">
+                <circle class="circle-bg" cx="60" cy="60" r="54"></circle>
+                <circle class="circle-fill over-circle" cx="60" cy="60" r="54" 
+                  style="stroke-dashoffset: ${339.292 - (339.292 * predictions.over25.percentage) / 100}"></circle>
+              </svg>
+              <div class="circle-content">
+                <span class="circle-percentage">${predictions.over25.percentage}%</span>
+                <span class="circle-label">Üst 2.5</span>
+              </div>
+            </div>
+            <div class="prediction-info">
+              <span class="confidence-badge confidence-${predictions.over25.confidence}">
+                <i class="fas fa-shield-alt"></i>
+                Güven: ${this.getConfidenceText(predictions.over25.confidence)}
+              </span>
+              <span class="expected-goals">
+                <i class="fas fa-futbol"></i>
+                Beklenen Gol: ${predictions.over25.expectedGoals}
+              </span>
+            </div>
+          </div>
+          
+          <!-- Team Comparisons -->
+          <div class="teams-comparison">
+            <div class="team-stat-box">
+              <div class="team-header">
+                ${homeTeam.logo ? `<img src="${this.getTeamLogoUrl(homeTeam.logo)}" alt="${homeTeam.name}" class="team-logo-small">` : ''}
+                <span class="team-name">${homeTeam.name}</span>
+                <span class="venue-indicator home">Ev</span>
+              </div>
+              <div class="over-stats">
+                <div class="stat-row">
+                  <span class="stat-label">Üst 1.5</span>
+                  <span class="stat-value ${this.getOverUnderClass(homeTeam.stats.over15)}">${homeTeam.stats.over15}%</span>
+                </div>
+                <div class="stat-row highlight">
+                  <span class="stat-label">Üst 2.5</span>
+                  <span class="stat-value ${this.getOverUnderClass(homeTeam.stats.over25)}">${homeTeam.stats.over25}%</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Üst 3.5</span>
+                  <span class="stat-value ${this.getOverUnderClass(homeTeam.stats.over35)}">${homeTeam.stats.over35}%</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Ort. Toplam Gol</span>
+                  <span class="stat-value">${homeTeam.stats.avgTotalGoals}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="vs-indicator">VS</div>
+            
+            <div class="team-stat-box">
+              <div class="team-header">
+                ${awayTeam.logo ? `<img src="${this.getTeamLogoUrl(awayTeam.logo)}" alt="${awayTeam.name}" class="team-logo-small">` : ''}
+                <span class="team-name">${awayTeam.name}</span>
+                <span class="venue-indicator away">Dep</span>
+              </div>
+              <div class="over-stats">
+                <div class="stat-row">
+                  <span class="stat-label">Üst 1.5</span>
+                  <span class="stat-value ${this.getOverUnderClass(awayTeam.stats.over15)}">${awayTeam.stats.over15}%</span>
+                </div>
+                <div class="stat-row highlight">
+                  <span class="stat-label">Üst 2.5</span>
+                  <span class="stat-value ${this.getOverUnderClass(awayTeam.stats.over25)}">${awayTeam.stats.over25}%</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Üst 3.5</span>
+                  <span class="stat-value ${this.getOverUnderClass(awayTeam.stats.over35)}">${awayTeam.stats.over35}%</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Ort. Toplam Gol</span>
+                  <span class="stat-value">${awayTeam.stats.avgTotalGoals}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- BTTS Section -->
+        <div class="btts-section">
+          <h4 class="section-title">
+            <i class="fas fa-exchange-alt"></i>
+            Karşılıklı Gol (BTTS) Analizi
+          </h4>
+          
+          <!-- Combined BTTS Prediction -->
+          <div class="combined-prediction">
+            <div class="prediction-circle-wrapper large">
+              <svg class="prediction-circle" viewBox="0 0 120 120">
+                <circle class="circle-bg" cx="60" cy="60" r="54"></circle>
+                <circle class="circle-fill btts-circle" cx="60" cy="60" r="54" 
+                  style="stroke-dashoffset: ${339.292 - (339.292 * predictions.btts.percentage) / 100}"></circle>
+              </svg>
+              <div class="circle-content">
+                <span class="circle-percentage">${predictions.btts.percentage}%</span>
+                <span class="circle-label">BTTS</span>
+              </div>
+            </div>
+            <div class="prediction-info">
+              <span class="confidence-badge confidence-${predictions.btts.confidence}">
+                <i class="fas fa-shield-alt"></i>
+                Güven: ${this.getConfidenceText(predictions.btts.confidence)}
+              </span>
+            </div>
+          </div>
+          
+          <!-- BTTS Team Stats -->
+          <div class="btts-comparison">
+            <div class="btts-stat-card">
+              <div class="team-info">
+                <span class="team-name">${homeTeam.name}</span>
+                <span class="venue-badge home">Ev Sahibi</span>
+              </div>
+              <div class="btts-stats-grid">
+                <div class="btts-stat">
+                  <span class="btts-label">BTTS Evet</span>
+                  <span class="btts-value yes">${homeTeam.stats.bttsYes}%</span>
+                </div>
+                <div class="btts-stat">
+                  <span class="btts-label">BTTS Hayır</span>
+                  <span class="btts-value no">${homeTeam.stats.bttsNo}%</span>
+                </div>
+                <div class="btts-stat full-width">
+                  <span class="btts-label">Maç Başı Attığı</span>
+                  <span class="btts-value">${homeTeam.stats.goalsPerMatch.toFixed(2)}</span>
+                </div>
+                <div class="btts-stat full-width">
+                  <span class="btts-label">Maç Başı Yediği</span>
+                  <span class="btts-value">${homeTeam.stats.goalsConcededPerMatch.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="btts-stat-card">
+              <div class="team-info">
+                <span class="team-name">${awayTeam.name}</span>
+                <span class="venue-badge away">Deplasman</span>
+              </div>
+              <div class="btts-stats-grid">
+                <div class="btts-stat">
+                  <span class="btts-label">BTTS Evet</span>
+                  <span class="btts-value yes">${awayTeam.stats.bttsYes}%</span>
+                </div>
+                <div class="btts-stat">
+                  <span class="btts-label">BTTS Hayır</span>
+                  <span class="btts-value no">${awayTeam.stats.bttsNo}%</span>
+                </div>
+                <div class="btts-stat full-width">
+                  <span class="btts-label">Maç Başı Attığı</span>
+                  <span class="btts-value">${awayTeam.stats.goalsPerMatch.toFixed(2)}</span>
+                </div>
+                <div class="btts-stat full-width">
+                  <span class="btts-label">Maç Başı Yediği</span>
+                  <span class="btts-value">${awayTeam.stats.goalsConcededPerMatch.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Insights Section -->
+      <div class="over-btts-insights">
+        <h5 class="insights-title">
+          <i class="fas fa-lightbulb"></i>
+          Analiz ve Öneriler
+        </h5>
+        <div class="insights-grid">
+          ${predictions.insights
+            .map(
+              insight => `
+            <div class="insight-item">
+              <i class="fas fa-check-circle"></i>
+              <span>${insight}</span>
+            </div>
+          `
+            )
+            .join('')}
+        </div>
+      </div>
+    `;
   }
 }
 

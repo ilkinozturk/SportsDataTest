@@ -11,6 +11,7 @@ import { H2HData } from '../data/h2h-data.js';
 import { FormPrediction } from '../prediction/form-prediction.js';
 import { GoalsComparison } from '../prediction/goals-comparison.js';
 import { GoalsConcededComparison } from '../prediction/goals-conceded-comparison.js';
+import { OverBTTSComparison } from '../prediction/over-btts-comparison.js';
 
 class MatchDetailsApp {
   constructor() {
@@ -46,6 +47,7 @@ class MatchDetailsApp {
     this.modules.formPrediction = new FormPrediction(this.eventBus);
     this.modules.goalsComparison = new GoalsComparison(this.eventBus);
     this.modules.goalsConcededComparison = new GoalsConcededComparison(this.eventBus);
+    this.modules.overBTTSComparison = new OverBTTSComparison(this.eventBus);
   }
 
   setupGlobalHandlers() {
