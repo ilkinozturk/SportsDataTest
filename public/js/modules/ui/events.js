@@ -4,7 +4,7 @@
  * @module TeamStatsUIEvents
  */
 
-(function(global) {
+(function (global) {
   'use strict';
 
   // Check dependencies
@@ -34,7 +34,7 @@
         event: config.event,
         handler: config.handler,
         options: config.options || false,
-        active: false
+        active: false,
       });
     }
 
@@ -45,11 +45,7 @@
     activate(id) {
       const handler = this.handlers.get(id);
       if (handler && !handler.active) {
-        handler.element.addEventListener(
-          handler.event,
-          handler.handler,
-          handler.options
-        );
+        handler.element.addEventListener(handler.event, handler.handler, handler.options);
         handler.active = true;
       }
     }
@@ -61,11 +57,7 @@
     deactivate(id) {
       const handler = this.handlers.get(id);
       if (handler && handler.active) {
-        handler.element.removeEventListener(
-          handler.event,
-          handler.handler,
-          handler.options
-        );
+        handler.element.removeEventListener(handler.event, handler.handler, handler.options);
         handler.active = false;
       }
     }
@@ -103,16 +95,16 @@
         tapTimeout: options.tapTimeout || 200,
         doubleTapTimeout: options.doubleTapTimeout || 300,
         longPressTimeout: options.longPressTimeout || 500,
-        ...options
+        ...options,
       };
-      
+
       this.touches = [];
       this.lastTap = 0;
       this.tapTimer = null;
       this.longPressTimer = null;
       this.isPinching = false;
       this.startDistance = 0;
-      
+
       this._bindEvents();
     }
 
@@ -121,10 +113,14 @@
      * @private
      */
     _bindEvents() {
-      this.element.addEventListener('touchstart', this._onTouchStart.bind(this), { passive: false });
+      this.element.addEventListener('touchstart', this._onTouchStart.bind(this), {
+        passive: false,
+      });
       this.element.addEventListener('touchmove', this._onTouchMove.bind(this), { passive: false });
       this.element.addEventListener('touchend', this._onTouchEnd.bind(this), { passive: false });
-      this.element.addEventListener('touchcancel', this._onTouchCancel.bind(this), { passive: false });
+      this.element.addEventListener('touchcancel', this._onTouchCancel.bind(this), {
+        passive: false,
+      });
     }
 
     /**
@@ -133,22 +129,21 @@
      */
     _onTouchStart(e) {
       this.touches = Array.from(e.touches);
-      
+
       if (this.touches.length === 1) {
         const touch = this.touches[0];
         this.startX = touch.clientX;
         this.startY = touch.clientY;
         this.startTime = Date.now();
-        
+
         // Long press detection
         this.longPressTimer = setTimeout(() => {
           this._emit('longpress', {
             x: this.startX,
             y: this.startY,
-            target: e.target
+            target: e.target,
           });
         }, this.options.longPressTimeout);
-        
       } else if (this.touches.length === 2) {
         // Pinch detection
         this.isPinching = true;
@@ -167,15 +162,15 @@
       }
 
       this.touches = Array.from(e.touches);
-      
+
       if (this.isPinching && this.touches.length === 2) {
         const distance = this._getDistance(this.touches[0], this.touches[1]);
         const scale = distance / this.startDistance;
-        
+
         this._emit('pinch', {
           scale,
           distance,
-          center: this._getCenter(this.touches[0], this.touches[1])
+          center: this._getCenter(this.touches[0], this.touches[1]),
         });
       }
     }
@@ -196,7 +191,7 @@
         const deltaY = touch.clientY - this.startY;
         const deltaTime = Date.now() - this.startTime;
         const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        
+
         // Swipe detection
         if (distance > this.options.swipeThreshold && deltaTime < this.options.swipeTimeout) {
           const direction = this._getSwipeDirection(deltaX, deltaY);
@@ -205,13 +200,13 @@
             distance,
             velocity: distance / deltaTime,
             deltaX,
-            deltaY
+            deltaY,
           });
         }
         // Tap detection
         else if (distance < 10 && deltaTime < this.options.tapTimeout) {
           const now = Date.now();
-          
+
           // Double tap detection
           if (now - this.lastTap < this.options.doubleTapTimeout) {
             if (this.tapTimer) {
@@ -221,7 +216,7 @@
             this._emit('doubletap', {
               x: touch.clientX,
               y: touch.clientY,
-              target: e.target
+              target: e.target,
             });
           } else {
             // Single tap (with delay to check for double tap)
@@ -229,15 +224,15 @@
               this._emit('tap', {
                 x: touch.clientX,
                 y: touch.clientY,
-                target: e.target
+                target: e.target,
               });
             }, this.options.doubleTapTimeout);
           }
-          
+
           this.lastTap = now;
         }
       }
-      
+
       this.touches = [];
       this.isPinching = false;
     }
@@ -288,7 +283,7 @@
     _getCenter(touch1, touch2) {
       return {
         x: (touch1.clientX + touch2.clientX) / 2,
-        y: (touch1.clientY + touch2.clientY) / 2
+        y: (touch1.clientY + touch2.clientY) / 2,
       };
     }
 
@@ -300,15 +295,15 @@
       const event = new CustomEvent(`gesture:${type}`, {
         detail,
         bubbles: true,
-        cancelable: true
+        cancelable: true,
       });
       this.element.dispatchEvent(event);
-      
+
       // Also emit to Event Bus if available
       if (global.TeamStatsEventBus) {
         global.TeamStatsEventBus.emit(`ui:gesture:${type}`, {
           element: this.element,
-          ...detail
+          ...detail,
         });
       }
     }
@@ -321,7 +316,7 @@
       this.element.removeEventListener('touchmove', this._onTouchMove);
       this.element.removeEventListener('touchend', this._onTouchEnd);
       this.element.removeEventListener('touchcancel', this._onTouchCancel);
-      
+
       if (this.longPressTimer) {
         clearTimeout(this.longPressTimer);
       }
@@ -350,21 +345,21 @@
      */
     on(container, event, selector, handler, options = {}) {
       const key = `${event}:${selector}`;
-      
+
       if (!this.delegates.has(container)) {
         this.delegates.set(container, new Map());
       }
-      
+
       const containerDelegates = this.delegates.get(container);
-      
+
       if (!containerDelegates.has(key)) {
-        const delegatedHandler = (e) => {
+        const delegatedHandler = e => {
           const target = e.target.closest(selector);
           if (target && container.contains(target)) {
             handler.call(target, e);
           }
         };
-        
+
         container.addEventListener(event, delegatedHandler, options);
         containerDelegates.set(key, { handler: delegatedHandler, options });
       }
@@ -379,12 +374,12 @@
     off(container, event, selector) {
       const key = `${event}:${selector}`;
       const containerDelegates = this.delegates.get(container);
-      
+
       if (containerDelegates && containerDelegates.has(key)) {
         const { handler, options } = containerDelegates.get(key);
         container.removeEventListener(event, handler, options);
         containerDelegates.delete(key);
-        
+
         if (containerDelegates.size === 0) {
           this.delegates.delete(container);
         }
@@ -397,13 +392,13 @@
      */
     clear(container) {
       const containerDelegates = this.delegates.get(container);
-      
+
       if (containerDelegates) {
         containerDelegates.forEach(({ handler, options }, key) => {
           const [event] = key.split(':');
           container.removeEventListener(event, handler, options);
         });
-        
+
         this.delegates.delete(container);
       }
     }
@@ -442,7 +437,7 @@
         description: options.description || '',
         preventDefault: options.preventDefault !== false,
         stopPropagation: options.stopPropagation !== false,
-        when: options.when || (() => true)
+        when: options.when || (() => true),
       });
     }
 
@@ -469,16 +464,16 @@
      */
     _handleKeyDown(e) {
       if (!this.enabled) return;
-      
+
       // Skip if in input/textarea
       const tagName = e.target.tagName.toLowerCase();
       if (tagName === 'input' || tagName === 'textarea' || e.target.contentEditable === 'true') {
         return;
       }
-      
+
       const combo = this._getComboFromEvent(e);
       const shortcut = this.shortcuts.get(combo);
-      
+
       if (shortcut && shortcut.when()) {
         if (shortcut.preventDefault) {
           e.preventDefault();
@@ -486,14 +481,14 @@
         if (shortcut.stopPropagation) {
           e.stopPropagation();
         }
-        
+
         shortcut.handler(e);
-        
+
         // Emit event
         if (global.TeamStatsEventBus) {
           global.TeamStatsEventBus.emit('ui:shortcut:triggered', {
             combo,
-            description: shortcut.description
+            description: shortcut.description,
           });
         }
       }
@@ -504,12 +499,7 @@
      * @private
      */
     _normalizeCombo(combo) {
-      return combo
-        .toLowerCase()
-        .replace(/\s+/g, '')
-        .split('+')
-        .sort()
-        .join('+');
+      return combo.toLowerCase().replace(/\s+/g, '').split('+').sort().join('+');
     }
 
     /**
@@ -518,11 +508,11 @@
      */
     _getComboFromEvent(e) {
       const parts = [];
-      
+
       if (e.ctrlKey || e.metaKey) parts.push('ctrl');
       if (e.altKey) parts.push('alt');
       if (e.shiftKey) parts.push('shift');
-      
+
       // Get the key
       let key = e.key.toLowerCase();
       if (key === ' ') key = 'space';
@@ -532,7 +522,7 @@
       } else {
         parts.push(key);
       }
-      
+
       return parts.sort().join('+');
     }
 
@@ -545,7 +535,7 @@
       this.shortcuts.forEach((config, combo) => {
         shortcuts.push({
           combo,
-          description: config.description
+          description: config.description,
         });
       });
       return shortcuts;
@@ -584,9 +574,9 @@
     on(element, event, handler, options = {}) {
       const el = typeof element === 'string' ? document.querySelector(element) : element;
       if (!el) return () => {};
-      
+
       const id = `handler-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
+
       // Apply throttle/debounce if specified
       let processedHandler = handler;
       if (options.throttle) {
@@ -594,16 +584,16 @@
       } else if (options.debounce) {
         processedHandler = this.debounce(handler, options.debounce);
       }
-      
+
       this.registry.register(id, {
         element: el,
         event,
         handler: processedHandler,
-        options: options.capture || options.passive || options.once ? options : false
+        options: options.capture || options.passive || options.once ? options : false,
       });
-      
+
       this.registry.activate(id);
-      
+
       // Return cleanup function
       return () => this.registry.remove(id);
     }
@@ -619,7 +609,7 @@
     delegate(container, event, selector, handler, options = {}) {
       const el = typeof container === 'string' ? document.querySelector(container) : container;
       if (!el) return;
-      
+
       this.delegation.on(el, event, selector, handler, options);
     }
 
@@ -632,7 +622,7 @@
     undelegate(container, event, selector) {
       const el = typeof container === 'string' ? document.querySelector(container) : container;
       if (!el) return;
-      
+
       this.delegation.off(el, event, selector);
     }
 
@@ -644,8 +634,8 @@
      * @returns {Promise} Promise that resolves when event fires
      */
     once(element, event, handler) {
-      return new Promise((resolve) => {
-        const cleanup = this.on(element, event, (e) => {
+      return new Promise(resolve => {
+        const cleanup = this.on(element, event, e => {
           cleanup();
           if (handler) handler(e);
           resolve(e);
@@ -663,9 +653,7 @@
     waitFor(element, event, timeout = 5000) {
       return Promise.race([
         this.once(element, event),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Event timeout')), timeout)
-        )
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Event timeout')), timeout)),
       ]);
     }
 
@@ -678,13 +666,13 @@
     enableGestures(element, options = {}) {
       const el = typeof element === 'string' ? document.querySelector(element) : element;
       if (!el) return null;
-      
+
       let detector = this.gestures.get(el);
       if (!detector) {
         detector = new GestureDetector(el, options);
         this.gestures.set(el, detector);
       }
-      
+
       return detector;
     }
 
@@ -695,7 +683,7 @@
     disableGestures(element) {
       const el = typeof element === 'string' ? document.querySelector(element) : element;
       if (!el) return;
-      
+
       const detector = this.gestures.get(el);
       if (detector) {
         detector.destroy();
@@ -737,15 +725,15 @@
      */
     throttle(fn, delay) {
       let throttled = this.throttledHandlers.get(fn);
-      
+
       if (!throttled) {
         let lastCall = 0;
         let timeout = null;
-        
-        throttled = function(...args) {
+
+        throttled = function (...args) {
           const now = Date.now();
           const timeSinceLastCall = now - lastCall;
-          
+
           if (timeSinceLastCall >= delay) {
             lastCall = now;
             fn.apply(this, args);
@@ -757,11 +745,11 @@
             }, delay - timeSinceLastCall);
           }
         };
-        
+
         throttled.cancel = () => clearTimeout(timeout);
         this.throttledHandlers.set(fn, throttled);
       }
-      
+
       return throttled;
     }
 
@@ -773,26 +761,26 @@
      */
     debounce(fn, delay) {
       let debounced = this.debouncedHandlers.get(fn);
-      
+
       if (!debounced) {
         let timeout = null;
-        
-        debounced = function(...args) {
+
+        debounced = function (...args) {
           clearTimeout(timeout);
           timeout = setTimeout(() => {
             fn.apply(this, args);
           }, delay);
         };
-        
+
         debounced.cancel = () => clearTimeout(timeout);
         debounced.flush = () => {
           clearTimeout(timeout);
           fn.apply(this, arguments);
         };
-        
+
         this.debouncedHandlers.set(fn, debounced);
       }
-      
+
       return debounced;
     }
 
@@ -806,15 +794,15 @@
     observeVisibility(element, callback, options = {}) {
       const el = typeof element === 'string' ? document.querySelector(element) : element;
       if (!el) return () => {};
-      
-      const observer = new IntersectionObserver((entries) => {
+
+      const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           callback(entry.isIntersecting, entry);
         });
       }, options);
-      
+
       observer.observe(el);
-      
+
       return () => observer.disconnect();
     }
 
@@ -827,15 +815,15 @@
     observeResize(element, callback) {
       const el = typeof element === 'string' ? document.querySelector(element) : element;
       if (!el) return () => {};
-      
-      const observer = new ResizeObserver((entries) => {
+
+      const observer = new ResizeObserver(entries => {
         entries.forEach(entry => {
           callback(entry.contentRect, entry);
         });
       });
-      
+
       observer.observe(el);
-      
+
       return () => observer.disconnect();
     }
 
@@ -862,9 +850,13 @@
   const uiEvents = new UIEvents();
 
   // Register default shortcuts
-  uiEvents.shortcut('alt+h', () => {
-    console.log('UI Events shortcuts:', uiEvents.getShortcuts());
-  }, { description: 'Show shortcuts help' });
+  uiEvents.shortcut(
+    'alt+h',
+    () => {
+      console.log('UI Events shortcuts:', uiEvents.getShortcuts());
+    },
+    { description: 'Show shortcuts help' }
+  );
 
   // Expose to global scope
   global.TeamStatsUIEvents = uiEvents;
@@ -872,14 +864,13 @@
   // Convenience shortcuts
   global.UIEvents = {
     on: uiEvents.on.bind(uiEvents),
-    off: (id) => uiEvents.registry.remove(id),
+    off: id => uiEvents.registry.remove(id),
     once: uiEvents.once.bind(uiEvents),
     delegate: uiEvents.delegate.bind(uiEvents),
     shortcut: uiEvents.shortcut.bind(uiEvents),
     throttle: uiEvents.throttle.bind(uiEvents),
-    debounce: uiEvents.debounce.bind(uiEvents)
+    debounce: uiEvents.debounce.bind(uiEvents),
   };
 
   console.log('Team Stats UI Events Module initialized');
-
 })(window);

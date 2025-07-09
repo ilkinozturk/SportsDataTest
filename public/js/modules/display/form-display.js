@@ -1,7 +1,7 @@
 /**
  * Form Display Module
  * Handles the visualization and rendering of team form and performance statistics
- * 
+ *
  * Features:
  * - Recent form visualization
  * - Performance metrics
@@ -12,13 +12,13 @@
  * - Interactive form timeline
  */
 
-(function(global) {
+(function (global) {
   'use strict';
 
   // Module dependencies check
   const requiredModules = ['TeamStatsEventBus', 'TeamStatsStateManager'];
   const missingModules = requiredModules.filter(module => !global[module]);
-  
+
   if (missingModules.length > 0) {
   }
 
@@ -38,7 +38,7 @@
           away: '#8b5cf6',
           positive: '#10b981',
           negative: '#f87171',
-          neutral: '#6b7280'
+          neutral: '#6b7280',
         },
         icons: {
           win: 'W',
@@ -47,14 +47,14 @@
           trend: {
             up: '↑',
             down: '↓',
-            stable: '→'
-          }
-        }
+            stable: '→',
+          },
+        },
       };
       this.state = {
         activeFilter: 'overall',
         timeFrame: 'last10',
-        viewMode: 'overview' // overview, detailed, comparison
+        viewMode: 'overview', // overview, detailed, comparison
       };
     }
 
@@ -106,10 +106,9 @@
         return;
       }
 
-      
       // Setup event listeners
       this.setupEventListeners();
-      
+
       this.initialized = true;
     }
 
@@ -137,8 +136,7 @@
     /**
      * Handle data update
      */
-    handleDataUpdate(data) {
-    }
+    handleDataUpdate(data) {}
 
     /**
      * Handle view mode change
@@ -160,7 +158,7 @@
         showCharts = true,
         showDetails = true,
         showTimeline = true,
-        animated = true
+        animated = true,
       } = options;
 
       // Clear container
@@ -169,7 +167,7 @@
       // Create main section
       const section = this.createElement('div', {
         className: 'form-section',
-        parent: container
+        parent: container,
       });
 
       // Render overview cards
@@ -207,7 +205,7 @@
     renderOverviewCards(container, statistics, filter) {
       const cardsContainer = this.createElement('div', {
         className: 'form-overview-cards',
-        parent: container
+        parent: container,
       });
 
       // Calculate statistics based on filter
@@ -220,7 +218,7 @@
         label: 'Points Per Game',
         subtitle: `${stats.points} pts from ${stats.matches} matches`,
         trend: this.calculateTrend(stats.ppg, stats.leagueAvgPPG),
-        valueColor: this.getPPGColor(stats.ppg)
+        valueColor: this.getPPGColor(stats.ppg),
       });
 
       // Win Rate card
@@ -230,7 +228,7 @@
         label: 'Win Rate',
         subtitle: `${stats.wins} wins`,
         trend: this.calculateTrend(stats.winRate, stats.leagueAvgWinRate),
-        valueColor: this.getWinRateColor(stats.winRate)
+        valueColor: this.getWinRateColor(stats.winRate),
       });
 
       // Current Streak card
@@ -239,7 +237,7 @@
         value: stats.currentStreak.count,
         label: `Current ${stats.currentStreak.type} Streak`,
         subtitle: stats.currentStreak.description,
-        valueColor: this.getStreakColor(stats.currentStreak.type)
+        valueColor: this.getStreakColor(stats.currentStreak.type),
       });
 
       // Form Rating card
@@ -248,7 +246,7 @@
         value: stats.formRating,
         label: 'Form Rating',
         subtitle: stats.formDescription,
-        valueColor: this.getFormRatingColor(stats.formRating)
+        valueColor: this.getFormRatingColor(stats.formRating),
       });
     }
 
@@ -258,14 +256,14 @@
     createOverviewCard(container, data) {
       const card = this.createElement('div', {
         className: 'form-overview-card',
-        parent: container
+        parent: container,
       });
 
       // Icon
       this.createElement('div', {
         className: 'card-icon',
         textContent: data.icon,
-        parent: card
+        parent: card,
       });
 
       // Value
@@ -274,14 +272,14 @@
         className: 'stat-value',
         textContent: data.value,
         style: { color: valueColor },
-        parent: card
+        parent: card,
       });
 
       // Label
       this.createElement('div', {
         className: 'stat-label',
         textContent: data.label,
-        parent: card
+        parent: card,
       });
 
       // Subtitle
@@ -289,18 +287,19 @@
         this.createElement('div', {
           className: 'stat-subtitle',
           textContent: data.subtitle,
-          parent: card
+          parent: card,
         });
       }
 
       // Trend indicator
       if (data.trend) {
-        const trendClass = data.trend === 'up' ? 'trend-up' : data.trend === 'down' ? 'trend-down' : 'trend-stable';
+        const trendClass =
+          data.trend === 'up' ? 'trend-up' : data.trend === 'down' ? 'trend-down' : 'trend-stable';
         const trendIcon = this.config.icons.trend[data.trend] || '→';
         this.createElement('div', {
           className: `trend-indicator ${trendClass}`,
           textContent: trendIcon,
-          parent: card
+          parent: card,
         });
       }
 
@@ -313,28 +312,28 @@
     renderFormString(container, statistics, filter) {
       const formWrapper = this.createElement('div', {
         className: 'form-string-wrapper',
-        parent: container
+        parent: container,
       });
 
       this.createElement('h3', {
         className: 'form-title',
         textContent: 'Recent Form',
-        parent: formWrapper
+        parent: formWrapper,
       });
 
       const formContainer = this.createElement('div', {
         className: 'form-string-container',
-        parent: formWrapper
+        parent: formWrapper,
       });
 
       // Get form string
       const formString = this.getFormString(statistics, filter);
-      
+
       // Render each match result
       formString.split('').forEach((result, index) => {
         const resultElement = this.createElement('div', {
           className: `form-result form-${result.toLowerCase()}`,
-          parent: formContainer
+          parent: formContainer,
         });
 
         // Result circle
@@ -355,16 +354,16 @@
             margin: '0 5px',
             opacity: '0',
             transform: 'scale(0)',
-            animation: `popIn 0.3s ease ${index * 0.1}s forwards`
+            animation: `popIn 0.3s ease ${index * 0.1}s forwards`,
           },
-          parent: resultElement
+          parent: resultElement,
         });
 
         // Match details (on hover)
         const tooltip = this.createElement('div', {
           className: 'result-tooltip',
           innerHTML: this.getMatchTooltip(statistics, filter, formString.length - index - 1),
-          parent: resultElement
+          parent: resultElement,
         });
       });
 
@@ -378,19 +377,19 @@
     renderFormLegend(container) {
       const legend = this.createElement('div', {
         className: 'form-legend',
-        parent: container
+        parent: container,
       });
 
       const legendItems = [
         { symbol: 'W', label: 'Win', color: this.config.colors.win },
         { symbol: 'D', label: 'Draw', color: this.config.colors.draw },
-        { symbol: 'L', label: 'Loss', color: this.config.colors.loss }
+        { symbol: 'L', label: 'Loss', color: this.config.colors.loss },
       ];
 
       legendItems.forEach(item => {
         const legendItem = this.createElement('div', {
           className: 'legend-item',
-          parent: legend
+          parent: legend,
         });
 
         this.createElement('span', {
@@ -406,14 +405,14 @@
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '12px',
-            marginRight: '5px'
+            marginRight: '5px',
           },
-          parent: legendItem
+          parent: legendItem,
         });
 
         this.createElement('span', {
           textContent: item.label,
-          parent: legendItem
+          parent: legendItem,
         });
       });
     }
@@ -424,18 +423,18 @@
     renderPerformanceChart(container, statistics, filter) {
       const chartWrapper = this.createElement('div', {
         className: 'performance-chart-wrapper',
-        parent: container
+        parent: container,
       });
 
       this.createElement('h3', {
         className: 'chart-title',
         textContent: 'Points Progression',
-        parent: chartWrapper
+        parent: chartWrapper,
       });
 
       const chartContainer = this.createElement('div', {
         className: 'line-chart-container',
-        parent: chartWrapper
+        parent: chartWrapper,
       });
 
       // Get matches data
@@ -444,14 +443,14 @@
         this.createElement('p', {
           className: 'no-data-message',
           textContent: 'No match data available',
-          parent: chartContainer
+          parent: chartContainer,
         });
         return;
       }
 
       // Calculate cumulative points
       const pointsData = this.calculateCumulativePoints(matches);
-      
+
       // Create simple line chart
       this.renderLineChart(chartContainer, pointsData);
     }
@@ -474,11 +473,14 @@
 
       // Create path
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      const pathData = data.map((point, index) => {
-        const x = (index / (data.length - 1)) * (chartWidth - 2 * padding) + padding;
-        const y = chartHeight - ((point.cumulative / maxPoints) * (chartHeight - 2 * padding) + padding);
-        return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
-      }).join(' ');
+      const pathData = data
+        .map((point, index) => {
+          const x = (index / (data.length - 1)) * (chartWidth - 2 * padding) + padding;
+          const y =
+            chartHeight - ((point.cumulative / maxPoints) * (chartHeight - 2 * padding) + padding);
+          return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
+        })
+        .join(' ');
 
       path.setAttribute('d', pathData);
       path.setAttribute('fill', 'none');
@@ -488,7 +490,8 @@
       // Add points
       data.forEach((point, index) => {
         const x = (index / (data.length - 1)) * (chartWidth - 2 * padding) + padding;
-        const y = chartHeight - ((point.cumulative / maxPoints) * (chartHeight - 2 * padding) + padding);
+        const y =
+          chartHeight - ((point.cumulative / maxPoints) * (chartHeight - 2 * padding) + padding);
 
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         circle.setAttribute('cx', x);
@@ -511,7 +514,7 @@
     renderDetailedStats(container, statistics, filter) {
       const detailsGrid = this.createElement('div', {
         className: 'form-details-grid',
-        parent: container
+        parent: container,
       });
 
       // Results breakdown
@@ -533,13 +536,13 @@
     renderResultsBreakdown(container, statistics, filter) {
       const card = this.createElement('div', {
         className: 'detail-card',
-        parent: container
+        parent: container,
       });
 
       this.createElement('h4', {
         className: 'detail-card-title',
         textContent: 'Results Breakdown',
-        parent: card
+        parent: card,
       });
 
       const stats = this.calculateResultsBreakdown(statistics, filter);
@@ -548,36 +551,36 @@
       this.createStatRow(card, 'Wins', `${stats.wins} (${stats.winPercentage}%)`, {
         progressBar: true,
         percentage: stats.winPercentage,
-        color: this.config.colors.win
+        color: this.config.colors.win,
       });
 
       // Draws
       this.createStatRow(card, 'Draws', `${stats.draws} (${stats.drawPercentage}%)`, {
         progressBar: true,
         percentage: stats.drawPercentage,
-        color: this.config.colors.draw
+        color: this.config.colors.draw,
       });
 
       // Losses
       this.createStatRow(card, 'Losses', `${stats.losses} (${stats.lossPercentage}%)`, {
         progressBar: true,
         percentage: stats.lossPercentage,
-        color: this.config.colors.loss
+        color: this.config.colors.loss,
       });
 
       // Points efficiency
       const efficiency = this.createElement('div', {
         className: 'stat-row highlight',
-        parent: card
+        parent: card,
       });
       this.createElement('span', {
         textContent: 'Points Efficiency',
-        parent: efficiency
+        parent: efficiency,
       });
       this.createElement('span', {
         className: 'stat-value',
         textContent: `${stats.pointsEfficiency}% of possible points`,
-        parent: efficiency
+        parent: efficiency,
       });
     }
 
@@ -587,20 +590,23 @@
     renderStreaksAnalysis(container, statistics, filter) {
       const card = this.createElement('div', {
         className: 'detail-card',
-        parent: container
+        parent: container,
       });
 
       this.createElement('h4', {
         className: 'detail-card-title',
         textContent: 'Streaks Analysis',
-        parent: card
+        parent: card,
       });
 
       const streaks = this.analyzeStreaks(statistics, filter);
 
       // Current streak
-      this.createStatRow(card, 'Current Streak', 
-        `${streaks.current.count} ${streaks.current.type}${streaks.current.count > 1 ? 's' : ''}`);
+      this.createStatRow(
+        card,
+        'Current Streak',
+        `${streaks.current.count} ${streaks.current.type}${streaks.current.count > 1 ? 's' : ''}`
+      );
 
       // Longest win streak
       this.createStatRow(card, 'Longest Win Streak', streaks.longestWin);
@@ -618,13 +624,13 @@
     renderVenueComparison(container, statistics) {
       const card = this.createElement('div', {
         className: 'detail-card',
-        parent: container
+        parent: container,
       });
 
       this.createElement('h4', {
         className: 'detail-card-title',
         textContent: 'Home vs Away Form',
-        parent: card
+        parent: card,
       });
 
       // Home PPG
@@ -634,14 +640,14 @@
       this.createStatRow(card, 'Home PPG', homePPG.toFixed(2), {
         progressBar: true,
         percentage: (homePPG / 3) * 100,
-        color: this.config.colors.home
+        color: this.config.colors.home,
       });
 
       // Away PPG
       this.createStatRow(card, 'Away PPG', awayPPG.toFixed(2), {
         progressBar: true,
         percentage: (awayPPG / 3) * 100,
-        color: this.config.colors.away
+        color: this.config.colors.away,
       });
 
       // Home form
@@ -649,7 +655,7 @@
       this.createElement('div', {
         className: 'venue-form-row',
         innerHTML: `<span>Home Form:</span> ${this.renderMiniForm(homeForm)}`,
-        parent: card
+        parent: card,
       });
 
       // Away form
@@ -657,7 +663,7 @@
       this.createElement('div', {
         className: 'venue-form-row',
         innerHTML: `<span>Away Form:</span> ${this.renderMiniForm(awayForm)}`,
-        parent: card
+        parent: card,
       });
     }
 
@@ -667,32 +673,44 @@
     renderGoalsForm(container, statistics, filter) {
       const card = this.createElement('div', {
         className: 'detail-card',
-        parent: container
+        parent: container,
       });
 
       this.createElement('h4', {
         className: 'detail-card-title',
         textContent: 'Goals Form',
-        parent: card
+        parent: card,
       });
 
       const goalsStats = this.calculateGoalsForm(statistics, filter);
 
       // Scoring form
-      this.createStatRow(card, 'Matches Scored', 
-        `${goalsStats.matchesScored}/${goalsStats.matches} (${goalsStats.scoringPercentage}%)`);
+      this.createStatRow(
+        card,
+        'Matches Scored',
+        `${goalsStats.matchesScored}/${goalsStats.matches} (${goalsStats.scoringPercentage}%)`
+      );
 
       // Goals per match when scoring
-      this.createStatRow(card, 'Goals When Scoring', 
-        `${goalsStats.goalsWhenScoring.toFixed(2)} per match`);
+      this.createStatRow(
+        card,
+        'Goals When Scoring',
+        `${goalsStats.goalsWhenScoring.toFixed(2)} per match`
+      );
 
       // Clean sheets
-      this.createStatRow(card, 'Clean Sheets', 
-        `${goalsStats.cleanSheets} (${goalsStats.cleanSheetPercentage}%)`);
+      this.createStatRow(
+        card,
+        'Clean Sheets',
+        `${goalsStats.cleanSheets} (${goalsStats.cleanSheetPercentage}%)`
+      );
 
       // Both teams scored
-      this.createStatRow(card, 'Both Teams Scored', 
-        `${goalsStats.btts} (${goalsStats.bttsPercentage}%)`);
+      this.createStatRow(
+        card,
+        'Both Teams Scored',
+        `${goalsStats.btts} (${goalsStats.bttsPercentage}%)`
+      );
     }
 
     /**
@@ -701,13 +719,13 @@
     renderFormTimeline(container, statistics, filter) {
       const timelineCard = this.createElement('div', {
         className: 'form-timeline-card',
-        parent: container
+        parent: container,
       });
 
       this.createElement('h3', {
         className: 'timeline-title',
         textContent: '📅 Match Timeline',
-        parent: timelineCard
+        parent: timelineCard,
       });
 
       const matches = this.getFilteredMatches(statistics, filter);
@@ -715,33 +733,33 @@
 
       const timeline = this.createElement('div', {
         className: 'form-timeline',
-        parent: timelineCard
+        parent: timelineCard,
       });
 
       recentMatches.forEach((match, index) => {
         const matchElement = this.createElement('div', {
           className: 'timeline-match',
-          parent: timeline
+          parent: timeline,
         });
 
         // Date
         this.createElement('div', {
           className: 'match-date',
           textContent: this.formatMatchDate(match.date),
-          parent: matchElement
+          parent: matchElement,
         });
 
         // Match info
         const matchInfo = this.createElement('div', {
           className: 'match-info',
-          parent: matchElement
+          parent: matchElement,
         });
 
         // Teams
         this.createElement('div', {
           className: 'match-teams',
           textContent: `${match.homeTeam.name} ${match.homeScore} - ${match.awayScore} ${match.awayTeam.name}`,
-          parent: matchInfo
+          parent: matchInfo,
         });
 
         // Result indicator
@@ -755,9 +773,9 @@
             padding: '2px 8px',
             borderRadius: '4px',
             fontSize: '12px',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
           },
-          parent: matchInfo
+          parent: matchInfo,
         });
 
         // Animation
@@ -777,23 +795,23 @@
     createStatRow(container, label, value, options = {}) {
       const row = this.createElement('div', {
         className: 'stat-row',
-        parent: container
+        parent: container,
       });
 
       this.createElement('span', {
         textContent: label,
-        parent: row
+        parent: row,
       });
 
       if (options.progressBar) {
         const progressContainer = this.createElement('div', {
           className: 'progress-container',
-          parent: row
+          parent: row,
         });
 
         const progressBar = this.createElement('div', {
           className: 'progress-bar',
-          parent: progressContainer
+          parent: progressContainer,
         });
 
         const progressFill = this.createElement('div', {
@@ -801,9 +819,9 @@
           style: {
             width: '0%',
             backgroundColor: options.color || '#3b82f6',
-            transition: 'width 0.5s ease'
+            transition: 'width 0.5s ease',
           },
-          parent: progressBar
+          parent: progressBar,
         });
 
         // Animate progress
@@ -815,7 +833,7 @@
       this.createElement('span', {
         className: 'stat-value',
         textContent: value,
-        parent: row
+        parent: row,
       });
     }
 
@@ -824,13 +842,26 @@
      */
     calculateFormStats(statistics, filter) {
       const suffix = filter === 'home' ? '_home' : filter === 'away' ? '_away' : '';
-      
-      const matches = statistics[`matches${suffix}`] || statistics[`${filter}Matches`] || statistics.totalMatches || statistics.matches || 0;
-      const wins = statistics[`wins${suffix}`] || statistics[`${filter}Wins`] || statistics.wins || 0;
-      const draws = statistics[`draws${suffix}`] || statistics[`${filter}Draws`] || statistics.draws || 0;
-      const losses = statistics[`losses${suffix}`] || statistics[`${filter}Losses`] || statistics.losses || 0;
-      const points = statistics[`points${suffix}`] || statistics[`${filter}Points`] || statistics.points || 0;
-      const ppg = statistics[`pointsPerGame${suffix}`] || statistics[`${filter}PointsPerGame`] || statistics.pointsPerGame || 0;
+
+      const matches =
+        statistics[`matches${suffix}`] ||
+        statistics[`${filter}Matches`] ||
+        statistics.totalMatches ||
+        statistics.matches ||
+        0;
+      const wins =
+        statistics[`wins${suffix}`] || statistics[`${filter}Wins`] || statistics.wins || 0;
+      const draws =
+        statistics[`draws${suffix}`] || statistics[`${filter}Draws`] || statistics.draws || 0;
+      const losses =
+        statistics[`losses${suffix}`] || statistics[`${filter}Losses`] || statistics.losses || 0;
+      const points =
+        statistics[`points${suffix}`] || statistics[`${filter}Points`] || statistics.points || 0;
+      const ppg =
+        statistics[`pointsPerGame${suffix}`] ||
+        statistics[`${filter}PointsPerGame`] ||
+        statistics.pointsPerGame ||
+        0;
 
       // Get form string
       const formString = this.getFormString(statistics, filter);
@@ -849,7 +880,7 @@
         formRating: formRating.rating,
         formDescription: formRating.description,
         leagueAvgPPG: 1.5, // League average
-        leagueAvgWinRate: 35
+        leagueAvgWinRate: 35,
       };
     }
 
@@ -875,7 +906,7 @@
 
       const lastResult = formString[formString.length - 1].toUpperCase();
       let count = 0;
-      
+
       // Count consecutive results from the end
       for (let i = formString.length - 1; i >= 0; i--) {
         if (formString[i].toUpperCase() === lastResult) {
@@ -886,15 +917,15 @@
       }
 
       const typeMap = {
-        'W': 'Win',
-        'D': 'Draw',
-        'L': 'Loss'
+        W: 'Win',
+        D: 'Draw',
+        L: 'Loss',
       };
 
       return {
         type: typeMap[lastResult] || 'Unknown',
         count,
-        description: `Last ${count} ${count === 1 ? 'match' : 'matches'}`
+        description: `Last ${count} ${count === 1 ? 'match' : 'matches'}`,
       };
     }
 
@@ -971,11 +1002,11 @@
     getFormRatingColor(rating) {
       const ratingColors = {
         'A+': this.config.colors.positive,
-        'A': this.config.colors.win,
-        'B': '#06b6d4',
-        'C': this.config.colors.draw,
-        'D': '#f97316',
-        'F': this.config.colors.loss
+        A: this.config.colors.win,
+        B: '#06b6d4',
+        C: this.config.colors.draw,
+        D: '#f97316',
+        F: this.config.colors.loss,
       };
       return ratingColors[rating] || this.config.colors.neutral;
     }
@@ -986,7 +1017,7 @@
     calculateTrend(current, average) {
       const diff = current - average;
       const threshold = average * 0.1; // 10% threshold
-      
+
       if (diff > threshold) return 'up';
       if (diff < -threshold) return 'down';
       return 'stable';
@@ -997,13 +1028,13 @@
      */
     getFilteredMatches(statistics, filter) {
       const allMatches = statistics.allMatches || statistics.recentMatches || [];
-      
+
       if (filter === 'home') {
         return allMatches.filter(m => m.homeTeam.id === statistics.teamId);
       } else if (filter === 'away') {
         return allMatches.filter(m => m.awayTeam.id === statistics.teamId);
       }
-      
+
       return allMatches;
     }
 
@@ -1014,7 +1045,7 @@
       const isHome = match.homeTeam.id === teamId;
       const teamScore = isHome ? match.homeScore : match.awayScore;
       const oppScore = isHome ? match.awayScore : match.homeScore;
-      
+
       if (teamScore > oppScore) return 'W';
       if (teamScore < oppScore) return 'L';
       return 'D';
@@ -1026,9 +1057,9 @@
     getMatchTooltip(statistics, filter, matchIndex) {
       const matches = this.getFilteredMatches(statistics, filter);
       const match = matches[matches.length - 1 - matchIndex];
-      
+
       if (!match) return '';
-      
+
       return `
         <div class="tooltip-content">
           <div>${this.formatMatchDate(match.date)}</div>
@@ -1057,12 +1088,12 @@
         const result = this.getMatchResult(match, match.homeTeam.id);
         if (result === 'W') cumulative += 3;
         else if (result === 'D') cumulative += 1;
-        
+
         return {
           match,
           result,
           points: result === 'W' ? 3 : result === 'D' ? 1 : 0,
-          cumulative
+          cumulative,
         };
       });
     }
@@ -1072,15 +1103,24 @@
      */
     calculateResultsBreakdown(statistics, filter) {
       const suffix = filter === 'home' ? '_home' : filter === 'away' ? '_away' : '';
-      
-      const matches = statistics[`matches${suffix}`] || statistics[`${filter}Matches`] || statistics.totalMatches || 0;
-      const wins = statistics[`wins${suffix}`] || statistics[`${filter}Wins`] || statistics.wins || 0;
-      const draws = statistics[`draws${suffix}`] || statistics[`${filter}Draws`] || statistics.draws || 0;
-      const losses = statistics[`losses${suffix}`] || statistics[`${filter}Losses`] || statistics.losses || 0;
-      const points = statistics[`points${suffix}`] || statistics[`${filter}Points`] || statistics.points || 0;
+
+      const matches =
+        statistics[`matches${suffix}`] ||
+        statistics[`${filter}Matches`] ||
+        statistics.totalMatches ||
+        0;
+      const wins =
+        statistics[`wins${suffix}`] || statistics[`${filter}Wins`] || statistics.wins || 0;
+      const draws =
+        statistics[`draws${suffix}`] || statistics[`${filter}Draws`] || statistics.draws || 0;
+      const losses =
+        statistics[`losses${suffix}`] || statistics[`${filter}Losses`] || statistics.losses || 0;
+      const points =
+        statistics[`points${suffix}`] || statistics[`${filter}Points`] || statistics.points || 0;
 
       const maxPossiblePoints = matches * 3;
-      const pointsEfficiency = maxPossiblePoints > 0 ? Math.round((points / maxPossiblePoints) * 100) : 0;
+      const pointsEfficiency =
+        maxPossiblePoints > 0 ? Math.round((points / maxPossiblePoints) * 100) : 0;
 
       return {
         matches,
@@ -1090,7 +1130,7 @@
         winPercentage: matches > 0 ? Math.round((wins / matches) * 100) : 0,
         drawPercentage: matches > 0 ? Math.round((draws / matches) * 100) : 0,
         lossPercentage: matches > 0 ? Math.round((losses / matches) * 100) : 0,
-        pointsEfficiency
+        pointsEfficiency,
       };
     }
 
@@ -1100,14 +1140,18 @@
     analyzeStreaks(statistics, filter) {
       const formString = this.getFormString(statistics, filter);
       const current = this.getCurrentStreak(formString);
-      
+
       // Calculate longest streaks
-      let longestWin = 0, longestUnbeaten = 0, longestWithoutWin = 0;
-      let currentWin = 0, currentUnbeaten = 0, currentWithoutWin = 0;
-      
+      let longestWin = 0,
+        longestUnbeaten = 0,
+        longestWithoutWin = 0;
+      let currentWin = 0,
+        currentUnbeaten = 0,
+        currentWithoutWin = 0;
+
       formString.split('').forEach(result => {
         const upperResult = result.toUpperCase();
-        
+
         // Win streak
         if (upperResult === 'W') {
           currentWin++;
@@ -1122,17 +1166,17 @@
           currentUnbeaten = 0;
           currentWithoutWin++;
         }
-        
+
         longestWin = Math.max(longestWin, currentWin);
         longestUnbeaten = Math.max(longestUnbeaten, currentUnbeaten);
         longestWithoutWin = Math.max(longestWithoutWin, currentWithoutWin);
       });
-      
+
       return {
         current,
         longestWin,
         longestUnbeaten,
-        longestWithoutWin
+        longestWithoutWin,
       };
     }
 
@@ -1141,16 +1185,36 @@
      */
     calculateGoalsForm(statistics, filter) {
       const suffix = filter === 'home' ? '_home' : filter === 'away' ? '_away' : '';
-      
-      const matches = statistics[`matches${suffix}`] || statistics[`${filter}Matches`] || statistics.totalMatches || 0;
-      const failedToScore = statistics[`failedToScore${suffix}`] || statistics[`${filter}FailedToScore`] || statistics.failedToScore || 0;
-      const cleanSheets = statistics[`cleanSheets${suffix}`] || statistics[`${filter}CleanSheets`] || statistics.cleanSheets || 0;
-      const btts = statistics[`bothTeamsScored${suffix}`] || statistics[`${filter}BothTeamsScored`] || statistics.bothTeamsScoredPercentage || 0;
-      const goalsFor = statistics[`goalsFor${suffix}`] || statistics[`${filter}GoalsFor`] || statistics.goalsFor || 0;
-      
+
+      const matches =
+        statistics[`matches${suffix}`] ||
+        statistics[`${filter}Matches`] ||
+        statistics.totalMatches ||
+        0;
+      const failedToScore =
+        statistics[`failedToScore${suffix}`] ||
+        statistics[`${filter}FailedToScore`] ||
+        statistics.failedToScore ||
+        0;
+      const cleanSheets =
+        statistics[`cleanSheets${suffix}`] ||
+        statistics[`${filter}CleanSheets`] ||
+        statistics.cleanSheets ||
+        0;
+      const btts =
+        statistics[`bothTeamsScored${suffix}`] ||
+        statistics[`${filter}BothTeamsScored`] ||
+        statistics.bothTeamsScoredPercentage ||
+        0;
+      const goalsFor =
+        statistics[`goalsFor${suffix}`] ||
+        statistics[`${filter}GoalsFor`] ||
+        statistics.goalsFor ||
+        0;
+
       const matchesScored = matches - failedToScore;
       const goalsWhenScoring = matchesScored > 0 ? goalsFor / matchesScored : 0;
-      
+
       return {
         matches,
         matchesScored,
@@ -1159,7 +1223,7 @@
         cleanSheets,
         cleanSheetPercentage: matches > 0 ? Math.round((cleanSheets / matches) * 100) : 0,
         btts: Math.round((matches * btts) / 100),
-        bttsPercentage: btts
+        bttsPercentage: btts,
       };
     }
 
@@ -1168,10 +1232,13 @@
      */
     renderMiniForm(formString) {
       if (!formString) return 'No data';
-      
-      return formString.split('').slice(-5).map(result => {
-        const color = this.getResultColor(result);
-        return `<span style="
+
+      return formString
+        .split('')
+        .slice(-5)
+        .map(result => {
+          const color = this.getResultColor(result);
+          return `<span style="
           display: inline-block;
           width: 20px;
           height: 20px;
@@ -1184,19 +1251,22 @@
           font-size: 11px;
           font-weight: bold;
         ">${result.toUpperCase()}</span>`;
-      }).join('');
+        })
+        .join('');
     }
 
     /**
      * Animate section elements
      */
     animateSection(section) {
-      const elements = section.querySelectorAll('.form-overview-card, .detail-card, .form-timeline-card');
-      
+      const elements = section.querySelectorAll(
+        '.form-overview-card, .detail-card, .form-timeline-card'
+      );
+
       elements.forEach((element, index) => {
         element.style.opacity = '0';
         element.style.transform = 'translateY(20px)';
-        
+
         setTimeout(() => {
           element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
           element.style.opacity = '1';
@@ -1221,7 +1291,7 @@
 
   // Create and export singleton instance
   const formDisplay = new FormDisplay();
-  
+
   // Auto-initialize
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => formDisplay.init());
@@ -1231,5 +1301,4 @@
 
   // Export to global scope
   global.TeamStatsFormDisplay = formDisplay;
-
 })(window);

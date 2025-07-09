@@ -27,7 +27,7 @@ export class EventBus {
    */
   off(event, callback) {
     if (!this.events[event]) return;
-    
+
     this.events[event] = this.events[event].filter(cb => cb !== callback);
   }
 
@@ -38,7 +38,7 @@ export class EventBus {
    */
   emit(event, data) {
     if (!this.events[event]) return;
-    
+
     this.events[event].forEach(callback => {
       try {
         callback(data);
@@ -54,7 +54,7 @@ export class EventBus {
    * @param {function} callback - Callback function
    */
   once(event, callback) {
-    const onceWrapper = (data) => {
+    const onceWrapper = data => {
       callback(data);
       this.off(event, onceWrapper);
     };

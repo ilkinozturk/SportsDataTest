@@ -117,6 +117,16 @@ export class MatchDetailsDisplay {
       this.updateOverBTTSComparison(comparison);
     });
 
+    // Listen for corners comparison data
+    this.eventBus.on('corners-comparison-calculated', comparison => {
+      this.updateCornersComparison(comparison);
+    });
+
+    // Listen for cards comparison data
+    this.eventBus.on('cards-comparison-calculated', comparison => {
+      this.updateCardsComparison(comparison);
+    });
+
     // Listen for tab switch events
     this.eventBus.on('switch-tab', tabName => {
       this.switchTab(tabName);
@@ -1535,27 +1545,6 @@ export class MatchDetailsDisplay {
           </div>
         </div>
 
-        <!-- Analysis Summary -->
-        <div class="prediction-summary">
-          <div class="summary-icon">
-            <i class="fas fa-chart-line"></i>
-          </div>
-          <div class="summary-content">
-            <p class="summary-text">${analysis.summary}</p>
-            <div class="summary-factors">
-              ${analysis.keyFactors
-                .map(
-                  factor => `
-                <span class="factor-badge">
-                  <i class="fas fa-check-circle"></i>
-                  ${factor}
-                </span>
-              `
-                )
-                .join('')}
-            </div>
-          </div>
-        </div>
       </div>
     `;
 
@@ -2054,6 +2043,32 @@ export class MatchDetailsDisplay {
     return 'low';
   }
 
+  getCornersClass(value) {
+    if (value >= 60) {
+      return 'very-high';
+    }
+    if (value >= 45) {
+      return 'high';
+    }
+    if (value >= 30) {
+      return 'medium';
+    }
+    return 'low';
+  }
+
+  getCornersPerMatchClass(value) {
+    if (value >= 6) {
+      return 'very-high';
+    }
+    if (value >= 4.5) {
+      return 'high';
+    }
+    if (value >= 3) {
+      return 'medium';
+    }
+    return 'low';
+  }
+
   /**
    * Update Over 2.5 & BTTS comparison display
    * @param {Object} comparison - Over 2.5 & BTTS comparison data
@@ -2340,49 +2355,473 @@ export class MatchDetailsDisplay {
             </tbody>
           </table>
         </div>
-        
-        <!-- Prediction Summary -->
-        <div class="prediction-summary">
-          <div class="prediction-card">
-            <div class="card-header">
-              <i class="fas fa-chart-line"></i>
-              <h5>Over 2.5 Analizi</h5>
-            </div>
-            <div class="card-content">
-              <div class="main-stat">
-                <span class="stat-value ${averages.over25Class}">${Math.round(averages.over25)}%</span>
-                <span class="stat-label">${averages.over25Strength}</span>
-              </div>
-              <div class="sub-stats">
-                <div class="sub-stat">
-                  <i class="fas fa-futbol"></i>
-                  <span>Beklenen: ${averages.totalGoalsExpected} gol</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="prediction-card">
-            <div class="card-header">
-              <i class="fas fa-arrows-alt-h"></i>
-              <h5>BTTS Analizi</h5>
-            </div>
-            <div class="card-content">
-              <div class="main-stat">
-                <span class="stat-value ${averages.bttsClass}">${Math.round(averages.btts)}%</span>
-                <span class="stat-label">${averages.bttsStrength}</span>
-              </div>
-              <div class="sub-stats">
-                <div class="sub-stat">
-                  <i class="fas fa-percentage"></i>
-                  <span>İki takım gol: ${Math.round(averages.bothTeamsLikelyToScore)}%</span>
-                </div>
-              </div>
-            </div>
-          </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Get class for corners values
+   * @param {number} value - Corners value
+   * @returns {string} CSS class
+   */
+  getCornersClass(value) {
+    if (value >= 70) {
+      return 'very-high';
+    }
+    if (value >= 50) {
+      return 'high';
+    }
+    if (value >= 30) {
+      return 'medium';
+    }
+    return 'low';
+  }
+
+  /**
+   * Get class for corners per match values
+   * @param {number} value - Corners per match value
+   * @returns {string} CSS class
+   */
+  getCornersPerMatchClass(value) {
+    if (value >= 6) {
+      return 'very-high';
+    }
+    if (value >= 4.5) {
+      return 'high';
+    }
+    if (value >= 3) {
+      return 'medium';
+    }
+    return 'low';
+  }
+
+  /**
+   * Update corners comparison display
+   * @param {Object} comparison - Corners comparison data
+   */
+  updateCornersComparison(comparison) {
+    const container = document.getElementById('cornersComparisonContent');
+    if (!container) {
+      return;
+    }
+
+    if (!comparison || !comparison.homeTeam || !comparison.awayTeam || !comparison.averages) {
+      container.innerHTML = `
+        <div class="no-data-message">
+          <i class="fas fa-info-circle"></i>
+          <p>Korner istatistikleri bekleniyor...</p>
+        </div>
+      `;
+      return;
+    }
+
+    const { homeTeam, awayTeam, averages } = comparison;
+
+    container.innerHTML = `
+      <!-- Corners Modern Design - Same as Over BTTS -->
+      <div class="over-btts-modern">
+        <!-- Statistics Table -->
+        <div class="stats-table-container">
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th class="stat-name-col">İstatistik</th>
+                <th class="team-col home-col">${homeTeam.name}</th>
+                <th class="team-col away-col">${awayTeam.name}</th>
+                <th class="average-col">Ortalama</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Corners Per Match -->
+              <tr class="highlight-row">
+                <td class="stat-name">
+                  <span class="highlight-badge">Kazanılan Korner</span>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersPerMatchClass(homeTeam.stats.cornersEarnedPerMatch)}">${homeTeam.stats.cornersEarnedPerMatch.toFixed(1)}</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersPerMatchClass(homeTeam.stats.cornersEarnedPerMatch)}" style="width: ${Math.min(homeTeam.stats.cornersEarnedPerMatch * 10, 100)}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersPerMatchClass(awayTeam.stats.cornersEarnedPerMatch)}">${awayTeam.stats.cornersEarnedPerMatch.toFixed(1)}</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersPerMatchClass(awayTeam.stats.cornersEarnedPerMatch)}" style="width: ${Math.min(awayTeam.stats.cornersEarnedPerMatch * 10, 100)}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value highlight ${this.getCornersPerMatchClass(averages.cornersEarnedPerMatch)}">${parseFloat(averages.cornersEarnedPerMatch).toFixed(1)}</span>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="stat-name">Korner Yenilen / Maç</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersPerMatchClass(homeTeam.stats.cornersAgainstPerMatch)}">${homeTeam.stats.cornersAgainstPerMatch.toFixed(1)}</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersPerMatchClass(homeTeam.stats.cornersAgainstPerMatch)}" style="width: ${Math.min(homeTeam.stats.cornersAgainstPerMatch * 10, 100)}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersPerMatchClass(awayTeam.stats.cornersAgainstPerMatch)}">${awayTeam.stats.cornersAgainstPerMatch.toFixed(1)}</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersPerMatchClass(awayTeam.stats.cornersAgainstPerMatch)}" style="width: ${Math.min(awayTeam.stats.cornersAgainstPerMatch * 10, 100)}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getCornersPerMatchClass(averages.cornersAgainstPerMatch)}">${parseFloat(averages.cornersAgainstPerMatch).toFixed(1)}</span>
+                </td>
+              </tr>
+              
+              <!-- Section Divider -->
+              <tr class="section-divider">
+                <td colspan="4"></td>
+              </tr>
+              
+              <!-- Over Corners For -->
+              <tr>
+                <td class="stat-name">Over 2.5 Korner Kazanma</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersClass(homeTeam.stats.over25CornersFor)}">${Math.round(homeTeam.stats.over25CornersFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersClass(homeTeam.stats.over25CornersFor)}" style="width: ${homeTeam.stats.over25CornersFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersClass(awayTeam.stats.over25CornersFor)}">${Math.round(awayTeam.stats.over25CornersFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersClass(awayTeam.stats.over25CornersFor)}" style="width: ${awayTeam.stats.over25CornersFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getCornersClass(averages.over25CornersFor)}">${Math.round(averages.over25CornersFor)}%</span>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="stat-name">Over 3.5 Korner Kazanma</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersClass(homeTeam.stats.over35CornersFor)}">${Math.round(homeTeam.stats.over35CornersFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersClass(homeTeam.stats.over35CornersFor)}" style="width: ${homeTeam.stats.over35CornersFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersClass(awayTeam.stats.over35CornersFor)}">${Math.round(awayTeam.stats.over35CornersFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersClass(awayTeam.stats.over35CornersFor)}" style="width: ${awayTeam.stats.over35CornersFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getCornersClass(averages.over35CornersFor)}">${Math.round(averages.over35CornersFor)}%</span>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="stat-name">Over 4.5 Korner Kazanma</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersClass(homeTeam.stats.over45CornersFor)}">${Math.round(homeTeam.stats.over45CornersFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersClass(homeTeam.stats.over45CornersFor)}" style="width: ${homeTeam.stats.over45CornersFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersClass(awayTeam.stats.over45CornersFor)}">${Math.round(awayTeam.stats.over45CornersFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersClass(awayTeam.stats.over45CornersFor)}" style="width: ${awayTeam.stats.over45CornersFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getCornersClass(averages.over45CornersFor)}">${Math.round(averages.over45CornersFor)}%</span>
+                </td>
+              </tr>
+              
+              <!-- Section Divider -->
+              <tr class="section-divider">
+                <td colspan="4"></td>
+              </tr>
+              
+              <!-- Over Corners Against -->
+              <tr>
+                <td class="stat-name">Over 2.5 Korner Yenme</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersClass(homeTeam.stats.over25CornersAgainst)}">${Math.round(homeTeam.stats.over25CornersAgainst)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersClass(homeTeam.stats.over25CornersAgainst)}" style="width: ${homeTeam.stats.over25CornersAgainst}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersClass(awayTeam.stats.over25CornersAgainst)}">${Math.round(awayTeam.stats.over25CornersAgainst)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersClass(awayTeam.stats.over25CornersAgainst)}" style="width: ${awayTeam.stats.over25CornersAgainst}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getCornersClass(averages.over25CornersAgainst)}">${Math.round(averages.over25CornersAgainst)}%</span>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="stat-name">Over 3.5 Korner Yenme</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersClass(homeTeam.stats.over35CornersAgainst)}">${Math.round(homeTeam.stats.over35CornersAgainst)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersClass(homeTeam.stats.over35CornersAgainst)}" style="width: ${homeTeam.stats.over35CornersAgainst}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersClass(awayTeam.stats.over35CornersAgainst)}">${Math.round(awayTeam.stats.over35CornersAgainst)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersClass(awayTeam.stats.over35CornersAgainst)}" style="width: ${awayTeam.stats.over35CornersAgainst}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getCornersClass(averages.over35CornersAgainst)}">${Math.round(averages.over35CornersAgainst)}%</span>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="stat-name">Over 4.5 Korner Yenme</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersClass(homeTeam.stats.over45CornersAgainst)}">${Math.round(homeTeam.stats.over45CornersAgainst)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersClass(homeTeam.stats.over45CornersAgainst)}" style="width: ${homeTeam.stats.over45CornersAgainst}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCornersClass(awayTeam.stats.over45CornersAgainst)}">${Math.round(awayTeam.stats.over45CornersAgainst)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCornersClass(awayTeam.stats.over45CornersAgainst)}" style="width: ${awayTeam.stats.over45CornersAgainst}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getCornersClass(averages.over45CornersAgainst)}">${Math.round(averages.over45CornersAgainst)}%</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     `;
+  }
+
+  /**
+   * Update cards comparison display
+   * @param {Object} comparison - Cards comparison data
+   */
+  updateCardsComparison(comparison) {
+    const container = document.getElementById('cardsComparisonContent');
+    if (!container) {
+      return;
+    }
+
+    if (!comparison || !comparison.homeTeam || !comparison.awayTeam || !comparison.averages) {
+      container.innerHTML = `
+        <div class="no-data-message">
+          <i class="fas fa-info-circle"></i>
+          <p>Kart istatistikleri bekleniyor...</p>
+        </div>
+      `;
+      return;
+    }
+
+    const { homeTeam, awayTeam, averages } = comparison;
+
+    container.innerHTML = `
+      <!-- Cards Modern Design - Only Over Values -->
+      <div class="over-btts-modern">
+        <!-- Statistics Table -->
+        <div class="stats-table-container">
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th class="stat-name-col">İstatistik</th>
+                <th class="team-col home-col">${homeTeam.name}</th>
+                <th class="team-col away-col">${awayTeam.name}</th>
+                <th class="average-col">Ortalama</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Over 2.5 Cards -->
+              <tr>
+                <td class="stat-name">Over 2.5 Kart</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCardsClass(homeTeam.stats.over25CardsFor)}">${Math.round(homeTeam.stats.over25CardsFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCardsClass(homeTeam.stats.over25CardsFor)}" style="width: ${homeTeam.stats.over25CardsFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCardsClass(awayTeam.stats.over25CardsFor)}">${Math.round(awayTeam.stats.over25CardsFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCardsClass(awayTeam.stats.over25CardsFor)}" style="width: ${awayTeam.stats.over25CardsFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getCardsClass(averages.over25CardsFor)}">${Math.round(averages.over25CardsFor)}%</span>
+                </td>
+              </tr>
+              
+              <!-- Over 3.5 Cards -->
+              <tr>
+                <td class="stat-name">Over 3.5 Kart</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCardsClass(homeTeam.stats.over35CardsFor)}">${Math.round(homeTeam.stats.over35CardsFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCardsClass(homeTeam.stats.over35CardsFor)}" style="width: ${homeTeam.stats.over35CardsFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCardsClass(awayTeam.stats.over35CardsFor)}">${Math.round(awayTeam.stats.over35CardsFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCardsClass(awayTeam.stats.over35CardsFor)}" style="width: ${awayTeam.stats.over35CardsFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getCardsClass(averages.over35CardsFor)}">${Math.round(averages.over35CardsFor)}%</span>
+                </td>
+              </tr>
+              
+              <!-- Over 4.5 Cards -->
+              <tr>
+                <td class="stat-name">Over 4.5 Kart</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCardsClass(homeTeam.stats.over45CardsFor)}">${Math.round(homeTeam.stats.over45CardsFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCardsClass(homeTeam.stats.over45CardsFor)}" style="width: ${homeTeam.stats.over45CardsFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCardsClass(awayTeam.stats.over45CardsFor)}">${Math.round(awayTeam.stats.over45CardsFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCardsClass(awayTeam.stats.over45CardsFor)}" style="width: ${awayTeam.stats.over45CardsFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getCardsClass(averages.over45CardsFor)}">${Math.round(averages.over45CardsFor)}%</span>
+                </td>
+              </tr>
+              
+              <!-- Over 5.5 Cards -->
+              <tr>
+                <td class="stat-name">Over 5.5 Kart</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCardsClass(homeTeam.stats.over55CardsFor)}">${Math.round(homeTeam.stats.over55CardsFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCardsClass(homeTeam.stats.over55CardsFor)}" style="width: ${homeTeam.stats.over55CardsFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCardsClass(awayTeam.stats.over55CardsFor)}">${Math.round(awayTeam.stats.over55CardsFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCardsClass(awayTeam.stats.over55CardsFor)}" style="width: ${awayTeam.stats.over55CardsFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getCardsClass(averages.over55CardsFor)}">${Math.round(averages.over55CardsFor)}%</span>
+                </td>
+              </tr>
+              
+              <!-- Over 6.5 Cards -->
+              <tr>
+                <td class="stat-name">Over 6.5 Kart</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCardsClass(homeTeam.stats.over65CardsFor)}">${Math.round(homeTeam.stats.over65CardsFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCardsClass(homeTeam.stats.over65CardsFor)}" style="width: ${homeTeam.stats.over65CardsFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getCardsClass(awayTeam.stats.over65CardsFor)}">${Math.round(awayTeam.stats.over65CardsFor)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getCardsClass(awayTeam.stats.over65CardsFor)}" style="width: ${awayTeam.stats.over65CardsFor}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getCardsClass(averages.over65CardsFor)}">${Math.round(averages.over65CardsFor)}%</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Get CSS class for cards per match value
+   * @param {number} value - Cards per match value
+   * @returns {string} CSS class name
+   */
+  getCardsPerMatchClass(value) {
+    if (value >= 3) return 'very-high';
+    if (value >= 2) return 'high';
+    if (value >= 1) return 'medium';
+    return 'low';
+  }
+
+  /**
+   * Get CSS class for cards percentage
+   * @param {number} percentage - Percentage value
+   * @returns {string} CSS class name
+   */
+  getCardsClass(percentage) {
+    if (percentage >= 70) return 'very-high';
+    if (percentage >= 50) return 'high';
+    if (percentage >= 30) return 'medium';
+    return 'low';
   }
 }
 

@@ -1,7 +1,7 @@
 /**
  * Corners Display Module
  * Handles the visualization and rendering of corners statistics
- * 
+ *
  * Features:
  * - Corners overview cards
  * - Corners timing charts
@@ -12,13 +12,17 @@
  * - Interactive charts and animations
  */
 
-(function(global) {
+(function (global) {
   'use strict';
 
   // Module dependencies check
-  const requiredModules = ['TeamStatsCornersStatistics', 'TeamStatsEventBus', 'TeamStatsStateManager'];
+  const requiredModules = [
+    'TeamStatsCornersStatistics',
+    'TeamStatsEventBus',
+    'TeamStatsStateManager',
+  ];
   const missingModules = requiredModules.filter(module => !global[module]);
-  
+
   if (missingModules.length > 0) {
     // Missing optional modules
   }
@@ -38,20 +42,20 @@
           firstHalf: '#10b981',
           secondHalf: '#f59e0b',
           over: '#22c55e',
-          under: '#f87171'
+          under: '#f87171',
         },
         thresholds: {
           highCorners: 10,
           lowCorners: 6,
           highCornersPerMatch: 5.5,
-          lowCornersPerMatch: 3.5
-        }
+          lowCornersPerMatch: 3.5,
+        },
       };
       this.state = {
         activeFilter: 'overall',
         activeTimeFrame: 'all',
         cornerType: 'all', // all, team, opponent
-        viewMode: 'overview' // overview, timing, comparison, patterns
+        viewMode: 'overview', // overview, timing, comparison, patterns
       };
     }
 
@@ -112,7 +116,7 @@
 
       // Setup event listeners
       this.setupEventListeners();
-      
+
       this.initialized = true;
     }
 
@@ -124,9 +128,9 @@
         this.eventBus.on('filters:change', this.handleFilterChange.bind(this));
         this.eventBus.on('data:corners:updated', this.handleDataUpdate.bind(this));
         this.eventBus.on('view:corners:modeChange', this.handleViewModeChange.bind(this));
-        
+
         // Listen for initial team data load
-        this.eventBus.on('data:team:loaded', (data) => {
+        this.eventBus.on('data:team:loaded', data => {
           if (data.data && data.data.statistics) {
             this.lastStatistics = data.data.statistics;
             // Update with current filter
@@ -141,16 +145,16 @@
      * Handle filter change
      */
     handleFilterChange(filter) {
-      
       // Handle both direct filter value and object with value property
-      const filterValue = typeof filter === 'string' ? filter : (filter.value || filter.venue || 'overall');
+      const filterValue =
+        typeof filter === 'string' ? filter : filter.value || filter.venue || 'overall';
       this.state.activeFilter = filterValue;
-      
+
       // Update corners statistics if data exists
       if (this.lastStatistics) {
         this.updateCornersStatistics(this.lastStatistics, filterValue);
       }
-      
+
       this.eventBus?.emit('corners:display:filterChanged', { filter: filterValue });
     }
 
@@ -160,106 +164,130 @@
     handleDataUpdate(data) {
       this.lastStatistics = data.statistics;
     }
-    
+
     /**
      * Update corners statistics based on filter
      */
     updateCornersStatistics(statistics, filter) {
-      
       const suffix = filter === 'overall' ? '_overall' : `_${filter}`;
-      
+
+      // Check actual field names in team-stats page
+      // const cornerFields = Object.keys(statistics).filter(key =>
+      //   key.toLowerCase().includes('corner')
+      // );
+
       // Update top stats cards
       this.updateCornersTopStats(statistics, filter);
-      
+
       // Update total corners
-      const totalCorners = filter === 'overall'
-        ? (statistics.cornersTotal || statistics.cornersTotal_overall || 0)
-        : (statistics[`cornersTotal${suffix}`] || 0);
-      
+      const totalCorners =
+        filter === 'overall'
+          ? statistics.cornersTotal || statistics.cornersTotal_overall || 0
+          : statistics[`cornersTotal${suffix}`] || 0;
+
       this.updateElement('totalCorners', totalCorners);
-      
+
       // Calculate matches based on filter
-      const matches = filter === 'overall' ? (statistics.totalMatches || statistics.matches || 0) :
-                     (filter === 'home' ? statistics.homeMatches : statistics.awayMatches) || 0;
-      
+      const matches =
+        filter === 'overall'
+          ? statistics.totalMatches || statistics.matches || 0
+          : (filter === 'home' ? statistics.homeMatches : statistics.awayMatches) || 0;
+
       // Update corners earned per match (corners for)
       let cornersForPerMatch;
       if (filter === 'overall') {
-        cornersForPerMatch = statistics.cornersEarnedPerMatch || statistics.cornersAVG || statistics.cornersForPerMatch || 0;
+        cornersForPerMatch =
+          statistics.cornersEarnedPerMatch ||
+          statistics.cornersAVG ||
+          statistics.cornersForPerMatch ||
+          0;
       } else if (filter === 'home') {
         cornersForPerMatch = statistics.homeCornersAVG || statistics.homeCornersForPerMatch || 0;
       } else if (filter === 'away') {
         cornersForPerMatch = statistics.awayCornersAVG || statistics.awayCornersForPerMatch || 0;
       }
-      
+
       this.updateElement('cornersEarnedPerMatch', cornersForPerMatch.toFixed(2));
       this.updateElement('filter-cornersEarnedPerMatch', cornersForPerMatch.toFixed(2));
-      
+
       // Update corners against per match
       let cornersAgainstPerMatch;
       if (filter === 'overall') {
-        cornersAgainstPerMatch = statistics.cornersAgainstPerMatch || statistics.cornersAgainstAVG || 0;
+        cornersAgainstPerMatch =
+          statistics.cornersAgainstPerMatch || statistics.cornersAgainstAVG || 0;
       } else if (filter === 'home') {
-        cornersAgainstPerMatch = statistics.homeCornersAgainstAVG || statistics.homeCornersAgainstPerMatch || 0;
+        cornersAgainstPerMatch =
+          statistics.homeCornersAgainstAVG || statistics.homeCornersAgainstPerMatch || 0;
       } else if (filter === 'away') {
-        cornersAgainstPerMatch = statistics.awayCornersAgainstAVG || statistics.awayCornersAgainstPerMatch || 0;
+        cornersAgainstPerMatch =
+          statistics.awayCornersAgainstAVG || statistics.awayCornersAgainstPerMatch || 0;
       }
-      
+
       this.updateElement('cornersAgainstPerMatch', cornersAgainstPerMatch.toFixed(2));
       this.updateElement('filter-cornersAgainstPerMatch', cornersAgainstPerMatch.toFixed(2));
-      
+
       // Update total corners per match
       let totalCornersPerMatch;
       if (filter === 'overall') {
-        totalCornersPerMatch = statistics.totalCornersPerMatch || statistics.cornersTotalAVG || 
-                              (parseFloat(cornersForPerMatch) + parseFloat(cornersAgainstPerMatch));
+        totalCornersPerMatch =
+          statistics.totalCornersPerMatch ||
+          statistics.cornersTotalAVG ||
+          parseFloat(cornersForPerMatch) + parseFloat(cornersAgainstPerMatch);
       } else if (filter === 'home') {
-        totalCornersPerMatch = statistics.homeCornersTotalAVG || 
-                              (parseFloat(cornersForPerMatch) + parseFloat(cornersAgainstPerMatch));
+        totalCornersPerMatch =
+          statistics.homeCornersTotalAVG ||
+          parseFloat(cornersForPerMatch) + parseFloat(cornersAgainstPerMatch);
       } else if (filter === 'away') {
-        totalCornersPerMatch = statistics.awayCornersTotalAVG || 
-                              (parseFloat(cornersForPerMatch) + parseFloat(cornersAgainstPerMatch));
+        totalCornersPerMatch =
+          statistics.awayCornersTotalAVG ||
+          parseFloat(cornersForPerMatch) + parseFloat(cornersAgainstPerMatch);
       }
-      
+
       this.updateElement('totalCornersPerMatch', totalCornersPerMatch.toFixed(2));
       this.updateElement('filter-totalCornersPerMatch', totalCornersPerMatch.toFixed(2));
-      
+
       // Update corners per match (average)
       this.updateElement('cornersPerMatch', cornersForPerMatch.toFixed(2));
       this.updateElement('avgCorners', cornersForPerMatch.toFixed(2));
-      
+
       // Update corners for/against totals
       const cornersFor = cornersForPerMatch * matches;
       const cornersAgainst = cornersAgainstPerMatch * matches;
       this.updateElement('cornersFor', Math.round(cornersFor));
       this.updateElement('cornersAgainst', Math.round(cornersAgainst));
-      
+
       // Update corners over percentages - all thresholds
       const overFields = ['65', '75', '85', '95', '105', '115', '125', '135'];
       overFields.forEach(threshold => {
         let overValue;
-        
+
         if (filter === 'overall') {
           // Try multiple field name patterns for overall
-          overValue = statistics[`cornersOver${threshold}`] || 
-                     statistics[`over${threshold}Corners`] || 
-                     statistics[`over${threshold}CornersPercentage_overall`] || 
-                     statistics[`cornersOver${threshold}Percentage_overall`] || 0;
+          overValue =
+            statistics[`cornersOver${threshold}`] ||
+            statistics[`over${threshold}Corners`] ||
+            statistics[`over${threshold}CornersPercentage_overall`] ||
+            statistics[`cornersOver${threshold}Percentage_overall`] ||
+            0;
         } else if (filter === 'home') {
-          overValue = statistics[`over${threshold}CornersPercentage_home`] || 
-                     statistics[`homeOver${threshold}Corners`] || 0;
+          overValue =
+            statistics[`over${threshold}CornersPercentage_home`] ||
+            statistics[`homeOver${threshold}Corners`] ||
+            0;
         } else if (filter === 'away') {
-          overValue = statistics[`over${threshold}CornersPercentage_away`] || 
-                     statistics[`awayOver${threshold}Corners`] || 0;
+          overValue =
+            statistics[`over${threshold}CornersPercentage_away`] ||
+            statistics[`awayOver${threshold}Corners`] ||
+            0;
         }
-        
+
         // Update multiple element patterns
         this.updateElement(`over${threshold}Corners`, `${overValue}%`);
         this.updateElement(`cornersOver${threshold}`, overValue > 0 ? `${overValue}%` : '-');
         this.updateElement(`filter-cornersOver${threshold}`, overValue > 0 ? `${overValue}%` : '-');
       });
     }
-    
+
     /**
      * Update element helper
      */
@@ -269,60 +297,85 @@
         element.textContent = value;
       }
     }
-    
+
     /**
      * Update Team Corners section specifically
      */
     updateTeamCornersSection(statistics, filter) {
-      
       // Update corners earned stats
       let cornersEarnedPerMatch, cornersAgainstPerMatch;
-      
+
       if (filter === 'overall') {
-        cornersEarnedPerMatch = statistics.cornersAVG || statistics.cornersForPerMatch || statistics.cornersEarnedPerMatch || 0;
-        cornersAgainstPerMatch = statistics.cornersAgainstAVG || statistics.cornersAgainstPerMatch || 0;
+        cornersEarnedPerMatch =
+          statistics.cornersAVG ||
+          statistics.cornersForPerMatch ||
+          statistics.cornersEarnedPerMatch ||
+          0;
+        cornersAgainstPerMatch =
+          statistics.cornersAgainstAVG || statistics.cornersAgainstPerMatch || 0;
       } else if (filter === 'home') {
-        cornersEarnedPerMatch = statistics.homeCornersAVG || statistics.cornersForPerMatch_home || statistics.homeCornersForPerMatch || 0;
-        cornersAgainstPerMatch = statistics.homeCornersAgainstAVG || statistics.cornersAgainstPerMatch_home || statistics.homeCornersAgainstPerMatch || 0;
+        cornersEarnedPerMatch =
+          statistics.homeCornersAVG ||
+          statistics.cornersForPerMatch_home ||
+          statistics.homeCornersForPerMatch ||
+          0;
+        cornersAgainstPerMatch =
+          statistics.homeCornersAgainstAVG ||
+          statistics.cornersAgainstPerMatch_home ||
+          statistics.homeCornersAgainstPerMatch ||
+          0;
       } else if (filter === 'away') {
-        cornersEarnedPerMatch = statistics.awayCornersAVG || statistics.cornersForPerMatch_away || statistics.awayCornersForPerMatch || 0;
-        cornersAgainstPerMatch = statistics.awayCornersAgainstAVG || statistics.cornersAgainstPerMatch_away || statistics.awayCornersAgainstPerMatch || 0;
+        cornersEarnedPerMatch =
+          statistics.awayCornersAVG ||
+          statistics.cornersForPerMatch_away ||
+          statistics.awayCornersForPerMatch ||
+          0;
+        cornersAgainstPerMatch =
+          statistics.awayCornersAgainstAVG ||
+          statistics.cornersAgainstPerMatch_away ||
+          statistics.awayCornersAgainstPerMatch ||
+          0;
       }
-      
+
       // Update earned per match
       this.updateElement('teamCorners-avgEarned', cornersEarnedPerMatch.toFixed(2));
-      
+
       // Update against per match
       this.updateElement('teamCorners-avgAgainst', cornersAgainstPerMatch.toFixed(2));
-      
+
       // Calculate total corners
-      const matches = filter === 'overall' ? (statistics.totalMatches || statistics.matches || 0) :
-                     (filter === 'home' ? statistics.homeMatches : statistics.awayMatches) || 0;
-      
+      const matches =
+        filter === 'overall'
+          ? statistics.totalMatches || statistics.matches || 0
+          : (filter === 'home' ? statistics.homeMatches : statistics.awayMatches) || 0;
+
       const totalEarned = Math.round(cornersEarnedPerMatch * matches);
       const totalAgainst = Math.round(cornersAgainstPerMatch * matches);
-      
+
       this.updateElement('teamCorners-totalEarned', totalEarned);
       this.updateElement('teamCorners-totalAgainst', totalAgainst);
-      
+
       // Update more corners than opponent percentage
       let moreThanOpponent;
       if (filter === 'overall') {
-        moreThanOpponent = statistics.winMostCornersPercentage || statistics.winMostCornersPercentage_overall || 0;
+        moreThanOpponent =
+          statistics.winMostCornersPercentage || statistics.winMostCornersPercentage_overall || 0;
       } else if (filter === 'home') {
         moreThanOpponent = statistics.winMostCornersPercentage_home || 0;
       } else if (filter === 'away') {
         moreThanOpponent = statistics.winMostCornersPercentage_away || 0;
       }
       this.updateElement('teamCorners-moreThanOpponent', moreThanOpponent + '%');
-      
+
       // Update corners earned over percentages
       const earnedThresholds = ['25', '35', '45', '55', '65', '75', '85'];
       earnedThresholds.forEach(threshold => {
         let value;
         if (filter === 'overall') {
-          value = statistics[`over${threshold}CornersForPercentage_overall`] || 
-                 statistics[`over${threshold}CornersForPercentage`] || 0;
+          value =
+            statistics[`over${threshold}CornersForPercentage_overall`] ||
+            statistics[`over${threshold}CornersForPercentage`] ||
+            0;
         } else if (filter === 'home') {
           value = statistics[`over${threshold}CornersForPercentage_home`] || 0;
         } else if (filter === 'away') {
@@ -330,14 +383,16 @@
         }
         this.updateElement(`teamCorners-earnedOver${threshold}`, value + '%');
       });
-      
+
       // Update corners against over percentages
       const againstThresholds = ['25', '35', '45', '55', '65', '75', '85'];
       againstThresholds.forEach(threshold => {
         let value;
         if (filter === 'overall') {
-          value = statistics[`over${threshold}CornersAgainstPercentage_overall`] || 
-                 statistics[`over${threshold}CornersAgainstPercentage`] || 0;
+          value =
+            statistics[`over${threshold}CornersAgainstPercentage_overall`] ||
+            statistics[`over${threshold}CornersAgainstPercentage`] ||
+            0;
         } else if (filter === 'home') {
           value = statistics[`over${threshold}CornersAgainstPercentage_home`] || 0;
         } else if (filter === 'away') {
@@ -351,28 +406,53 @@
      * Update corners top stats cards
      */
     updateCornersTopStats(statistics, filter) {
-      console.log('[CornersDisplay] Updating corners top stats with filter:', filter);
-      
       // Total corners per match
       let totalCornersPerMatch, cornersEarnedPerMatch, cornersAgainstPerMatch;
-      
+
       if (filter === 'overall') {
-        cornersEarnedPerMatch = statistics.cornersAVG || statistics.cornersForPerMatch || statistics.cornersEarnedPerMatch || 0;
-        cornersAgainstPerMatch = statistics.cornersAgainstAVG || statistics.cornersAgainstPerMatch || 0;
-        totalCornersPerMatch = statistics.cornersTotalAVG || statistics.totalCornersPerMatch || 
-                              (parseFloat(cornersEarnedPerMatch) + parseFloat(cornersAgainstPerMatch));
+        cornersEarnedPerMatch =
+          statistics.cornersAVG ||
+          statistics.cornersForPerMatch ||
+          statistics.cornersEarnedPerMatch ||
+          0;
+        cornersAgainstPerMatch =
+          statistics.cornersAgainstAVG || statistics.cornersAgainstPerMatch || 0;
+        totalCornersPerMatch =
+          statistics.cornersTotalAVG ||
+          statistics.totalCornersPerMatch ||
+          parseFloat(cornersEarnedPerMatch) + parseFloat(cornersAgainstPerMatch);
       } else if (filter === 'home') {
-        cornersEarnedPerMatch = statistics.homeCornersAVG || statistics.cornersForPerMatch_home || statistics.homeCornersForPerMatch || 0;
-        cornersAgainstPerMatch = statistics.homeCornersAgainstAVG || statistics.cornersAgainstPerMatch_home || statistics.homeCornersAgainstPerMatch || 0;
-        totalCornersPerMatch = statistics.homeCornersTotalAVG || statistics.totalCornersPerMatch_home ||
-                              (parseFloat(cornersEarnedPerMatch) + parseFloat(cornersAgainstPerMatch));
+        cornersEarnedPerMatch =
+          statistics.homeCornersAVG ||
+          statistics.cornersForPerMatch_home ||
+          statistics.homeCornersForPerMatch ||
+          0;
+        cornersAgainstPerMatch =
+          statistics.homeCornersAgainstAVG ||
+          statistics.cornersAgainstPerMatch_home ||
+          statistics.homeCornersAgainstPerMatch ||
+          0;
+        totalCornersPerMatch =
+          statistics.homeCornersTotalAVG ||
+          statistics.totalCornersPerMatch_home ||
+          parseFloat(cornersEarnedPerMatch) + parseFloat(cornersAgainstPerMatch);
       } else if (filter === 'away') {
-        cornersEarnedPerMatch = statistics.awayCornersAVG || statistics.cornersForPerMatch_away || statistics.awayCornersForPerMatch || 0;
-        cornersAgainstPerMatch = statistics.awayCornersAgainstAVG || statistics.cornersAgainstPerMatch_away || statistics.awayCornersAgainstPerMatch || 0;
-        totalCornersPerMatch = statistics.awayCornersTotalAVG || statistics.totalCornersPerMatch_away ||
-                              (parseFloat(cornersEarnedPerMatch) + parseFloat(cornersAgainstPerMatch));
+        cornersEarnedPerMatch =
+          statistics.awayCornersAVG ||
+          statistics.cornersForPerMatch_away ||
+          statistics.awayCornersForPerMatch ||
+          0;
+        cornersAgainstPerMatch =
+          statistics.awayCornersAgainstAVG ||
+          statistics.cornersAgainstPerMatch_away ||
+          statistics.awayCornersAgainstPerMatch ||
+          0;
+        totalCornersPerMatch =
+          statistics.awayCornersTotalAVG ||
+          statistics.totalCornersPerMatch_away ||
+          parseFloat(cornersEarnedPerMatch) + parseFloat(cornersAgainstPerMatch);
       }
-      
+
       this.updateElement('cornersPerMatchCard', totalCornersPerMatch.toFixed(2));
       this.updateElement('cornersEarnedPerMatchCard', cornersEarnedPerMatch.toFixed(2));
       this.updateElement('cornersAgainstPerMatchCard', cornersAgainstPerMatch.toFixed(2));
@@ -399,7 +479,7 @@
         showCharts = true,
         showDetails = true,
         showPatterns = true,
-        animated = true
+        animated = true,
       } = options;
 
       // Clear container
@@ -408,7 +488,7 @@
       // Create main section
       const section = this.createElement('div', {
         className: 'corners-section',
-        parent: container
+        parent: container,
       });
 
       // Render overview cards
@@ -443,7 +523,7 @@
     renderOverviewCards(container, statistics, filter) {
       const cardsContainer = this.createElement('div', {
         className: 'corners-overview-cards',
-        parent: container
+        parent: container,
       });
 
       // Calculate statistics based on filter
@@ -455,7 +535,7 @@
         value: stats.totalCorners,
         label: 'Total Corners',
         subtitle: `${stats.cornersPerMatch} per match`,
-        trend: this.calculateTrend(stats.cornersPerMatch, stats.avgCornersPerMatch)
+        trend: this.calculateTrend(stats.cornersPerMatch, stats.avgCornersPerMatch),
       });
 
       // Team Corners card
@@ -464,7 +544,7 @@
         value: stats.teamCorners,
         label: 'Team Corners',
         subtitle: `${stats.teamCornersPerMatch} per match`,
-        trend: this.calculateTrend(stats.teamCornersPerMatch, stats.avgTeamCornersPerMatch)
+        trend: this.calculateTrend(stats.teamCornersPerMatch, stats.avgTeamCornersPerMatch),
       });
 
       // Opponent Corners card
@@ -473,16 +553,22 @@
         value: stats.opponentCorners,
         label: 'Opponent Corners',
         subtitle: `${stats.opponentCornersPerMatch} per match`,
-        trend: this.calculateTrend(stats.avgOpponentCornersPerMatch, stats.opponentCornersPerMatch)
+        trend: this.calculateTrend(stats.avgOpponentCornersPerMatch, stats.opponentCornersPerMatch),
       });
 
       // Corners Difference card
       this.createOverviewCard(cardsContainer, {
         icon: '📊',
-        value: stats.cornersDifference > 0 ? `+${stats.cornersDifference}` : stats.cornersDifference,
+        value:
+          stats.cornersDifference > 0 ? `+${stats.cornersDifference}` : stats.cornersDifference,
         label: 'Corners Difference',
         subtitle: `${stats.cornersDiffPerMatch > 0 ? '+' : ''}${stats.cornersDiffPerMatch} per match`,
-        valueColor: stats.cornersDifference > 0 ? '#22c55e' : stats.cornersDifference < 0 ? '#ef4444' : '#6b7280'
+        valueColor:
+          stats.cornersDifference > 0
+            ? '#22c55e'
+            : stats.cornersDifference < 0
+              ? '#ef4444'
+              : '#6b7280',
       });
     }
 
@@ -492,14 +578,14 @@
     createOverviewCard(container, data) {
       const card = this.createElement('div', {
         className: 'corners-overview-card',
-        parent: container
+        parent: container,
       });
 
       // Icon
       this.createElement('div', {
         className: 'card-icon',
         textContent: data.icon,
-        parent: card
+        parent: card,
       });
 
       // Value
@@ -508,14 +594,14 @@
         className: 'stat-value',
         textContent: data.value,
         style: { color: valueColor },
-        parent: card
+        parent: card,
       });
 
       // Label
       this.createElement('div', {
         className: 'stat-label',
         textContent: data.label,
-        parent: card
+        parent: card,
       });
 
       // Subtitle
@@ -523,18 +609,19 @@
         this.createElement('div', {
           className: 'stat-subtitle',
           textContent: data.subtitle,
-          parent: card
+          parent: card,
         });
       }
 
       // Trend indicator
       if (data.trend) {
-        const trendClass = data.trend === 'up' ? 'trend-up' : data.trend === 'down' ? 'trend-down' : 'trend-stable';
+        const trendClass =
+          data.trend === 'up' ? 'trend-up' : data.trend === 'down' ? 'trend-down' : 'trend-stable';
         const trendIcon = data.trend === 'up' ? '↑' : data.trend === 'down' ? '↓' : '→';
         this.createElement('div', {
           className: `trend-indicator ${trendClass}`,
           textContent: trendIcon,
-          parent: card
+          parent: card,
         });
       }
 
@@ -547,18 +634,18 @@
     renderCornersChart(container, statistics, filter) {
       const chartWrapper = this.createElement('div', {
         className: 'corners-chart-wrapper',
-        parent: container
+        parent: container,
       });
 
       this.createElement('h3', {
         className: 'chart-title',
         textContent: 'Corners Timeline',
-        parent: chartWrapper
+        parent: chartWrapper,
       });
 
       const chartContainer = this.createElement('div', {
         className: 'bar-chart-container',
-        parent: chartWrapper
+        parent: chartWrapper,
       });
 
       // Get matches data
@@ -567,14 +654,16 @@
         this.createElement('p', {
           className: 'no-data-message',
           textContent: 'No match data available',
-          parent: chartContainer
+          parent: chartContainer,
         });
         return;
       }
 
       // Create bars for last 10 matches
       const recentMatches = matches.slice(-10);
-      const maxCorners = Math.max(...recentMatches.map(m => (m.teamCorners || 0) + (m.opponentCorners || 0)));
+      const maxCorners = Math.max(
+        ...recentMatches.map(m => (m.teamCorners || 0) + (m.opponentCorners || 0))
+      );
 
       recentMatches.forEach(match => {
         const teamCorners = match.teamCorners || 0;
@@ -583,7 +672,7 @@
 
         const barWrapper = this.createElement('div', {
           className: 'bar-wrapper',
-          parent: chartContainer
+          parent: chartContainer,
         });
 
         // Create stacked bar
@@ -591,9 +680,9 @@
           className: 'stacked-bar',
           style: {
             height: '0px',
-            transition: 'height 0.5s ease'
+            transition: 'height 0.5s ease',
           },
-          parent: barWrapper
+          parent: barWrapper,
         });
 
         // Team corners part
@@ -602,9 +691,9 @@
           className: 'bar-segment team-corners',
           style: {
             height: `${teamHeight}px`,
-            backgroundColor: this.config.chartColors.team
+            backgroundColor: this.config.chartColors.team,
           },
-          parent: bar
+          parent: bar,
         });
 
         // Opponent corners part
@@ -613,23 +702,23 @@
           className: 'bar-segment opponent-corners',
           style: {
             height: `${oppHeight}px`,
-            backgroundColor: this.config.chartColors.opponent
+            backgroundColor: this.config.chartColors.opponent,
           },
-          parent: bar
+          parent: bar,
         });
 
         // Value label
         this.createElement('div', {
           className: 'bar-value',
           textContent: totalCorners,
-          parent: barWrapper
+          parent: barWrapper,
         });
 
         // Match label
         this.createElement('div', {
           className: 'bar-label',
           textContent: this.formatMatchLabel(match),
-          parent: barWrapper
+          parent: barWrapper,
         });
 
         // Animate bar
@@ -648,37 +737,37 @@
     renderChartLegend(container) {
       const legend = this.createElement('div', {
         className: 'chart-legend',
-        parent: container
+        parent: container,
       });
 
       // Team corners
       const teamLegend = this.createElement('div', {
         className: 'legend-item',
-        parent: legend
+        parent: legend,
       });
       this.createElement('span', {
         className: 'legend-color',
         style: { backgroundColor: this.config.chartColors.team },
-        parent: teamLegend
+        parent: teamLegend,
       });
       this.createElement('span', {
         textContent: 'Team Corners',
-        parent: teamLegend
+        parent: teamLegend,
       });
 
       // Opponent corners
       const oppLegend = this.createElement('div', {
         className: 'legend-item',
-        parent: legend
+        parent: legend,
       });
       this.createElement('span', {
         className: 'legend-color',
         style: { backgroundColor: this.config.chartColors.opponent },
-        parent: oppLegend
+        parent: oppLegend,
       });
       this.createElement('span', {
         textContent: 'Opponent Corners',
-        parent: oppLegend
+        parent: oppLegend,
       });
     }
 
@@ -688,7 +777,7 @@
     renderDetailedStats(container, statistics, filter) {
       const detailsGrid = this.createElement('div', {
         className: 'corners-details-grid',
-        parent: container
+        parent: container,
       });
 
       // Corners by half
@@ -710,13 +799,13 @@
     renderHalfTimeStats(container, statistics, filter) {
       const card = this.createElement('div', {
         className: 'detail-card',
-        parent: container
+        parent: container,
       });
 
       this.createElement('h4', {
         className: 'detail-card-title',
         textContent: 'Corners by Half',
-        parent: card
+        parent: card,
       });
 
       const stats = this.calculateHalfTimeStats(statistics, filter);
@@ -724,46 +813,46 @@
       // First half
       const firstHalf = this.createElement('div', {
         className: 'stat-row',
-        parent: card
+        parent: card,
       });
       this.createElement('span', {
         textContent: '1st Half',
-        parent: firstHalf
+        parent: firstHalf,
       });
       this.createElement('span', {
         className: 'stat-value',
         textContent: `${stats.firstHalfCorners} (${stats.firstHalfPercentage}%)`,
-        parent: firstHalf
+        parent: firstHalf,
       });
 
       // Second half
       const secondHalf = this.createElement('div', {
         className: 'stat-row',
-        parent: card
+        parent: card,
       });
       this.createElement('span', {
         textContent: '2nd Half',
-        parent: secondHalf
+        parent: secondHalf,
       });
       this.createElement('span', {
         className: 'stat-value',
         textContent: `${stats.secondHalfCorners} (${stats.secondHalfPercentage}%)`,
-        parent: secondHalf
+        parent: secondHalf,
       });
 
       // Average per half
       const avgRow = this.createElement('div', {
         className: 'stat-row highlight',
-        parent: card
+        parent: card,
       });
       this.createElement('span', {
         textContent: 'Average',
-        parent: avgRow
+        parent: avgRow,
       });
       this.createElement('span', {
         className: 'stat-value',
         textContent: `1H: ${stats.avgFirstHalf} | 2H: ${stats.avgSecondHalf}`,
-        parent: avgRow
+        parent: avgRow,
       });
     }
 
@@ -773,13 +862,13 @@
     renderOverUnderStats(container, statistics, filter) {
       const card = this.createElement('div', {
         className: 'detail-card',
-        parent: container
+        parent: container,
       });
 
       this.createElement('h4', {
         className: 'detail-card-title',
         textContent: 'Over/Under Corners',
-        parent: card
+        parent: card,
       });
 
       const overUnderLines = [7.5, 8.5, 9.5, 10.5, 11.5, 12.5];
@@ -788,33 +877,34 @@
       overUnderLines.forEach(line => {
         const row = this.createElement('div', {
           className: 'stat-row',
-          parent: card
+          parent: card,
         });
 
         this.createElement('span', {
           textContent: `Over ${line}`,
-          parent: row
+          parent: row,
         });
 
         const percentage = stats[`over${line.toString().replace('.', '')}`] || 0;
         const progressBar = this.createElement('div', {
           className: 'progress-bar',
-          parent: row
+          parent: row,
         });
 
         const progress = this.createElement('div', {
           className: 'progress-fill',
           style: {
             width: '0%',
-            backgroundColor: percentage > 50 ? this.config.chartColors.over : this.config.chartColors.under
+            backgroundColor:
+              percentage > 50 ? this.config.chartColors.over : this.config.chartColors.under,
           },
-          parent: progressBar
+          parent: progressBar,
         });
 
         this.createElement('span', {
           className: 'stat-value',
           textContent: `${percentage}%`,
-          parent: row
+          parent: row,
         });
 
         // Animate progress bar
@@ -830,13 +920,13 @@
     renderFirstLastCornerStats(container, statistics, filter) {
       const card = this.createElement('div', {
         className: 'detail-card',
-        parent: container
+        parent: container,
       });
 
       this.createElement('h4', {
         className: 'detail-card-title',
         textContent: 'First & Last Corner',
-        parent: card
+        parent: card,
       });
 
       const stats = this.calculateFirstLastStats(statistics, filter);
@@ -844,48 +934,48 @@
       // First corner
       const firstRow = this.createElement('div', {
         className: 'stat-row',
-        parent: card
+        parent: card,
       });
       this.createElement('span', {
         textContent: 'First Corner (Team)',
-        parent: firstRow
+        parent: firstRow,
       });
       this.createElement('span', {
         className: 'stat-value',
         textContent: `${stats.firstCornerTeam}%`,
         style: { color: stats.firstCornerTeam > 50 ? this.config.chartColors.team : '#6b7280' },
-        parent: firstRow
+        parent: firstRow,
       });
 
       // Last corner
       const lastRow = this.createElement('div', {
         className: 'stat-row',
-        parent: card
+        parent: card,
       });
       this.createElement('span', {
         textContent: 'Last Corner (Team)',
-        parent: lastRow
+        parent: lastRow,
       });
       this.createElement('span', {
         className: 'stat-value',
         textContent: `${stats.lastCornerTeam}%`,
         style: { color: stats.lastCornerTeam > 50 ? this.config.chartColors.team : '#6b7280' },
-        parent: lastRow
+        parent: lastRow,
       });
 
       // Average time
       const timeRow = this.createElement('div', {
         className: 'stat-row highlight',
-        parent: card
+        parent: card,
       });
       this.createElement('span', {
         textContent: 'Avg First Corner Time',
-        parent: timeRow
+        parent: timeRow,
       });
       this.createElement('span', {
         className: 'stat-value',
         textContent: `${stats.avgFirstCornerTime}'`,
-        parent: timeRow
+        parent: timeRow,
       });
     }
 
@@ -895,13 +985,13 @@
     renderTimingDistribution(container, statistics, filter) {
       const card = this.createElement('div', {
         className: 'detail-card',
-        parent: container
+        parent: container,
       });
 
       this.createElement('h4', {
         className: 'detail-card-title',
         textContent: 'Corners Timing',
-        parent: card
+        parent: card,
       });
 
       const timePeriods = [
@@ -910,7 +1000,7 @@
         { label: '31-45 min', key: 'corners31to45' },
         { label: '46-60 min', key: 'corners46to60' },
         { label: '61-75 min', key: 'corners61to75' },
-        { label: '76-90 min', key: 'corners76to90' }
+        { label: '76-90 min', key: 'corners76to90' },
       ];
 
       const stats = this.calculateTimingStats(statistics, filter);
@@ -919,18 +1009,18 @@
       timePeriods.forEach(period => {
         const row = this.createElement('div', {
           className: 'timing-row',
-          parent: card
+          parent: card,
         });
 
         this.createElement('span', {
           className: 'timing-label',
           textContent: period.label,
-          parent: row
+          parent: row,
         });
 
         const barContainer = this.createElement('div', {
           className: 'timing-bar-container',
-          parent: row
+          parent: row,
         });
 
         const percentage = maxCorners > 0 ? ((stats[period.key] || 0) / maxCorners) * 100 : 0;
@@ -939,15 +1029,15 @@
           style: {
             width: '0%',
             backgroundColor: this.config.chartColors.team,
-            transition: 'width 0.5s ease'
+            transition: 'width 0.5s ease',
           },
-          parent: barContainer
+          parent: barContainer,
         });
 
         this.createElement('span', {
           className: 'timing-value',
           textContent: stats[period.key] || 0,
-          parent: row
+          parent: row,
         });
 
         // Animate bar
@@ -963,13 +1053,13 @@
     renderCornerPatterns(container, statistics, filter) {
       const analysisCard = this.createElement('div', {
         className: 'corners-patterns-analysis',
-        parent: container
+        parent: container,
       });
 
       this.createElement('h3', {
         className: 'analysis-title',
         textContent: '📊 Corners Analysis & Patterns',
-        parent: analysisCard
+        parent: analysisCard,
       });
 
       const stats = this.calculateCornerStats(statistics, filter);
@@ -978,7 +1068,7 @@
       // Summary section
       const summary = this.createElement('div', {
         className: 'analysis-summary',
-        parent: analysisCard
+        parent: analysisCard,
       });
 
       this.createElement('p', {
@@ -987,31 +1077,31 @@
           <strong>Dominance:</strong> ${stats.cornersDifference > 0 ? 'Positive' : stats.cornersDifference < 0 ? 'Negative' : 'Balanced'} 
           (${stats.cornersDiffPerMatch > 0 ? '+' : ''}${stats.cornersDiffPerMatch} per match)
         `,
-        parent: summary
+        parent: summary,
       });
 
       // Key insights
       const insights = this.createElement('div', {
         className: 'analysis-insights',
-        parent: analysisCard
+        parent: analysisCard,
       });
 
       patterns.forEach(pattern => {
         const insight = this.createElement('div', {
           className: `insight-item ${pattern.type}`,
-          parent: insights
+          parent: insights,
         });
 
         this.createElement('span', {
           className: 'insight-icon',
           textContent: pattern.icon,
-          parent: insight
+          parent: insight,
         });
 
         this.createElement('span', {
           className: 'insight-text',
           textContent: pattern.text,
-          parent: insight
+          parent: insight,
         });
       });
 
@@ -1027,24 +1117,24 @@
     renderRecommendations(container, stats, patterns) {
       const recommendations = this.createElement('div', {
         className: 'corner-recommendations',
-        parent: container
+        parent: container,
       });
 
       this.createElement('h4', {
         textContent: '💡 Strategic Insights',
-        parent: recommendations
+        parent: recommendations,
       });
 
       const recs = this.generateRecommendations(stats, patterns);
       const list = this.createElement('ul', {
         className: 'recommendations-list',
-        parent: recommendations
+        parent: recommendations,
       });
 
       recs.forEach(rec => {
         this.createElement('li', {
           textContent: rec,
-          parent: list
+          parent: list,
         });
       });
     }
@@ -1054,25 +1144,48 @@
      */
     calculateCornerStats(statistics, filter) {
       const suffix = filter === 'home' ? '_home' : filter === 'away' ? '_away' : '';
-      
-      const matches = statistics[`matches${suffix}`] || statistics[`${filter}Matches`] || statistics.totalMatches || statistics.matches || 0;
-      
+
+      const matches =
+        statistics[`matches${suffix}`] ||
+        statistics[`${filter}Matches`] ||
+        statistics.totalMatches ||
+        statistics.matches ||
+        0;
+
       // Handle different API field names for corners
       let totalCorners, teamCorners, opponentCorners;
-      
+
       if (filter === 'home') {
-        totalCorners = statistics.homeCornersTotalAVG ? statistics.homeCornersTotalAVG * matches : statistics.homeCornersTotal || 0;
-        teamCorners = statistics.homeCornersAVG ? statistics.homeCornersAVG * matches : statistics.homeCornersFor || 0;
-        opponentCorners = statistics.homeCornersAgainstAVG ? statistics.homeCornersAgainstAVG * matches : statistics.homeCornersAgainst || 0;
+        totalCorners = statistics.homeCornersTotalAVG
+          ? statistics.homeCornersTotalAVG * matches
+          : statistics.homeCornersTotal || 0;
+        teamCorners = statistics.homeCornersAVG
+          ? statistics.homeCornersAVG * matches
+          : statistics.homeCornersFor || 0;
+        opponentCorners = statistics.homeCornersAgainstAVG
+          ? statistics.homeCornersAgainstAVG * matches
+          : statistics.homeCornersAgainst || 0;
       } else if (filter === 'away') {
-        totalCorners = statistics.awayCornersTotalAVG ? statistics.awayCornersTotalAVG * matches : statistics.awayCornersTotal || 0;
-        teamCorners = statistics.awayCornersAVG ? statistics.awayCornersAVG * matches : statistics.awayCornersFor || 0;
-        opponentCorners = statistics.awayCornersAgainstAVG ? statistics.awayCornersAgainstAVG * matches : statistics.awayCornersAgainst || 0;
+        totalCorners = statistics.awayCornersTotalAVG
+          ? statistics.awayCornersTotalAVG * matches
+          : statistics.awayCornersTotal || 0;
+        teamCorners = statistics.awayCornersAVG
+          ? statistics.awayCornersAVG * matches
+          : statistics.awayCornersFor || 0;
+        opponentCorners = statistics.awayCornersAgainstAVG
+          ? statistics.awayCornersAgainstAVG * matches
+          : statistics.awayCornersAgainst || 0;
       } else {
         // For overall, use average values if totals not available
-        totalCorners = statistics.cornersTotalAVG ? statistics.cornersTotalAVG * matches : statistics.cornersTotal || 0;
-        teamCorners = statistics.cornersAVG ? statistics.cornersAVG * matches : statistics.cornersFor || 0;
-        opponentCorners = statistics.cornersAgainstAVG ? statistics.cornersAgainstAVG * matches : statistics.cornersAgainst || 0;
+        totalCorners = statistics.cornersTotalAVG
+          ? statistics.cornersTotalAVG * matches
+          : statistics.cornersTotal || 0;
+        teamCorners = statistics.cornersAVG
+          ? statistics.cornersAVG * matches
+          : statistics.cornersFor || 0;
+        opponentCorners = statistics.cornersAgainstAVG
+          ? statistics.cornersAgainstAVG * matches
+          : statistics.cornersAgainst || 0;
       }
 
       return {
@@ -1084,10 +1197,11 @@
         cornersPerMatch: matches > 0 ? (totalCorners / matches).toFixed(2) : '0.00',
         teamCornersPerMatch: matches > 0 ? (teamCorners / matches).toFixed(2) : '0.00',
         opponentCornersPerMatch: matches > 0 ? (opponentCorners / matches).toFixed(2) : '0.00',
-        cornersDiffPerMatch: matches > 0 ? ((teamCorners - opponentCorners) / matches).toFixed(2) : '0.00',
+        cornersDiffPerMatch:
+          matches > 0 ? ((teamCorners - opponentCorners) / matches).toFixed(2) : '0.00',
         avgCornersPerMatch: 9.5, // League average
         avgTeamCornersPerMatch: 4.8,
-        avgOpponentCornersPerMatch: 4.7
+        avgOpponentCornersPerMatch: 4.7,
       };
     }
 
@@ -1096,11 +1210,18 @@
      */
     calculateHalfTimeStats(statistics, filter) {
       const suffix = filter === 'home' ? '_home' : filter === 'away' ? '_away' : '';
-      
-      const firstHalfCorners = statistics[`corners1H_total${suffix}`] || statistics.corners1H_total || 0;
-      const secondHalfCorners = statistics[`corners2H_total${suffix}`] || statistics.corners2H_total || 0;
+
+      const firstHalfCorners =
+        statistics[`corners1H_total${suffix}`] || statistics.corners1H_total || 0;
+      const secondHalfCorners =
+        statistics[`corners2H_total${suffix}`] || statistics.corners2H_total || 0;
       const totalCorners = firstHalfCorners + secondHalfCorners || 1;
-      const matches = statistics[`matches${suffix}`] || statistics[`${filter}Matches`] || statistics.totalMatches || statistics.matches || 0;
+      const matches =
+        statistics[`matches${suffix}`] ||
+        statistics[`${filter}Matches`] ||
+        statistics.totalMatches ||
+        statistics.matches ||
+        0;
 
       return {
         firstHalfCorners,
@@ -1108,7 +1229,7 @@
         firstHalfPercentage: Math.round((firstHalfCorners / totalCorners) * 100),
         secondHalfPercentage: Math.round((secondHalfCorners / totalCorners) * 100),
         avgFirstHalf: matches > 0 ? (firstHalfCorners / matches).toFixed(2) : '0.00',
-        avgSecondHalf: matches > 0 ? (secondHalfCorners / matches).toFixed(2) : '0.00'
+        avgSecondHalf: matches > 0 ? (secondHalfCorners / matches).toFixed(2) : '0.00',
       };
     }
 
@@ -1117,14 +1238,14 @@
      */
     calculateOverUnderStats(statistics, filter) {
       const suffix = filter === 'home' ? '_home' : filter === 'away' ? '_away' : '';
-      
+
       return {
         over75: statistics[`over75Corners${suffix}`] || statistics.over75CornersPercentage || 0,
         over85: statistics[`over85Corners${suffix}`] || statistics.over85CornersPercentage || 0,
         over95: statistics[`over95Corners${suffix}`] || statistics.over95CornersPercentage || 0,
         over105: statistics[`over105Corners${suffix}`] || statistics.over105CornersPercentage || 0,
         over115: statistics[`over115Corners${suffix}`] || statistics.over115CornersPercentage || 0,
-        over125: statistics[`over125Corners${suffix}`] || statistics.over125CornersPercentage || 0
+        over125: statistics[`over125Corners${suffix}`] || statistics.over125CornersPercentage || 0,
       };
     }
 
@@ -1133,15 +1254,18 @@
      */
     calculateFirstLastStats(statistics, filter) {
       const suffix = filter === 'home' ? '_home' : filter === 'away' ? '_away' : '';
-      
-      const firstCornerTeam = statistics[`firstCornerFor${suffix}`] || statistics.firstCornerForPercentage || 0;
-      const lastCornerTeam = statistics[`lastCornerFor${suffix}`] || statistics.lastCornerForPercentage || 0;
-      const avgFirstCornerTime = statistics[`avgFirstCornerTime${suffix}`] || statistics.avgFirstCornerTime || 25;
+
+      const firstCornerTeam =
+        statistics[`firstCornerFor${suffix}`] || statistics.firstCornerForPercentage || 0;
+      const lastCornerTeam =
+        statistics[`lastCornerFor${suffix}`] || statistics.lastCornerForPercentage || 0;
+      const avgFirstCornerTime =
+        statistics[`avgFirstCornerTime${suffix}`] || statistics.avgFirstCornerTime || 25;
 
       return {
         firstCornerTeam,
         lastCornerTeam,
-        avgFirstCornerTime: Math.round(avgFirstCornerTime)
+        avgFirstCornerTime: Math.round(avgFirstCornerTime),
       };
     }
 
@@ -1150,14 +1274,14 @@
      */
     calculateTimingStats(statistics, filter) {
       const suffix = filter === 'home' ? '_home' : filter === 'away' ? '_away' : '';
-      
+
       return {
         corners0to15: statistics[`corners0to15${suffix}`] || statistics.corners0to15 || 0,
         corners16to30: statistics[`corners16to30${suffix}`] || statistics.corners16to30 || 0,
         corners31to45: statistics[`corners31to45${suffix}`] || statistics.corners31to45 || 0,
         corners46to60: statistics[`corners46to60${suffix}`] || statistics.corners46to60 || 0,
         corners61to75: statistics[`corners61to75${suffix}`] || statistics.corners61to75 || 0,
-        corners76to90: statistics[`corners76to90${suffix}`] || statistics.corners76to90 || 0
+        corners76to90: statistics[`corners76to90${suffix}`] || statistics.corners76to90 || 0,
       };
     }
 
@@ -1166,13 +1290,13 @@
      */
     getFilteredMatches(statistics, filter) {
       const allMatches = statistics.recentMatches || [];
-      
+
       if (filter === 'home') {
         return allMatches.filter(m => m.venue === 'home');
       } else if (filter === 'away') {
         return allMatches.filter(m => m.venue === 'away');
       }
-      
+
       return allMatches;
     }
 
@@ -1181,11 +1305,11 @@
      */
     formatMatchLabel(match) {
       if (!match) return '';
-      
+
       const date = new Date(match.date);
       const day = date.getDate();
       const month = date.getMonth() + 1;
-      
+
       return `${day}/${month}`;
     }
 
@@ -1195,7 +1319,7 @@
     calculateTrend(current, average) {
       const diff = current - average;
       const threshold = average * 0.1; // 10% threshold
-      
+
       if (diff > threshold) return 'up';
       if (diff < -threshold) return 'down';
       return 'stable';
@@ -1224,13 +1348,13 @@
         patterns.push({
           type: 'positive',
           icon: '✅',
-          text: 'Strong corner dominance over opponents'
+          text: 'Strong corner dominance over opponents',
         });
       } else if (stats.cornersDifference < -stats.matches) {
         patterns.push({
           type: 'negative',
           icon: '⚠️',
-          text: 'Opponents dominate in corner count'
+          text: 'Opponents dominate in corner count',
         });
       }
 
@@ -1239,7 +1363,7 @@
         patterns.push({
           type: 'neutral',
           icon: '📈',
-          text: 'Significantly more corners in second half'
+          text: 'Significantly more corners in second half',
         });
       }
 
@@ -1248,7 +1372,7 @@
         patterns.push({
           type: 'positive',
           icon: '🎯',
-          text: 'Excellent first corner winning rate'
+          text: 'Excellent first corner winning rate',
         });
       }
 
@@ -1258,7 +1382,7 @@
         patterns.push({
           type: 'neutral',
           icon: '📊',
-          text: 'Majority of matches see 11+ corners'
+          text: 'Majority of matches see 11+ corners',
         });
       }
 
@@ -1276,12 +1400,16 @@
       }
 
       if (parseFloat(stats.opponentCornersPerMatch) > this.config.thresholds.highCornersPerMatch) {
-        recommendations.push('Opponents win many corners - defensive positioning may need adjustment');
+        recommendations.push(
+          'Opponents win many corners - defensive positioning may need adjustment'
+        );
       }
 
       const hasSecondHalfPattern = patterns.some(p => p.text.includes('second half'));
       if (hasSecondHalfPattern) {
-        recommendations.push('Second half sees more corner activity - fitness and pressing factors');
+        recommendations.push(
+          'Second half sees more corner activity - fitness and pressing factors'
+        );
       }
 
       if (recommendations.length === 0) {
@@ -1295,12 +1423,14 @@
      * Animate section elements
      */
     animateSection(section) {
-      const elements = section.querySelectorAll('.corners-overview-card, .detail-card, .corners-patterns-analysis');
-      
+      const elements = section.querySelectorAll(
+        '.corners-overview-card, .detail-card, .corners-patterns-analysis'
+      );
+
       elements.forEach((element, index) => {
         element.style.opacity = '0';
         element.style.transform = 'translateY(20px)';
-        
+
         setTimeout(() => {
           element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
           element.style.opacity = '1';
@@ -1320,13 +1450,12 @@
       }
 
       this.initialized = false;
-      console.log('[CornersDisplay] Module destroyed');
     }
   }
 
   // Create and export singleton instance
   const cornersDisplay = new CornersDisplay();
-  
+
   // Auto-initialize
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => cornersDisplay.init());
@@ -1336,5 +1465,4 @@
 
   // Export to global scope
   global.TeamStatsCornersDisplay = cornersDisplay;
-
 })(window);

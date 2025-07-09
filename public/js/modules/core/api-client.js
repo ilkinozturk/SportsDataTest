@@ -2,7 +2,7 @@
  * Team Stats API Client Module
  * Centralizes all API communication with proper error handling,
  * retries, caching, and integration with State Manager and Event Bus
- * 
+ *
  * Features:
  * - Centralized API configuration
  * - Automatic retries with exponential backoff
@@ -14,14 +14,14 @@
  * - Integration with Event Bus for reactive updates
  */
 
-(function(global) {
+(function (global) {
   'use strict';
 
   // Check dependencies
   if (!global.TeamStatsStateManager) {
     throw new Error('API Client requires State Manager to be loaded first');
   }
-  
+
   if (!global.TeamStatsEventBus) {
     throw new Error('API Client requires Event Bus to be loaded first');
   }
@@ -29,30 +29,32 @@
   /**
    * API Client Configuration
    */
-  const DEFAULT_CONFIG = global.TeamStatsConstants ? {
-    baseURL: global.TeamStatsConstants.get('API', 'BASE_URL'),
-    timeout: global.TeamStatsConstants.get('API', 'TIMEOUT'),
-    retries: global.TeamStatsConstants.get('API', 'RETRY_ATTEMPTS'),
-    retryDelay: global.TeamStatsConstants.get('API', 'RETRY_DELAY'),
-    cacheEnabled: global.TeamStatsConstants.get('FEATURES', 'ENABLE_CACHE'),
-    cacheExpiry: global.TeamStatsConstants.get('API', 'CACHE_DURATION'),
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    }
-  } : {
-    baseURL: '/api',
-    timeout: 30000,
-    retries: 3,
-    retryDelay: 1000,
-    cacheEnabled: true,
-    cacheExpiry: 5 * 60 * 1000, // 5 minutes
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    withCredentials: false
-  };
+  const DEFAULT_CONFIG = global.TeamStatsConstants
+    ? {
+        baseURL: global.TeamStatsConstants.get('API', 'BASE_URL'),
+        timeout: global.TeamStatsConstants.get('API', 'TIMEOUT'),
+        retries: global.TeamStatsConstants.get('API', 'RETRY_ATTEMPTS'),
+        retryDelay: global.TeamStatsConstants.get('API', 'RETRY_DELAY'),
+        cacheEnabled: global.TeamStatsConstants.get('FEATURES', 'ENABLE_CACHE'),
+        cacheExpiry: global.TeamStatsConstants.get('API', 'CACHE_DURATION'),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      }
+    : {
+        baseURL: '/api',
+        timeout: 30000,
+        retries: 3,
+        retryDelay: 1000,
+        cacheEnabled: true,
+        cacheExpiry: 5 * 60 * 1000, // 5 minutes
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        withCredentials: false,
+      };
 
   /**
    * Cache Manager
@@ -80,7 +82,7 @@
 
       this.cache.set(key, {
         data,
-        expiry: Date.now() + expiry
+        expiry: Date.now() + expiry,
       });
 
       // Set auto-cleanup timer
@@ -112,7 +114,7 @@
       let expiredCount = 0;
       const now = Date.now();
 
-      this.cache.forEach((value) => {
+      this.cache.forEach(value => {
         if (value.expiry > now) {
           validCount++;
         } else {
@@ -123,7 +125,7 @@
       return {
         total: this.cache.size,
         valid: validCount,
-        expired: expiredCount
+        expired: expiredCount,
       };
     }
   }
@@ -177,7 +179,7 @@
       this.interceptors = {
         request: [],
         response: [],
-        error: []
+        error: [],
       };
 
       // Initialize metrics
@@ -186,7 +188,7 @@
         successfulRequests: 0,
         failedRequests: 0,
         cachedResponses: 0,
-        averageResponseTime: 0
+        averageResponseTime: 0,
       };
 
       // Bind methods
@@ -216,11 +218,11 @@
      */
     async _applyRequestInterceptors(config) {
       let modifiedConfig = { ...config };
-      
+
       for (const interceptor of this.interceptors.request) {
         modifiedConfig = await interceptor(modifiedConfig);
       }
-      
+
       return modifiedConfig;
     }
 
@@ -229,11 +231,11 @@
      */
     async _applyResponseInterceptors(response) {
       let modifiedResponse = response;
-      
+
       for (const interceptor of this.interceptors.response) {
         modifiedResponse = await interceptor(modifiedResponse);
       }
-      
+
       return modifiedResponse;
     }
 
@@ -242,11 +244,11 @@
      */
     async _applyErrorInterceptors(error) {
       let modifiedError = error;
-      
+
       for (const interceptor of this.interceptors.error) {
         modifiedError = await interceptor(modifiedError);
       }
-      
+
       return modifiedError;
     }
 
@@ -275,18 +277,18 @@
       } catch (error) {
         if (retries > 0 && this._isRetryableError(error)) {
           const delay = this.config.retryDelay * (this.config.retries - retries + 1);
-          
+
           // Emit retry event
           global.TeamStatsEventBus.emit('api:retry', {
             error,
             retriesLeft: retries - 1,
-            delay
+            delay,
           });
 
           await this._delay(delay);
           return this._retryRequest(fn, retries - 1);
         }
-        
+
         throw error;
       }
     }
@@ -329,19 +331,19 @@
       const url = this._buildURL(endpoint);
       const requestKey = `${method}:${endpoint}`;
       const cacheKey = this._getCacheKey(method, url, options.params);
-      
+
       // Check cache for GET requests
       if (method === 'GET' && this.config.cacheEnabled && !options.noCache) {
         const cached = this.cache.get(cacheKey);
         if (cached) {
           this.metrics.cachedResponses++;
-          
+
           // Emit cache hit event
           global.TeamStatsEventBus.emit('api:cache:hit', {
             endpoint,
-            cacheKey
+            cacheKey,
           });
-          
+
           return cached;
         }
       }
@@ -354,7 +356,7 @@
       let config = {
         method,
         headers: { ...this.config.headers, ...options.headers },
-        signal: controller.signal
+        signal: controller.signal,
       };
 
       // Add body for POST/PUT/PATCH
@@ -374,7 +376,7 @@
         ...config,
         url: finalURL,
         endpoint,
-        originalOptions: options
+        originalOptions: options,
       });
 
       // Update metrics
@@ -385,7 +387,7 @@
       global.TeamStatsEventBus.emit('api:request:start', {
         method,
         endpoint,
-        url: finalURL
+        url: finalURL,
       });
 
       try {
@@ -393,7 +395,7 @@
         const response = await this._retryRequest(async () => {
           const res = await fetch(finalURL, {
             ...config,
-            timeout: options.timeout || this.config.timeout
+            timeout: options.timeout || this.config.timeout,
           });
 
           if (!res.ok) {
@@ -409,7 +411,7 @@
         // Parse response
         let data;
         const contentType = response.headers.get('content-type');
-        
+
         if (contentType && contentType.includes('application/json')) {
           data = await response.json();
         } else {
@@ -423,7 +425,7 @@
           statusText: response.statusText,
           headers: response.headers,
           config,
-          request: { method, url: finalURL }
+          request: { method, url: finalURL },
         });
 
         // Cache successful GET requests
@@ -435,8 +437,9 @@
         this.metrics.successfulRequests++;
         const endTime = performance.now();
         const responseTime = endTime - startTime;
-        this.metrics.averageResponseTime = 
-          (this.metrics.averageResponseTime * (this.metrics.successfulRequests - 1) + responseTime) / 
+        this.metrics.averageResponseTime =
+          (this.metrics.averageResponseTime * (this.metrics.successfulRequests - 1) +
+            responseTime) /
           this.metrics.successfulRequests;
 
         // Remove from active requests
@@ -448,17 +451,16 @@
           endpoint,
           url: finalURL,
           data: finalData.data || finalData,
-          responseTime
+          responseTime,
         });
 
         return finalData.data || finalData;
-
       } catch (error) {
         // Apply error interceptors
         const finalError = await this._applyErrorInterceptors({
           error,
           config,
-          request: { method, url: finalURL }
+          request: { method, url: finalURL },
         });
 
         // Update metrics
@@ -472,7 +474,7 @@
           method,
           endpoint,
           url: finalURL,
-          error: finalError.error || finalError
+          error: finalError.error || finalError,
         });
 
         throw finalError.error || finalError;
@@ -503,22 +505,22 @@
      */
     async getTeamData(teamId, options = {}) {
       try {
-        const endpoint = global.TeamStatsConstants ? 
-          global.TeamStatsConstants.get('ENDPOINTS', 'TEAM_DATA') : 
-          'teams/data';
-          
+        const endpoint = global.TeamStatsConstants
+          ? global.TeamStatsConstants.get('ENDPOINTS', 'TEAM_DATA')
+          : 'teams/data';
+
         const response = await this.get(endpoint, {
           params: { teamId },
-          ...options
+          ...options,
         });
 
         // Handle different response formats
         let teamData = null;
-        
+
         // Check if response has success/data structure
         if (response.success && response.data) {
           teamData = response.data;
-          
+
           // Store in State Manager
           if (teamData.teamInfo) {
             global.TeamStatsStateManager.setTeamData(teamData.teamInfo);
@@ -527,32 +529,32 @@
             global.TeamStatsStateManager.setStatistics(teamData.statistics);
           }
           global.TeamStatsStateManager.set('lastTeamData', teamData);
-          
+
           // Emit data loaded event
           global.TeamStatsEventBus.emit('data:team:loaded', {
             teamId: teamData.teamInfo?.id || teamId,
             name: teamData.teamInfo?.name,
-            data: teamData
+            data: teamData,
           });
-          
+
           return teamData;
         }
         // Direct format: teamInfo and statistics at root
         else if (response.teamInfo && response.statistics) {
           teamData = response;
-          
+
           // Store in State Manager
           global.TeamStatsStateManager.setTeamData(response.teamInfo);
           global.TeamStatsStateManager.setStatistics(response.statistics);
           global.TeamStatsStateManager.set('lastTeamData', response);
-          
+
           // Emit data loaded event
           global.TeamStatsEventBus.emit('data:team:loaded', {
             teamId: response.teamInfo.id || teamId,
             name: response.teamInfo.name,
-            data: response
+            data: response,
           });
-          
+
           return response;
         }
 
@@ -571,7 +573,7 @@
         if (data.success && data.data) {
           global.TeamStatsEventBus.emit('data:match:loaded', {
             matchId,
-            data: data.data
+            data: data.data,
           });
         }
 
@@ -604,7 +606,7 @@
 
     invalidateCache(pattern) {
       const keysToDelete = [];
-      
+
       this.cache.cache.forEach((value, key) => {
         if (key.includes(pattern)) {
           keysToDelete.push(key);
@@ -612,10 +614,10 @@
       });
 
       keysToDelete.forEach(key => this.cache.delete(key));
-      
+
       global.TeamStatsEventBus.emit('api:cache:invalidated', {
         pattern,
-        count: keysToDelete.length
+        count: keysToDelete.length,
       });
     }
 
@@ -626,7 +628,7 @@
       return {
         ...this.metrics,
         cache: this.cache.getStats(),
-        activeRequests: this.requests.activeRequests.size
+        activeRequests: this.requests.activeRequests.size,
       };
     }
 
@@ -635,7 +637,7 @@
      */
     configure(config) {
       this.config = { ...this.config, ...config };
-      
+
       global.TeamStatsEventBus.emit('api:configured', config);
     }
 
@@ -650,12 +652,12 @@
         successfulRequests: 0,
         failedRequests: 0,
         cachedResponses: 0,
-        averageResponseTime: 0
+        averageResponseTime: 0,
       };
       this.interceptors = {
         request: [],
         response: [],
-        error: []
+        error: [],
       };
     }
   }
@@ -670,9 +672,9 @@
   }
 
   // Set up default interceptors
-  
+
   // Request interceptor - Add auth token if available
-  apiClient.addInterceptor('request', async (config) => {
+  apiClient.addInterceptor('request', async config => {
     const authToken = global.TeamStatsStateManager.get('authToken');
     if (authToken) {
       config.headers['Authorization'] = `Bearer ${authToken}`;
@@ -681,7 +683,7 @@
   });
 
   // Response interceptor - Handle common response format
-  apiClient.addInterceptor('response', async (response) => {
+  apiClient.addInterceptor('response', async response => {
     // If response has standard format, extract data
     if (response.data && typeof response.data === 'object') {
       if ('success' in response.data && 'data' in response.data) {
@@ -692,15 +694,15 @@
   });
 
   // Error interceptor - Standardize errors
-  apiClient.addInterceptor('error', async (errorInfo) => {
+  apiClient.addInterceptor('error', async errorInfo => {
     const { error, request } = errorInfo;
-    
+
     const standardError = {
       message: error.message || 'An error occurred',
       status: error.status || 0,
       endpoint: request.url,
       method: request.method,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Handle specific error types
@@ -719,7 +721,7 @@
     } else if (error.status === 401) {
       standardError.message = 'Authentication required';
       standardError.type = 'AUTH';
-      
+
       // Clear auth token and emit event
       global.TeamStatsStateManager.set('authToken', null);
       global.TeamStatsEventBus.emit('auth:required');
@@ -729,7 +731,7 @@
   });
 
   // Listen for state changes that affect API
-  global.TeamStatsEventBus.on('state:config:changed', (data) => {
+  global.TeamStatsEventBus.on('state:config:changed', data => {
     if (data.key === 'apiConfig') {
       apiClient.configure(data.value);
     }
@@ -745,9 +747,8 @@
     get: (endpoint, options) => apiClient.get(endpoint, options),
     post: (endpoint, body, options) => apiClient.post(endpoint, body, options),
     cancelAllRequests: () => apiClient.cancelAllRequests(),
-    clearCache: () => apiClient.clearCache()
+    clearCache: () => apiClient.clearCache(),
   };
 
   console.log('Team Stats API Client initialized');
-
 })(window);

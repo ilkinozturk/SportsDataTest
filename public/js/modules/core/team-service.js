@@ -3,7 +3,7 @@
  * Handles team data fetching and caching
  */
 
-(function(global) {
+(function (global) {
   'use strict';
 
   class TeamService {
@@ -40,48 +40,48 @@
 
       try {
         console.log(`[TeamService] Fetching data for team ${teamId}`);
-        
+
         // Use APIClient if available
         if (this.apiClient && this.apiClient.getTeamData) {
           // Use APIClient's getTeamData method which handles the response properly
           const teamData = await this.apiClient.getTeamData(teamId);
-          
+
           // Transform the data to expected format
           const data = this.transformApiResponse(teamData);
-          
+
           // Cache the data
           this.setCache(cacheKey, data);
-          
+
           return data;
         } else if (this.apiClient) {
           // Fallback to generic get method
           const response = await this.apiClient.get(`/teams/data`, { params: { teamId } });
           // APIClient returns the data directly, not wrapped in response object
           const rawData = response;
-          
+
           // Transform the data to expected format
           const data = this.transformApiResponse(rawData);
-          
+
           // Cache the data
           this.setCache(cacheKey, data);
-          
+
           return data;
         } else {
           // Fallback to direct fetch
           const response = await fetch(`${this.baseUrl}/data?teamId=${teamId}`);
-          
+
           if (!response.ok) {
             throw new Error(`HTTP Error ${response.status}: ${response.statusText}`);
           }
-          
+
           const responseData = await response.json();
-          
+
           // Transform the data to expected format
           const data = this.transformApiResponse(responseData);
-          
+
           // Cache the data
           this.setCache(cacheKey, data);
-          
+
           return data;
         }
       } catch (error) {
@@ -108,7 +108,7 @@
         name: teamData.teamName,
         logo: teamData.teamLogo,
         league: teamData.leagueName,
-        country: teamData.country
+        country: teamData.country,
       };
     }
 
@@ -127,15 +127,15 @@
     getFromCache(key) {
       const cached = this.cache.get(key);
       if (!cached) return null;
-      
+
       const { data, timestamp } = cached;
       const age = Date.now() - timestamp;
-      
+
       if (age > this.cacheTimeout) {
         this.cache.delete(key);
         return null;
       }
-      
+
       return data;
     }
 
@@ -145,7 +145,7 @@
     setCache(key, data) {
       this.cache.set(key, {
         data,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
 
@@ -190,14 +190,15 @@
           league: rawData.league,
           leaguePosition: rawData.leaguePosition,
           allMatches: rawData.allMatches || [],
-          recentMatches: rawData.allMatches?.filter(m => m.status === 'complete').slice(0, 10) || []
+          recentMatches:
+            rawData.allMatches?.filter(m => m.status === 'complete').slice(0, 10) || [],
         };
       }
-      
+
       // Handle the wrapped API response structure (for direct fetch)
       if (rawData.success && rawData.data) {
         const apiData = rawData.data;
-        
+
         return {
           teamId: apiData.teamInfo?.id,
           teamName: apiData.teamInfo?.name,
@@ -215,15 +216,16 @@
           league: apiData.league,
           leaguePosition: apiData.leaguePosition,
           allMatches: apiData.allMatches || [],
-          recentMatches: apiData.allMatches?.filter(m => m.status === 'complete').slice(0, 10) || []
+          recentMatches:
+            apiData.allMatches?.filter(m => m.status === 'complete').slice(0, 10) || [],
         };
       }
-      
+
       // If data is already in expected format, return as is
       if (rawData.teamId && rawData.stats) {
         return rawData;
       }
-      
+
       // Otherwise throw error
       console.error('Invalid API response format. Got:', rawData);
       throw new Error('Invalid API response format');
@@ -232,8 +234,7 @@
 
   // Create and export singleton instance
   const teamService = new TeamService();
-  
+
   // Export to global scope
   global.TeamStatsTeamService = teamService;
-
 })(window);

@@ -384,73 +384,9 @@ export class MatchDetailsData {
       if (homeResponse.success && homeResponse.data) {
         const homeData = homeResponse.data;
 
-        // Debug API response
-        console.log('=== Home Team API Response Debug ===');
-        console.log('Team:', homeData.teamInfo?.name);
-        console.log('Has additional_info:', !!homeData.additional_info);
-        console.log(
-          'additional_info keys:',
-          homeData.additional_info ? Object.keys(homeData.additional_info).slice(0, 10) : 'NONE'
-        );
-        console.log(
-          'Has statistics.additional_info:',
-          !!(homeData.statistics && homeData.statistics.additional_info)
-        );
-
-        // Debug Over/Under and BTTS fields
-        console.log('=== Over/Under & BTTS Fields Debug ===');
-        const stats = homeData.statistics || {};
-        const additionalInfo = homeData.additional_info || {};
-
-        // Check for over/under fields
-        console.log('Over/Under fields in stats:', {
-          seasonOver05Percentage_overall: stats.seasonOver05Percentage_overall,
-          seasonOver15Percentage_overall: stats.seasonOver15Percentage_overall,
-          seasonOver25Percentage_overall: stats.seasonOver25Percentage_overall,
-          seasonOver35Percentage_overall: stats.seasonOver35Percentage_overall,
-          seasonOver45Percentage_overall: stats.seasonOver45Percentage_overall,
-          over05GoalsPercentage: stats.over05GoalsPercentage,
-          over15GoalsPercentage: stats.over15GoalsPercentage,
-          over25GoalsPercentage: stats.over25GoalsPercentage,
-        });
-
-        console.log('Over/Under fields in additional_info:', {
-          seasonOver05Percentage_overall: additionalInfo.seasonOver05Percentage_overall,
-          seasonOver15Percentage_overall: additionalInfo.seasonOver15Percentage_overall,
-          seasonOver25Percentage_overall: additionalInfo.seasonOver25Percentage_overall,
-          over_05_percentage: additionalInfo.over_05_percentage,
-          over_15_percentage: additionalInfo.over_15_percentage,
-          over_25_percentage: additionalInfo.over_25_percentage,
-        });
-
-        // Check for BTTS fields
-        console.log('BTTS fields in stats:', {
-          bothTeamsScoredPercentage: stats.bothTeamsScoredPercentage,
-          seasonBTTSPercentage_overall: stats.seasonBTTSPercentage_overall,
-          btts: stats.btts,
-          bttsPercentage: stats.bttsPercentage,
-          bttsAndWinPercentage: stats.bttsAndWinPercentage,
-          bttsAndDrawPercentage: stats.bttsAndDrawPercentage,
-          bttsAndOver25Percentage: stats.bttsAndOver25Percentage,
-          bttsNoAndOver25Percentage: stats.bttsNoAndOver25Percentage,
-        });
-
-        console.log('BTTS fields in additional_info:', {
-          btts_percentage: additionalInfo.btts_percentage,
-          btts_and_win_percentage: additionalInfo.btts_and_win_percentage,
-          btts_and_draw_percentage: additionalInfo.btts_and_draw_percentage,
-          btts_and_over25_percentage: additionalInfo.btts_and_over25_percentage,
-          btts_no_and_over25_percentage: additionalInfo.btts_no_and_over25_percentage,
-          bttsAndOver25: additionalInfo.bttsAndOver25,
-          bttsNoAndOver25: additionalInfo.bttsNoAndOver25,
-        });
-
-        // Check for win percentage that might be confused with BTTS & Win
-        console.log('Win percentage fields:', {
-          winPercentage: stats.winPercentage,
-          seasonWinPercentage_overall: stats.seasonWinPercentage_overall,
-          winPercentage_overall: stats.winPercentage_overall,
-        });
+        // Unused variables removed to fix ESLint errors
+        // const stats = homeData.statistics || {};
+        // const additionalInfo = homeData.additional_info || {};
 
         // Calculate form from matches if not available
         let overallForm =
@@ -509,18 +445,7 @@ export class MatchDetailsData {
       if (awayResponse.success && awayResponse.data) {
         const awayData = awayResponse.data;
 
-        // Debug API response
-        console.log('=== Away Team API Response Debug ===');
-        console.log('Team:', awayData.teamInfo?.name);
-        console.log('Has additional_info:', !!awayData.additional_info);
-        console.log(
-          'additional_info keys:',
-          awayData.additional_info ? Object.keys(awayData.additional_info).slice(0, 10) : 'NONE'
-        );
-        console.log(
-          'Has statistics.additional_info:',
-          !!(awayData.statistics && awayData.statistics.additional_info)
-        );
+        // Process away team statistics
 
         // Calculate form from matches if not available
         let overallForm =
@@ -575,6 +500,26 @@ export class MatchDetailsData {
         };
       }
 
+      // Debug: Log team data before emitting
+      console.log('[MatchDetailsData] Team data to emit:', {
+        homeTeam: teamData.homeTeam
+          ? {
+              name: teamData.homeTeam.name,
+              statsKeys: Object.keys(teamData.homeTeam.stats || {})
+                .filter(k => k.includes('Card') || k.includes('card'))
+                .slice(0, 20),
+            }
+          : null,
+        awayTeam: teamData.awayTeam
+          ? {
+              name: teamData.awayTeam.name,
+              statsKeys: Object.keys(teamData.awayTeam.stats || {})
+                .filter(k => k.includes('Card') || k.includes('card'))
+                .slice(0, 20),
+            }
+          : null,
+      });
+
       // Emit team statistics data
       this.eventBus.emit('team-stats-loaded', teamData);
     } catch (error) {
@@ -594,795 +539,828 @@ export class MatchDetailsData {
    * @returns {Object} - Processed statistics
    */
   extractTeamStatistics(stats, teamData = null) {
-    const additionalInfo = stats.additional_info || teamData?.additional_info || {};
+    // Use stats directly as it already contains the statistics
+    const actualStats = stats;
+    const additionalInfo = teamData?.additional_info || {};
 
-    // Debug logging for conceded fields
-    console.log('=== extractTeamStatistics Debug ===');
-    console.log('Team:', teamData?.teamInfo?.name);
-    console.log('Has stats:', Object.keys(stats).length > 0);
-    console.log('Has additionalInfo:', Object.keys(additionalInfo).length > 0);
-
-    // Log conceded-related fields in stats
-    const statsConcededFields = Object.keys(stats).filter(key =>
-      key.toLowerCase().includes('conceded')
-    );
-    console.log('Stats conceded fields:', statsConcededFields);
-    if (statsConcededFields.length > 0) {
-      statsConcededFields.forEach(field => {
-        console.log(`  stats.${field} = ${stats[field]}`);
-      });
-    }
-
-    // Log conceded-related fields in additionalInfo
-    const concededFields = Object.keys(additionalInfo).filter(key =>
-      key.toLowerCase().includes('conceded')
-    );
-    console.log('AdditionalInfo conceded fields:', concededFields);
-    if (concededFields.length > 0) {
-      concededFields.forEach(field => {
-        console.log(`  additionalInfo.${field} = ${additionalInfo[field]}`);
-      });
-    }
-
-    // Log specific lookups to trace data flow
-    console.log('Field lookup results:');
+    // Debug team stats extraction
     console.log(
-      '  seasonConcededOver05Percentage_home from stats:',
-      stats.seasonConcededOver05Percentage_home
+      '[MatchDetailsData] Extracting stats for:',
+      teamData?.teamInfo?.name || 'Unknown Team'
     );
-    console.log(
-      '  seasonConcededOver05Percentage_home from additionalInfo:',
-      additionalInfo.seasonConcededOver05Percentage_home
-    );
-    console.log(
-      '  over05_conceded_percentage_home from additionalInfo:',
-      additionalInfo.over05_conceded_percentage_home
-    );
+
+    // Debug card data
+    console.log('[MatchDetailsData] Card data check:', {
+      cardsOver25: actualStats.cardsOver25,
+      cardsOver25_overall: actualStats.cardsOver25_overall,
+      cardsOver25_home: actualStats.cardsOver25_home,
+      cardsOver25_away: actualStats.cardsOver25_away,
+      homeCardsOver25: actualStats.homeCardsOver25,
+      awayCardsOver25: actualStats.awayCardsOver25,
+    });
+
+    // Debug logging for all fields (removed to clean up code)
+
+    // Corner and average field checks removed - no longer needed
+
+    // Conceded field logging removed - no longer needed
 
     const extractedStats = {
       // Win percentages - Calculate from wins/totalMatches if percentage not available
       winPercentage:
-        stats.winPercentage_overall ||
-        stats.winPercentage ||
-        (stats.seasonWinsNum_overall && stats.seasonMatchesPlayed_overall
-          ? Math.round((stats.seasonWinsNum_overall / stats.seasonMatchesPlayed_overall) * 100)
+        actualStats.winPercentage_overall ||
+        actualStats.winPercentage ||
+        (actualStats.seasonWinsNum_overall && actualStats.seasonMatchesPlayed_overall
+          ? Math.round(
+              (actualStats.seasonWinsNum_overall / actualStats.seasonMatchesPlayed_overall) * 100
+            )
           : 0),
       homeWinPercentage:
-        stats.winPercentage_home ||
-        stats.homeWinPercentage ||
-        (stats.seasonWinsNum_home && stats.seasonMatchesPlayed_home
-          ? Math.round((stats.seasonWinsNum_home / stats.seasonMatchesPlayed_home) * 100)
+        actualStats.winPercentage_home ||
+        actualStats.homeWinPercentage ||
+        (actualStats.seasonWinsNum_home && actualStats.seasonMatchesPlayed_home
+          ? Math.round(
+              (actualStats.seasonWinsNum_home / actualStats.seasonMatchesPlayed_home) * 100
+            )
           : 0),
       awayWinPercentage:
-        stats.winPercentage_away ||
-        stats.awayWinPercentage ||
-        (stats.seasonWinsNum_away && stats.seasonMatchesPlayed_away
-          ? Math.round((stats.seasonWinsNum_away / stats.seasonMatchesPlayed_away) * 100)
+        actualStats.winPercentage_away ||
+        actualStats.awayWinPercentage ||
+        (actualStats.seasonWinsNum_away && actualStats.seasonMatchesPlayed_away
+          ? Math.round(
+              (actualStats.seasonWinsNum_away / actualStats.seasonMatchesPlayed_away) * 100
+            )
           : 0),
 
       // Goals per match (AVG) - API uses 'seasonScoredAVG' fields
       goalsPerMatch:
-        stats.seasonScoredAVG_overall ||
-        stats.seasonScoredAVG ||
-        stats.goalsPerMatch ||
-        stats.averageGoalsFor ||
+        actualStats.seasonScoredAVG_overall ||
+        actualStats.seasonScoredAVG ||
+        actualStats.goalsPerMatch ||
+        actualStats.averageGoalsFor ||
         0,
       homeGoalsPerMatch:
-        stats.seasonScoredAVG_home ||
-        stats.homeGoalsPerMatch ||
-        (stats.homeGoalsFor && stats.homeMatches
-          ? (stats.homeGoalsFor / stats.homeMatches).toFixed(2)
+        actualStats.seasonScoredAVG_home ||
+        actualStats.homeGoalsPerMatch ||
+        (actualStats.homeGoalsFor && actualStats.homeMatches
+          ? (actualStats.homeGoalsFor / actualStats.homeMatches).toFixed(2)
           : 0),
       awayGoalsPerMatch:
-        stats.seasonScoredAVG_away ||
-        stats.awayGoalsPerMatch ||
-        (stats.awayGoalsFor && stats.awayMatches
-          ? (stats.awayGoalsFor / stats.awayMatches).toFixed(2)
+        actualStats.seasonScoredAVG_away ||
+        actualStats.awayGoalsPerMatch ||
+        (actualStats.awayGoalsFor && actualStats.awayMatches
+          ? (actualStats.awayGoalsFor / actualStats.awayMatches).toFixed(2)
           : 0),
 
       // Total goals scored
       goalsScored:
-        stats.goalsFor ||
-        stats.seasonGoals ||
-        stats.seasonScoredNum_overall ||
-        stats.goals_scored ||
+        actualStats.goalsFor ||
+        actualStats.seasonGoals ||
+        actualStats.seasonScoredNum_overall ||
+        actualStats.goals_scored ||
         0,
       homeGoalsScored:
-        stats.homeGoalsFor ||
-        stats.seasonGoals_home ||
-        stats.seasonScoredNum_home ||
-        stats.home_goals_scored ||
+        actualStats.homeGoalsFor ||
+        actualStats.seasonGoals_home ||
+        actualStats.seasonScoredNum_home ||
+        actualStats.home_goals_scored ||
         0,
       awayGoalsScored:
-        stats.awayGoalsFor ||
-        stats.seasonGoals_away ||
-        stats.seasonScoredNum_away ||
-        stats.away_goals_scored ||
+        actualStats.awayGoalsFor ||
+        actualStats.seasonGoals_away ||
+        actualStats.seasonScoredNum_away ||
+        actualStats.away_goals_scored ||
         0,
 
       // Goals conceded - prioritize actual API field names
       goalsConceded:
-        stats.goalsAgainst ||
-        stats.seasonConcededNum_overall ||
-        stats.seasonConcededNum ||
-        stats.seasonConceded ||
-        stats.goals_conceded ||
+        actualStats.goalsAgainst ||
+        actualStats.seasonConcededNum_overall ||
+        actualStats.seasonConcededNum ||
+        actualStats.seasonConceded ||
+        actualStats.goals_conceded ||
         0,
       homeGoalsConceded:
-        stats.homeGoalsAgainst || stats.seasonConcededNum_home || stats.home_goals_conceded || 0,
+        actualStats.homeGoalsAgainst ||
+        actualStats.seasonConcededNum_home ||
+        actualStats.home_goals_conceded ||
+        0,
       awayGoalsConceded:
-        stats.awayGoalsAgainst || stats.seasonConcededNum_away || stats.away_goals_conceded || 0,
+        actualStats.awayGoalsAgainst ||
+        actualStats.seasonConcededNum_away ||
+        actualStats.away_goals_conceded ||
+        0,
 
       // Goals conceded per match (for Goals Conceded Comparison display)
       goalsConcededPerMatch:
-        stats.seasonConcededAVG_overall ||
-        stats.seasonConcededAVG ||
-        stats.goalsConcededAVG ||
-        stats.goalsAgainstPerMatch ||
-        stats.averageGoalsAgainst ||
+        actualStats.seasonConcededAVG_overall ||
+        actualStats.seasonConcededAVG ||
+        actualStats.goalsConcededAVG ||
+        actualStats.goalsAgainstPerMatch ||
+        actualStats.averageGoalsAgainst ||
         0,
       homeGoalsConcededPerMatch:
-        stats.seasonConcededAVG_home ||
-        stats.homeGoalsConcededAVG ||
-        stats.homeGoalsAgainstPerMatch ||
+        actualStats.seasonConcededAVG_home ||
+        actualStats.homeGoalsConcededAVG ||
+        actualStats.homeGoalsAgainstPerMatch ||
         0,
       awayGoalsConcededPerMatch:
-        stats.seasonConcededAVG_away ||
-        stats.awayGoalsConcededAVG ||
-        stats.awayGoalsAgainstPerMatch ||
+        actualStats.seasonConcededAVG_away ||
+        actualStats.awayGoalsConcededAVG ||
+        actualStats.awayGoalsAgainstPerMatch ||
         0,
 
       // Additional aliases for Goals Conceded module
       concededPerMatch:
-        stats.seasonConcededAVG_overall ||
-        stats.seasonConcededAVG ||
-        stats.goalsConcededAVG ||
-        stats.goalsAgainstPerMatch ||
-        stats.averageGoalsAgainst ||
+        actualStats.seasonConcededAVG_overall ||
+        actualStats.seasonConcededAVG ||
+        actualStats.goalsConcededAVG ||
+        actualStats.goalsAgainstPerMatch ||
+        actualStats.averageGoalsAgainst ||
         0,
       goalsAgainstPerMatch:
-        stats.seasonConcededAVG_overall ||
-        stats.seasonConcededAVG ||
-        stats.goalsConcededAVG ||
-        stats.goalsAgainstPerMatch ||
-        stats.averageGoalsAgainst ||
+        actualStats.seasonConcededAVG_overall ||
+        actualStats.seasonConcededAVG ||
+        actualStats.goalsConcededAVG ||
+        actualStats.goalsAgainstPerMatch ||
+        actualStats.averageGoalsAgainst ||
         0,
       homeConcededPerMatch:
-        stats.seasonConcededAVG_home ||
-        stats.homeGoalsConcededAVG ||
-        stats.homeGoalsAgainstPerMatch ||
+        actualStats.seasonConcededAVG_home ||
+        actualStats.homeGoalsConcededAVG ||
+        actualStats.homeGoalsAgainstPerMatch ||
         0,
       homeGoalsAgainstPerMatch:
-        stats.seasonConcededAVG_home ||
-        stats.homeGoalsConcededAVG ||
-        stats.homeGoalsAgainstPerMatch ||
+        actualStats.seasonConcededAVG_home ||
+        actualStats.homeGoalsConcededAVG ||
+        actualStats.homeGoalsAgainstPerMatch ||
         0,
       awayConcededPerMatch:
-        stats.seasonConcededAVG_away ||
-        stats.awayGoalsConcededAVG ||
-        stats.awayGoalsAgainstPerMatch ||
+        actualStats.seasonConcededAVG_away ||
+        actualStats.awayGoalsConcededAVG ||
+        actualStats.awayGoalsAgainstPerMatch ||
         0,
       awayGoalsAgainstPerMatch:
-        stats.seasonConcededAVG_away ||
-        stats.awayGoalsConcededAVG ||
-        stats.awayGoalsAgainstPerMatch ||
+        actualStats.seasonConcededAVG_away ||
+        actualStats.awayGoalsConcededAVG ||
+        actualStats.awayGoalsAgainstPerMatch ||
         0,
 
       // Total goals conceded (alias for goalsConceded)
       totalGoalsConceded:
-        stats.goalsAgainst ||
-        stats.seasonConcededNum_overall ||
-        stats.seasonConcededNum ||
-        stats.seasonConceded ||
-        stats.goals_conceded ||
+        actualStats.goalsAgainst ||
+        actualStats.seasonConcededNum_overall ||
+        actualStats.seasonConcededNum ||
+        actualStats.seasonConceded ||
+        actualStats.goals_conceded ||
         0,
       homeTotalGoalsConceded:
-        stats.homeGoalsAgainst || stats.seasonConcededNum_home || stats.home_goals_conceded || 0,
+        actualStats.homeGoalsAgainst ||
+        actualStats.seasonConcededNum_home ||
+        actualStats.home_goals_conceded ||
+        0,
       awayTotalGoalsConceded:
-        stats.awayGoalsAgainst || stats.seasonConcededNum_away || stats.away_goals_conceded || 0,
+        actualStats.awayGoalsAgainst ||
+        actualStats.seasonConcededNum_away ||
+        actualStats.away_goals_conceded ||
+        0,
 
       // BTTS percentages - API uses 'bothTeamsScoredPercentage' fields
       bttsPercentage:
-        stats.bothTeamsScoredPercentage ||
-        stats.seasonBTTSPercentage_overall ||
-        stats.btts ||
-        stats.bttsPercentage ||
+        actualStats.bothTeamsScoredPercentage ||
+        actualStats.seasonBTTSPercentage_overall ||
+        actualStats.btts ||
+        actualStats.bttsPercentage ||
         0,
       homeBTTSPercentage:
-        stats.homeBothTeamsScoredPercentage ||
-        stats.seasonBTTSPercentage_home ||
-        stats.homeBtts ||
-        stats.bttsPercentage_home ||
+        actualStats.homeBothTeamsScoredPercentage ||
+        actualStats.seasonBTTSPercentage_home ||
+        actualStats.homeBtts ||
+        actualStats.bttsPercentage_home ||
         0,
       awayBTTSPercentage:
-        stats.awayBothTeamsScoredPercentage ||
-        stats.seasonBTTSPercentage_away ||
-        stats.awayBtts ||
-        stats.bttsPercentage_away ||
+        actualStats.awayBothTeamsScoredPercentage ||
+        actualStats.seasonBTTSPercentage_away ||
+        actualStats.awayBtts ||
+        actualStats.bttsPercentage_away ||
         0,
 
       // BTTS variations
       btts:
-        stats.bothTeamsScoredPercentage ||
-        stats.seasonBTTSPercentage_overall ||
-        stats.btts ||
-        stats.bttsPercentage ||
+        actualStats.bothTeamsScoredPercentage ||
+        actualStats.seasonBTTSPercentage_overall ||
+        actualStats.btts ||
+        actualStats.bttsPercentage ||
         0,
 
       // BTTS & Result combinations
       bttsWin:
-        stats.bttsAndWinPercentage ||
+        actualStats.bttsAndWinPercentage ||
         additionalInfo.btts_and_win_percentage ||
         additionalInfo.bttsWinPercentage ||
-        stats.bttsWin ||
+        actualStats.bttsWin ||
         0,
       bttsDraw:
-        stats.bttsAndDrawPercentage ||
+        actualStats.bttsAndDrawPercentage ||
         additionalInfo.btts_and_draw_percentage ||
         additionalInfo.bttsDrawPercentage ||
-        stats.bttsDraw ||
+        actualStats.bttsDraw ||
         0,
       bttsLose:
-        stats.bttsAndLosePercentage ||
+        actualStats.bttsAndLosePercentage ||
         additionalInfo.btts_and_lose_percentage ||
         additionalInfo.bttsLosePercentage ||
-        stats.bttsLose ||
+        actualStats.bttsLose ||
         0,
 
       homeBTTSWin:
-        stats.bttsAndWinPercentage_home ||
+        actualStats.bttsAndWinPercentage_home ||
         additionalInfo.btts_and_win_percentage_home ||
-        stats.homeBttsWin ||
+        actualStats.homeBttsWin ||
         0,
       awayBTTSWin:
-        stats.bttsAndWinPercentage_away ||
+        actualStats.bttsAndWinPercentage_away ||
         additionalInfo.btts_and_win_percentage_away ||
-        stats.awayBttsWin ||
+        actualStats.awayBttsWin ||
         0,
 
       // BTTS & Over combinations
       bttsAndOver25:
-        stats.bttsAndOver25Percentage ||
+        actualStats.bttsAndOver25Percentage ||
         additionalInfo.btts_and_over25_percentage ||
         additionalInfo.bttsAndOver25 ||
-        stats.bttsOver25 ||
+        actualStats.bttsOver25 ||
         0,
       bttsNoAndOver25:
-        stats.bttsNoAndOver25Percentage ||
+        actualStats.bttsNoAndOver25Percentage ||
         additionalInfo.btts_no_and_over25_percentage ||
         additionalInfo.bttsNoAndOver25 ||
-        stats.bttsNoOver25 ||
+        actualStats.bttsNoOver25 ||
         0,
 
       homeBTTSAndOver25:
-        stats.bttsAndOver25Percentage_home ||
+        actualStats.bttsAndOver25Percentage_home ||
         additionalInfo.btts_and_over25_percentage_home ||
         additionalInfo.homeBttsAndOver25 ||
         0,
       awayBTTSAndOver25:
-        stats.bttsAndOver25Percentage_away ||
+        actualStats.bttsAndOver25Percentage_away ||
         additionalInfo.btts_and_over25_percentage_away ||
         additionalInfo.awayBttsAndOver25 ||
         0,
 
       // Clean sheet percentages - API field names (prioritize non-zero values)
       cleanSheetPercentage:
-        stats.cleanSheetPercentage ||
-        stats.cleanSheetsPercentage_overall ||
-        stats.seasonCleanSheetPercentage_overall ||
-        stats.seasonCleanSheetPercentage ||
-        stats.seasonCSPercentage_overall ||
-        stats.cleanSheetPercentage_overall ||
-        stats.clean_sheet_percentage ||
-        stats.cs_percentage ||
-        stats.csPercentage ||
+        actualStats.cleanSheetPercentage ||
+        actualStats.cleanSheetsPercentage_overall ||
+        actualStats.seasonCleanSheetPercentage_overall ||
+        actualStats.seasonCleanSheetPercentage ||
+        actualStats.seasonCSPercentage_overall ||
+        actualStats.cleanSheetPercentage_overall ||
+        actualStats.clean_sheet_percentage ||
+        actualStats.cs_percentage ||
+        actualStats.csPercentage ||
         0,
       homeCleanSheetPercentage:
-        stats.homeCleanSheetPercentage ||
-        stats.cleanSheetsPercentage_home ||
-        stats.seasonCleanSheetPercentage_home ||
-        stats.seasonCSPercentage_home ||
-        stats.cleanSheetPercentage_home ||
-        stats.home_clean_sheet_percentage ||
-        stats.cs_percentage_home ||
-        stats.csPercentageHome ||
+        actualStats.homeCleanSheetPercentage ||
+        actualStats.cleanSheetsPercentage_home ||
+        actualStats.seasonCleanSheetPercentage_home ||
+        actualStats.seasonCSPercentage_home ||
+        actualStats.cleanSheetPercentage_home ||
+        actualStats.home_clean_sheet_percentage ||
+        actualStats.cs_percentage_home ||
+        actualStats.csPercentageHome ||
         0,
       awayCleanSheetPercentage:
-        stats.awayCleanSheetPercentage ||
-        stats.cleanSheetsPercentage_away ||
-        stats.seasonCleanSheetPercentage_away ||
-        stats.seasonCSPercentage_away ||
-        stats.cleanSheetPercentage_away ||
-        stats.away_clean_sheet_percentage ||
-        stats.cs_percentage_away ||
-        stats.csPercentageAway ||
+        actualStats.awayCleanSheetPercentage ||
+        actualStats.cleanSheetsPercentage_away ||
+        actualStats.seasonCleanSheetPercentage_away ||
+        actualStats.seasonCSPercentage_away ||
+        actualStats.cleanSheetPercentage_away ||
+        actualStats.away_clean_sheet_percentage ||
+        actualStats.cs_percentage_away ||
+        actualStats.csPercentageAway ||
         0,
 
       // First Half Clean Sheet percentages
       firstHalfCleanSheetPercentage_home:
-        stats.firstHalfCleanSheetPercentage_home ||
-        stats.homeFirstHalfCleanSheet ||
-        stats.seasonFirstHalfCSPercentage_home ||
+        actualStats.firstHalfCleanSheetPercentage_home ||
+        actualStats.homeFirstHalfCleanSheet ||
+        actualStats.seasonFirstHalfCSPercentage_home ||
         additionalInfo.firstHalfCleanSheetPercentage_home ||
         0,
       homeFirstHalfCleanSheet:
-        stats.firstHalfCleanSheetPercentage_home ||
-        stats.homeFirstHalfCleanSheet ||
-        stats.seasonFirstHalfCSPercentage_home ||
+        actualStats.firstHalfCleanSheetPercentage_home ||
+        actualStats.homeFirstHalfCleanSheet ||
+        actualStats.seasonFirstHalfCSPercentage_home ||
         additionalInfo.firstHalfCleanSheetPercentage_home ||
         0,
       firstHalfCleanSheetPercentage_away:
-        stats.firstHalfCleanSheetPercentage_away ||
-        stats.awayFirstHalfCleanSheet ||
-        stats.seasonFirstHalfCSPercentage_away ||
+        actualStats.firstHalfCleanSheetPercentage_away ||
+        actualStats.awayFirstHalfCleanSheet ||
+        actualStats.seasonFirstHalfCSPercentage_away ||
         additionalInfo.firstHalfCleanSheetPercentage_away ||
         0,
       awayFirstHalfCleanSheet:
-        stats.firstHalfCleanSheetPercentage_away ||
-        stats.awayFirstHalfCleanSheet ||
-        stats.seasonFirstHalfCSPercentage_away ||
+        actualStats.firstHalfCleanSheetPercentage_away ||
+        actualStats.awayFirstHalfCleanSheet ||
+        actualStats.seasonFirstHalfCSPercentage_away ||
         additionalInfo.firstHalfCleanSheetPercentage_away ||
         0,
 
       // Second Half Clean Sheet percentages
       secondHalfCleanSheetPercentage_home:
-        stats.secondHalfCleanSheetPercentage_home ||
-        stats.homeSecondHalfCleanSheet ||
-        stats.seasonSecondHalfCSPercentage_home ||
+        actualStats.secondHalfCleanSheetPercentage_home ||
+        actualStats.homeSecondHalfCleanSheet ||
+        actualStats.seasonSecondHalfCSPercentage_home ||
         additionalInfo.secondHalfCleanSheetPercentage_home ||
         0,
       homeSecondHalfCleanSheet:
-        stats.secondHalfCleanSheetPercentage_home ||
-        stats.homeSecondHalfCleanSheet ||
-        stats.seasonSecondHalfCSPercentage_home ||
+        actualStats.secondHalfCleanSheetPercentage_home ||
+        actualStats.homeSecondHalfCleanSheet ||
+        actualStats.seasonSecondHalfCSPercentage_home ||
         additionalInfo.secondHalfCleanSheetPercentage_home ||
         0,
       secondHalfCleanSheetPercentage_away:
-        stats.secondHalfCleanSheetPercentage_away ||
-        stats.awaySecondHalfCleanSheet ||
-        stats.seasonSecondHalfCSPercentage_away ||
+        actualStats.secondHalfCleanSheetPercentage_away ||
+        actualStats.awaySecondHalfCleanSheet ||
+        actualStats.seasonSecondHalfCSPercentage_away ||
         additionalInfo.secondHalfCleanSheetPercentage_away ||
         0,
       awaySecondHalfCleanSheet:
-        stats.secondHalfCleanSheetPercentage_away ||
-        stats.awaySecondHalfCleanSheet ||
-        stats.seasonSecondHalfCSPercentage_away ||
+        actualStats.secondHalfCleanSheetPercentage_away ||
+        actualStats.awaySecondHalfCleanSheet ||
+        actualStats.seasonSecondHalfCSPercentage_away ||
         additionalInfo.secondHalfCleanSheetPercentage_away ||
         0,
 
       // Failed to score percentages - API field names (prioritize non-zero values)
       failedToScorePercentage:
-        stats.failedToScorePercentage ||
-        stats.seasonFailedToScorePercentage_overall ||
-        stats.seasonFailedToScorePercentage ||
-        stats.seasonFTSPercentage_overall ||
-        stats.seasonFTSPercentage ||
-        stats.failed_to_score_percentage ||
-        stats.fts_percentage ||
-        stats.ftsPercentage ||
+        actualStats.failedToScorePercentage ||
+        actualStats.seasonFailedToScorePercentage_overall ||
+        actualStats.seasonFailedToScorePercentage ||
+        actualStats.seasonFTSPercentage_overall ||
+        actualStats.seasonFTSPercentage ||
+        actualStats.failed_to_score_percentage ||
+        actualStats.fts_percentage ||
+        actualStats.ftsPercentage ||
         0,
       homeFailedToScorePercentage:
-        stats.homeFailedToScorePercentage ||
-        stats.seasonFailedToScorePercentage_home ||
-        stats.seasonFTSPercentage_home ||
-        stats.failedToScorePercentage_home ||
-        stats.home_failed_to_score_percentage ||
-        stats.fts_percentage_home ||
-        stats.ftsPercentageHome ||
+        actualStats.homeFailedToScorePercentage ||
+        actualStats.seasonFailedToScorePercentage_home ||
+        actualStats.seasonFTSPercentage_home ||
+        actualStats.failedToScorePercentage_home ||
+        actualStats.home_failed_to_score_percentage ||
+        actualStats.fts_percentage_home ||
+        actualStats.ftsPercentageHome ||
         0,
       awayFailedToScorePercentage:
-        stats.awayFailedToScorePercentage ||
-        stats.seasonFailedToScorePercentage_away ||
-        stats.seasonFTSPercentage_away ||
-        stats.failedToScorePercentage_away ||
-        stats.away_failed_to_score_percentage ||
-        stats.fts_percentage_away ||
-        stats.ftsPercentageAway ||
+        actualStats.awayFailedToScorePercentage ||
+        actualStats.seasonFailedToScorePercentage_away ||
+        actualStats.seasonFTSPercentage_away ||
+        actualStats.failedToScorePercentage_away ||
+        actualStats.away_failed_to_score_percentage ||
+        actualStats.fts_percentage_away ||
+        actualStats.ftsPercentageAway ||
         0,
 
       // xG statistics
       xGFor:
-        stats.xgFor || stats.xg_for || stats.seasonXGF_overall || stats.expected_goals_for || 0,
+        actualStats.xgFor ||
+        actualStats.xg_for ||
+        actualStats.seasonXGF_overall ||
+        actualStats.expected_goals_for ||
+        0,
       homeXGFor:
-        stats.homeXgFor ||
-        stats.xg_for_home ||
-        stats.seasonXGF_home ||
-        stats.home_expected_goals_for ||
+        actualStats.homeXgFor ||
+        actualStats.xg_for_home ||
+        actualStats.seasonXGF_home ||
+        actualStats.home_expected_goals_for ||
         0,
       awayXGFor:
-        stats.awayXgFor ||
-        stats.xg_for_away ||
-        stats.seasonXGF_away ||
-        stats.away_expected_goals_for ||
+        actualStats.awayXgFor ||
+        actualStats.xg_for_away ||
+        actualStats.seasonXGF_away ||
+        actualStats.away_expected_goals_for ||
         0,
 
       xGAgainst:
-        stats.xgAgainst ||
-        stats.xg_against ||
-        stats.seasonXGA_overall ||
-        stats.expected_goals_against ||
+        actualStats.xgAgainst ||
+        actualStats.xg_against ||
+        actualStats.seasonXGA_overall ||
+        actualStats.expected_goals_against ||
         0,
       homeXGAgainst:
-        stats.homeXgAgainst ||
-        stats.xg_against_home ||
-        stats.seasonXGA_home ||
-        stats.home_expected_goals_against ||
+        actualStats.homeXgAgainst ||
+        actualStats.xg_against_home ||
+        actualStats.seasonXGA_home ||
+        actualStats.home_expected_goals_against ||
         0,
       awayXGAgainst:
-        stats.awayXgAgainst ||
-        stats.xg_against_away ||
-        stats.seasonXGA_away ||
-        stats.away_expected_goals_against ||
+        actualStats.awayXgAgainst ||
+        actualStats.xg_against_away ||
+        actualStats.seasonXGA_away ||
+        actualStats.away_expected_goals_against ||
         0,
 
       // PPG values (backup)
-      ppg: stats.pointsPerGame || stats.seasonPPG || stats.ppg || 0,
+      ppg: actualStats.pointsPerGame || actualStats.seasonPPG || actualStats.ppg || 0,
       homePPG:
-        stats.homePointsPerGame || stats.seasonPPG_home || stats.homePPG || stats.home_ppg || 0,
+        actualStats.homePointsPerGame ||
+        actualStats.seasonPPG_home ||
+        actualStats.homePPG ||
+        actualStats.home_ppg ||
+        0,
       awayPPG:
-        stats.awayPointsPerGame || stats.seasonPPG_away || stats.awayPPG || stats.away_ppg || 0,
+        actualStats.awayPointsPerGame ||
+        actualStats.seasonPPG_away ||
+        actualStats.awayPPG ||
+        actualStats.away_ppg ||
+        0,
 
       // First Half Goals Average
-      scoredAVGHT_overall: stats.scoredAVGHT_overall || stats.firstHalfGoalsAVG_overall || 0,
-      scoredAVGHT_home: stats.scoredAVGHT_home || stats.firstHalfGoalsAVG_home || 0,
-      scoredAVGHT_away: stats.scoredAVGHT_away || stats.firstHalfGoalsAVG_away || 0,
-      firstHalfGoalsAVG_overall: stats.firstHalfGoalsAVG_overall || stats.scoredAVGHT_overall || 0,
-      firstHalfGoalsAVG_home: stats.firstHalfGoalsAVG_home || stats.scoredAVGHT_home || 0,
-      firstHalfGoalsAVG_away: stats.firstHalfGoalsAVG_away || stats.scoredAVGHT_away || 0,
+      scoredAVGHT_overall:
+        actualStats.scoredAVGHT_overall || actualStats.firstHalfGoalsAVG_overall || 0,
+      scoredAVGHT_home: actualStats.scoredAVGHT_home || actualStats.firstHalfGoalsAVG_home || 0,
+      scoredAVGHT_away: actualStats.scoredAVGHT_away || actualStats.firstHalfGoalsAVG_away || 0,
+      firstHalfGoalsAVG_overall:
+        actualStats.firstHalfGoalsAVG_overall || actualStats.scoredAVGHT_overall || 0,
+      firstHalfGoalsAVG_home:
+        actualStats.firstHalfGoalsAVG_home || actualStats.scoredAVGHT_home || 0,
+      firstHalfGoalsAVG_away:
+        actualStats.firstHalfGoalsAVG_away || actualStats.scoredAVGHT_away || 0,
 
       // Second Half Goals Average
       scored_2hg_avg_overall:
-        stats.scored_2hg_avg_overall ||
-        stats.secondHalfGoalsAVG_overall ||
-        stats.scoredAVG2H_overall ||
+        actualStats.scored_2hg_avg_overall ||
+        actualStats.secondHalfGoalsAVG_overall ||
+        actualStats.scoredAVG2H_overall ||
         0,
       scored_2hg_avg_home:
-        stats.scored_2hg_avg_home || stats.secondHalfGoalsAVG_home || stats.scoredAVG2H_home || 0,
+        actualStats.scored_2hg_avg_home ||
+        actualStats.secondHalfGoalsAVG_home ||
+        actualStats.scoredAVG2H_home ||
+        0,
       scored_2hg_avg_away:
-        stats.scored_2hg_avg_away || stats.secondHalfGoalsAVG_away || stats.scoredAVG2H_away || 0,
+        actualStats.scored_2hg_avg_away ||
+        actualStats.secondHalfGoalsAVG_away ||
+        actualStats.scoredAVG2H_away ||
+        0,
       secondHalfGoalsAVG_overall:
-        stats.secondHalfGoalsAVG_overall ||
-        stats.scored_2hg_avg_overall ||
-        stats.scoredAVG2H_overall ||
+        actualStats.secondHalfGoalsAVG_overall ||
+        actualStats.scored_2hg_avg_overall ||
+        actualStats.scoredAVG2H_overall ||
         0,
       secondHalfGoalsAVG_home:
-        stats.secondHalfGoalsAVG_home || stats.scored_2hg_avg_home || stats.scoredAVG2H_home || 0,
+        actualStats.secondHalfGoalsAVG_home ||
+        actualStats.scored_2hg_avg_home ||
+        actualStats.scoredAVG2H_home ||
+        0,
       secondHalfGoalsAVG_away:
-        stats.secondHalfGoalsAVG_away || stats.scored_2hg_avg_away || stats.scoredAVG2H_away || 0,
+        actualStats.secondHalfGoalsAVG_away ||
+        actualStats.scored_2hg_avg_away ||
+        actualStats.scoredAVG2H_away ||
+        0,
       scoredAVG2H_overall:
-        stats.scoredAVG2H_overall ||
-        stats.secondHalfGoalsAVG_overall ||
-        stats.scored_2hg_avg_overall ||
+        actualStats.scoredAVG2H_overall ||
+        actualStats.secondHalfGoalsAVG_overall ||
+        actualStats.scored_2hg_avg_overall ||
         0,
       scoredAVG2H_home:
-        stats.scoredAVG2H_home || stats.secondHalfGoalsAVG_home || stats.scored_2hg_avg_home || 0,
+        actualStats.scoredAVG2H_home ||
+        actualStats.secondHalfGoalsAVG_home ||
+        actualStats.scored_2hg_avg_home ||
+        0,
       scoredAVG2H_away:
-        stats.scoredAVG2H_away || stats.secondHalfGoalsAVG_away || stats.scored_2hg_avg_away || 0,
+        actualStats.scoredAVG2H_away ||
+        actualStats.secondHalfGoalsAVG_away ||
+        actualStats.scored_2hg_avg_away ||
+        0,
 
       // First Half Conceded Average
       firstHalfConcededAvg:
-        stats.concededAVGHT_overall ||
-        stats.firstHalfConcededAVG_overall ||
-        stats.conceded_1hg_avg_overall ||
+        actualStats.concededAVGHT_overall ||
+        actualStats.firstHalfConcededAVG_overall ||
+        actualStats.conceded_1hg_avg_overall ||
         0,
       homeFirstHalfConcededAvg:
-        stats.concededAVGHT_home ||
-        stats.firstHalfConcededAVG_home ||
-        stats.conceded_1hg_avg_home ||
+        actualStats.concededAVGHT_home ||
+        actualStats.firstHalfConcededAVG_home ||
+        actualStats.conceded_1hg_avg_home ||
         0,
       awayFirstHalfConcededAvg:
-        stats.concededAVGHT_away ||
-        stats.firstHalfConcededAVG_away ||
-        stats.conceded_1hg_avg_away ||
+        actualStats.concededAVGHT_away ||
+        actualStats.firstHalfConcededAVG_away ||
+        actualStats.conceded_1hg_avg_away ||
         0,
 
       // Second Half Conceded Average
       secondHalfConcededAvg:
-        stats.concededAVG2H_overall ||
-        stats.secondHalfConcededAVG_overall ||
-        stats.conceded_2hg_avg_overall ||
+        actualStats.concededAVG2H_overall ||
+        actualStats.secondHalfConcededAVG_overall ||
+        actualStats.conceded_2hg_avg_overall ||
         0,
       homeSecondHalfConcededAvg:
-        stats.concededAVG2H_home ||
-        stats.secondHalfConcededAVG_home ||
-        stats.conceded_2hg_avg_home ||
+        actualStats.concededAVG2H_home ||
+        actualStats.secondHalfConcededAVG_home ||
+        actualStats.conceded_2hg_avg_home ||
         0,
       awaySecondHalfConcededAvg:
-        stats.concededAVG2H_away ||
-        stats.secondHalfConcededAVG_away ||
-        stats.conceded_2hg_avg_away ||
+        actualStats.concededAVG2H_away ||
+        actualStats.secondHalfConcededAVG_away ||
+        actualStats.conceded_2hg_avg_away ||
         0,
 
       // Over/Under Goals Percentages
       over05GoalsPercentage:
-        stats.seasonOver05Percentage_overall || stats.over05GoalsPercentage || 0,
+        actualStats.seasonOver05Percentage_overall || actualStats.over05GoalsPercentage || 0,
       homeOver05GoalsPercentage:
-        stats.seasonOver05Percentage_home || stats.over05GoalsPercentage_home || 0,
+        actualStats.seasonOver05Percentage_home || actualStats.over05GoalsPercentage_home || 0,
       awayOver05GoalsPercentage:
-        stats.seasonOver05Percentage_away || stats.over05GoalsPercentage_away || 0,
+        actualStats.seasonOver05Percentage_away || actualStats.over05GoalsPercentage_away || 0,
 
       over15GoalsPercentage:
-        stats.seasonOver15Percentage_overall || stats.over15GoalsPercentage || 0,
+        actualStats.seasonOver15Percentage_overall || actualStats.over15GoalsPercentage || 0,
       homeOver15GoalsPercentage:
-        stats.seasonOver15Percentage_home || stats.over15GoalsPercentage_home || 0,
+        actualStats.seasonOver15Percentage_home || actualStats.over15GoalsPercentage_home || 0,
       awayOver15GoalsPercentage:
-        stats.seasonOver15Percentage_away || stats.over15GoalsPercentage_away || 0,
+        actualStats.seasonOver15Percentage_away || actualStats.over15GoalsPercentage_away || 0,
 
       over25GoalsPercentage:
-        stats.seasonOver25Percentage_overall || stats.over25GoalsPercentage || 0,
+        actualStats.seasonOver25Percentage_overall || actualStats.over25GoalsPercentage || 0,
       homeOver25GoalsPercentage:
-        stats.seasonOver25Percentage_home || stats.over25GoalsPercentage_home || 0,
+        actualStats.seasonOver25Percentage_home || actualStats.over25GoalsPercentage_home || 0,
       awayOver25GoalsPercentage:
-        stats.seasonOver25Percentage_away || stats.over25GoalsPercentage_away || 0,
+        actualStats.seasonOver25Percentage_away || actualStats.over25GoalsPercentage_away || 0,
 
       over35GoalsPercentage:
-        stats.seasonOver35Percentage_overall || stats.over35GoalsPercentage || 0,
+        actualStats.seasonOver35Percentage_overall || actualStats.over35GoalsPercentage || 0,
       homeOver35GoalsPercentage:
-        stats.seasonOver35Percentage_home || stats.over35GoalsPercentage_home || 0,
+        actualStats.seasonOver35Percentage_home || actualStats.over35GoalsPercentage_home || 0,
       awayOver35GoalsPercentage:
-        stats.seasonOver35Percentage_away || stats.over35GoalsPercentage_away || 0,
+        actualStats.seasonOver35Percentage_away || actualStats.over35GoalsPercentage_away || 0,
 
       // Add simplified field names for over-btts-comparison module
       over05:
-        stats.seasonOver05Percentage_overall ||
+        actualStats.seasonOver05Percentage_overall ||
         additionalInfo.seasonOver05Percentage_overall ||
-        stats.over05GoalsPercentage ||
+        actualStats.over05GoalsPercentage ||
         additionalInfo.over_05_percentage ||
         0,
       over15:
-        stats.seasonOver15Percentage_overall ||
+        actualStats.seasonOver15Percentage_overall ||
         additionalInfo.seasonOver15Percentage_overall ||
-        stats.over15GoalsPercentage ||
+        actualStats.over15GoalsPercentage ||
         additionalInfo.over_15_percentage ||
         0,
       over25:
-        stats.seasonOver25Percentage_overall ||
+        actualStats.seasonOver25Percentage_overall ||
         additionalInfo.seasonOver25Percentage_overall ||
-        stats.over25GoalsPercentage ||
+        actualStats.over25GoalsPercentage ||
         additionalInfo.over_25_percentage ||
         0,
       over35:
-        stats.seasonOver35Percentage_overall ||
+        actualStats.seasonOver35Percentage_overall ||
         additionalInfo.seasonOver35Percentage_overall ||
-        stats.over35GoalsPercentage ||
+        actualStats.over35GoalsPercentage ||
         additionalInfo.over_35_percentage ||
         0,
       over45:
-        stats.seasonOver45Percentage_overall ||
+        actualStats.seasonOver45Percentage_overall ||
         additionalInfo.seasonOver45Percentage_overall ||
-        stats.over45GoalsPercentage ||
+        actualStats.over45GoalsPercentage ||
         additionalInfo.over_45_percentage ||
         0,
 
       // Venue-specific over/under
       homeOver05:
-        stats.seasonOver05Percentage_home ||
+        actualStats.seasonOver05Percentage_home ||
         additionalInfo.seasonOver05Percentage_home ||
-        stats.over05GoalsPercentage_home ||
+        actualStats.over05GoalsPercentage_home ||
         additionalInfo.over_05_percentage_home ||
         0,
       homeOver15:
-        stats.seasonOver15Percentage_home ||
+        actualStats.seasonOver15Percentage_home ||
         additionalInfo.seasonOver15Percentage_home ||
-        stats.over15GoalsPercentage_home ||
+        actualStats.over15GoalsPercentage_home ||
         additionalInfo.over_15_percentage_home ||
         0,
       homeOver25:
-        stats.seasonOver25Percentage_home ||
+        actualStats.seasonOver25Percentage_home ||
         additionalInfo.seasonOver25Percentage_home ||
-        stats.over25GoalsPercentage_home ||
+        actualStats.over25GoalsPercentage_home ||
         additionalInfo.over_25_percentage_home ||
         0,
       homeOver35:
-        stats.seasonOver35Percentage_home ||
+        actualStats.seasonOver35Percentage_home ||
         additionalInfo.seasonOver35Percentage_home ||
-        stats.over35GoalsPercentage_home ||
+        actualStats.over35GoalsPercentage_home ||
         additionalInfo.over_35_percentage_home ||
         0,
       homeOver45:
-        stats.seasonOver45Percentage_home ||
+        actualStats.seasonOver45Percentage_home ||
         additionalInfo.seasonOver45Percentage_home ||
-        stats.over45GoalsPercentage_home ||
+        actualStats.over45GoalsPercentage_home ||
         additionalInfo.over_45_percentage_home ||
         0,
 
       awayOver05:
-        stats.seasonOver05Percentage_away ||
+        actualStats.seasonOver05Percentage_away ||
         additionalInfo.seasonOver05Percentage_away ||
-        stats.over05GoalsPercentage_away ||
+        actualStats.over05GoalsPercentage_away ||
         additionalInfo.over_05_percentage_away ||
         0,
       awayOver15:
-        stats.seasonOver15Percentage_away ||
+        actualStats.seasonOver15Percentage_away ||
         additionalInfo.seasonOver15Percentage_away ||
-        stats.over15GoalsPercentage_away ||
+        actualStats.over15GoalsPercentage_away ||
         additionalInfo.over_15_percentage_away ||
         0,
       awayOver25:
-        stats.seasonOver25Percentage_away ||
+        actualStats.seasonOver25Percentage_away ||
         additionalInfo.seasonOver25Percentage_away ||
-        stats.over25GoalsPercentage_away ||
+        actualStats.over25GoalsPercentage_away ||
         additionalInfo.over_25_percentage_away ||
         0,
       awayOver35:
-        stats.seasonOver35Percentage_away ||
+        actualStats.seasonOver35Percentage_away ||
         additionalInfo.seasonOver35Percentage_away ||
-        stats.over35GoalsPercentage_away ||
+        actualStats.over35GoalsPercentage_away ||
         additionalInfo.over_35_percentage_away ||
         0,
       awayOver45:
-        stats.seasonOver45Percentage_away ||
+        actualStats.seasonOver45Percentage_away ||
         additionalInfo.seasonOver45Percentage_away ||
-        stats.over45GoalsPercentage_away ||
+        actualStats.over45GoalsPercentage_away ||
         additionalInfo.over_45_percentage_away ||
         0,
 
       // Scored Over Percentages (Team Scored Goals)
       scoredOver05Percentage:
-        stats.seasonScoredOver05Percentage_overall ||
+        actualStats.seasonScoredOver05Percentage_overall ||
         additionalInfo.seasonScoredOver05Percentage_overall ||
-        stats.scoredOver05Percentage ||
+        actualStats.scoredOver05Percentage ||
         0,
       homeScoredOver05Percentage:
-        stats.seasonScoredOver05Percentage_home ||
+        actualStats.seasonScoredOver05Percentage_home ||
         additionalInfo.seasonScoredOver05Percentage_home ||
-        stats.scoredOver05Percentage_home ||
+        actualStats.scoredOver05Percentage_home ||
         0,
       awayScoredOver05Percentage:
-        stats.seasonScoredOver05Percentage_away ||
+        actualStats.seasonScoredOver05Percentage_away ||
         additionalInfo.seasonScoredOver05Percentage_away ||
-        stats.scoredOver05Percentage_away ||
+        actualStats.scoredOver05Percentage_away ||
         0,
 
       scoredOver15Percentage:
-        stats.seasonScoredOver15Percentage_overall ||
+        actualStats.seasonScoredOver15Percentage_overall ||
         additionalInfo.seasonScoredOver15Percentage_overall ||
-        stats.scoredOver15Percentage ||
+        actualStats.scoredOver15Percentage ||
         0,
       homeScoredOver15Percentage:
-        stats.seasonScoredOver15Percentage_home ||
+        actualStats.seasonScoredOver15Percentage_home ||
         additionalInfo.seasonScoredOver15Percentage_home ||
-        stats.scoredOver15Percentage_home ||
+        actualStats.scoredOver15Percentage_home ||
         0,
       awayScoredOver15Percentage:
-        stats.seasonScoredOver15Percentage_away ||
+        actualStats.seasonScoredOver15Percentage_away ||
         additionalInfo.seasonScoredOver15Percentage_away ||
-        stats.scoredOver15Percentage_away ||
+        actualStats.scoredOver15Percentage_away ||
         0,
 
       scoredOver25Percentage:
-        stats.seasonScoredOver25Percentage_overall ||
+        actualStats.seasonScoredOver25Percentage_overall ||
         additionalInfo.seasonScoredOver25Percentage_overall ||
-        stats.scoredOver25Percentage ||
+        actualStats.scoredOver25Percentage ||
         0,
       homeScoredOver25Percentage:
-        stats.seasonScoredOver25Percentage_home ||
+        actualStats.seasonScoredOver25Percentage_home ||
         additionalInfo.seasonScoredOver25Percentage_home ||
-        stats.scoredOver25Percentage_home ||
+        actualStats.scoredOver25Percentage_home ||
         0,
       awayScoredOver25Percentage:
-        stats.seasonScoredOver25Percentage_away ||
+        actualStats.seasonScoredOver25Percentage_away ||
         additionalInfo.seasonScoredOver25Percentage_away ||
-        stats.scoredOver25Percentage_away ||
+        actualStats.scoredOver25Percentage_away ||
         0,
 
       scoredOver35Percentage:
-        stats.seasonScoredOver35Percentage_overall ||
+        actualStats.seasonScoredOver35Percentage_overall ||
         additionalInfo.seasonScoredOver35Percentage_overall ||
-        stats.scoredOver35Percentage ||
+        actualStats.scoredOver35Percentage ||
         0,
       homeScoredOver35Percentage:
-        stats.seasonScoredOver35Percentage_home ||
+        actualStats.seasonScoredOver35Percentage_home ||
         additionalInfo.seasonScoredOver35Percentage_home ||
-        stats.scoredOver35Percentage_home ||
+        actualStats.scoredOver35Percentage_home ||
         0,
       awayScoredOver35Percentage:
-        stats.seasonScoredOver35Percentage_away ||
+        actualStats.seasonScoredOver35Percentage_away ||
         additionalInfo.seasonScoredOver35Percentage_away ||
-        stats.scoredOver35Percentage_away ||
+        actualStats.scoredOver35Percentage_away ||
         0,
 
       // Over/Under Conceded Percentages (for Goals Conceded Comparison)
       // Use seasonConcededOver*Percentage_* from stats, not additional_info
       over05Conceded:
-        stats.seasonConcededOver05Percentage_overall ||
+        actualStats.seasonConcededOver05Percentage_overall ||
         additionalInfo.seasonConcededOver05Percentage_overall ||
         additionalInfo.over05_conceded_percentage_overall ||
-        stats.concededOver05Percentage ||
+        actualStats.concededOver05Percentage ||
         0,
       homeOver05Conceded:
-        stats.seasonConcededOver05Percentage_home ||
+        actualStats.seasonConcededOver05Percentage_home ||
         additionalInfo.seasonConcededOver05Percentage_home ||
         additionalInfo.over05_conceded_percentage_home ||
-        stats.concededOver05Percentage_home ||
+        actualStats.concededOver05Percentage_home ||
         0,
       awayOver05Conceded:
-        stats.seasonConcededOver05Percentage_away ||
+        actualStats.seasonConcededOver05Percentage_away ||
         additionalInfo.seasonConcededOver05Percentage_away ||
         additionalInfo.over05_conceded_percentage_away ||
-        stats.concededOver05Percentage_away ||
+        actualStats.concededOver05Percentage_away ||
         0,
 
       over15Conceded:
-        stats.seasonConcededOver15Percentage_overall ||
+        actualStats.seasonConcededOver15Percentage_overall ||
         additionalInfo.seasonConcededOver15Percentage_overall ||
         additionalInfo.over15_conceded_percentage_overall ||
-        stats.concededOver15Percentage ||
+        actualStats.concededOver15Percentage ||
         0,
       homeOver15Conceded:
-        stats.seasonConcededOver15Percentage_home ||
+        actualStats.seasonConcededOver15Percentage_home ||
         additionalInfo.seasonConcededOver15Percentage_home ||
         additionalInfo.over15_conceded_percentage_home ||
-        stats.concededOver15Percentage_home ||
+        actualStats.concededOver15Percentage_home ||
         0,
       awayOver15Conceded:
-        stats.seasonConcededOver15Percentage_away ||
+        actualStats.seasonConcededOver15Percentage_away ||
         additionalInfo.seasonConcededOver15Percentage_away ||
         additionalInfo.over15_conceded_percentage_away ||
-        stats.concededOver15Percentage_away ||
+        actualStats.concededOver15Percentage_away ||
         0,
 
       over25Conceded:
-        stats.seasonConcededOver25Percentage_overall ||
+        actualStats.seasonConcededOver25Percentage_overall ||
         additionalInfo.seasonConcededOver25Percentage_overall ||
         additionalInfo.over25_conceded_percentage_overall ||
-        stats.concededOver25Percentage ||
+        actualStats.concededOver25Percentage ||
         0,
       homeOver25Conceded:
-        stats.seasonConcededOver25Percentage_home ||
+        actualStats.seasonConcededOver25Percentage_home ||
         additionalInfo.seasonConcededOver25Percentage_home ||
         additionalInfo.over25_conceded_percentage_home ||
-        stats.concededOver25Percentage_home ||
+        actualStats.concededOver25Percentage_home ||
         0,
       awayOver25Conceded:
-        stats.seasonConcededOver25Percentage_away ||
+        actualStats.seasonConcededOver25Percentage_away ||
         additionalInfo.seasonConcededOver25Percentage_away ||
         additionalInfo.over25_conceded_percentage_away ||
-        stats.concededOver25Percentage_away ||
+        actualStats.concededOver25Percentage_away ||
         0,
 
       over35Conceded:
-        stats.seasonConcededOver35Percentage_overall ||
+        actualStats.seasonConcededOver35Percentage_overall ||
         additionalInfo.seasonConcededOver35Percentage_overall ||
         additionalInfo.over35_conceded_percentage_overall ||
-        stats.concededOver35Percentage ||
+        actualStats.concededOver35Percentage ||
         0,
       homeOver35Conceded:
-        stats.seasonConcededOver35Percentage_home ||
+        actualStats.seasonConcededOver35Percentage_home ||
         additionalInfo.seasonConcededOver35Percentage_home ||
         additionalInfo.over35_conceded_percentage_home ||
-        stats.concededOver35Percentage_home ||
+        actualStats.concededOver35Percentage_home ||
         0,
       awayOver35Conceded:
-        stats.seasonConcededOver35Percentage_away ||
+        actualStats.seasonConcededOver35Percentage_away ||
         additionalInfo.seasonConcededOver35Percentage_away ||
         additionalInfo.over35_conceded_percentage_away ||
-        stats.concededOver35Percentage_away ||
+        actualStats.concededOver35Percentage_away ||
         0,
 
       // BTTS statistics
       seasonBTTSPercentage_overall:
-        stats.seasonBTTSPercentage_overall || stats.bothTeamsScoredPercentage || 0,
+        actualStats.seasonBTTSPercentage_overall || actualStats.bothTeamsScoredPercentage || 0,
       seasonBTTSPercentage_home:
-        stats.seasonBTTSPercentage_home || stats.homeBothTeamsScoredPercentage || 0,
+        actualStats.seasonBTTSPercentage_home || actualStats.homeBothTeamsScoredPercentage || 0,
       seasonBTTSPercentage_away:
-        stats.seasonBTTSPercentage_away || stats.awayBothTeamsScoredPercentage || 0,
+        actualStats.seasonBTTSPercentage_away || actualStats.awayBothTeamsScoredPercentage || 0,
 
       // BTTS & Win
       BTTS_and_win_percentage_overall:
-        stats.bttsAndWinPercentage || additionalInfo.BTTS_and_win_percentage_overall || 0,
+        actualStats.bttsAndWinPercentage || additionalInfo.BTTS_and_win_percentage_overall || 0,
       BTTS_and_win_percentage_home:
-        stats.homeBttsAndWinPercentage || additionalInfo.BTTS_and_win_percentage_home || 0,
+        actualStats.homeBttsAndWinPercentage || additionalInfo.BTTS_and_win_percentage_home || 0,
       BTTS_and_win_percentage_away:
-        stats.awayBttsAndWinPercentage || additionalInfo.BTTS_and_win_percentage_away || 0,
+        actualStats.awayBttsAndWinPercentage || additionalInfo.BTTS_and_win_percentage_away || 0,
 
       // BTTS & Draw
       BTTS_and_draw_percentage_overall:
-        stats.bttsAndDrawPercentage || additionalInfo.BTTS_and_draw_percentage_overall || 0,
+        actualStats.bttsAndDrawPercentage || additionalInfo.BTTS_and_draw_percentage_overall || 0,
       BTTS_and_draw_percentage_home:
-        stats.homeBttsAndDrawPercentage || additionalInfo.BTTS_and_draw_percentage_home || 0,
+        actualStats.homeBttsAndDrawPercentage || additionalInfo.BTTS_and_draw_percentage_home || 0,
       BTTS_and_draw_percentage_away:
-        stats.awayBttsAndDrawPercentage || additionalInfo.BTTS_and_draw_percentage_away || 0,
+        actualStats.awayBttsAndDrawPercentage || additionalInfo.BTTS_and_draw_percentage_away || 0,
 
       // BTTS & Over 2.5
       BTTS_and_over_2_5_percentage_overall: additionalInfo.over25_and_btts_percentage_overall || 0,
@@ -1394,7 +1372,626 @@ export class MatchDetailsData {
         additionalInfo.over25_and_no_btts_percentage_overall || 0,
       BTTS_no_and_over_2_5_percentage_home: additionalInfo.over25_and_no_btts_percentage_home || 0,
       BTTS_no_and_over_2_5_percentage_away: additionalInfo.over25_and_no_btts_percentage_away || 0,
+
+      // Corner statistics - prioritize working fields first
+      cornersForPerMatch:
+        actualStats.cornersEarnedPerMatch ||
+        actualStats.cornersAVG ||
+        actualStats.cornersForPerMatch ||
+        actualStats.cornersAVG_overall ||
+        actualStats.cornersTotalAVG_overall ||
+        actualStats.corners_for_per_match ||
+        actualStats.seasonCornersForPerMatch ||
+        (actualStats.cornersFor && actualStats.matchesPlayed
+          ? (actualStats.cornersFor / actualStats.matchesPlayed).toFixed(2)
+          : 0) ||
+        0,
+      cornersAgainstPerMatch:
+        actualStats.cornersAgainstPerMatch ||
+        actualStats.cornersAgainstAVG ||
+        actualStats.cornersAgainstAVG_overall ||
+        actualStats.corners_against_per_match ||
+        actualStats.seasonCornersAgainstPerMatch ||
+        0,
+      homeCornersForPerMatch:
+        actualStats.homeCornersAVG ||
+        actualStats.homeCornersForPerMatch ||
+        actualStats.cornersAVG_home ||
+        actualStats.cornersTotalAVG_home ||
+        actualStats.home_corners_for_per_match ||
+        actualStats.seasonCornersForPerMatch_home ||
+        (actualStats.homeCornersFor && actualStats.homeMatches
+          ? (actualStats.homeCornersFor / actualStats.homeMatches).toFixed(2)
+          : actualStats.cornersFor && actualStats.matchesPlayed
+            ? (actualStats.cornersFor / actualStats.matchesPlayed).toFixed(2)
+            : 0) ||
+        0,
+      homeCornersAgainstPerMatch:
+        actualStats.homeCornersAgainstPerMatch ||
+        actualStats.homeCornersAgainstAVG ||
+        actualStats.cornersAgainstAVG_home ||
+        actualStats.home_corners_against_per_match ||
+        actualStats.seasonCornersAgainstPerMatch_home ||
+        (actualStats.homeCornersAgainst && actualStats.homeMatches
+          ? (actualStats.homeCornersAgainst / actualStats.homeMatches).toFixed(2)
+          : actualStats.cornersAgainstPerMatch) ||
+        0,
+      awayCornersForPerMatch:
+        actualStats.awayCornersAVG ||
+        actualStats.awayCornersForPerMatch ||
+        actualStats.cornersAVG_away ||
+        actualStats.cornersTotalAVG_away ||
+        actualStats.away_corners_for_per_match ||
+        actualStats.seasonCornersForPerMatch_away ||
+        (actualStats.awayCornersFor && actualStats.awayMatches
+          ? (actualStats.awayCornersFor / actualStats.awayMatches).toFixed(2)
+          : actualStats.cornersFor && actualStats.matchesPlayed
+            ? (actualStats.cornersFor / actualStats.matchesPlayed).toFixed(2)
+            : 0) ||
+        0,
+      awayCornersAgainstPerMatch:
+        actualStats.awayCornersAgainstPerMatch ||
+        actualStats.awayCornersAgainstAVG ||
+        actualStats.cornersAgainstAVG_away ||
+        actualStats.away_corners_against_per_match ||
+        actualStats.seasonCornersAgainstPerMatch_away ||
+        (actualStats.awayCornersAgainst && actualStats.awayMatches
+          ? (actualStats.awayCornersAgainst / actualStats.awayMatches).toFixed(2)
+          : actualStats.cornersAgainstPerMatch) ||
+        0,
+
+      // Corner over/under percentages - using actual API field names
+      over25CornersFor:
+        actualStats.over25CornersForPercentage_overall ||
+        actualStats.over25CornersFor ||
+        additionalInfo.over_2_5_corners_for_percentage_overall ||
+        actualStats.over25CornersForPercentage ||
+        0,
+      over35CornersFor:
+        actualStats.over35CornersForPercentage_overall ||
+        actualStats.over35CornersFor ||
+        additionalInfo.over_3_5_corners_for_percentage_overall ||
+        actualStats.over35CornersForPercentage ||
+        0,
+      over45CornersFor:
+        actualStats.over45CornersForPercentage_overall ||
+        actualStats.over45CornersFor ||
+        additionalInfo.over_4_5_corners_for_percentage_overall ||
+        actualStats.over45CornersForPercentage ||
+        0,
+      over25CornersAgainst:
+        actualStats.over25CornersAgainstPercentage_overall ||
+        actualStats.over25CornersAgainst ||
+        additionalInfo.over_2_5_corners_against_percentage_overall ||
+        actualStats.over25CornersAgainstPercentage ||
+        0,
+      over35CornersAgainst:
+        actualStats.over35CornersAgainstPercentage_overall ||
+        actualStats.over35CornersAgainst ||
+        additionalInfo.over_3_5_corners_against_percentage_overall ||
+        actualStats.over35CornersAgainstPercentage ||
+        0,
+      over45CornersAgainst:
+        actualStats.over45CornersAgainstPercentage_overall ||
+        actualStats.over45CornersAgainst ||
+        additionalInfo.over_4_5_corners_against_percentage_overall ||
+        actualStats.over45CornersAgainstPercentage ||
+        0,
+
+      // Venue-specific corner over/under - using actual API field names
+      homeOver25CornersFor:
+        actualStats.over25CornersForPercentage_home ||
+        actualStats.homeOver25CornersFor ||
+        additionalInfo.over_2_5_corners_for_percentage_home ||
+        actualStats.over25CornersForPercentage_home ||
+        0,
+      homeOver35CornersFor:
+        actualStats.over35CornersForPercentage_home ||
+        actualStats.homeOver35CornersFor ||
+        additionalInfo.over_3_5_corners_for_percentage_home ||
+        actualStats.over35CornersForPercentage_home ||
+        0,
+      homeOver45CornersFor:
+        actualStats.over45CornersForPercentage_home ||
+        actualStats.homeOver45CornersFor ||
+        additionalInfo.over_4_5_corners_for_percentage_home ||
+        actualStats.over45CornersForPercentage_home ||
+        0,
+      awayOver25CornersFor:
+        actualStats.over25CornersForPercentage_away ||
+        actualStats.awayOver25CornersFor ||
+        additionalInfo.over_2_5_corners_for_percentage_away ||
+        actualStats.over25CornersForPercentage_away ||
+        0,
+      awayOver35CornersFor:
+        actualStats.over35CornersForPercentage_away ||
+        actualStats.awayOver35CornersFor ||
+        additionalInfo.over_3_5_corners_for_percentage_away ||
+        actualStats.over35CornersForPercentage_away ||
+        0,
+      awayOver45CornersFor:
+        actualStats.over45CornersForPercentage_away ||
+        actualStats.awayOver45CornersFor ||
+        additionalInfo.over_4_5_corners_for_percentage_away ||
+        actualStats.over45CornersForPercentage_away ||
+        0,
+
+      // Total corners - using actual API field names
+      cornersFor:
+        actualStats.cornersTotal_overall ||
+        actualStats.cornersFor ||
+        actualStats.corners_for ||
+        actualStats.seasonCornersFor ||
+        0,
+      cornersAgainst:
+        actualStats.cornersAgainst_overall ||
+        actualStats.cornersAgainst ||
+        actualStats.corners_against ||
+        actualStats.seasonCornersAgainst ||
+        0,
+      homeCornersFor:
+        actualStats.cornersTotal_home ||
+        actualStats.homeCornersFor ||
+        actualStats.home_corners_for ||
+        actualStats.seasonCornersFor_home ||
+        0,
+      homeCornersAgainst:
+        actualStats.cornersAgainst_home ||
+        actualStats.homeCornersAgainst ||
+        actualStats.home_corners_against ||
+        actualStats.seasonCornersAgainst_home ||
+        0,
+      awayCornersFor:
+        actualStats.cornersTotal_away ||
+        actualStats.awayCornersFor ||
+        actualStats.away_corners_for ||
+        actualStats.seasonCornersFor_away ||
+        0,
+      awayCornersAgainst:
+        actualStats.cornersAgainst_away ||
+        actualStats.awayCornersAgainst ||
+        actualStats.away_corners_against ||
+        actualStats.seasonCornersAgainst_away ||
+        0,
+
+      // Card statistics - prioritize working fields first
+      cardsPerMatch:
+        actualStats.cardsAVG ||
+        actualStats.cardsPerMatch ||
+        actualStats.cardsAVG_overall ||
+        actualStats.cardsAverage ||
+        actualStats.cards_avg_overall ||
+        actualStats.yellowCardsAVG ||
+        (actualStats.cardsFor && actualStats.matchesPlayed
+          ? (actualStats.cardsFor / actualStats.matchesPlayed).toFixed(2)
+          : 0) ||
+        0,
+      cardsAgainstPerMatch:
+        actualStats.cardsAgainstAVG ||
+        actualStats.cardsAgainstPerMatch ||
+        actualStats.cardsAgainstAVG_overall ||
+        actualStats.cards_against_per_match ||
+        actualStats.seasonCardsAgainstPerMatch ||
+        0,
+      homeCardsPerMatch:
+        actualStats.homeCardsAVG ||
+        actualStats.homeCardsPerMatch ||
+        actualStats.cardsAVG_home ||
+        actualStats.homeCardsAverage ||
+        actualStats.cards_avg_home ||
+        (actualStats.homeCardsFor && actualStats.homeMatches
+          ? (actualStats.homeCardsFor / actualStats.homeMatches).toFixed(2)
+          : actualStats.cardsPerMatch) ||
+        0,
+      homeCardsAgainstPerMatch:
+        actualStats.homeCardsAgainstAVG ||
+        actualStats.homeCardsAgainstPerMatch ||
+        actualStats.cardsAgainstAVG_home ||
+        actualStats.home_cards_against_per_match ||
+        actualStats.seasonCardsAgainstPerMatch_home ||
+        (actualStats.homeCardsAgainst && actualStats.homeMatches
+          ? (actualStats.homeCardsAgainst / actualStats.homeMatches).toFixed(2)
+          : actualStats.cardsAgainstPerMatch) ||
+        0,
+      awayCardsPerMatch:
+        actualStats.awayCardsAVG ||
+        actualStats.awayCardsPerMatch ||
+        actualStats.cardsAVG_away ||
+        actualStats.awayCardsAverage ||
+        actualStats.cards_avg_away ||
+        (actualStats.awayCardsFor && actualStats.awayMatches
+          ? (actualStats.awayCardsFor / actualStats.awayMatches).toFixed(2)
+          : actualStats.cardsPerMatch) ||
+        0,
+      awayCardsAgainstPerMatch:
+        actualStats.awayCardsAgainstAVG ||
+        actualStats.awayCardsAgainstPerMatch ||
+        actualStats.cardsAgainstAVG_away ||
+        actualStats.away_cards_against_per_match ||
+        actualStats.seasonCardsAgainstPerMatch_away ||
+        (actualStats.awayCardsAgainst && actualStats.awayMatches
+          ? (actualStats.awayCardsAgainst / actualStats.awayMatches).toFixed(2)
+          : actualStats.cardsAgainstPerMatch) ||
+        0,
+
+      // Card over/under percentages - Match Total Cards (team-stats format)
+      cardsOver15:
+        actualStats.over15CardsPercentage_overall || additionalInfo.over15_cards_percentage || 0,
+      cardsOver25:
+        actualStats.over25CardsPercentage_overall || additionalInfo.over25_cards_percentage || 0,
+      cardsOver35:
+        actualStats.over35CardsPercentage_overall || additionalInfo.over35_cards_percentage || 0,
+      cardsOver45:
+        actualStats.over45CardsPercentage_overall || additionalInfo.over45_cards_percentage || 0,
+      cardsOver55:
+        actualStats.over55CardsPercentage_overall || additionalInfo.over55_cards_percentage || 0,
+      cardsOver65:
+        actualStats.over65CardsPercentage_overall || additionalInfo.over65_cards_percentage || 0,
+
+      cardsOver15_overall:
+        actualStats.over15CardsPercentage_overall || additionalInfo.over15_cards_percentage || 0,
+      cardsOver25_overall:
+        actualStats.over25CardsPercentage_overall || additionalInfo.over25_cards_percentage || 0,
+      cardsOver35_overall:
+        actualStats.over35CardsPercentage_overall || additionalInfo.over35_cards_percentage || 0,
+      cardsOver45_overall:
+        actualStats.over45CardsPercentage_overall || additionalInfo.over45_cards_percentage || 0,
+      cardsOver55_overall:
+        actualStats.over55CardsPercentage_overall || additionalInfo.over55_cards_percentage || 0,
+      cardsOver65_overall:
+        actualStats.over65CardsPercentage_overall || additionalInfo.over65_cards_percentage || 0,
+
+      cardsOver15_home:
+        actualStats.homeCardsOver15 ||
+        actualStats.cardsOver15_home ||
+        actualStats.over15CardsPercentage_home ||
+        0,
+      cardsOver25_home:
+        actualStats.homeCardsOver25 ||
+        actualStats.cardsOver25_home ||
+        actualStats.over25CardsPercentage_home ||
+        0,
+      cardsOver35_home:
+        actualStats.homeCardsOver35 ||
+        actualStats.cardsOver35_home ||
+        actualStats.over35CardsPercentage_home ||
+        0,
+      cardsOver45_home:
+        actualStats.homeCardsOver45 ||
+        actualStats.cardsOver45_home ||
+        actualStats.over45CardsPercentage_home ||
+        0,
+      cardsOver55_home:
+        actualStats.homeCardsOver55 ||
+        actualStats.cardsOver55_home ||
+        actualStats.over55CardsPercentage_home ||
+        0,
+      cardsOver65_home:
+        actualStats.homeCardsOver65 ||
+        actualStats.cardsOver65_home ||
+        actualStats.over65CardsPercentage_home ||
+        0,
+
+      cardsOver15_away:
+        actualStats.awayCardsOver15 ||
+        actualStats.cardsOver15_away ||
+        actualStats.over15CardsPercentage_away ||
+        0,
+      cardsOver25_away:
+        actualStats.awayCardsOver25 ||
+        actualStats.cardsOver25_away ||
+        actualStats.over25CardsPercentage_away ||
+        0,
+      cardsOver35_away:
+        actualStats.awayCardsOver35 ||
+        actualStats.cardsOver35_away ||
+        actualStats.over35CardsPercentage_away ||
+        0,
+      cardsOver45_away:
+        actualStats.awayCardsOver45 ||
+        actualStats.cardsOver45_away ||
+        actualStats.over45CardsPercentage_away ||
+        0,
+      cardsOver55_away:
+        actualStats.awayCardsOver55 ||
+        actualStats.cardsOver55_away ||
+        actualStats.over55CardsPercentage_away ||
+        0,
+      cardsOver65_away:
+        actualStats.awayCardsOver65 ||
+        actualStats.cardsOver65_away ||
+        actualStats.over65CardsPercentage_away ||
+        0,
+
+      // Add percentage fields that cards-comparison.js is looking for
+      // These are now mapped from the values above to avoid duplication
+
+      // Card over/under percentages - Use correct API field names
+      over15CardsFor:
+        actualStats.over15CardsPercentage_overall ||
+        actualStats.over15CardsForPercentage_overall ||
+        actualStats.over15CardsFor ||
+        additionalInfo.over_1_5_cards_for_percentage_overall ||
+        actualStats.over15CardsForPercentage ||
+        0,
+      over25CardsFor:
+        actualStats.over25CardsPercentage_overall ||
+        actualStats.over25CardsForPercentage_overall ||
+        actualStats.over25CardsFor ||
+        additionalInfo.over_2_5_cards_for_percentage_overall ||
+        actualStats.over25CardsForPercentage ||
+        0,
+      over35CardsFor:
+        actualStats.over35CardsPercentage_overall ||
+        actualStats.over35CardsForPercentage_overall ||
+        actualStats.over35CardsFor ||
+        additionalInfo.over_3_5_cards_for_percentage_overall ||
+        actualStats.over35CardsForPercentage ||
+        0,
+      over45CardsFor:
+        actualStats.over45CardsPercentage_overall ||
+        actualStats.over45CardsForPercentage_overall ||
+        actualStats.over45CardsFor ||
+        additionalInfo.over_4_5_cards_for_percentage_overall ||
+        actualStats.over45CardsForPercentage ||
+        0,
+      over55CardsFor:
+        actualStats.over55CardsPercentage_overall ||
+        actualStats.over55CardsForPercentage_overall ||
+        actualStats.over55CardsFor ||
+        additionalInfo.over_5_5_cards_for_percentage_overall ||
+        actualStats.over55CardsForPercentage ||
+        0,
+      over65CardsFor:
+        actualStats.over65CardsPercentage_overall ||
+        actualStats.over65CardsForPercentage_overall ||
+        actualStats.over65CardsFor ||
+        additionalInfo.over_6_5_cards_for_percentage_overall ||
+        actualStats.over65CardsForPercentage ||
+        0,
+      over15CardsAgainst:
+        actualStats.over15CardsAgainstPercentage_overall ||
+        actualStats.over15CardsAgainst ||
+        additionalInfo.over_1_5_cards_against_percentage_overall ||
+        actualStats.over15CardsAgainstPercentage ||
+        0,
+      over25CardsAgainst:
+        actualStats.over25CardsAgainstPercentage_overall ||
+        actualStats.over25CardsAgainst ||
+        additionalInfo.over_2_5_cards_against_percentage_overall ||
+        actualStats.over25CardsAgainstPercentage ||
+        0,
+      over35CardsAgainst:
+        actualStats.over35CardsAgainstPercentage_overall ||
+        actualStats.over35CardsAgainst ||
+        additionalInfo.over_3_5_cards_against_percentage_overall ||
+        actualStats.over35CardsAgainstPercentage ||
+        0,
+      over45CardsAgainst:
+        actualStats.over45CardsAgainstPercentage_overall ||
+        actualStats.over45CardsAgainst ||
+        additionalInfo.over_4_5_cards_against_percentage_overall ||
+        actualStats.over45CardsAgainstPercentage ||
+        0,
+      over55CardsAgainst:
+        actualStats.over55CardsAgainstPercentage_overall ||
+        actualStats.over55CardsAgainst ||
+        additionalInfo.over_5_5_cards_against_percentage_overall ||
+        actualStats.over55CardsAgainstPercentage ||
+        0,
+      over65CardsAgainst:
+        actualStats.over65CardsAgainstPercentage_overall ||
+        actualStats.over65CardsAgainst ||
+        additionalInfo.over_6_5_cards_against_percentage_overall ||
+        actualStats.over65CardsAgainstPercentage ||
+        0,
+
+      // Venue-specific card over/under - Use correct API field names
+      homeOver15CardsFor:
+        actualStats.over15CardsPercentage_home ||
+        actualStats.over15CardsForPercentage_home ||
+        actualStats.homeOver15CardsFor ||
+        additionalInfo.over_1_5_cards_for_percentage_home ||
+        0,
+      homeOver25CardsFor:
+        actualStats.over25CardsPercentage_home ||
+        actualStats.over25CardsForPercentage_home ||
+        actualStats.homeOver25CardsFor ||
+        additionalInfo.over_2_5_cards_for_percentage_home ||
+        0,
+      homeOver35CardsFor:
+        actualStats.over35CardsPercentage_home ||
+        actualStats.over35CardsForPercentage_home ||
+        actualStats.homeOver35CardsFor ||
+        additionalInfo.over_3_5_cards_for_percentage_home ||
+        0,
+      homeOver45CardsFor:
+        actualStats.over45CardsPercentage_home ||
+        actualStats.over45CardsForPercentage_home ||
+        actualStats.homeOver45CardsFor ||
+        additionalInfo.over_4_5_cards_for_percentage_home ||
+        0,
+      homeOver55CardsFor:
+        actualStats.over55CardsPercentage_home ||
+        actualStats.over55CardsForPercentage_home ||
+        actualStats.homeOver55CardsFor ||
+        additionalInfo.over_5_5_cards_for_percentage_home ||
+        0,
+      homeOver65CardsFor:
+        actualStats.over65CardsPercentage_home ||
+        actualStats.over65CardsForPercentage_home ||
+        actualStats.homeOver65CardsFor ||
+        additionalInfo.over_6_5_cards_for_percentage_home ||
+        0,
+      awayOver15CardsFor:
+        actualStats.over15CardsPercentage_away ||
+        actualStats.over15CardsForPercentage_away ||
+        actualStats.awayOver15CardsFor ||
+        additionalInfo.over_1_5_cards_for_percentage_away ||
+        0,
+      awayOver25CardsFor:
+        actualStats.over25CardsPercentage_away ||
+        actualStats.over25CardsForPercentage_away ||
+        actualStats.awayOver25CardsFor ||
+        additionalInfo.over_2_5_cards_for_percentage_away ||
+        0,
+      awayOver35CardsFor:
+        actualStats.over35CardsPercentage_away ||
+        actualStats.over35CardsForPercentage_away ||
+        actualStats.awayOver35CardsFor ||
+        additionalInfo.over_3_5_cards_for_percentage_away ||
+        0,
+      awayOver45CardsFor:
+        actualStats.over45CardsPercentage_away ||
+        actualStats.over45CardsForPercentage_away ||
+        actualStats.awayOver45CardsFor ||
+        additionalInfo.over_4_5_cards_for_percentage_away ||
+        0,
+      awayOver55CardsFor:
+        actualStats.over55CardsPercentage_away ||
+        actualStats.over55CardsForPercentage_away ||
+        actualStats.awayOver55CardsFor ||
+        additionalInfo.over_5_5_cards_for_percentage_away ||
+        0,
+      awayOver65CardsFor:
+        actualStats.over65CardsPercentage_away ||
+        actualStats.over65CardsForPercentage_away ||
+        actualStats.awayOver65CardsFor ||
+        additionalInfo.over_6_5_cards_for_percentage_away ||
+        0,
+
+      // Total cards
+      cardsFor:
+        actualStats.cardsTotal_overall ||
+        actualStats.cardsFor ||
+        actualStats.cards_for ||
+        actualStats.seasonCardsFor ||
+        actualStats.yellowCards ||
+        0,
+      cardsAgainst:
+        actualStats.cardsAgainst_overall ||
+        actualStats.cardsAgainst ||
+        actualStats.cards_against ||
+        actualStats.seasonCardsAgainst ||
+        0,
+      homeCardsFor:
+        actualStats.cardsTotal_home ||
+        actualStats.homeCardsFor ||
+        actualStats.home_cards_for ||
+        actualStats.seasonCardsFor_home ||
+        actualStats.homeYellowCards ||
+        0,
+      homeCardsAgainst:
+        actualStats.cardsAgainst_home ||
+        actualStats.homeCardsAgainst ||
+        actualStats.home_cards_against ||
+        actualStats.seasonCardsAgainst_home ||
+        0,
+      awayCardsFor:
+        actualStats.cardsTotal_away ||
+        actualStats.awayCardsFor ||
+        actualStats.away_cards_for ||
+        actualStats.seasonCardsFor_away ||
+        actualStats.awayYellowCards ||
+        0,
+      awayCardsAgainst:
+        actualStats.cardsAgainst_away ||
+        actualStats.awayCardsAgainst ||
+        actualStats.away_cards_against ||
+        actualStats.seasonCardsAgainst_away ||
+        0,
+
+      // Over cards percentages - team cards
+      over15CardsForPercentage_overall:
+        actualStats.over15CardsForPercentage_overall || actualStats.over15CardsFor || 0,
+      over25CardsForPercentage_overall:
+        actualStats.over25CardsForPercentage_overall || actualStats.over25CardsFor || 0,
+      over35CardsForPercentage_overall:
+        actualStats.over35CardsForPercentage_overall || actualStats.over35CardsFor || 0,
+      over45CardsForPercentage_overall:
+        actualStats.over45CardsForPercentage_overall || actualStats.over45CardsFor || 0,
+
+      over15CardsForPercentage_home:
+        actualStats.over15CardsForPercentage_home || actualStats.homeOver15CardsFor || 0,
+      over25CardsForPercentage_home:
+        actualStats.over25CardsForPercentage_home || actualStats.homeOver25CardsFor || 0,
+      over35CardsForPercentage_home:
+        actualStats.over35CardsForPercentage_home || actualStats.homeOver35CardsFor || 0,
+      over45CardsForPercentage_home:
+        actualStats.over45CardsForPercentage_home || actualStats.homeOver45CardsFor || 0,
+
+      over15CardsForPercentage_away:
+        actualStats.over15CardsForPercentage_away || actualStats.awayOver15CardsFor || 0,
+      over25CardsForPercentage_away:
+        actualStats.over25CardsForPercentage_away || actualStats.awayOver25CardsFor || 0,
+      over35CardsForPercentage_away:
+        actualStats.over35CardsForPercentage_away || actualStats.awayOver35CardsFor || 0,
+      over45CardsForPercentage_away:
+        actualStats.over45CardsForPercentage_away || actualStats.awayOver45CardsFor || 0,
+
+      // Over cards percentages - opponent cards
+      over15CardsAgainstPercentage_overall:
+        actualStats.over15CardsAgainstPercentage_overall || actualStats.over15CardsAgainst || 0,
+      over25CardsAgainstPercentage_overall:
+        actualStats.over25CardsAgainstPercentage_overall || actualStats.over25CardsAgainst || 0,
+      over35CardsAgainstPercentage_overall:
+        actualStats.over35CardsAgainstPercentage_overall || actualStats.over35CardsAgainst || 0,
+
+      over15CardsAgainstPercentage_home:
+        actualStats.over15CardsAgainstPercentage_home || actualStats.homeOver15CardsAgainst || 0,
+      over25CardsAgainstPercentage_home:
+        actualStats.over25CardsAgainstPercentage_home || actualStats.homeOver25CardsAgainst || 0,
+      over35CardsAgainstPercentage_home:
+        actualStats.over35CardsAgainstPercentage_home || actualStats.homeOver35CardsAgainst || 0,
+
+      over15CardsAgainstPercentage_away:
+        actualStats.over15CardsAgainstPercentage_away || actualStats.awayOver15CardsAgainst || 0,
+      over25CardsAgainstPercentage_away:
+        actualStats.over25CardsAgainstPercentage_away || actualStats.awayOver25CardsAgainst || 0,
+      over35CardsAgainstPercentage_away:
+        actualStats.over35CardsAgainstPercentage_away || actualStats.awayOver35CardsAgainst || 0,
+
+      // Over cards percentages - total match cards
+      over15CardsPercentage_overall:
+        actualStats.over15CardsPercentage_overall || actualStats.over15Cards || 0,
+      over25CardsPercentage_overall:
+        actualStats.over25CardsPercentage_overall || actualStats.over25Cards || 0,
+      over35CardsPercentage_overall:
+        actualStats.over35CardsPercentage_overall || actualStats.over35Cards || 0,
+      over45CardsPercentage_overall:
+        actualStats.over45CardsPercentage_overall || actualStats.over45Cards || 0,
+      over55CardsPercentage_overall:
+        actualStats.over55CardsPercentage_overall || actualStats.over55Cards || 0,
+
+      over15CardsPercentage_home:
+        actualStats.over15CardsPercentage_home || actualStats.homeOver15Cards || 0,
+      over25CardsPercentage_home:
+        actualStats.over25CardsPercentage_home || actualStats.homeOver25Cards || 0,
+      over35CardsPercentage_home:
+        actualStats.over35CardsPercentage_home || actualStats.homeOver35Cards || 0,
+      over45CardsPercentage_home:
+        actualStats.over45CardsPercentage_home || actualStats.homeOver45Cards || 0,
+      over55CardsPercentage_home:
+        actualStats.over55CardsPercentage_home || actualStats.homeOver55Cards || 0,
+
+      over15CardsPercentage_away:
+        actualStats.over15CardsPercentage_away || actualStats.awayOver15Cards || 0,
+      over25CardsPercentage_away:
+        actualStats.over25CardsPercentage_away || actualStats.awayOver25Cards || 0,
+      over35CardsPercentage_away:
+        actualStats.over35CardsPercentage_away || actualStats.awayOver35Cards || 0,
+      over45CardsPercentage_away:
+        actualStats.over45CardsPercentage_away || actualStats.awayOver45Cards || 0,
+      over55CardsPercentage_away:
+        actualStats.over55CardsPercentage_away || actualStats.awayOver55Cards || 0,
     };
+
+    // Debug before return
+    console.log('[MatchDetailsData] extractedStats card fields:', {
+      cardsOver25: extractedStats.cardsOver25,
+      cardsOver25_home: extractedStats.cardsOver25_home,
+      cardsOver25_away: extractedStats.cardsOver25_away,
+    });
 
     return extractedStats;
   }

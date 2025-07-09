@@ -3,7 +3,7 @@
  * Parent class for all display modules providing common functionality
  */
 
-(function(global) {
+(function (global) {
   'use strict';
 
   class BaseDisplay {
@@ -40,10 +40,10 @@
       if (this.eventBus) {
         // Listen for initial data load
         this.eventBus.on('data:team:loaded', this.handleTeamDataLoaded.bind(this));
-        
+
         // Listen for filter changes
         this.eventBus.on('filters:change', this.handleFilterChange.bind(this));
-        
+
         // Listen for state changes
         if (this.stateManager) {
           this.stateManager.subscribe('statistics', this.handleStatisticsUpdate.bind(this));
@@ -68,7 +68,7 @@
      */
     handleTeamDataLoaded(eventData) {
       this.log('info', 'Team data loaded event received');
-      
+
       if (eventData && eventData.data && eventData.data.statistics) {
         this.lastStatistics = eventData.data.statistics;
         const currentFilter = this.getCurrentFilter();
@@ -81,7 +81,7 @@
      */
     handleFilterChange(filterData) {
       this.log('info', 'Filter change event received:', filterData);
-      
+
       const filter = this.extractFilterValue(filterData);
       if (this.lastStatistics) {
         this.updateDisplay(this.lastStatistics, filter);
@@ -93,7 +93,7 @@
      */
     handleStatisticsUpdate(statistics) {
       this.log('info', 'Statistics updated in state');
-      
+
       if (statistics) {
         this.lastStatistics = statistics;
         const currentFilter = this.getCurrentFilter();
@@ -126,17 +126,17 @@
     updateElementGroup(mappingKey, value) {
       const ids = this.elementMappings[mappingKey] || [mappingKey];
       let updated = 0;
-      
+
       ids.forEach(id => {
         if (this.updateElement(id, value)) {
           updated++;
         }
       });
-      
+
       if (updated === 0 && this.debug) {
         this.log('warn', `No elements found for mapping: ${mappingKey}`);
       }
-      
+
       return updated;
     }
 
@@ -163,7 +163,7 @@
       if (typeof filterData === 'string') {
         return filterData;
       }
-      
+
       return filterData.value || filterData.venue || filterData.filter || 'overall';
     }
 
@@ -174,9 +174,13 @@
       if (filter === 'overall') {
         return statistics[key] || statistics[`${key}_overall`] || 0;
       }
-      
+
       const suffix = `_${filter}`;
-      return statistics[`${key}${suffix}`] || statistics[`${filter}${key.charAt(0).toUpperCase() + key.slice(1)}`] || 0;
+      return (
+        statistics[`${key}${suffix}`] ||
+        statistics[`${filter}${key.charAt(0).toUpperCase() + key.slice(1)}`] ||
+        0
+      );
     }
 
     /**
@@ -206,7 +210,7 @@
      */
     log(level, ...args) {
       if (!this.debug && level !== 'error') return;
-      
+
       const prefix = `[${this.name}]`;
       switch (level) {
         case 'error':
@@ -223,7 +227,7 @@
      */
     createElement(tag, attributes = {}) {
       const element = document.createElement(tag);
-      
+
       Object.entries(attributes).forEach(([key, value]) => {
         if (key === 'className') {
           element.className = value;
@@ -237,7 +241,7 @@
           element.setAttribute(key, value);
         }
       });
-      
+
       return element;
     }
 
@@ -268,6 +272,4 @@
 
   // Export to global scope
   global.TeamStatsBaseDisplay = BaseDisplay;
-
-
 })(window);

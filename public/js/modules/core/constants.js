@@ -4,7 +4,7 @@
  * @module TeamStatsConstants
  */
 
-(function(global) {
+(function (global) {
   'use strict';
 
   /**
@@ -16,7 +16,7 @@
       // Private storage for constants
       this._constants = new Map();
       this._frozen = false;
-      
+
       // Initialize with default constants
       this._initializeDefaults();
     }
@@ -34,7 +34,7 @@
         RETRY_DELAY: 1000,
         CACHE_DURATION: 30 * 60 * 1000, // 30 minutes
         RATE_LIMIT_DELAY: 1000,
-        MAX_CONCURRENT_REQUESTS: 5
+        MAX_CONCURRENT_REQUESTS: 5,
       });
 
       // API Endpoints
@@ -45,7 +45,7 @@
         LEAGUE_LIST: 'league-list',
         CHOSEN_LEAGUES: 'chosen-leagues',
         TEAM_SEARCH: 'teams/search',
-        TEAM_STANDINGS: 'teams/standings'
+        TEAM_STANDINGS: 'teams/standings',
       });
 
       // Filter Types
@@ -53,7 +53,7 @@
         VENUE: ['overall', 'home', 'away'],
         TIMEFRAME: ['overall', 'last5', 'last10'],
         MATCH_TYPE: ['all', 'league', 'cup', 'friendly'],
-        RESULT: ['all', 'wins', 'draws', 'losses']
+        RESULT: ['all', 'wins', 'draws', 'losses'],
       });
 
       // Statistics Categories
@@ -61,9 +61,15 @@
         GENERAL: ['matches', 'wins', 'draws', 'losses', 'points'],
         GOALS: ['goalsFor', 'goalsAgainst', 'goalDifference', 'avgGoalsFor', 'avgGoalsAgainst'],
         CARDS: ['yellowCards', 'redCards', 'cardsTotal', 'cardsFor', 'cardsAgainst'],
-        CORNERS: ['cornersFor', 'cornersAgainst', 'cornersTotal', 'avgCornersFor', 'avgCornersAgainst'],
+        CORNERS: [
+          'cornersFor',
+          'cornersAgainst',
+          'cornersTotal',
+          'avgCornersFor',
+          'avgCornersAgainst',
+        ],
         POSSESSION: ['avgPossession', 'avgPassAccuracy', 'avgShots', 'avgShotsOnTarget'],
-        FORM: ['ppg', 'form', 'cleanSheets', 'failedToScore', 'btts']
+        FORM: ['ppg', 'form', 'cleanSheets', 'failedToScore', 'btts'],
       });
 
       // Tab Names
@@ -74,7 +80,7 @@
         CORNERS: 'corners',
         HALFTIME: 'half-time',
         MATCHES: 'matches',
-        PLAYERS: 'players'
+        PLAYERS: 'players',
       });
 
       // Event Names
@@ -83,28 +89,28 @@
         TEAM_LOADED: 'data:team:loaded',
         MATCH_LOADED: 'data:match:loaded',
         STATISTICS_UPDATED: 'data:statistics:updated',
-        
+
         // API Events
         REQUEST_START: 'api:request:start',
         REQUEST_SUCCESS: 'api:request:success',
         REQUEST_ERROR: 'api:request:error',
         REQUEST_RETRY: 'api:retry',
-        
+
         // Cache Events
         CACHE_HIT: 'api:cache:hit',
         CACHE_MISS: 'api:cache:miss',
         CACHE_CLEARED: 'api:cache:cleared',
-        
+
         // State Events
         STATE_CHANGED: 'state:changed',
         FILTER_CHANGED: 'filter:changed',
         TAB_CHANGED: 'tab:changed',
-        
+
         // UI Events
         LOADING_START: 'ui:loading:start',
         LOADING_END: 'ui:loading:end',
         ERROR_SHOWN: 'ui:error:shown',
-        NOTIFICATION_SHOWN: 'ui:notification:shown'
+        NOTIFICATION_SHOWN: 'ui:notification:shown',
       });
 
       // Error Types
@@ -116,7 +122,7 @@
         SERVER: 'SERVER_ERROR',
         VALIDATION: 'VALIDATION_ERROR',
         RATE_LIMIT: 'RATE_LIMIT_ERROR',
-        CANCELLED: 'REQUEST_CANCELLED'
+        CANCELLED: 'REQUEST_CANCELLED',
       });
 
       // Status Codes
@@ -130,7 +136,7 @@
         NOT_FOUND: 404,
         RATE_LIMITED: 429,
         SERVER_ERROR: 500,
-        SERVICE_UNAVAILABLE: 503
+        SERVICE_UNAVAILABLE: 503,
       });
 
       // Time Periods
@@ -139,7 +145,7 @@
         HOUR: 60 * 60 * 1000,
         DAY: 24 * 60 * 60 * 1000,
         WEEK: 7 * 24 * 60 * 60 * 1000,
-        MONTH: 30 * 24 * 60 * 60 * 1000
+        MONTH: 30 * 24 * 60 * 60 * 1000,
       });
 
       // Regex Patterns
@@ -148,7 +154,7 @@
         TEAM_ID: /^\d+$/,
         MATCH_ID: /^\d+$/,
         SEASON_FORMAT: /^\d{4}\/\d{4}$/,
-        DATE_FORMAT: /^\d{4}-\d{2}-\d{2}$/
+        DATE_FORMAT: /^\d{4}-\d{2}-\d{2}$/,
       });
 
       // Color Schemes
@@ -161,7 +167,7 @@
         INFO: '#2196F3',
         DARK: '#0d0d0d',
         LIGHT: '#ffffff',
-        GRAY: '#666666'
+        GRAY: '#666666',
       });
 
       // Chart Colors
@@ -172,7 +178,7 @@
         GOALS_FOR: '#2196F3',
         GOALS_AGAINST: '#ff5252',
         HOME: '#4CAF50',
-        AWAY: '#ff9800'
+        AWAY: '#ff9800',
       });
 
       // Breakpoints
@@ -180,7 +186,7 @@
         MOBILE: 480,
         TABLET: 768,
         DESKTOP: 1024,
-        WIDE: 1440
+        WIDE: 1440,
       });
 
       // Animation Durations
@@ -188,7 +194,7 @@
         FAST: 200,
         NORMAL: 300,
         SLOW: 500,
-        VERY_SLOW: 1000
+        VERY_SLOW: 1000,
       });
 
       // Local Storage Keys
@@ -198,7 +204,7 @@
         LAST_VIEWED: 'teamstats_last_viewed',
         FAVORITES: 'teamstats_favorites',
         THEME: 'teamstats_theme',
-        LANGUAGE: 'teamstats_language'
+        LANGUAGE: 'teamstats_language',
       });
 
       // Default Values
@@ -209,7 +215,7 @@
         PAGE_SIZE: 20,
         SORT_ORDER: 'desc',
         THEME: 'dark',
-        LANGUAGE: 'en'
+        LANGUAGE: 'en',
       });
 
       // Validation Rules
@@ -221,7 +227,7 @@
         MIN_PAGE_SIZE: 1,
         MAX_PAGE_SIZE: 100,
         MAX_SEARCH_LENGTH: 100,
-        MAX_CACHE_SIZE: 100 * 1024 * 1024 // 100MB
+        MAX_CACHE_SIZE: 100 * 1024 * 1024, // 100MB
       });
 
       // Feature Flags
@@ -232,14 +238,14 @@
         ENABLE_DEBUG: false,
         ENABLE_MOCK_DATA: false,
         ENABLE_WEBSOCKET: false,
-        ENABLE_NOTIFICATIONS: true
+        ENABLE_NOTIFICATIONS: true,
       });
 
       // Version Info
       this.define('VERSION', {
         API: '1.0.0',
         APP: '1.3.0',
-        MODULE: '1.0.0'
+        MODULE: '1.0.0',
       });
     }
 
@@ -429,7 +435,7 @@
     isValidOption(constantKey, value) {
       // Support nested paths like 'FILTERS.VENUE'
       let options;
-      
+
       if (constantKey.includes('.')) {
         const [mainKey, subKey] = constantKey.split('.');
         const mainConstant = this.get(mainKey);
@@ -437,11 +443,11 @@
       } else {
         options = this.get(constantKey);
       }
-      
+
       if (Array.isArray(options)) {
         return options.includes(value);
       }
-      
+
       if (typeof options === 'object') {
         return Object.values(options).includes(value);
       }
@@ -476,15 +482,28 @@
 
   // For convenience, expose common getters
   global.CONSTANTS = {
-    get API() { return constants.get('API'); },
-    get ENDPOINTS() { return constants.get('ENDPOINTS'); },
-    get EVENTS() { return constants.get('EVENTS'); },
-    get FILTERS() { return constants.get('FILTERS'); },
-    get TABS() { return constants.get('TABS'); },
-    get COLORS() { return constants.get('COLORS'); },
-    get DEFAULTS() { return constants.get('DEFAULTS'); }
+    get API() {
+      return constants.get('API');
+    },
+    get ENDPOINTS() {
+      return constants.get('ENDPOINTS');
+    },
+    get EVENTS() {
+      return constants.get('EVENTS');
+    },
+    get FILTERS() {
+      return constants.get('FILTERS');
+    },
+    get TABS() {
+      return constants.get('TABS');
+    },
+    get COLORS() {
+      return constants.get('COLORS');
+    },
+    get DEFAULTS() {
+      return constants.get('DEFAULTS');
+    },
   };
 
   console.log('Team Stats Constants Module initialized');
-
 })(window);

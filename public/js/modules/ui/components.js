@@ -4,7 +4,7 @@
  * @module TeamStatsComponents
  */
 
-(function(global) {
+(function (global) {
   'use strict';
 
   // Check dependencies
@@ -42,11 +42,11 @@
         methods: config.methods || {},
         lifecycle: config.lifecycle || {},
         events: config.events || [],
-        ...config
+        ...config,
       };
 
       this.components.set(name, component);
-      
+
       if (global.TeamStatsEventBus) {
         global.TeamStatsEventBus.emit('ui:component:registered', { name, component });
       }
@@ -80,7 +80,7 @@
         state: {},
         element: null,
         mounted: false,
-        destroyed: false
+        destroyed: false,
       };
 
       // Bind methods
@@ -90,9 +90,10 @@
 
       // Initialize state
       if (definition.data) {
-        instance.state = typeof definition.data === 'function' 
-          ? definition.data.call(instance) 
-          : { ...definition.data };
+        instance.state =
+          typeof definition.data === 'function'
+            ? definition.data.call(instance)
+            : { ...definition.data };
       }
 
       this.instances.set(instance, definition);
@@ -150,7 +151,7 @@
     render() {
       // Process template with props and state
       let html = this.template;
-      
+
       // Simple template engine
       const data = { ...this.props, ...this.state };
       html = html.replace(/\{\{(\w+)\}\}/g, (match, key) => {
@@ -170,9 +171,7 @@
         return;
       }
 
-      const targetElement = typeof target === 'string' 
-        ? document.querySelector(target) 
-        : target;
+      const targetElement = typeof target === 'string' ? document.querySelector(target) : target;
 
       if (!targetElement) {
         throw new Error('Target element not found');
@@ -183,7 +182,7 @@
       this.element.className = `component-${this.name}`;
       this.element.setAttribute('data-component', this.name);
       this.element.setAttribute('data-component-id', this.id);
-      
+
       // Render and insert
       this.element.innerHTML = this.render();
       targetElement.appendChild(this.element);
@@ -272,7 +271,7 @@
   /**
    * Built-in Components
    */
-  
+
   // Loading Spinner Component
   const LoadingSpinner = {
     name: 'loading-spinner',
@@ -284,7 +283,7 @@
     `,
     props: {
       text: 'Loading...',
-      size: 'medium'
+      size: 'medium',
     },
     styles: `
       .loading-spinner {
@@ -311,7 +310,7 @@
       @keyframes spin {
         to { transform: rotate(360deg); }
       }
-    `
+    `,
   };
 
   // Error Message Component
@@ -332,7 +331,7 @@
       title: 'Error',
       message: 'An error occurred',
       icon: '⚠️',
-      dismissible: true
+      dismissible: true,
     },
     styles: `
       .error-message {
@@ -386,7 +385,7 @@
       .error-close:hover {
         opacity: 1;
       }
-    `
+    `,
   };
 
   // Progress Bar Component
@@ -404,7 +403,7 @@
     props: {
       label: '',
       percent: 0,
-      color: '#2196F3'
+      color: '#2196F3',
     },
     styles: `
       .progress-bar {
@@ -436,8 +435,8 @@
     methods: {
       setProgress(percent) {
         this.update({ percent: Math.min(100, Math.max(0, percent)) });
-      }
-    }
+      },
+    },
   };
 
   // Stat Card Component
@@ -467,7 +466,7 @@
       changeType: 'neutral',
       period: '',
       size: 'medium',
-      variant: 'default'
+      variant: 'default',
     },
     styles: `
       .stat-card {
@@ -546,7 +545,7 @@
         background: rgba(244, 67, 54, 0.1);
         border-color: rgba(244, 67, 54, 0.3);
       }
-    `
+    `,
   };
 
   // Filter Button Component
@@ -560,7 +559,7 @@
     props: {
       label: 'Filter',
       value: '',
-      active: false
+      active: false,
     },
     styles: `
       .filter-button {
@@ -587,8 +586,8 @@
     methods: {
       toggle() {
         this.update({ active: !this.state.active });
-      }
-    }
+      },
+    },
   };
 
   // Data Table Component
@@ -613,7 +612,7 @@
       data: [],
       striped: true,
       hoverable: true,
-      sortable: false
+      sortable: false,
     },
     styles: `
       .data-table-wrapper {
@@ -650,21 +649,17 @@
     `,
     methods: {
       renderTable() {
-        const headers = this.props.columns
-          .map(col => `<th>${col.label || col.key}</th>`)
-          .join('');
-          
+        const headers = this.props.columns.map(col => `<th>${col.label || col.key}</th>`).join('');
+
         const rows = this.props.data
           .map(row => {
-            const cells = this.props.columns
-              .map(col => `<td>${row[col.key] || ''}</td>`)
-              .join('');
+            const cells = this.props.columns.map(col => `<td>${row[col.key] || ''}</td>`).join('');
             return `<tr>${cells}</tr>`;
           })
           .join('');
-          
+
         this.update({ headers, rows });
-      }
+      },
     },
     lifecycle: {
       onMount() {
@@ -672,8 +667,8 @@
       },
       onUpdate() {
         this.renderTable();
-      }
-    }
+      },
+    },
   };
 
   // Create component registry
@@ -715,9 +710,11 @@
         name: definition.name,
         template: definition.template,
         props: { ...definition.props, ...props },
-        state: definition.data ? 
-          (typeof definition.data === 'function' ? definition.data() : { ...definition.data }) : 
-          {}
+        state: definition.data
+          ? typeof definition.data === 'function'
+            ? definition.data()
+            : { ...definition.data }
+          : {},
       });
 
       // Copy methods
@@ -788,7 +785,7 @@
       if (!definition || !definition.styles) return;
 
       const styleId = `component-styles-${name}`;
-      
+
       // Check if styles already injected
       if (document.getElementById(styleId)) return;
 
@@ -815,7 +812,7 @@
     /**
      * Registry instance
      */
-    registry
+    registry,
   };
 
   // Auto-inject styles on load
@@ -832,14 +829,13 @@
 
   // For convenience, expose common components
   global.UIComponents = {
-    LoadingSpinner: (props) => Components.create('loading-spinner', props),
-    ErrorMessage: (props) => Components.create('error-message', props),
-    ProgressBar: (props) => Components.create('progress-bar', props),
-    StatCard: (props) => Components.create('stat-card', props),
-    FilterButton: (props) => Components.create('filter-button', props),
-    DataTable: (props) => Components.create('data-table', props)
+    LoadingSpinner: props => Components.create('loading-spinner', props),
+    ErrorMessage: props => Components.create('error-message', props),
+    ProgressBar: props => Components.create('progress-bar', props),
+    StatCard: props => Components.create('stat-card', props),
+    FilterButton: props => Components.create('filter-button', props),
+    DataTable: props => Components.create('data-table', props),
   };
 
   console.log('Team Stats UI Components Module initialized');
-
 })(window);

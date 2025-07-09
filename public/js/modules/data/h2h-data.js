@@ -102,7 +102,7 @@ export class H2HData {
         hasData: true,
         teamNames: h2hData.teamNames || {
           teamA: matchData?.homeTeam?.name || 'Home Team',
-          teamB: matchData?.awayTeam?.name || 'Away Team'
+          teamB: matchData?.awayTeam?.name || 'Away Team',
         },
       };
 
@@ -115,36 +115,35 @@ export class H2HData {
         // Get current team names from match data or API response
         const teamAName = h2hData.teamNames?.teamA || matchData?.homeTeam?.name || 'Team A';
         const teamBName = h2hData.teamNames?.teamB || matchData?.awayTeam?.name || 'Team B';
-        
+
         // Store team names in processed object
         processed.teamNames = {
           teamA: teamAName,
-          teamB: teamBName
+          teamB: teamBName,
         };
-        
 
-        processed.matches = h2hData.previous_matches_ids.map((match) => {
+        processed.matches = h2hData.previous_matches_ids.map(match => {
           // Convert Unix timestamp to date
           const date = new Date(match.date_unix * 1000).toISOString();
 
           // In previous_matches_ids:
           // team_a_id is the HOME team in that specific match
           // team_b_id is the AWAY team in that specific match
-          
+
           // Since team IDs change across seasons, we cannot reliably determine
           // which current team corresponds to which historical team ID.
           // Instead, we'll show the actual home/away teams from each match.
-          
+
           // For display purposes, try to match by partial name if possible
           let homeName = `Team ${match.team_a_id}`;
           let awayName = `Team ${match.team_b_id}`;
-          
+
           // Check if we have team ID to name mapping from the API
           if (h2hData.teamIdMapping) {
             homeName = h2hData.teamIdMapping[match.team_a_id] || homeName;
             awayName = h2hData.teamIdMapping[match.team_b_id] || awayName;
           }
-          
+
           // Use current match team names for known IDs
           // These are the IDs from the current match
           if (match.team_a_id === currentTeamAId) {
@@ -152,14 +151,12 @@ export class H2HData {
           } else if (match.team_a_id === currentTeamBId) {
             homeName = teamBName;
           }
-          
+
           if (match.team_b_id === currentTeamAId) {
             awayName = teamAName;
           } else if (match.team_b_id === currentTeamBId) {
             awayName = teamBName;
           }
-          
-          
 
           return {
             id: match.id,
@@ -206,7 +203,7 @@ export class H2HData {
       hasData: true,
       teamNames: h2hData?.teamNames || {
         teamA: matchData?.homeTeam?.name || 'Home Team',
-        teamB: matchData?.awayTeam?.name || 'Away Team'
+        teamB: matchData?.awayTeam?.name || 'Away Team',
       },
     };
 
@@ -269,16 +266,25 @@ export class H2HData {
       over35: { count: 0, percentage: 0, total: matches.length },
     };
 
-    matches.forEach((match) => {
+    matches.forEach(match => {
       // Check different possible field names for goals
       const homeGoals =
-        match.homeGoalCount || match.home_goal_count || match.homeScore || match.home_score || 
-        match.team_a_goals || match.homeGoals || 0;
+        match.homeGoalCount ||
+        match.home_goal_count ||
+        match.homeScore ||
+        match.home_score ||
+        match.team_a_goals ||
+        match.homeGoals ||
+        0;
       const awayGoals =
-        match.awayGoalCount || match.away_goal_count || match.awayScore || match.away_score || 
-        match.team_b_goals || match.awayGoals || 0;
+        match.awayGoalCount ||
+        match.away_goal_count ||
+        match.awayScore ||
+        match.away_score ||
+        match.team_b_goals ||
+        match.awayGoals ||
+        0;
       const totalGoals = homeGoals + awayGoals;
-
 
       if (totalGoals > 1.5) {
         stats.over15.count++;
@@ -397,7 +403,6 @@ export class H2HData {
       // Get matches from team data
       const homeMatches = homeTeamData.recentMatches || [];
       const awayMatches = awayTeamData.recentMatches || [];
-
 
       // Find H2H matches by matching IDs
       const h2hMatches = [];

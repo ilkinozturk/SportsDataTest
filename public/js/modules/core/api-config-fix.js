@@ -3,9 +3,9 @@
  * This script ensures API endpoints work correctly in test environment
  */
 
-(function() {
+(function () {
   'use strict';
-  
+
   // Wait for modules to load
   function fixAPIConfig() {
     // Fix APIClient if available
@@ -16,28 +16,33 @@
         console.log('[API Config Fix] Updated APIClient baseURL to:', config.baseURL);
       }
     }
-    
+
     // Fix TeamService if available
     if (window.TeamStatsTeamService) {
       if (window.TeamStatsTeamService.baseUrl === '/api/teams') {
         window.TeamStatsTeamService.baseUrl = 'http://localhost:3005/api/teams';
-        console.log('[API Config Fix] Updated TeamService baseUrl to:', window.TeamStatsTeamService.baseUrl);
+        console.log(
+          '[API Config Fix] Updated TeamService baseUrl to:',
+          window.TeamStatsTeamService.baseUrl
+        );
       }
     }
-    
+
     // Fix Constants if needed
     if (window.TeamStatsConstants) {
       const apiConstants = window.TeamStatsConstants.get('API');
       if (apiConstants && apiConstants.BASE_URL === '/api') {
         // Note: Constants are usually immutable, but we can override in APIClient
-        console.log('[API Config Fix] Constants BASE_URL is relative, but APIClient config has been updated');
+        console.log(
+          '[API Config Fix] Constants BASE_URL is relative, but APIClient config has been updated'
+        );
       }
     }
   }
-  
+
   // Apply fix when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       setTimeout(fixAPIConfig, 100);
     });
   } else {

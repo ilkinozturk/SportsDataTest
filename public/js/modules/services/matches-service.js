@@ -1,7 +1,7 @@
 /**
  * Matches Service Module
  * Independent service for fetching and managing match data
- * 
+ *
  * Features:
  * - Fetch matches independently from TeamDataService
  * - Cache management
@@ -9,7 +9,7 @@
  * - Error handling
  */
 
-(function(global) {
+(function (global) {
   'use strict';
 
   class MatchesService {
@@ -26,12 +26,12 @@
      */
     initialize() {
       console.log('[MatchesService] Initializing...');
-      
+
       // Subscribe to events if EventBus is available
       if (global.TeamStatsEventBus) {
-        global.TeamStatsEventBus.on('team:loaded', (data) => this.handleTeamLoaded(data));
+        global.TeamStatsEventBus.on('team:loaded', data => this.handleTeamLoaded(data));
       }
-      
+
       console.log('[MatchesService] ✓ Initialized successfully');
     }
 
@@ -41,7 +41,7 @@
     handleTeamLoaded(data) {
       const teamId = data.teamInfo?.id || data.teamId;
       const seasonId = data.seasonId || data.teamInfo?.seasonId;
-      
+
       if (teamId && seasonId) {
         this.fetchMatches(teamId, seasonId);
       }
@@ -52,7 +52,7 @@
      */
     async fetchMatches(teamId, seasonId, options = {}) {
       const cacheKey = `matches_${teamId}_${seasonId}`;
-      
+
       // Check cache first
       const cached = this.getCachedData(cacheKey);
       if (cached && !options.forceRefresh) {
@@ -63,16 +63,16 @@
 
       try {
         console.log(`[MatchesService] Fetching matches for team ${teamId}`);
-        
+
         // Build API URL
         const apiUrl = this.apiEndpoint.replace(':teamId', teamId);
-        
+
         // Fetch from API
         const response = await fetch(apiUrl, {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
 
         if (!response.ok) {
@@ -80,23 +80,23 @@
         }
 
         const data = await response.json();
-        
+
         if (data.success && data.data) {
           const matches = this.processMatches(data.data);
-          
+
           // Cache the results
           this.setCachedData(cacheKey, matches);
-          
+
           // Publish via EventBus
           this.publishMatches(matches);
-          
+
           return matches;
         } else {
           throw new Error('Invalid API response format');
         }
       } catch (error) {
         console.error('[MatchesService] Error fetching matches:', error);
-        
+
         // Try to get from TeamDataService as fallback
         return this.fetchFromTeamData(teamId);
       }
@@ -110,8 +110,8 @@
         const response = await fetch(`/api/teams/data?teamId=${teamId}`, {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
 
         if (!response.ok) {
@@ -119,14 +119,14 @@
         }
 
         const data = await response.json();
-        
+
         if (data.success && data.data) {
           const matches = data.data.allMatches || data.data.recentMatches || [];
           const processedMatches = this.processMatches(matches);
-          
+
           // Publish via EventBus
           this.publishMatches(processedMatches);
-          
+
           return processedMatches;
         }
       } catch (error) {
@@ -144,36 +144,38 @@
         return [];
       }
 
-      return matches.map(match => {
-        // Ensure consistent format
-        return {
-          id: match.id || match.match_id,
-          date: match.date || match.match_date,
-          time: match.time || match.match_time,
-          status: match.status || (match.is_finished ? 'complete' : 'scheduled'),
-          competition: match.competition || match.league_name || 'League',
-          homeTeam: {
-            id: match.home_id || match.homeTeam?.id,
-            name: match.home_name || match.homeTeam?.name || 'Home Team'
-          },
-          awayTeam: {
-            id: match.away_id || match.awayTeam?.id,
-            name: match.away_name || match.awayTeam?.name || 'Away Team'
-          },
-          homeScore: match.home_score !== undefined ? match.home_score : match.homeScore,
-          awayScore: match.away_score !== undefined ? match.away_score : match.awayScore,
-          venue: match.venue || (match.is_home ? 'Home' : 'Away'),
-          round: match.round || match.match_round,
-          // Additional data
-          halfTimeHome: match.ht_home_score || match.halfTimeHome,
-          halfTimeAway: match.ht_away_score || match.halfTimeAway,
-          referee: match.referee,
-          attendance: match.attendance
-        };
-      }).sort((a, b) => {
-        // Sort by date descending (most recent first)
-        return new Date(b.date) - new Date(a.date);
-      });
+      return matches
+        .map(match => {
+          // Ensure consistent format
+          return {
+            id: match.id || match.match_id,
+            date: match.date || match.match_date,
+            time: match.time || match.match_time,
+            status: match.status || (match.is_finished ? 'complete' : 'scheduled'),
+            competition: match.competition || match.league_name || 'League',
+            homeTeam: {
+              id: match.home_id || match.homeTeam?.id,
+              name: match.home_name || match.homeTeam?.name || 'Home Team',
+            },
+            awayTeam: {
+              id: match.away_id || match.awayTeam?.id,
+              name: match.away_name || match.awayTeam?.name || 'Away Team',
+            },
+            homeScore: match.home_score !== undefined ? match.home_score : match.homeScore,
+            awayScore: match.away_score !== undefined ? match.away_score : match.awayScore,
+            venue: match.venue || (match.is_home ? 'Home' : 'Away'),
+            round: match.round || match.match_round,
+            // Additional data
+            halfTimeHome: match.ht_home_score || match.halfTimeHome,
+            halfTimeAway: match.ht_away_score || match.halfTimeAway,
+            referee: match.referee,
+            attendance: match.attendance,
+          };
+        })
+        .sort((a, b) => {
+          // Sort by date descending (most recent first)
+          return new Date(b.date) - new Date(a.date);
+        });
     }
 
     /**
@@ -183,7 +185,7 @@
       if (global.TeamStatsEventBus) {
         global.TeamStatsEventBus.emit('matches:loaded', {
           matches: matches,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       }
     }
@@ -193,7 +195,7 @@
      */
     getCachedData(key) {
       const cached = this.cache.get(key);
-      if (cached && (Date.now() - cached.timestamp < this.cacheTimeout)) {
+      if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
         return cached.data;
       }
       return null;
@@ -205,7 +207,7 @@
     setCachedData(key, data) {
       this.cache.set(key, {
         data: data,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
 
@@ -222,7 +224,7 @@
      */
     getMatchesByFilter(matches, filter = 'all', teamId) {
       if (!matches || !Array.isArray(matches)) return [];
-      
+
       switch (filter) {
         case 'home':
           return matches.filter(m => m.homeTeam.id === teamId);
@@ -256,26 +258,29 @@
      */
     getMatchStatistics(matches, teamId) {
       const completed = matches.filter(m => m.status === 'complete');
-      
-      let wins = 0, draws = 0, losses = 0;
-      let goalsFor = 0, goalsAgainst = 0;
+
+      let wins = 0,
+        draws = 0,
+        losses = 0;
+      let goalsFor = 0,
+        goalsAgainst = 0;
       let cleanSheets = 0;
-      
+
       completed.forEach(match => {
         const isHome = match.homeTeam.id === teamId;
         const teamScore = isHome ? match.homeScore : match.awayScore;
         const opponentScore = isHome ? match.awayScore : match.homeScore;
-        
+
         goalsFor += teamScore;
         goalsAgainst += opponentScore;
-        
+
         if (teamScore > opponentScore) wins++;
         else if (teamScore === opponentScore) draws++;
         else losses++;
-        
+
         if (opponentScore === 0) cleanSheets++;
       });
-      
+
       return {
         played: completed.length,
         wins,
@@ -287,7 +292,7 @@
         cleanSheets,
         points: wins * 3 + draws,
         avgGoalsFor: completed.length > 0 ? (goalsFor / completed.length).toFixed(2) : 0,
-        avgGoalsAgainst: completed.length > 0 ? (goalsAgainst / completed.length).toFixed(2) : 0
+        avgGoalsAgainst: completed.length > 0 ? (goalsAgainst / completed.length).toFixed(2) : 0,
       };
     }
 
@@ -295,19 +300,19 @@
      * Get form string (last 5 matches)
      */
     getFormString(matches, teamId) {
-      const last5 = matches
-        .filter(m => m.status === 'complete')
-        .slice(0, 5);
-      
-      return last5.map(match => {
-        const isHome = match.homeTeam.id === teamId;
-        const teamScore = isHome ? match.homeScore : match.awayScore;
-        const opponentScore = isHome ? match.awayScore : match.homeScore;
-        
-        if (teamScore > opponentScore) return 'W';
-        else if (teamScore === opponentScore) return 'D';
-        else return 'L';
-      }).join('');
+      const last5 = matches.filter(m => m.status === 'complete').slice(0, 5);
+
+      return last5
+        .map(match => {
+          const isHome = match.homeTeam.id === teamId;
+          const teamScore = isHome ? match.homeScore : match.awayScore;
+          const opponentScore = isHome ? match.awayScore : match.homeScore;
+
+          if (teamScore > opponentScore) return 'W';
+          else if (teamScore === opponentScore) return 'D';
+          else return 'L';
+        })
+        .join('');
     }
   }
 
@@ -325,5 +330,4 @@
   global.TeamStatsMatchesService = matchesService;
 
   console.log('[MatchesService] Module loaded successfully');
-
 })(window);

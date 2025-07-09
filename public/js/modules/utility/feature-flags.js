@@ -3,7 +3,7 @@
  * Handles feature flag management for the team stats application
  */
 
-(function(global) {
+(function (global) {
   'use strict';
 
   const FeatureFlags = {
@@ -13,9 +13,9 @@
       enableStorage: true,
       storageKey: 'teamstats_feature_flags',
       enableRemote: false,
-      remoteUrl: null
+      remoteUrl: null,
     },
-    
+
     // Default feature flags
     defaultFlags: {
       'new-ui': false,
@@ -27,33 +27,33 @@
       'dark-mode': true,
       'performance-monitoring': true,
       'error-reporting': false,
-      'beta-features': false
+      'beta-features': false,
     },
-    
+
     init() {
       if (this.initialized) return;
-      
+
       this.loadDefaultFlags();
       this.loadStoredFlags();
-      
+
       // Load remote flags if enabled
       if (this.config.enableRemote && this.config.remoteUrl) {
         this.loadRemoteFlags();
       }
-      
+
       this.initialized = true;
       console.log('[FeatureFlags] Initialized');
     },
-    
+
     loadDefaultFlags() {
       Object.entries(this.defaultFlags).forEach(([key, value]) => {
         this.flags.set(key, value);
       });
     },
-    
+
     loadStoredFlags() {
       if (!this.config.enableStorage) return;
-      
+
       try {
         const stored = localStorage.getItem(this.config.storageKey);
         if (stored) {
@@ -66,70 +66,69 @@
         console.warn('[FeatureFlags] Failed to load stored flags:', error);
       }
     },
-    
+
     async loadRemoteFlags() {
       try {
         const response = await fetch(this.config.remoteUrl);
         const remoteFlags = await response.json();
-        
+
         Object.entries(remoteFlags).forEach(([key, value]) => {
           this.flags.set(key, value);
         });
-        
+
         // Save updated flags
         this.storeFlags();
-        
+
         console.log('[FeatureFlags] Remote flags loaded');
-        
+
         // Emit flags updated event
         if (global.TeamStatsEventBus) {
           global.TeamStatsEventBus.emit('feature-flags:updated', this.getAllFlags());
         }
-        
       } catch (error) {
         console.warn('[FeatureFlags] Failed to load remote flags:', error);
       }
     },
-    
+
     isEnabled(flagName) {
       return this.flags.get(flagName) === true;
     },
-    
+
     isDisabled(flagName) {
       return this.flags.get(flagName) === false;
     },
-    
+
     getFlag(flagName) {
       return this.flags.get(flagName);
     },
-    
+
     setFlag(flagName, value) {
       const oldValue = this.flags.get(flagName);
       this.flags.set(flagName, value);
-      
+
       // Store updated flags
       if (this.config.enableStorage) {
         this.storeFlags();
       }
-      
+
       console.log(`[FeatureFlags] Flag '${flagName}' set to: ${value}`);
-      
+
       // Emit flag changed event
       if (global.TeamStatsEventBus) {
         global.TeamStatsEventBus.emit('feature-flag:changed', {
           flag: flagName,
           oldValue: oldValue,
-          newValue: value
+          newValue: value,
         });
       }
     },
-    
+
     toggleFlag(flagName) {
       const currentValue = this.flags.get(flagName);
       this.setFlag(flagName, !currentValue);
       return !currentValue;
     },
-    
+
     getAllFlags() {
       const flags = {};
       this.flags.forEach((value, key) => {
@@ -137,7 +136,7 @@
       });
       return flags;
     },
-    
+
     storeFlags() {
       try {
         const flags = this.getAllFlags();
@@ -146,7 +145,7 @@
         console.warn('[FeatureFlags] Failed to store flags:', error);
       }
     },
-    
+
     // Conditional execution based on flags
     when(flagName, callback) {
       if (this.isEnabled(flagName)) {
@@ -154,66 +153,64 @@
       }
       return null;
     },
-    
+
     unless(flagName, callback) {
       if (this.isDisabled(flagName)) {
         return callback();
       }
       return null;
     },
-    
+
     // Advanced flag evaluation
     evaluateCondition(condition) {
       // Simple condition evaluation
       // Example: "new-ui && !beta-features"
       try {
-        const expression = condition.replace(/([a-z-]+)/g, (match) => {
+        const expression = condition.replace(/([a-z-]+)/g, match => {
           return this.isEnabled(match) ? 'true' : 'false';
         });
-        
+
         // Basic safety check - only allow boolean operations
         if (!/^[true|false|&|!|\s|\(|\)]+$/.test(expression)) {
           throw new Error('Invalid condition expression');
         }
-        
+
         // Replace && and || for eval safety
-        const safeExpression = expression
-          .replace(/&&/g, ' && ')
-          .replace(/\|\|/g, ' || ');
-        
+        const safeExpression = expression.replace(/&&/g, ' && ').replace(/\|\|/g, ' || ');
+
         return eval(safeExpression);
       } catch (error) {
         console.warn('[FeatureFlags] Failed to evaluate condition:', condition, error);
         return false;
       }
     },
-    
+
     // Feature rollout helpers
     enableForPercentage(flagName, percentage) {
       // Enable feature for a percentage of users based on hash of user identifier
       const userHash = this.getUserHash();
-      const threshold = (percentage / 100) * 0xFFFFFFFF;
-      
+      const threshold = (percentage / 100) * 0xffffffff;
+
       const enabled = userHash < threshold;
       this.setFlag(flagName, enabled);
-      
+
       return enabled;
     },
-    
+
     getUserHash() {
       // Simple hash based on user agent and localStorage
       const identifier = navigator.userAgent + (localStorage.getItem('user_id') || '');
       let hash = 0;
-      
+
       for (let i = 0; i < identifier.length; i++) {
         const char = identifier.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
+        hash = (hash << 5) - hash + char;
         hash = hash & hash; // Convert to 32-bit integer
       }
-      
+
       return Math.abs(hash);
     },
-    
+
     // Debugging and admin tools
     enableAllFlags() {
       this.flags.forEach((value, key) => {
@@ -222,7 +219,7 @@
       this.storeFlags();
       console.log('[FeatureFlags] All flags enabled');
     },
-    
+
     disableAllFlags() {
       this.flags.forEach((value, key) => {
         this.flags.set(key, false);
@@ -230,28 +227,28 @@
       this.storeFlags();
       console.log('[FeatureFlags] All flags disabled');
     },
-    
+
     resetToDefaults() {
       this.flags.clear();
       this.loadDefaultFlags();
       this.storeFlags();
       console.log('[FeatureFlags] Reset to defaults');
     },
-    
+
     // Configuration management
     setConfig(newConfig) {
       this.config = { ...this.config, ...newConfig };
-      
+
       if (newConfig.enableRemote && newConfig.remoteUrl) {
         this.loadRemoteFlags();
       }
     },
-    
+
     // Export/Import flags
     exportFlags() {
       return JSON.stringify(this.getAllFlags(), null, 2);
     },
-    
+
     importFlags(flagsJson) {
       try {
         const flags = JSON.parse(flagsJson);
@@ -262,13 +259,12 @@
       } catch (error) {
         console.error('[FeatureFlags] Failed to import flags:', error);
       }
-    }
+    },
   };
 
   // Global registration
   global.TeamStatsFeatureFlags = FeatureFlags;
-  
+
   // Auto-initialize
   FeatureFlags.init();
-
 })(window);

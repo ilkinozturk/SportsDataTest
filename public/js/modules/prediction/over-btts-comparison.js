@@ -58,23 +58,6 @@ class OverBTTSComparison {
     // Extract venue-specific stats
     const venuePrefix = venue === 'home' ? 'home' : 'away';
 
-    // Debug logging
-    console.log(`=== ${team.name} (${venue}) BTTS Stats Debug ===`);
-    console.log('BTTS base fields:', {
-      [`seasonBTTSPercentage_${venue}`]: stats[`seasonBTTSPercentage_${venue}`],
-      [`${venuePrefix}BTTSPercentage`]: stats[`${venuePrefix}BTTSPercentage`],
-      btts: stats.btts,
-    });
-    console.log('BTTS combination fields:', {
-      [`BTTS_and_win_percentage_${venue}`]: stats[`BTTS_and_win_percentage_${venue}`],
-      [`BTTS_and_draw_percentage_${venue}`]: stats[`BTTS_and_draw_percentage_${venue}`],
-      [`BTTS_and_over_2_5_percentage_${venue}`]: stats[`BTTS_and_over_2_5_percentage_${venue}`],
-      [`over25_and_btts_percentage_${venue}`]: stats[`over25_and_btts_percentage_${venue}`],
-      [`BTTS_no_and_over_2_5_percentage_${venue}`]:
-        stats[`BTTS_no_and_over_2_5_percentage_${venue}`],
-      [`over25_and_no_btts_percentage_${venue}`]: stats[`over25_and_no_btts_percentage_${venue}`],
-    });
-
     return {
       // Over statistics
       over05: parseFloat(stats[`${venuePrefix}Over05`] || stats.over05 || 0),

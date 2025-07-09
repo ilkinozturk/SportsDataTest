@@ -112,7 +112,6 @@ export class GoalsConcededComparison {
       };
     }
 
-    console.log(`Extracted ${venue} conceded stats:`, result);
     return result;
   }
 }

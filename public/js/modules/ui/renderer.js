@@ -4,7 +4,7 @@
  * @module TeamStatsRenderer
  */
 
-(function(global) {
+(function (global) {
   'use strict';
 
   // Check dependencies
@@ -20,7 +20,7 @@
       this.type = type;
       this.props = props || {};
       this.children = children || [];
-      this.key = props && props.key || null;
+      this.key = (props && props.key) || null;
     }
   }
 
@@ -65,8 +65,7 @@
      * Check if nodes are different types
      */
     isDifferentNode(node1, node2) {
-      return node1.type !== node2.type || 
-             (typeof node1 === 'string' && node1 !== node2);
+      return node1.type !== node2.type || (typeof node1 === 'string' && node1 !== node2);
     }
 
     /**
@@ -74,10 +73,7 @@
      */
     diffProps(oldProps, newProps) {
       const patches = [];
-      const allProps = new Set([
-        ...Object.keys(oldProps || {}),
-        ...Object.keys(newProps || {})
-      ]);
+      const allProps = new Set([...Object.keys(oldProps || {}), ...Object.keys(newProps || {})]);
 
       allProps.forEach(prop => {
         const oldVal = oldProps && oldProps[prop];
@@ -118,40 +114,42 @@
       this.cache = new Map();
       this.helpers = new Map();
       this.partials = new Map();
-      
+
       // Register default helpers
       this.registerHelper('if', (condition, options) => {
-        return condition ? options.fn() : (options.inverse ? options.inverse() : '');
+        return condition ? options.fn() : options.inverse ? options.inverse() : '';
       });
-      
+
       this.registerHelper('unless', (condition, options) => {
-        return !condition ? options.fn() : (options.inverse ? options.inverse() : '');
+        return !condition ? options.fn() : options.inverse ? options.inverse() : '';
       });
-      
+
       this.registerHelper('each', (array, options) => {
         if (!Array.isArray(array)) return '';
-        return array.map((item, index) => {
-          return options.fn(item);
-        }).join('');
+        return array
+          .map((item, index) => {
+            return options.fn(item);
+          })
+          .join('');
       });
-      
+
       this.registerHelper('eq', (a, b) => a === b);
       this.registerHelper('ne', (a, b) => a !== b);
       this.registerHelper('gt', (a, b) => a > b);
       this.registerHelper('gte', (a, b) => a >= b);
       this.registerHelper('lt', (a, b) => a < b);
       this.registerHelper('lte', (a, b) => a <= b);
-      
+
       this.registerHelper('formatNumber', (num, decimals = 0) => {
         return Number(num).toFixed(decimals);
       });
-      
-      this.registerHelper('formatPercent', (num) => {
+
+      this.registerHelper('formatPercent', num => {
         const value = Number(num);
         return `${Math.round(value)}%`;
       });
-      
-      this.registerHelper('formatDate', (date) => {
+
+      this.registerHelper('formatDate', date => {
         return new Date(date).toLocaleDateString();
       });
     }
@@ -176,7 +174,7 @@
      * @private
      */
     _compileTemplate(template) {
-      return (data) => {
+      return data => {
         let result = template;
 
         // Replace partials {{> partialName}}
@@ -185,31 +183,33 @@
         });
 
         // Replace helpers {{#helper arg1 arg2}}...{{/helper}}
-        result = result.replace(/\{\{#(\w+)\s*([^}]*)\}\}([\s\S]*?)\{\{\/\1\}\}/g, 
+        result = result.replace(
+          /\{\{#(\w+)\s*([^}]*)\}\}([\s\S]*?)\{\{\/\1\}\}/g,
           (match, helper, args, content) => {
             const helperFn = this.helpers.get(helper);
             if (!helperFn) return match;
 
             const parsedArgs = this._parseArgs(args, data);
             const options = {
-              fn: (context) => this._compileTemplate(content)(context || data),
+              fn: context => this._compileTemplate(content)(context || data),
               inverse: () => '',
               hash: {},
-              data: data
+              data: data,
             };
 
             return helperFn(...parsedArgs, options);
-          });
+          }
+        );
 
         // Replace variables {{variable}} or {{helper arg1 arg2}}
         result = result.replace(/\{\{([^}]+)\}\}/g, (match, expression) => {
           const trimmed = expression.trim();
-          
+
           // Skip if it's part of a block helper
           if (trimmed.startsWith('#') || trimmed.startsWith('/')) {
             return match;
           }
-          
+
           // Check if it's a helper call
           const parts = trimmed.split(/\s+/);
           if (this.helpers.has(parts[0])) {
@@ -232,30 +232,32 @@
      */
     _parseArgs(argsStr, data) {
       if (!argsStr) return [];
-      
+
       // Handle helper calls in parentheses like (eq value 5)
       if (argsStr.startsWith('(') && argsStr.endsWith(')')) {
         const innerExpr = argsStr.slice(1, -1);
         const parts = innerExpr.split(/\s+/);
         const helperName = parts[0];
-        
+
         if (this.helpers.has(helperName)) {
           const helper = this.helpers.get(helperName);
           const helperArgs = this._parseArgs(parts.slice(1).join(' '), data);
           return [helper(...helperArgs)];
         }
       }
-      
+
       const args = [];
       const regex = /(?:[^\s"']+|"[^"]*"|'[^']*')+/g;
       let match;
 
       while ((match = regex.exec(argsStr)) !== null) {
         let arg = match[0];
-        
+
         // Remove quotes if present
-        if ((arg.startsWith('"') && arg.endsWith('"')) || 
-            (arg.startsWith("'") && arg.endsWith("'"))) {
+        if (
+          (arg.startsWith('"') && arg.endsWith('"')) ||
+          (arg.startsWith("'") && arg.endsWith("'"))
+        ) {
           arg = arg.slice(1, -1);
         } else if (!isNaN(arg)) {
           arg = Number(arg);
@@ -267,7 +269,7 @@
           // Variable reference
           arg = this._getValue(arg, data);
         }
-        
+
         args.push(arg);
       }
 
@@ -418,7 +420,7 @@
       const flatChildren = children
         .flat(Infinity)
         .filter(child => child != null && child !== false);
-      
+
       return new VNode(type, props, flatChildren);
     }
 
@@ -489,22 +491,19 @@
           case 'CREATE':
             parent.appendChild(this.createElement(patch.node));
             break;
-            
+
           case 'REMOVE':
             if (parent.childNodes[index]) {
               parent.removeChild(parent.childNodes[index]);
             }
             break;
-            
+
           case 'REPLACE':
             if (parent.childNodes[index]) {
-              parent.replaceChild(
-                this.createElement(patch.node),
-                parent.childNodes[index]
-              );
+              parent.replaceChild(this.createElement(patch.node), parent.childNodes[index]);
             }
             break;
-            
+
           case 'UPDATE_PROPS':
             const element = parent.childNodes[index];
             if (element && element.nodeType === 1) {
@@ -513,7 +512,7 @@
               });
             }
             break;
-            
+
           case 'UPDATE_CHILDREN':
             const parentElement = parent.childNodes[index];
             if (parentElement && parentElement.nodeType === 1) {
@@ -532,9 +531,8 @@
      * @param {HTMLElement|string} container - Container element
      */
     render(component, container) {
-      const containerEl = typeof container === 'string' 
-        ? document.querySelector(container) 
-        : container;
+      const containerEl =
+        typeof container === 'string' ? document.querySelector(container) : container;
 
       if (!containerEl) {
         throw new Error('Container not found');
@@ -553,7 +551,7 @@
         }
 
         const oldVNode = this.vdom.get(containerEl);
-        
+
         if (!oldVNode) {
           // Initial render
           containerEl.innerHTML = '';
@@ -576,9 +574,8 @@
      */
     renderTemplate(template, data, container) {
       const html = this.templateEngine.render(template, data);
-      const containerEl = typeof container === 'string' 
-        ? document.querySelector(container) 
-        : container;
+      const containerEl =
+        typeof container === 'string' ? document.querySelector(container) : container;
 
       if (!containerEl) {
         throw new Error('Container not found');
@@ -586,12 +583,12 @@
 
       this.renderQueue.add(() => {
         containerEl.innerHTML = html;
-        
+
         if (global.TeamStatsEventBus) {
           global.TeamStatsEventBus.emit('ui:rendered', {
             container: containerEl,
             template,
-            data
+            data,
           });
         }
       });
@@ -640,10 +637,10 @@
     createRenderer(renderFn, container) {
       let mounted = false;
 
-      const update = (data) => {
+      const update = data => {
         const vnode = renderFn(data);
         this.render(vnode, container);
-        
+
         if (!mounted) {
           mounted = true;
           if (global.TeamStatsEventBus) {
@@ -662,9 +659,8 @@
         // Return update function with cleanup
         update.destroy = () => {
           unsubscribe();
-          const containerEl = typeof container === 'string' 
-            ? document.querySelector(container) 
-            : container;
+          const containerEl =
+            typeof container === 'string' ? document.querySelector(container) : container;
           if (containerEl) {
             containerEl.innerHTML = '';
             this.vdom.delete(containerEl);
@@ -693,7 +689,7 @@
     return classes.filter(Boolean).join(' ');
   });
 
-  renderer.registerHelper('style', (styles) => {
+  renderer.registerHelper('style', styles => {
     if (typeof styles === 'object') {
       return Object.entries(styles)
         .map(([key, value]) => `${key}: ${value}`)
@@ -702,7 +698,7 @@
     return styles;
   });
 
-  renderer.registerHelper('json', (data) => {
+  renderer.registerHelper('json', data => {
     return JSON.stringify(data, null, 2);
   });
 
@@ -719,5 +715,4 @@
   global.renderTemplate = renderer.renderTemplate.bind(renderer);
 
   console.log('Team Stats UI Renderer Module initialized');
-
 })(window);

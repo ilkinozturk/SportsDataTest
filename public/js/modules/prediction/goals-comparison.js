@@ -61,7 +61,7 @@ export class GoalsComparison {
     // Return structure that matches API response
     return {
       statistics: team.stats || {},
-      additional_info: team.additional_info || {}
+      additional_info: team.additional_info || {},
     };
   }
 
@@ -74,7 +74,10 @@ export class GoalsComparison {
   extractGoalsStatsFromRaw(rawTeamData, venue) {
     // Use TeamStatisticsExtractor for data extraction
     const goalsStats = TeamStatisticsExtractor.extractGoalsScoredStats(rawTeamData, venue);
-    const overPercentages = TeamStatisticsExtractor.extractScoredOverPercentages(rawTeamData, venue);
+    const overPercentages = TeamStatisticsExtractor.extractScoredOverPercentages(
+      rawTeamData,
+      venue
+    );
     const csFts = TeamStatisticsExtractor.extractCSandFTSPercentages(rawTeamData, venue);
 
     return {
@@ -89,7 +92,6 @@ export class GoalsComparison {
       failedToScore: csFts.failedToScorePercentage,
     };
   }
-
 }
 
 export default GoalsComparison;

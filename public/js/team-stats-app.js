@@ -3,7 +3,7 @@
  * Main entry point for the modular team stats application
  */
 
-(function(global) {
+(function (global) {
   'use strict';
 
   class TeamStatsApp {
@@ -51,7 +51,6 @@
 
         // Emit initialization event
         TeamStatsEventBus.emit('app:initialized', { teamId: this.teamId });
-
       } catch (error) {
         console.error('Failed to initialize Team Stats App:', error);
         this.showError('Failed to load team statistics. Please try again.');
@@ -80,13 +79,13 @@
           overUnder: 'overall',
           btts: 'overall',
           matchCards: 'overall',
-          teamCards: 'overall'
+          teamCards: 'overall',
         },
         activeTab: 'all',
         timeFrame: 'all',
         venue: 'overall',
         loading: true,
-        error: null
+        error: null,
       });
 
       // Subscribe to state changes
@@ -98,19 +97,19 @@
      */
     subscribeToStateChanges() {
       // Subscribe to filter changes
-      const filterSub = TeamStatsStateManager.subscribe('filters', (filters) => {
+      const filterSub = TeamStatsStateManager.subscribe('filters', filters => {
         TeamStatsEventBus.emit('filters:changed', filters);
       });
       this.subscriptions.push(filterSub);
 
       // Subscribe to tab changes
-      const tabSub = TeamStatsStateManager.subscribe('activeTab', (tab) => {
+      const tabSub = TeamStatsStateManager.subscribe('activeTab', tab => {
         TeamStatsEventBus.emit('tab:changed', tab);
       });
       this.subscriptions.push(tabSub);
 
       // Subscribe to loading state
-      const loadingSub = TeamStatsStateManager.subscribe('loading', (loading) => {
+      const loadingSub = TeamStatsStateManager.subscribe('loading', loading => {
         this.updateLoadingState(loading);
       });
       this.subscriptions.push(loadingSub);
@@ -121,7 +120,7 @@
      */
     setupEventListeners() {
       // Tab navigation
-      TeamStatsEventBus.on('tab:change', (tab) => {
+      TeamStatsEventBus.on('tab:change', tab => {
         this.changeTab(tab);
       });
 
@@ -136,7 +135,7 @@
       });
 
       // Error handling
-      TeamStatsEventBus.on('error', (error) => {
+      TeamStatsEventBus.on('error', error => {
         this.handleError(error);
       });
 
@@ -220,17 +219,17 @@
         `,
         props: {
           teamInfo: null,
-          statistics: null
+          statistics: null,
         },
         mounted() {
           // Subscribe to team info updates
-          this.unsubscribe = TeamStatsStateManager.subscribe('teamInfo', (teamInfo) => {
+          this.unsubscribe = TeamStatsStateManager.subscribe('teamInfo', teamInfo => {
             this.update({ teamInfo });
           });
         },
         destroyed() {
           if (this.unsubscribe) this.unsubscribe();
-        }
+        },
       });
 
       // Register filter component
@@ -249,18 +248,23 @@
         `,
         props: {
           filter: 'overall',
-          type: 'current'
+          type: 'current',
         },
         mounted() {
           // Add click handlers
-          TeamStatsUIEvents.delegate(this.element, 'click', '.filter-btn', function(e) {
-            const filter = this.dataset.filter;
-            TeamStatsEventBus.emit('filter:change', { 
-              type: this.props.type || 'current', 
-              value: filter 
-            });
-          }.bind(this));
-        }
+          TeamStatsUIEvents.delegate(
+            this.element,
+            'click',
+            '.filter-btn',
+            function (e) {
+              const filter = this.dataset.filter;
+              TeamStatsEventBus.emit('filter:change', {
+                type: this.props.type || 'current',
+                value: filter,
+              });
+            }.bind(this)
+          );
+        },
       });
     }
 
@@ -278,7 +282,7 @@
         TeamStatsStateManager.setState({
           teamInfo: data.teamInfo,
           globalStatistics: data.statistics,
-          loading: false
+          loading: false,
         });
 
         // Process and update UI
@@ -286,12 +290,11 @@
 
         // Emit data loaded event
         TeamStatsEventBus.emit('data:loaded', data);
-
       } catch (error) {
         console.error('Failed to load team data:', error);
-        TeamStatsStateManager.setState({ 
-          loading: false, 
-          error: error.message 
+        TeamStatsStateManager.setState({
+          loading: false,
+          error: error.message,
         });
         throw error;
       }
@@ -306,7 +309,7 @@
         ...statistics,
         winRate: Math.round((statistics.wins / statistics.matches) * 100),
         goalsPerMatch: (statistics.goalsFor / statistics.matches).toFixed(2),
-        cleanSheetRate: Math.round((statistics.cleanSheets / statistics.matches) * 100)
+        cleanSheetRate: Math.round((statistics.cleanSheets / statistics.matches) * 100),
       };
 
       // Emit processed statistics
@@ -318,7 +321,7 @@
      */
     changeTab(tab) {
       TeamStatsStateManager.setState({ activeTab: tab });
-      
+
       // Update URL without reload
       const url = new URL(window.location);
       url.searchParams.set('tab', tab);
@@ -361,7 +364,7 @@
       const errorComponent = TeamStatsComponents.create('error-message', {
         type: 'error',
         title: 'Error',
-        message: message
+        message: message,
       });
       errorComponent.mount('#errorContainer');
     }
@@ -400,7 +403,7 @@
 
   // Create and expose singleton instance
   const app = new TeamStatsApp();
-  
+
   // Auto-initialize when DOM is ready (unless prevented for testing)
   if (!window.preventTeamStatsAutoInit) {
     if (document.readyState === 'loading') {
@@ -414,5 +417,4 @@
   global.TeamStatsApp = app;
 
   console.log('Team Stats Application Controller loaded');
-
 })(window);
