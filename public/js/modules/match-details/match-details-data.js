@@ -397,6 +397,61 @@ export class MatchDetailsData {
           !!(homeData.statistics && homeData.statistics.additional_info)
         );
 
+        // Debug Over/Under and BTTS fields
+        console.log('=== Over/Under & BTTS Fields Debug ===');
+        const stats = homeData.statistics || {};
+        const additionalInfo = homeData.additional_info || {};
+
+        // Check for over/under fields
+        console.log('Over/Under fields in stats:', {
+          seasonOver05Percentage_overall: stats.seasonOver05Percentage_overall,
+          seasonOver15Percentage_overall: stats.seasonOver15Percentage_overall,
+          seasonOver25Percentage_overall: stats.seasonOver25Percentage_overall,
+          seasonOver35Percentage_overall: stats.seasonOver35Percentage_overall,
+          seasonOver45Percentage_overall: stats.seasonOver45Percentage_overall,
+          over05GoalsPercentage: stats.over05GoalsPercentage,
+          over15GoalsPercentage: stats.over15GoalsPercentage,
+          over25GoalsPercentage: stats.over25GoalsPercentage,
+        });
+
+        console.log('Over/Under fields in additional_info:', {
+          seasonOver05Percentage_overall: additionalInfo.seasonOver05Percentage_overall,
+          seasonOver15Percentage_overall: additionalInfo.seasonOver15Percentage_overall,
+          seasonOver25Percentage_overall: additionalInfo.seasonOver25Percentage_overall,
+          over_05_percentage: additionalInfo.over_05_percentage,
+          over_15_percentage: additionalInfo.over_15_percentage,
+          over_25_percentage: additionalInfo.over_25_percentage,
+        });
+
+        // Check for BTTS fields
+        console.log('BTTS fields in stats:', {
+          bothTeamsScoredPercentage: stats.bothTeamsScoredPercentage,
+          seasonBTTSPercentage_overall: stats.seasonBTTSPercentage_overall,
+          btts: stats.btts,
+          bttsPercentage: stats.bttsPercentage,
+          bttsAndWinPercentage: stats.bttsAndWinPercentage,
+          bttsAndDrawPercentage: stats.bttsAndDrawPercentage,
+          bttsAndOver25Percentage: stats.bttsAndOver25Percentage,
+          bttsNoAndOver25Percentage: stats.bttsNoAndOver25Percentage,
+        });
+
+        console.log('BTTS fields in additional_info:', {
+          btts_percentage: additionalInfo.btts_percentage,
+          btts_and_win_percentage: additionalInfo.btts_and_win_percentage,
+          btts_and_draw_percentage: additionalInfo.btts_and_draw_percentage,
+          btts_and_over25_percentage: additionalInfo.btts_and_over25_percentage,
+          btts_no_and_over25_percentage: additionalInfo.btts_no_and_over25_percentage,
+          bttsAndOver25: additionalInfo.bttsAndOver25,
+          bttsNoAndOver25: additionalInfo.bttsNoAndOver25,
+        });
+
+        // Check for win percentage that might be confused with BTTS & Win
+        console.log('Win percentage fields:', {
+          winPercentage: stats.winPercentage,
+          seasonWinPercentage_overall: stats.seasonWinPercentage_overall,
+          winPercentage_overall: stats.winPercentage_overall,
+        });
+
         // Calculate form from matches if not available
         let overallForm =
           homeData.statistics?.recentForm ||
@@ -746,6 +801,70 @@ export class MatchDetailsData {
         stats.bttsPercentage_away ||
         0,
 
+      // BTTS variations
+      btts:
+        stats.bothTeamsScoredPercentage ||
+        stats.seasonBTTSPercentage_overall ||
+        stats.btts ||
+        stats.bttsPercentage ||
+        0,
+
+      // BTTS & Result combinations
+      bttsWin:
+        stats.bttsAndWinPercentage ||
+        additionalInfo.btts_and_win_percentage ||
+        additionalInfo.bttsWinPercentage ||
+        stats.bttsWin ||
+        0,
+      bttsDraw:
+        stats.bttsAndDrawPercentage ||
+        additionalInfo.btts_and_draw_percentage ||
+        additionalInfo.bttsDrawPercentage ||
+        stats.bttsDraw ||
+        0,
+      bttsLose:
+        stats.bttsAndLosePercentage ||
+        additionalInfo.btts_and_lose_percentage ||
+        additionalInfo.bttsLosePercentage ||
+        stats.bttsLose ||
+        0,
+
+      homeBTTSWin:
+        stats.bttsAndWinPercentage_home ||
+        additionalInfo.btts_and_win_percentage_home ||
+        stats.homeBttsWin ||
+        0,
+      awayBTTSWin:
+        stats.bttsAndWinPercentage_away ||
+        additionalInfo.btts_and_win_percentage_away ||
+        stats.awayBttsWin ||
+        0,
+
+      // BTTS & Over combinations
+      bttsAndOver25:
+        stats.bttsAndOver25Percentage ||
+        additionalInfo.btts_and_over25_percentage ||
+        additionalInfo.bttsAndOver25 ||
+        stats.bttsOver25 ||
+        0,
+      bttsNoAndOver25:
+        stats.bttsNoAndOver25Percentage ||
+        additionalInfo.btts_no_and_over25_percentage ||
+        additionalInfo.bttsNoAndOver25 ||
+        stats.bttsNoOver25 ||
+        0,
+
+      homeBTTSAndOver25:
+        stats.bttsAndOver25Percentage_home ||
+        additionalInfo.btts_and_over25_percentage_home ||
+        additionalInfo.homeBttsAndOver25 ||
+        0,
+      awayBTTSAndOver25:
+        stats.bttsAndOver25Percentage_away ||
+        additionalInfo.btts_and_over25_percentage_away ||
+        additionalInfo.awayBttsAndOver25 ||
+        0,
+
       // Clean sheet percentages - API field names (prioritize non-zero values)
       cleanSheetPercentage:
         stats.cleanSheetPercentage ||
@@ -1003,6 +1122,101 @@ export class MatchDetailsData {
       awayOver35GoalsPercentage:
         stats.seasonOver35Percentage_away || stats.over35GoalsPercentage_away || 0,
 
+      // Add simplified field names for over-btts-comparison module
+      over05:
+        stats.seasonOver05Percentage_overall ||
+        additionalInfo.seasonOver05Percentage_overall ||
+        stats.over05GoalsPercentage ||
+        additionalInfo.over_05_percentage ||
+        0,
+      over15:
+        stats.seasonOver15Percentage_overall ||
+        additionalInfo.seasonOver15Percentage_overall ||
+        stats.over15GoalsPercentage ||
+        additionalInfo.over_15_percentage ||
+        0,
+      over25:
+        stats.seasonOver25Percentage_overall ||
+        additionalInfo.seasonOver25Percentage_overall ||
+        stats.over25GoalsPercentage ||
+        additionalInfo.over_25_percentage ||
+        0,
+      over35:
+        stats.seasonOver35Percentage_overall ||
+        additionalInfo.seasonOver35Percentage_overall ||
+        stats.over35GoalsPercentage ||
+        additionalInfo.over_35_percentage ||
+        0,
+      over45:
+        stats.seasonOver45Percentage_overall ||
+        additionalInfo.seasonOver45Percentage_overall ||
+        stats.over45GoalsPercentage ||
+        additionalInfo.over_45_percentage ||
+        0,
+
+      // Venue-specific over/under
+      homeOver05:
+        stats.seasonOver05Percentage_home ||
+        additionalInfo.seasonOver05Percentage_home ||
+        stats.over05GoalsPercentage_home ||
+        additionalInfo.over_05_percentage_home ||
+        0,
+      homeOver15:
+        stats.seasonOver15Percentage_home ||
+        additionalInfo.seasonOver15Percentage_home ||
+        stats.over15GoalsPercentage_home ||
+        additionalInfo.over_15_percentage_home ||
+        0,
+      homeOver25:
+        stats.seasonOver25Percentage_home ||
+        additionalInfo.seasonOver25Percentage_home ||
+        stats.over25GoalsPercentage_home ||
+        additionalInfo.over_25_percentage_home ||
+        0,
+      homeOver35:
+        stats.seasonOver35Percentage_home ||
+        additionalInfo.seasonOver35Percentage_home ||
+        stats.over35GoalsPercentage_home ||
+        additionalInfo.over_35_percentage_home ||
+        0,
+      homeOver45:
+        stats.seasonOver45Percentage_home ||
+        additionalInfo.seasonOver45Percentage_home ||
+        stats.over45GoalsPercentage_home ||
+        additionalInfo.over_45_percentage_home ||
+        0,
+
+      awayOver05:
+        stats.seasonOver05Percentage_away ||
+        additionalInfo.seasonOver05Percentage_away ||
+        stats.over05GoalsPercentage_away ||
+        additionalInfo.over_05_percentage_away ||
+        0,
+      awayOver15:
+        stats.seasonOver15Percentage_away ||
+        additionalInfo.seasonOver15Percentage_away ||
+        stats.over15GoalsPercentage_away ||
+        additionalInfo.over_15_percentage_away ||
+        0,
+      awayOver25:
+        stats.seasonOver25Percentage_away ||
+        additionalInfo.seasonOver25Percentage_away ||
+        stats.over25GoalsPercentage_away ||
+        additionalInfo.over_25_percentage_away ||
+        0,
+      awayOver35:
+        stats.seasonOver35Percentage_away ||
+        additionalInfo.seasonOver35Percentage_away ||
+        stats.over35GoalsPercentage_away ||
+        additionalInfo.over_35_percentage_away ||
+        0,
+      awayOver45:
+        stats.seasonOver45Percentage_away ||
+        additionalInfo.seasonOver45Percentage_away ||
+        stats.over45GoalsPercentage_away ||
+        additionalInfo.over_45_percentage_away ||
+        0,
+
       // Scored Over Percentages (Team Scored Goals)
       scoredOver05Percentage:
         stats.seasonScoredOver05Percentage_overall ||
@@ -1145,6 +1359,41 @@ export class MatchDetailsData {
         additionalInfo.over35_conceded_percentage_away ||
         stats.concededOver35Percentage_away ||
         0,
+
+      // BTTS statistics
+      seasonBTTSPercentage_overall:
+        stats.seasonBTTSPercentage_overall || stats.bothTeamsScoredPercentage || 0,
+      seasonBTTSPercentage_home:
+        stats.seasonBTTSPercentage_home || stats.homeBothTeamsScoredPercentage || 0,
+      seasonBTTSPercentage_away:
+        stats.seasonBTTSPercentage_away || stats.awayBothTeamsScoredPercentage || 0,
+
+      // BTTS & Win
+      BTTS_and_win_percentage_overall:
+        stats.bttsAndWinPercentage || additionalInfo.BTTS_and_win_percentage_overall || 0,
+      BTTS_and_win_percentage_home:
+        stats.homeBttsAndWinPercentage || additionalInfo.BTTS_and_win_percentage_home || 0,
+      BTTS_and_win_percentage_away:
+        stats.awayBttsAndWinPercentage || additionalInfo.BTTS_and_win_percentage_away || 0,
+
+      // BTTS & Draw
+      BTTS_and_draw_percentage_overall:
+        stats.bttsAndDrawPercentage || additionalInfo.BTTS_and_draw_percentage_overall || 0,
+      BTTS_and_draw_percentage_home:
+        stats.homeBttsAndDrawPercentage || additionalInfo.BTTS_and_draw_percentage_home || 0,
+      BTTS_and_draw_percentage_away:
+        stats.awayBttsAndDrawPercentage || additionalInfo.BTTS_and_draw_percentage_away || 0,
+
+      // BTTS & Over 2.5
+      BTTS_and_over_2_5_percentage_overall: additionalInfo.over25_and_btts_percentage_overall || 0,
+      BTTS_and_over_2_5_percentage_home: additionalInfo.over25_and_btts_percentage_home || 0,
+      BTTS_and_over_2_5_percentage_away: additionalInfo.over25_and_btts_percentage_away || 0,
+
+      // BTTS No & Over 2.5
+      BTTS_no_and_over_2_5_percentage_overall:
+        additionalInfo.over25_and_no_btts_percentage_overall || 0,
+      BTTS_no_and_over_2_5_percentage_home: additionalInfo.over25_and_no_btts_percentage_home || 0,
+      BTTS_no_and_over_2_5_percentage_away: additionalInfo.over25_and_no_btts_percentage_away || 0,
     };
 
     return extractedStats;

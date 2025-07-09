@@ -2037,6 +2037,24 @@ export class MatchDetailsDisplay {
   }
 
   /**
+   * Get class for BTTS values
+   * @param {number} value - Percentage value
+   * @returns {string} CSS class
+   */
+  getBTTSClass(value) {
+    if (value >= 65) {
+      return 'very-high';
+    }
+    if (value >= 50) {
+      return 'high';
+    }
+    if (value >= 40) {
+      return 'medium';
+    }
+    return 'low';
+  }
+
+  /**
    * Update Over 2.5 & BTTS comparison display
    * @param {Object} comparison - Over 2.5 & BTTS comparison data
    */
@@ -2046,7 +2064,7 @@ export class MatchDetailsDisplay {
       return;
     }
 
-    if (!comparison || !comparison.homeTeam || !comparison.awayTeam || !comparison.predictions) {
+    if (!comparison || !comparison.homeTeam || !comparison.awayTeam || !comparison.averages) {
       container.innerHTML = `
         <div class="no-data-message">
           <i class="fas fa-info-circle"></i>
@@ -2056,201 +2074,312 @@ export class MatchDetailsDisplay {
       return;
     }
 
-    const { homeTeam, awayTeam, predictions } = comparison;
+    const { homeTeam, awayTeam, averages } = comparison;
 
     container.innerHTML = `
-      <!-- Over 2.5 & BTTS Comparison Grid -->
-      <div class="over-btts-grid">
-        <!-- Over 2.5 Goals Section -->
-        <div class="over-section">
-          <h4 class="section-title">
-            <i class="fas fa-chart-line"></i>
-            Üst 2.5 Gol Analizi
-          </h4>
-          
-          <!-- Combined Prediction -->
-          <div class="combined-prediction">
-            <div class="prediction-circle-wrapper large">
-              <svg class="prediction-circle" viewBox="0 0 120 120">
-                <circle class="circle-bg" cx="60" cy="60" r="54"></circle>
-                <circle class="circle-fill over-circle" cx="60" cy="60" r="54" 
-                  style="stroke-dashoffset: ${339.292 - (339.292 * predictions.over25.percentage) / 100}"></circle>
-              </svg>
-              <div class="circle-content">
-                <span class="circle-percentage">${predictions.over25.percentage}%</span>
-                <span class="circle-label">Üst 2.5</span>
-              </div>
-            </div>
-            <div class="prediction-info">
-              <span class="confidence-badge confidence-${predictions.over25.confidence}">
-                <i class="fas fa-shield-alt"></i>
-                Güven: ${this.getConfidenceText(predictions.over25.confidence)}
-              </span>
-              <span class="expected-goals">
-                <i class="fas fa-futbol"></i>
-                Beklenen Gol: ${predictions.over25.expectedGoals}
-              </span>
-            </div>
-          </div>
-          
-          <!-- Team Comparisons -->
-          <div class="teams-comparison">
-            <div class="team-stat-box">
-              <div class="team-header">
-                ${homeTeam.logo ? `<img src="${this.getTeamLogoUrl(homeTeam.logo)}" alt="${homeTeam.name}" class="team-logo-small">` : ''}
-                <span class="team-name">${homeTeam.name}</span>
-                <span class="venue-indicator home">Ev</span>
-              </div>
-              <div class="over-stats">
-                <div class="stat-row">
-                  <span class="stat-label">Üst 1.5</span>
-                  <span class="stat-value ${this.getOverUnderClass(homeTeam.stats.over15)}">${homeTeam.stats.over15}%</span>
-                </div>
-                <div class="stat-row highlight">
-                  <span class="stat-label">Üst 2.5</span>
-                  <span class="stat-value ${this.getOverUnderClass(homeTeam.stats.over25)}">${homeTeam.stats.over25}%</span>
-                </div>
-                <div class="stat-row">
-                  <span class="stat-label">Üst 3.5</span>
-                  <span class="stat-value ${this.getOverUnderClass(homeTeam.stats.over35)}">${homeTeam.stats.over35}%</span>
-                </div>
-                <div class="stat-row">
-                  <span class="stat-label">Ort. Toplam Gol</span>
-                  <span class="stat-value">${homeTeam.stats.avgTotalGoals}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="vs-indicator">VS</div>
-            
-            <div class="team-stat-box">
-              <div class="team-header">
-                ${awayTeam.logo ? `<img src="${this.getTeamLogoUrl(awayTeam.logo)}" alt="${awayTeam.name}" class="team-logo-small">` : ''}
-                <span class="team-name">${awayTeam.name}</span>
-                <span class="venue-indicator away">Dep</span>
-              </div>
-              <div class="over-stats">
-                <div class="stat-row">
-                  <span class="stat-label">Üst 1.5</span>
-                  <span class="stat-value ${this.getOverUnderClass(awayTeam.stats.over15)}">${awayTeam.stats.over15}%</span>
-                </div>
-                <div class="stat-row highlight">
-                  <span class="stat-label">Üst 2.5</span>
-                  <span class="stat-value ${this.getOverUnderClass(awayTeam.stats.over25)}">${awayTeam.stats.over25}%</span>
-                </div>
-                <div class="stat-row">
-                  <span class="stat-label">Üst 3.5</span>
-                  <span class="stat-value ${this.getOverUnderClass(awayTeam.stats.over35)}">${awayTeam.stats.over35}%</span>
-                </div>
-                <div class="stat-row">
-                  <span class="stat-label">Ort. Toplam Gol</span>
-                  <span class="stat-value">${awayTeam.stats.avgTotalGoals}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+      <!-- Over 2.5 & BTTS Modern Design -->
+      <div class="over-btts-modern">
+        <!-- Section Header -->
+        <div class="section-header">
+          <h4 class="section-title">Maç Golleri İstatistikleri</h4>
         </div>
         
-        <!-- BTTS Section -->
-        <div class="btts-section">
-          <h4 class="section-title">
-            <i class="fas fa-exchange-alt"></i>
-            Karşılıklı Gol (BTTS) Analizi
-          </h4>
-          
-          <!-- Combined BTTS Prediction -->
-          <div class="combined-prediction">
-            <div class="prediction-circle-wrapper large">
-              <svg class="prediction-circle" viewBox="0 0 120 120">
-                <circle class="circle-bg" cx="60" cy="60" r="54"></circle>
-                <circle class="circle-fill btts-circle" cx="60" cy="60" r="54" 
-                  style="stroke-dashoffset: ${339.292 - (339.292 * predictions.btts.percentage) / 100}"></circle>
-              </svg>
-              <div class="circle-content">
-                <span class="circle-percentage">${predictions.btts.percentage}%</span>
-                <span class="circle-label">BTTS</span>
-              </div>
-            </div>
-            <div class="prediction-info">
-              <span class="confidence-badge confidence-${predictions.btts.confidence}">
-                <i class="fas fa-shield-alt"></i>
-                Güven: ${this.getConfidenceText(predictions.btts.confidence)}
-              </span>
-            </div>
-          </div>
-          
-          <!-- BTTS Team Stats -->
-          <div class="btts-comparison">
-            <div class="btts-stat-card">
-              <div class="team-info">
-                <span class="team-name">${homeTeam.name}</span>
-                <span class="venue-badge home">Ev Sahibi</span>
-              </div>
-              <div class="btts-stats-grid">
-                <div class="btts-stat">
-                  <span class="btts-label">BTTS Evet</span>
-                  <span class="btts-value yes">${homeTeam.stats.bttsYes}%</span>
-                </div>
-                <div class="btts-stat">
-                  <span class="btts-label">BTTS Hayır</span>
-                  <span class="btts-value no">${homeTeam.stats.bttsNo}%</span>
-                </div>
-                <div class="btts-stat full-width">
-                  <span class="btts-label">Maç Başı Attığı</span>
-                  <span class="btts-value">${homeTeam.stats.goalsPerMatch.toFixed(2)}</span>
-                </div>
-                <div class="btts-stat full-width">
-                  <span class="btts-label">Maç Başı Yediği</span>
-                  <span class="btts-value">${homeTeam.stats.goalsConcededPerMatch.toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="btts-stat-card">
-              <div class="team-info">
-                <span class="team-name">${awayTeam.name}</span>
-                <span class="venue-badge away">Deplasman</span>
-              </div>
-              <div class="btts-stats-grid">
-                <div class="btts-stat">
-                  <span class="btts-label">BTTS Evet</span>
-                  <span class="btts-value yes">${awayTeam.stats.bttsYes}%</span>
-                </div>
-                <div class="btts-stat">
-                  <span class="btts-label">BTTS Hayır</span>
-                  <span class="btts-value no">${awayTeam.stats.bttsNo}%</span>
-                </div>
-                <div class="btts-stat full-width">
-                  <span class="btts-label">Maç Başı Attığı</span>
-                  <span class="btts-value">${awayTeam.stats.goalsPerMatch.toFixed(2)}</span>
-                </div>
-                <div class="btts-stat full-width">
-                  <span class="btts-label">Maç Başı Yediği</span>
-                  <span class="btts-value">${awayTeam.stats.goalsConcededPerMatch.toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+        <!-- Statistics Table -->
+        <div class="stats-table-container">
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th class="stat-name-col">İstatistik</th>
+                <th class="team-col home-col">${homeTeam.name}</th>
+                <th class="team-col away-col">${awayTeam.name}</th>
+                <th class="average-col">Ortalama</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Over Statistics -->
+              <tr>
+                <td class="stat-name">Over 0.5</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getOverUnderClass(homeTeam.stats.over05)}">${Math.round(homeTeam.stats.over05)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getOverUnderClass(homeTeam.stats.over05)}" style="width: ${homeTeam.stats.over05}%">
+                        <span class="value-label">${Math.round(homeTeam.stats.over05)}%</span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getOverUnderClass(awayTeam.stats.over05)}">${Math.round(awayTeam.stats.over05)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getOverUnderClass(awayTeam.stats.over05)}" style="width: ${awayTeam.stats.over05}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getOverUnderClass(averages.over05)}">${Math.round(averages.over05)}%</span>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="stat-name">Over 1.5</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getOverUnderClass(homeTeam.stats.over15)}">${Math.round(homeTeam.stats.over15)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getOverUnderClass(homeTeam.stats.over15)}" style="width: ${homeTeam.stats.over15}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getOverUnderClass(awayTeam.stats.over15)}">${Math.round(awayTeam.stats.over15)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getOverUnderClass(awayTeam.stats.over15)}" style="width: ${awayTeam.stats.over15}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getOverUnderClass(averages.over15)}">${Math.round(averages.over15)}%</span>
+                </td>
+              </tr>
+              
+              <tr class="highlight-row">
+                <td class="stat-name">
+                  <span class="highlight-badge">Over 2.5</span>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getOverUnderClass(homeTeam.stats.over25)}">${Math.round(homeTeam.stats.over25)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getOverUnderClass(homeTeam.stats.over25)}" style="width: ${homeTeam.stats.over25}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getOverUnderClass(awayTeam.stats.over25)}">${Math.round(awayTeam.stats.over25)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getOverUnderClass(awayTeam.stats.over25)}" style="width: ${awayTeam.stats.over25}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value highlight ${this.getOverUnderClass(averages.over25)}">${Math.round(averages.over25)}%</span>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="stat-name">Over 3.5</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getOverUnderClass(homeTeam.stats.over35)}">${Math.round(homeTeam.stats.over35)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getOverUnderClass(homeTeam.stats.over35)}" style="width: ${homeTeam.stats.over35}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getOverUnderClass(awayTeam.stats.over35)}">${Math.round(awayTeam.stats.over35)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getOverUnderClass(awayTeam.stats.over35)}" style="width: ${awayTeam.stats.over35}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getOverUnderClass(averages.over35)}">${Math.round(averages.over35)}%</span>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="stat-name">Over 4.5</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getOverUnderClass(homeTeam.stats.over45)}">${Math.round(homeTeam.stats.over45)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getOverUnderClass(homeTeam.stats.over45)}" style="width: ${homeTeam.stats.over45}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getOverUnderClass(awayTeam.stats.over45)}">${Math.round(awayTeam.stats.over45)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getOverUnderClass(awayTeam.stats.over45)}" style="width: ${awayTeam.stats.over45}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getOverUnderClass(averages.over45)}">${Math.round(averages.over45)}%</span>
+                </td>
+              </tr>
+              
+              <!-- BTTS Statistics -->
+              <tr class="section-divider">
+                <td colspan="4"></td>
+              </tr>
+              
+              <tr class="highlight-row">
+                <td class="stat-name">
+                  <span class="highlight-badge">BTTS</span>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getBTTSClass(homeTeam.stats.btts)}">${Math.round(homeTeam.stats.btts)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getBTTSClass(homeTeam.stats.btts)}" style="width: ${homeTeam.stats.btts}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getBTTSClass(awayTeam.stats.btts)}">${Math.round(awayTeam.stats.btts)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getBTTSClass(awayTeam.stats.btts)}" style="width: ${awayTeam.stats.btts}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value highlight ${this.getBTTSClass(averages.btts)}">${Math.round(averages.btts)}%</span>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="stat-name">BTTS & Win</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getBTTSClass(homeTeam.stats.bttsWin)}">${Math.round(homeTeam.stats.bttsWin)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getBTTSClass(homeTeam.stats.bttsWin)}" style="width: ${homeTeam.stats.bttsWin}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getBTTSClass(awayTeam.stats.bttsWin)}">${Math.round(awayTeam.stats.bttsWin)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getBTTSClass(awayTeam.stats.bttsWin)}" style="width: ${awayTeam.stats.bttsWin}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getBTTSClass(averages.bttsWin)}">${Math.round(averages.bttsWin)}%</span>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="stat-name">BTTS & Draw</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getBTTSClass(homeTeam.stats.bttsDraw)}">${Math.round(homeTeam.stats.bttsDraw)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getBTTSClass(homeTeam.stats.bttsDraw)}" style="width: ${homeTeam.stats.bttsDraw}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getBTTSClass(awayTeam.stats.bttsDraw)}">${Math.round(awayTeam.stats.bttsDraw)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getBTTSClass(awayTeam.stats.bttsDraw)}" style="width: ${awayTeam.stats.bttsDraw}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getBTTSClass(averages.bttsDraw)}">${Math.round(averages.bttsDraw)}%</span>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="stat-name">BTTS & Over 2.5</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getBTTSClass(homeTeam.stats.bttsOver25)}">${Math.round(homeTeam.stats.bttsOver25)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getBTTSClass(homeTeam.stats.bttsOver25)}" style="width: ${homeTeam.stats.bttsOver25}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getBTTSClass(awayTeam.stats.bttsOver25)}">${Math.round(awayTeam.stats.bttsOver25)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getBTTSClass(awayTeam.stats.bttsOver25)}" style="width: ${awayTeam.stats.bttsOver25}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getBTTSClass(averages.bttsOver25)}">${Math.round(averages.bttsOver25)}%</span>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="stat-name">BTTS No & Over 2.5</td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getBTTSClass(homeTeam.stats.bttsNoOver25)}">${Math.round(homeTeam.stats.bttsNoOver25)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getBTTSClass(homeTeam.stats.bttsNoOver25)}" style="width: ${homeTeam.stats.bttsNoOver25}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value">
+                  <div class="value-container">
+                    <span class="value ${this.getBTTSClass(awayTeam.stats.bttsNoOver25)}">${Math.round(awayTeam.stats.bttsNoOver25)}%</span>
+                    <div class="value-bar">
+                      <div class="value-fill ${this.getBTTSClass(awayTeam.stats.bttsNoOver25)}" style="width: ${awayTeam.stats.bttsNoOver25}%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="stat-value average">
+                  <span class="value ${this.getBTTSClass(averages.bttsNoOver25)}">${Math.round(averages.bttsNoOver25)}%</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </div>
-      
-      <!-- Insights Section -->
-      <div class="over-btts-insights">
-        <h5 class="insights-title">
-          <i class="fas fa-lightbulb"></i>
-          Analiz ve Öneriler
-        </h5>
-        <div class="insights-grid">
-          ${predictions.insights
-            .map(
-              insight => `
-            <div class="insight-item">
-              <i class="fas fa-check-circle"></i>
-              <span>${insight}</span>
+        
+        <!-- Prediction Summary -->
+        <div class="prediction-summary">
+          <div class="prediction-card">
+            <div class="card-header">
+              <i class="fas fa-chart-line"></i>
+              <h5>Over 2.5 Analizi</h5>
             </div>
-          `
-            )
-            .join('')}
+            <div class="card-content">
+              <div class="main-stat">
+                <span class="stat-value ${averages.over25Class}">${Math.round(averages.over25)}%</span>
+                <span class="stat-label">${averages.over25Strength}</span>
+              </div>
+              <div class="sub-stats">
+                <div class="sub-stat">
+                  <i class="fas fa-futbol"></i>
+                  <span>Beklenen: ${averages.totalGoalsExpected} gol</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="prediction-card">
+            <div class="card-header">
+              <i class="fas fa-arrows-alt-h"></i>
+              <h5>BTTS Analizi</h5>
+            </div>
+            <div class="card-content">
+              <div class="main-stat">
+                <span class="stat-value ${averages.bttsClass}">${Math.round(averages.btts)}%</span>
+                <span class="stat-label">${averages.bttsStrength}</span>
+              </div>
+              <div class="sub-stats">
+                <div class="sub-stat">
+                  <i class="fas fa-percentage"></i>
+                  <span>İki takım gol: ${Math.round(averages.bothTeamsLikelyToScore)}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     `;
