@@ -383,6 +383,13 @@ export class MatchDetailsData {
       // Process home team data
       if (homeResponse.success && homeResponse.data) {
         const homeData = homeResponse.data;
+        
+        // Debug API response
+        console.log('=== Home Team API Response Debug ===');
+        console.log('Team:', homeData.teamInfo?.name);
+        console.log('Has additional_info:', !!homeData.additional_info);
+        console.log('additional_info keys:', homeData.additional_info ? Object.keys(homeData.additional_info).slice(0, 10) : 'NONE');
+        console.log('Has statistics.additional_info:', !!(homeData.statistics && homeData.statistics.additional_info));
 
         // Calculate form from matches if not available
         let overallForm =
@@ -421,13 +428,13 @@ export class MatchDetailsData {
             homeData.statistics?.ppg ||
             0,
           homePPG:
-            homeData.statistics?.homePointsPerGame ||
+            homeData.statistics?.homePointsPerPage ||
             homeData.statistics?.seasonPPG_home ||
             homeData.statistics?.homePPG ||
             homeData.statistics?.home_ppg ||
             0,
           awayPPG:
-            homeData.statistics?.awayPointsPerGame ||
+            homeData.statistics?.awayPointsPerPage ||
             homeData.statistics?.seasonPPG_away ||
             homeData.statistics?.awayPPG ||
             homeData.statistics?.away_ppg ||
@@ -440,6 +447,13 @@ export class MatchDetailsData {
       // Process away team data
       if (awayResponse.success && awayResponse.data) {
         const awayData = awayResponse.data;
+        
+        // Debug API response
+        console.log('=== Away Team API Response Debug ===');
+        console.log('Team:', awayData.teamInfo?.name);
+        console.log('Has additional_info:', !!awayData.additional_info);
+        console.log('additional_info keys:', awayData.additional_info ? Object.keys(awayData.additional_info).slice(0, 10) : 'NONE');
+        console.log('Has statistics.additional_info:', !!(awayData.statistics && awayData.statistics.additional_info));
 
         // Calculate form from matches if not available
         let overallForm =
@@ -1041,23 +1055,35 @@ export class MatchDetailsData {
         0,
     };
 
-    // Temporary debug for JIPPO and JäPS
-    if (
-      teamData?.teamInfo?.name &&
-      (teamData.teamInfo.name.includes('JIPPO') || teamData.teamInfo.name.includes('JäPS'))
-    ) {
-      console.log('=== Team Data Debug ===');
-      console.log('Team:', teamData.teamInfo.name);
-      console.log('Raw stats object:', stats);
-      console.log('Raw additional_info object:', additionalInfo);
-      console.log('Extracted conceded values:', {
-        homeOver05Conceded: extractedStats.homeOver05Conceded,
-        homeOver15Conceded: extractedStats.homeOver15Conceded,
-        homeOver25Conceded: extractedStats.homeOver25Conceded,
-        homeOver35Conceded: extractedStats.homeOver35Conceded,
-        homeCleanSheetPercentage: extractedStats.homeCleanSheetPercentage,
-      });
-    }
+    // Enhanced debug logging for conceded data
+    console.log('=== Conceded Data Extraction Debug ===');
+    console.log('Team:', teamData?.teamInfo?.name);
+    console.log('Has stats object:', !!stats);
+    console.log('Has additionalInfo object:', !!additionalInfo);
+    
+    // Log available conceded fields in stats
+    const statsConcededFields = Object.keys(stats).filter(k => k.toLowerCase().includes('conceded'));
+    console.log('Stats conceded fields:', statsConcededFields);
+    
+    // Log available conceded fields in additionalInfo
+    const additionalConcededFields = Object.keys(additionalInfo).filter(k => k.toLowerCase().includes('conceded'));
+    console.log('AdditionalInfo conceded fields:', additionalConcededFields);
+    
+    // Log extracted values
+    console.log('Extracted conceded values:', {
+      over05Conceded: extractedStats.over05Conceded,
+      homeOver05Conceded: extractedStats.homeOver05Conceded,
+      awayOver05Conceded: extractedStats.awayOver05Conceded,
+      over15Conceded: extractedStats.over15Conceded,
+      homeOver15Conceded: extractedStats.homeOver15Conceded,
+      awayOver15Conceded: extractedStats.awayOver15Conceded,
+      over25Conceded: extractedStats.over25Conceded,
+      homeOver25Conceded: extractedStats.homeOver25Conceded,
+      awayOver25Conceded: extractedStats.awayOver25Conceded,
+      over35Conceded: extractedStats.over35Conceded,
+      homeOver35Conceded: extractedStats.homeOver35Conceded,
+      awayOver35Conceded: extractedStats.awayOver35Conceded,
+    });
 
     return extractedStats;
   }

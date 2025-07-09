@@ -1856,6 +1856,13 @@ export class MatchDetailsDisplay {
     }
 
     const { homeTeam, awayTeam } = comparison;
+    
+    // Debug the data being displayed
+    console.log('=== Goals Conceded Display Debug ===');
+    console.log('Home Team:', homeTeam.name);
+    console.log('Home Stats:', homeTeam.stats);
+    console.log('Away Team:', awayTeam.name);
+    console.log('Away Stats:', awayTeam.stats);
 
     container.innerHTML = `
       <!-- Goals Conceded Comparison Grid -->

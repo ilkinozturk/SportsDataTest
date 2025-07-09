@@ -190,6 +190,14 @@ class TeamDataService {
               this.logger.info(
                 `  - seasonHighestScored_overall: ${teamData.stats.seasonHighestScored_overall}`
               );
+              
+              // Check for additional_info
+              this.logger.info('📋 Additional Info Check:');
+              this.logger.info(`  - Has teamData.additional_info: ${!!teamData.additional_info}`);
+              this.logger.info(`  - Has teamData.stats.additional_info: ${!!teamData.stats.additional_info}`);
+              if (teamData.additional_info) {
+                this.logger.info(`  - Additional info keys: ${Object.keys(teamData.additional_info).slice(0, 5).join(', ')}`);
+              }
             }
 
             teamStats = teamData;
@@ -308,10 +316,19 @@ class TeamDataService {
       );
 
       // 8. Build response
+      // Debug additional_info extraction
+      const additionalInfo = (teamStats.stats && teamStats.stats.additional_info) || teamStats.additional_info || {};
+      this.logger.info('📋 Additional Info Debug:');
+      this.logger.info(`  - Has teamStats.stats: ${!!teamStats.stats}`);
+      this.logger.info(`  - Has teamStats.stats.additional_info: ${!!(teamStats.stats && teamStats.stats.additional_info)}`);
+      this.logger.info(`  - Has teamStats.additional_info: ${!!teamStats.additional_info}`);
+      this.logger.info(`  - Additional info keys: ${Object.keys(additionalInfo).length > 0 ? Object.keys(additionalInfo).slice(0, 5).join(', ') + '...' : 'NONE'}`);
+      
       const responseData = {
         teamInfo,
         league: leagueInfo,
         statistics,
+        additional_info: additionalInfo,
         leaguePosition,
         allMatches: matches,
         recentMatches: matches.slice(0, 15),
