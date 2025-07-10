@@ -581,6 +581,27 @@ export class MatchDetailsData {
       teamData?.teamInfo?.name || 'Unknown Team'
     );
 
+    // Debug: Log raw offside data
+    console.log('[MatchDetailsData] Raw offside fields in stats:', {
+      teamName: teamData?.teamInfo?.name || 'Unknown Team',
+      all_fields: Object.keys(actualStats)
+        .filter(k => k.toLowerCase().includes('offside'))
+        .sort(),
+      offsidesTeamAVG_home: actualStats.offsidesTeamAVG_home,
+      offsidesTeamAVG_away: actualStats.offsidesTeamAVG_away,
+      offsidesTeamAVG_overall: actualStats.offsidesTeamAVG_overall,
+      over25OffsidesPercentage_home: actualStats.over25OffsidesPercentage_home,
+      over25OffsidesPercentage_away: actualStats.over25OffsidesPercentage_away,
+      over35OffsidesPercentage_home: actualStats.over35OffsidesPercentage_home,
+      over35OffsidesPercentage_away: actualStats.over35OffsidesPercentage_away,
+      offsidesAvg: actualStats.offsidesAvg,
+      homeOffsidesAvg: actualStats.homeOffsidesAvg,
+      awayOffsidesAvg: actualStats.awayOffsidesAvg,
+      matchOffsidesAvg: actualStats.matchOffsidesAvg,
+      offsidesMatchTeamAVG_home: actualStats.offsidesMatchTeamAVG_home,
+      offsidesMatchTeamAVG_away: actualStats.offsidesMatchTeamAVG_away,
+    });
+
     // Debug card data
     console.log('[MatchDetailsData] Card data check:', {
       cardsOver25: actualStats.cardsOver25,
@@ -2036,8 +2057,8 @@ export class MatchDetailsData {
       offsidePerMatch:
         actualStats.offsidesAvg ||
         actualStats.matchOffsidesAvg ||
-        actualStats.offsidesAVG_overall ||
         actualStats.offsidesTeamAVG_overall ||
+        actualStats.offsidesAVG_overall ||
         actualStats.offsideAVG_overall ||
         actualStats.offsidesPerMatch ||
         actualStats.offsidePerMatch ||
@@ -2048,11 +2069,11 @@ export class MatchDetailsData {
           : 0) ||
         0,
       homeOffsidePerMatch:
-        actualStats.homeOffsidePerMatch ||
+        actualStats.homeMatchOffsidesAvg || // Primary field for total match offsides
         actualStats.homeOffsidesAvg ||
-        actualStats.homeMatchOffsidesAvg ||
-        actualStats.offsidesAVG_home ||
         actualStats.offsidesTeamAVG_home ||
+        actualStats.homeOffsidePerMatch ||
+        actualStats.offsidesAVG_home ||
         actualStats.offsideAVG_home ||
         actualStats.homeOffsidesPerMatch ||
         actualStats.homeOffsideAVG ||
@@ -2062,11 +2083,11 @@ export class MatchDetailsData {
           : actualStats.offsidePerMatch) ||
         0,
       awayOffsidePerMatch:
-        actualStats.awayOffsidePerMatch ||
+        actualStats.awayMatchOffsidesAvg || // Primary field for total match offsides
         actualStats.awayOffsidesAvg ||
-        actualStats.awayMatchOffsidesAvg ||
-        actualStats.offsidesAVG_away ||
         actualStats.offsidesTeamAVG_away ||
+        actualStats.awayOffsidePerMatch ||
+        actualStats.offsidesAVG_away ||
         actualStats.offsideAVG_away ||
         actualStats.awayOffsidesPerMatch ||
         actualStats.awayOffsideAVG ||
@@ -2076,46 +2097,55 @@ export class MatchDetailsData {
           : actualStats.offsidePerMatch) ||
         0,
 
-      // Offside over/under percentages - Use correct API field names
+      // Offside over/under percentages - Include all venue-specific fields
+      // Home venue statistics
+      over25OffsidesPercentage_home:
+        actualStats.over25OffsidesPercentage_home ||
+        actualStats.homeMatchOffsidesOver2_5 || // Primary field from API
+        actualStats.homeOffsidesOver2_5 ||
+        0,
+      over35OffsidesPercentage_home:
+        actualStats.over35OffsidesPercentage_home ||
+        actualStats.homeMatchOffsidesOver3_5 || // Primary field from API
+        actualStats.homeOffsidesOver3_5 ||
+        0,
+
+      // Away venue statistics
+      over25OffsidesPercentage_away:
+        actualStats.over25OffsidesPercentage_away ||
+        actualStats.awayMatchOffsidesOver2_5 || // Primary field from API
+        actualStats.awayOffsidesOver2_5 ||
+        0,
+      over35OffsidesPercentage_away:
+        actualStats.over35OffsidesPercentage_away ||
+        actualStats.awayMatchOffsidesOver3_5 || // Primary field from API
+        actualStats.awayOffsidesOver3_5 ||
+        0,
+
+      // Keep old fields for backward compatibility but mark as deprecated
       homeOffsideOver25:
-        actualStats.homeOffsideOver25 ||
+        actualStats.over25OffsidesPercentage_home ||
         actualStats.homeOffsidesOver2_5 ||
         actualStats.homeMatchOffsidesOver2_5 ||
-        actualStats.over25OffsidesPercentage_home ||
-        actualStats.over25OffsidesTeamPercentage_home ||
-        actualStats.homeOffsidesOver25 ||
-        actualStats.offsideOver25_home ||
-        actualStats.offsidesOver25_home ||
+        actualStats.homeOffsideOver25 ||
         0,
       homeOffsideOver35:
-        actualStats.homeOffsideOver35 ||
+        actualStats.over35OffsidesPercentage_home ||
         actualStats.homeOffsidesOver3_5 ||
         actualStats.homeMatchOffsidesOver3_5 ||
-        actualStats.over35OffsidesPercentage_home ||
-        actualStats.over35OffsidesTeamPercentage_home ||
-        actualStats.homeOffsidesOver35 ||
-        actualStats.offsideOver35_home ||
-        actualStats.offsidesOver35_home ||
+        actualStats.homeOffsideOver35 ||
         0,
       awayOffsideOver25:
-        actualStats.awayOffsideOver25 ||
+        actualStats.over25OffsidesPercentage_away ||
         actualStats.awayOffsidesOver2_5 ||
         actualStats.awayMatchOffsidesOver2_5 ||
-        actualStats.over25OffsidesPercentage_away ||
-        actualStats.over25OffsidesTeamPercentage_away ||
-        actualStats.awayOffsidesOver25 ||
-        actualStats.offsideOver25_away ||
-        actualStats.offsidesOver25_away ||
+        actualStats.awayOffsideOver25 ||
         0,
       awayOffsideOver35:
-        actualStats.awayOffsideOver35 ||
+        actualStats.over35OffsidesPercentage_away ||
         actualStats.awayOffsidesOver3_5 ||
         actualStats.awayMatchOffsidesOver3_5 ||
-        actualStats.over35OffsidesPercentage_away ||
-        actualStats.over35OffsidesTeamPercentage_away ||
-        actualStats.awayOffsidesOver35 ||
-        actualStats.offsideOver35_away ||
-        actualStats.offsidesOver35_away ||
+        actualStats.awayOffsideOver35 ||
         0,
 
       // Total offsides
@@ -2146,15 +2176,38 @@ export class MatchDetailsData {
       cardsOver25_away: extractedStats.cardsOver25_away,
     });
 
-    console.log('[MatchDetailsData] extractedStats offside fields:', {
-      offsidePerMatch: extractedStats.offsidePerMatch,
-      homeOffsidePerMatch: extractedStats.homeOffsidePerMatch,
-      awayOffsidePerMatch: extractedStats.awayOffsidePerMatch,
-      homeOffsideOver25: extractedStats.homeOffsideOver25,
-      awayOffsideOver25: extractedStats.awayOffsideOver25,
-      homeOffsideOver35: extractedStats.homeOffsideOver35,
-      awayOffsideOver35: extractedStats.awayOffsideOver35,
-    });
+    console.log(
+      '[MatchDetailsData] extractedStats offside fields for',
+      teamData?.teamInfo?.name,
+      ':',
+      {
+        offsidePerMatch: extractedStats.offsidePerMatch,
+        homeOffsidePerMatch: extractedStats.homeOffsidePerMatch,
+        awayOffsidePerMatch: extractedStats.awayOffsidePerMatch,
+        venue_specific_percentages: {
+          over25OffsidesPercentage_home: extractedStats.over25OffsidesPercentage_home,
+          over25OffsidesPercentage_away: extractedStats.over25OffsidesPercentage_away,
+          over35OffsidesPercentage_home: extractedStats.over35OffsidesPercentage_home,
+          over35OffsidesPercentage_away: extractedStats.over35OffsidesPercentage_away,
+        },
+        deprecated_fields: {
+          homeOffsideOver25: extractedStats.homeOffsideOver25,
+          awayOffsideOver25: extractedStats.awayOffsideOver25,
+          homeOffsideOver35: extractedStats.homeOffsideOver35,
+          awayOffsideOver35: extractedStats.awayOffsideOver35,
+        },
+        raw_values: {
+          awayOffsidePerMatch: actualStats.awayOffsidePerMatch,
+          homeOffsidePerMatch: actualStats.homeOffsidePerMatch,
+          offsidesAvg: actualStats.offsidesAvg,
+          matchOffsidesAvg: actualStats.matchOffsidesAvg,
+          awayOffsidesAvg: actualStats.awayOffsidesAvg,
+          homeOffsidesAvg: actualStats.homeOffsidesAvg,
+          homeOffsidesOver2_5: actualStats.homeOffsidesOver2_5,
+          awayOffsidesOver2_5: actualStats.awayOffsidesOver2_5,
+        },
+      }
+    );
 
     return extractedStats;
   }
