@@ -90,11 +90,11 @@ class OffsideComparison {
     if (venue === 'home') {
       // This team is playing at home in THIS match, so use their HOME venue statistics
       offsidePerMatch = parseFloat(
-        stats.homeOffsidePerMatch ||
+        stats.offsidesTeamAVG_home || // Primary field - Team's own offsides only
+          stats.homeOffsidePerMatch ||
           stats.homeOffsidesAvg ||
           stats.homeMatchOffsidesAvg ||
-          stats.offsidesTeamAVG_home ||
-          stats.offsidesAVG_home ||
+          stats.offsidesAVG_home || // This is match total, not team only
           stats.homeOffsidesPerMatch ||
           stats.homeOffsideAVG ||
           0
@@ -119,11 +119,11 @@ class OffsideComparison {
     } else if (venue === 'away') {
       // This team is playing away in THIS match, so use their AWAY venue statistics
       offsidePerMatch = parseFloat(
-        stats.awayOffsidePerMatch ||
+        stats.offsidesTeamAVG_away || // Primary field - Team's own offsides only
+          stats.awayOffsidePerMatch ||
           stats.awayOffsidesAvg ||
           stats.awayMatchOffsidesAvg ||
-          stats.offsidesTeamAVG_away ||
-          stats.offsidesAVG_away ||
+          stats.offsidesAVG_away || // This is match total, not team only
           stats.awayOffsidesPerMatch ||
           stats.awayOffsideAVG ||
           0

@@ -2055,10 +2055,10 @@ export class MatchDetailsData {
 
       // Offside statistics - Use correct API field names
       offsidePerMatch:
-        actualStats.offsidesAVG_overall || // Primary field from API (PPJ, HJS)
+        actualStats.offsidesTeamAVG_overall || // Primary field - Team's own offsides only
         actualStats.offsidesAvg ||
+        actualStats.offsidesAVG_overall || // This is match total, not team only
         actualStats.matchOffsidesAvg ||
-        actualStats.offsidesTeamAVG_overall ||
         actualStats.offsideAVG_overall ||
         actualStats.offsidesPerMatch ||
         actualStats.offsidePerMatch ||
@@ -2069,10 +2069,10 @@ export class MatchDetailsData {
           : 0) ||
         0,
       homeOffsidePerMatch:
-        actualStats.offsidesAVG_home || // Primary field from API (PPJ, HJS)
+        actualStats.offsidesTeamAVG_home || // Primary field - Team's own offsides when playing at home
+        actualStats.offsidesAVG_home || // This is match total when team plays at home
         actualStats.homeMatchOffsidesAvg ||
         actualStats.homeOffsidesAvg ||
-        actualStats.offsidesTeamAVG_home ||
         actualStats.homeOffsidePerMatch ||
         actualStats.offsideAVG_home ||
         actualStats.homeOffsidesPerMatch ||
@@ -2083,10 +2083,10 @@ export class MatchDetailsData {
           : actualStats.offsidePerMatch) ||
         0,
       awayOffsidePerMatch:
-        actualStats.offsidesAVG_away || // Primary field from API (PPJ, HJS)
+        actualStats.offsidesTeamAVG_away || // Primary field - Team's own offsides when playing away
+        actualStats.offsidesAVG_away || // This is match total when team plays away
         actualStats.awayMatchOffsidesAvg ||
         actualStats.awayOffsidesAvg ||
-        actualStats.offsidesTeamAVG_away ||
         actualStats.awayOffsidePerMatch ||
         actualStats.offsideAVG_away ||
         actualStats.awayOffsidesPerMatch ||
