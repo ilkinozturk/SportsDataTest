@@ -387,6 +387,66 @@ app.get('/api-docs.json', (req, res) => {
   res.send(swaggerSpec);
 });
 
+// Get league list
+app.get('/api/league-list', asyncHandler(async (req, res) => {
+  const url = `https://api.football-data-api.com/league-list`;
+  const params = {
+    key: config.API.FOOTBALL_API_KEY,
+    chosen_leagues_only: req.query.chosen_leagues_only || 'false'
+  };
+  
+  try {
+    logger.info(`Fetching league list from API`);
+    const response = await axios.get(url, { params });
+    
+    res.json({
+      success: true,
+      data: response.data.data || []
+    });
+  } catch (error) {
+    logger.error('Error fetching league list:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+}));
+
+// Get league tables
+app.get('/api/league-tables', asyncHandler(async (req, res) => {
+  const { season_id, include } = req.query;
+  
+  if (!season_id) {
+    return res.status(400).json({
+      success: false,
+      error: 'season_id is required'
+    });
+  }
+  
+  const url = `https://api.football-data-api.com/league-tables`;
+  const params = {
+    key: config.API.FOOTBALL_API_KEY,
+    season_id,
+    include: include || 'stats'
+  };
+  
+  try {
+    logger.info(`Fetching league tables for season: ${season_id}`);
+    const response = await axios.get(url, { params });
+    
+    res.json({
+      success: true,
+      data: response.data.data || []
+    });
+  } catch (error) {
+    logger.error('Error fetching league tables:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+}));
+
 // Get matches for today (without date parameter)
 app.get('/api/matches/date', asyncHandler(async (req, res, next) => {
   const today = moment().format('YYYY-MM-DD');

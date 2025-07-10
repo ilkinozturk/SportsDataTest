@@ -252,6 +252,7 @@ ENV.measure = async (name, fn) => {
 // Make available globally for non-module scripts
 if (typeof window !== 'undefined') {
   window.ENV = ENV;
+  window.DEBUG_MODE = ENV.ENABLE_DEBUG;
 }
 
 // Export for module environments

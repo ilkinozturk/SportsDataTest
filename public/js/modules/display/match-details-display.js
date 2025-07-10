@@ -121,6 +121,11 @@ export class MatchDetailsDisplay {
     this.eventBus.on('corners-comparison-calculated', comparison => {
       this.updateCornersComparison(comparison);
     });
+    
+    // Listen for league table comparison data
+    this.eventBus.on('league-table-comparison-calculated', comparison => {
+      this.updateLeagueTableComparison(comparison);
+    });
 
     // Listen for cards comparison data
     this.eventBus.on('cards-comparison-calculated', comparison => {
@@ -130,6 +135,11 @@ export class MatchDetailsDisplay {
     // Listen for offside comparison data
     this.eventBus.on('offside-comparison-calculated', comparison => {
       this.updateOffsideComparison(comparison);
+    });
+    
+    // Listen for goals H2H comparison data
+    this.eventBus.on('goals-h2h-comparison-calculated', comparison => {
+      this.updateGoalsH2HComparison(comparison);
     });
 
     // Listen for tab switch events
@@ -400,6 +410,143 @@ export class MatchDetailsDisplay {
       })
       .join('');
   }
+  
+  updateTrends(matchData) {
+    // Generate insights directly
+    this.generateMatchInsights(matchData);
+  }
+  
+  generateMatchInsights(_matchData) {
+    const insightsContainer = document.getElementById('matchInsights');
+    if (!insightsContainer) return;
+    
+    const insights = [];
+    
+    // Wait for team stats to generate insights
+    this.eventBus.once('team-stats-loaded', (teamData) => {
+      if (teamData && teamData.homeTeam && teamData.awayTeam) {
+        const homeStats = teamData.homeTeam.stats;
+        const awayStats = teamData.awayTeam.stats;
+        
+        if (homeStats && awayStats) {
+          // Win percentage insights
+          if (homeStats.seasonWinPercentage_home > 50) {
+            insights.push({
+              icon: 'fa-home',
+              text: `${teamData.homeTeam.name} ev sahibi olarak ${homeStats.seasonWinPercentage_home}% kazanma oranı`
+            });
+          }
+          
+          if (awayStats.seasonWinPercentage_away > 30) {
+            insights.push({
+              icon: 'fa-plane',
+              text: `${teamData.awayTeam.name} deplasmanda ${awayStats.seasonWinPercentage_away}% kazanma oranı`
+            });
+          }
+          
+          // Goals scored/conceded insights
+          const homeGoalsAvg = (homeStats.seasonScoredNum_overall / homeStats.seasonMatchesPlayed_overall).toFixed(2);
+          const awayGoalsAvg = (awayStats.seasonScoredNum_overall / awayStats.seasonMatchesPlayed_overall).toFixed(2);
+          const homeConcededAvg = (homeStats.seasonConcededNum_overall / homeStats.seasonMatchesPlayed_overall).toFixed(2);
+          const awayConcededAvg = (awayStats.seasonConcededNum_overall / awayStats.seasonMatchesPlayed_overall).toFixed(2);
+          
+          insights.push({
+            icon: 'fa-chart-line',
+            text: `${teamData.homeTeam.name} maç başına ${homeGoalsAvg} gol atıyor, ${homeConcededAvg} gol yiyor`
+          });
+          
+          insights.push({
+            icon: 'fa-chart-bar',
+            text: `${teamData.awayTeam.name} maç başına ${awayGoalsAvg} gol atıyor, ${awayConcededAvg} gol yiyor`
+          });
+          
+          // Over/Under insights
+          const homeOver25 = parseFloat(homeStats.seasonOver25Percentage_overall || 0);
+          const awayOver25 = parseFloat(awayStats.seasonOver25Percentage_overall || 0);
+          const avgOver25 = ((homeOver25 + awayOver25) / 2).toFixed(0);
+          
+          insights.push({
+            icon: 'fa-futbol',
+            text: `Maçların ortalama ${avgOver25}%'inde 2.5 üstü gol var`
+          });
+          
+          // BTTS insights
+          const homeBTTS = parseFloat(homeStats.seasonBTTSPercentage_overall || 0);
+          const awayBTTS = parseFloat(awayStats.seasonBTTSPercentage_overall || 0);
+          const avgBTTS = ((homeBTTS + awayBTTS) / 2).toFixed(0);
+          
+          insights.push({
+            icon: 'fa-exchange-alt',
+            text: `Karşılıklı gol (BTTS) oranı: ${avgBTTS}%`
+          });
+          
+          // Form insights
+          const homeForm = homeStats.form_overall ? homeStats.form_overall.split(',').slice(0, 5) : [];
+          const awayForm = awayStats.form_overall ? awayStats.form_overall.split(',').slice(0, 5) : [];
+          
+          const homeWins = homeForm.filter(r => r === 'W').length;
+          const awayWins = awayForm.filter(r => r === 'W').length;
+          const homeLosses = homeForm.filter(r => r === 'L').length;
+          const awayLosses = awayForm.filter(r => r === 'L').length;
+          
+          insights.push({
+            icon: 'fa-fire',
+            text: `${teamData.homeTeam.name} son 5 maçta ${homeWins} galibiyet, ${homeLosses} mağlubiyet`
+          });
+          
+          insights.push({
+            icon: 'fa-trophy',
+            text: `${teamData.awayTeam.name} son 5 maçta ${awayWins} galibiyet, ${awayLosses} mağlubiyet`
+          });
+          
+          // Clean sheet insights
+          if (homeStats.seasonCSPercentage_overall > 30) {
+            insights.push({
+              icon: 'fa-shield-alt',
+              text: `${teamData.homeTeam.name} maçların ${homeStats.seasonCSPercentage_overall}%'inde gol yemiyor`
+            });
+          }
+          
+          // Corners insights
+          if (homeStats.cornersTotal_overall && awayStats.cornersTotal_overall) {
+            const homeCornersAvg = (homeStats.cornersTotal_overall / homeStats.seasonMatchesPlayed_overall).toFixed(1);
+            const awayCornersAvg = (awayStats.cornersTotal_overall / awayStats.seasonMatchesPlayed_overall).toFixed(1);
+            insights.push({
+              icon: 'fa-flag',
+              text: `Korner ortalamaları: ${teamData.homeTeam.name} ${homeCornersAvg} - ${teamData.awayTeam.name} ${awayCornersAvg}`
+            });
+          }
+          
+          // Cards insights
+          if (homeStats.cardsTotal_overall && awayStats.cardsTotal_overall) {
+            const homeCardsAvg = (homeStats.cardsTotal_overall / homeStats.seasonMatchesPlayed_overall).toFixed(1);
+            const awayCardsAvg = (awayStats.cardsTotal_overall / awayStats.seasonMatchesPlayed_overall).toFixed(1);
+            insights.push({
+              icon: 'fa-square',
+              text: `Kart ortalamaları: ${teamData.homeTeam.name} ${homeCardsAvg} - ${teamData.awayTeam.name} ${awayCardsAvg}`
+            });
+          }
+        }
+        
+        // Display insights
+        if (insights.length > 0) {
+          insightsContainer.innerHTML = insights.map(insight => `
+            <div class="insight-item">
+              <i class="fas ${insight.icon}"></i>
+              <span>${insight.text}</span>
+            </div>
+          `).join('');
+        } else {
+          insightsContainer.innerHTML = `
+            <div class="insight-item">
+              <i class="fas fa-info-circle"></i>
+              <span>Maç istatistikleri yükleniyor...</span>
+            </div>
+          `;
+        }
+      }
+    });
+  }
 
   addFormLabel(container, labelText) {
     let label = container.nextElementSibling;
@@ -438,6 +585,9 @@ export class MatchDetailsDisplay {
 
     // Emit event for content loading
     this.eventBus.emit('tab-content-requested', tabName);
+    
+    // Emit tab switched event
+    this.eventBus.emit('tab-switched', tabName);
   }
 
   // Utility methods
@@ -2945,6 +3095,236 @@ export class MatchDetailsDisplay {
       return 'medium';
     }
     return 'low';
+  }
+  
+  updateLeagueTableComparison(comparison) {
+    console.log('[MatchDetailsDisplay] Updating league table comparison');
+    const container = document.getElementById('leagueTableComparisonContent');
+    
+    if (!container) {
+      console.error('[MatchDetailsDisplay] League table comparison container not found');
+      return;
+    }
+    
+    if (!comparison || !comparison.leagueTable || comparison.leagueTable.length === 0) {
+      container.innerHTML = `
+        <div class="comparison-error">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>League table data not available</p>
+        </div>
+      `;
+      return;
+    }
+    
+    // Create league table HTML
+    const tableHTML = `
+      <div class="league-table-container">
+        <table class="league-table">
+          <thead>
+            <tr>
+              <th class="position-col">#</th>
+              <th class="team-col">Team</th>
+              <th class="matches-col">MP</th>
+              <th class="wins-col">G%</th>
+              <th class="goals-col">GF</th>
+              <th class="goals-col">GA</th>
+              <th class="gd-col">GD</th>
+              <th class="points-col">PTS</th>
+              <th class="form-col">Form</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${comparison.leagueTable.map(team => `
+              <tr class="${team.isHomeTeam ? 'home-team-row' : ''} ${team.isAwayTeam ? 'away-team-row' : ''}">
+                <td class="position-col">${team.position}</td>
+                <td class="team-col">
+                  <span class="team-name">${team.teamName}</span>
+                </td>
+                <td class="matches-col">${team.matchesPlayed}</td>
+                <td class="wins-col">${team.matchesPlayed > 0 ? Math.round((team.wins / team.matchesPlayed) * 100) : 0}%</td>
+                <td class="goals-col">${team.goalsFor}</td>
+                <td class="goals-col">${team.goalsAgainst}</td>
+                <td class="gd-col ${team.goalDifference > 0 ? 'positive' : team.goalDifference < 0 ? 'negative' : ''}">${team.goalDifference > 0 ? '+' : ''}${team.goalDifference}</td>
+                <td class="points-col">${team.points}</td>
+                <td class="form-col">${this.renderLeagueFormString(team.form || '')}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+    
+    container.innerHTML = tableHTML;
+  }
+  
+  renderLeagueFormString(formString) {
+    if (!formString) return '-';
+    
+    // Take last 5 results
+    const last5 = formString.slice(-5);
+    
+    return last5.split('').map(result => {
+      const upperResult = result.toUpperCase();
+      const className = upperResult === 'W' ? 'win' : upperResult === 'D' ? 'draw' : 'loss';
+      return `<span class="form-result ${className}">${upperResult}</span>`;
+    }).join('');
+  }
+  
+  updateGoalsH2HComparison(comparison) {
+    console.log('[MatchDetailsDisplay] Updating Goals H2H comparison');
+    
+    const h2hContainer = document.querySelector('#h2hTab .h2h-container');
+    if (!h2hContainer) {
+      console.error('[MatchDetailsDisplay] H2H container not found');
+      return;
+    }
+    
+    if (!comparison || !comparison.homeTeam || !comparison.awayTeam) {
+      h2hContainer.innerHTML = `
+        <div class="stat-card">
+          <h3 class="card-title">Goals Statistics</h3>
+          <div class="comparison-error">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Goals statistics not available</p>
+          </div>
+        </div>
+      `;
+      return;
+    }
+    
+    const { homeTeam, awayTeam } = comparison;
+    
+    const html = `
+      <div class="stat-card goals-h2h-card">
+        <h3 class="card-title">
+          <i class="fas fa-futbol"></i>
+          Gol İstatistikleri
+        </h3>
+        <div class="goals-comparison-modern">
+          <!-- Main Stats Header -->
+          <div class="goals-main-stats">
+            <div class="main-stat-block home">
+              <img src="${homeTeam.logo}" alt="${homeTeam.name}" class="team-logo">
+              <div class="team-name">${homeTeam.name}</div>
+              <div class="venue-label">Ev Sahibi</div>
+              <div class="big-stat">
+                <div class="stat-number">${homeTeam.stats.goalsPerMatch}</div>
+                <div class="stat-text">Maç Başı Gol</div>
+              </div>
+            </div>
+            
+            <div class="main-stat-block away">
+              <img src="${awayTeam.logo}" alt="${awayTeam.name}" class="team-logo">
+              <div class="team-name">${awayTeam.name}</div>
+              <div class="venue-label">Deplasman</div>
+              <div class="big-stat">
+                <div class="stat-number">${awayTeam.stats.goalsPerMatch}</div>
+                <div class="stat-text">Maç Başı Gol</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Over Goals Stats -->
+          <div class="over-stats-section">
+            <h4 class="section-subtitle">Üst Gol İstatistikleri</h4>
+            
+            <div class="over-stats-grid">
+              <div class="over-stat-row">
+                <div class="stat-label">0.5+ Gol</div>
+                <div class="stat-bars">
+                  <div class="bar-container">
+                    <div class="team-value home">${homeTeam.stats.over05}%</div>
+                    <div class="progress-bar">
+                      <div class="progress home" style="width: ${homeTeam.stats.over05}%"></div>
+                    </div>
+                  </div>
+                  <div class="bar-container">
+                    <div class="progress-bar">
+                      <div class="progress away" style="width: ${awayTeam.stats.over05}%"></div>
+                    </div>
+                    <div class="team-value away">${awayTeam.stats.over05}%</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="over-stat-row">
+                <div class="stat-label">1.5+ Gol</div>
+                <div class="stat-bars">
+                  <div class="bar-container">
+                    <div class="team-value home">${homeTeam.stats.over15}%</div>
+                    <div class="progress-bar">
+                      <div class="progress home" style="width: ${homeTeam.stats.over15}%"></div>
+                    </div>
+                  </div>
+                  <div class="bar-container">
+                    <div class="progress-bar">
+                      <div class="progress away" style="width: ${awayTeam.stats.over15}%"></div>
+                    </div>
+                    <div class="team-value away">${awayTeam.stats.over15}%</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="over-stat-row">
+                <div class="stat-label">2.5+ Gol</div>
+                <div class="stat-bars">
+                  <div class="bar-container">
+                    <div class="team-value home">${homeTeam.stats.over25}%</div>
+                    <div class="progress-bar">
+                      <div class="progress home" style="width: ${homeTeam.stats.over25}%"></div>
+                    </div>
+                  </div>
+                  <div class="bar-container">
+                    <div class="progress-bar">
+                      <div class="progress away" style="width: ${awayTeam.stats.over25}%"></div>
+                    </div>
+                    <div class="team-value away">${awayTeam.stats.over25}%</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="over-stat-row">
+                <div class="stat-label">3.5+ Gol</div>
+                <div class="stat-bars">
+                  <div class="bar-container">
+                    <div class="team-value home">${homeTeam.stats.over35}%</div>
+                    <div class="progress-bar">
+                      <div class="progress home" style="width: ${homeTeam.stats.over35}%"></div>
+                    </div>
+                  </div>
+                  <div class="bar-container">
+                    <div class="progress-bar">
+                      <div class="progress away" style="width: ${awayTeam.stats.over35}%"></div>
+                    </div>
+                    <div class="team-value away">${awayTeam.stats.over35}%</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="over-stat-row">
+                <div class="stat-label">Gol Atamama</div>
+                <div class="stat-bars">
+                  <div class="bar-container">
+                    <div class="team-value home">${homeTeam.stats.failedToScore}%</div>
+                    <div class="progress-bar">
+                      <div class="progress home failed" style="width: ${homeTeam.stats.failedToScore}%"></div>
+                    </div>
+                  </div>
+                  <div class="bar-container">
+                    <div class="progress-bar">
+                      <div class="progress away failed" style="width: ${awayTeam.stats.failedToScore}%"></div>
+                    </div>
+                    <div class="team-value away">${awayTeam.stats.failedToScore}%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    h2hContainer.innerHTML = html;
   }
 }
 

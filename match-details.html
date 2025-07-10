@@ -107,8 +107,8 @@
             <span>All</span>
           </button>
           <button type="button" class="nav-tab" data-tab="h2h" onclick="switchTab('h2h')">
-            <i class="fas fa-history"></i>
-            <span>H2H History</span>
+            <i class="fas fa-futbol"></i>
+            <span>Goals</span>
           </button>
           <button type="button" class="nav-tab" data-tab="statistics" onclick="switchTab('statistics')">
             <i class="fas fa-chart-bar"></i>
@@ -590,22 +590,24 @@
               </div>
             </div>
           </div>
+
+          <!-- League Table Positions -->
+          <div class="stat-card league-table-comparison-card">
+            <h3 class="card-title">League Table Positions</h3>
+            <div id="leagueTableComparisonContent" class="league-table-comparison-content">
+              <!-- League table comparison content will be populated by JavaScript -->
+              <div class="league-table-loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Lig sıralaması yükleniyor...</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- H2H Tab -->
         <div id="h2hTab" class="tab-pane" data-tab="h2h">
           <div class="h2h-container">
-            <!-- H2H Summary -->
-            <div class="stat-card">
-              <h3 class="card-title">Head to Head Summary</h3>
-              <div id="h2hSummary" class="h2h-summary"></div>
-            </div>
-
-            <!-- H2H Matches -->
-            <div class="stat-card">
-              <h3 class="card-title">Previous Meetings</h3>
-              <div id="h2hMatches" class="h2h-matches-list"></div>
-            </div>
+            <!-- Tab content will be populated by other modules -->
           </div>
         </div>
 

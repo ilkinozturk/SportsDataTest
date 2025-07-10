@@ -136,6 +136,7 @@ class MatchDetailsService {
             logo: match.competition_logo || match.league_logo || `leagues/l${match.competition_id || match.league_id}.png`
           },
           h2h: match.h2h || null,
+          trends: match.trends || null,
         };
 
         // Cache the result

@@ -273,11 +273,28 @@ export class TeamStatisticsExtractor {
         0;
     }
 
+    // Get matches played
+    let matchesPlayed = 0;
+    if (venue === 'home') {
+      matchesPlayed = stats.seasonMatchesPlayed_home || 
+                     additionalInfo.seasonMatchesPlayed_home || 
+                     stats.homeMatchesPlayed || 0;
+    } else if (venue === 'away') {
+      matchesPlayed = stats.seasonMatchesPlayed_away || 
+                     additionalInfo.seasonMatchesPlayed_away || 
+                     stats.awayMatchesPlayed || 0;
+    } else {
+      matchesPlayed = stats.seasonMatchesPlayed_overall || 
+                     additionalInfo.seasonMatchesPlayed_overall || 
+                     stats.matchesPlayed || 0;
+    }
+
     return {
       goalsPerMatch: parseFloat(goalsPerMatch).toFixed(2),
       totalGoals: parseInt(totalGoals, 10),
       firstHalfAvg: parseFloat(firstHalfAvg).toFixed(2),
       secondHalfAvg: parseFloat(secondHalfAvg).toFixed(2),
+      matchesPlayed: parseInt(matchesPlayed, 10),
     };
   }
 
