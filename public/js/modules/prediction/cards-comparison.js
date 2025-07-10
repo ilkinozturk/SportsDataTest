@@ -55,18 +55,6 @@ class CardsComparison {
   extractCardsStats(team, venue) {
     const stats = team.stats || {};
 
-    // Debug: Check what fields are available
-    console.log(`[CardsComparison] ${team.name} (${venue}) available fields:`, {
-      over25CardsPercentage_home: stats.over25CardsPercentage_home,
-      over25CardsPercentage_away: stats.over25CardsPercentage_away,
-      over25CardsPercentage_overall: stats.over25CardsPercentage_overall,
-      cardsOver25_home: stats.cardsOver25_home,
-      cardsOver25_away: stats.cardsOver25_away,
-      'ALL CARD FIELDS': Object.keys(stats)
-        .filter(k => k.toLowerCase().includes('card'))
-        .sort(),
-    });
-
     // Get card values with proper fallback logic
     let cardsPerMatch = 0;
     let cardsAgainstPerMatch = 0;
@@ -143,15 +131,6 @@ class CardsComparison {
       over65Cards = parseFloat(
         stats.awayCardsOver65 || stats.cardsOver65_away || stats.over65CardsPercentage_away || 0
       );
-
-      // Debug: Log away values specifically
-      console.log(`[CardsComparison] ${team.name} AWAY card values:`, {
-        over25CardsPercentage_away: stats.over25CardsPercentage_away,
-        over35CardsPercentage_away: stats.over35CardsPercentage_away,
-        over45CardsPercentage_away: stats.over45CardsPercentage_away,
-        final_over25Cards: over25Cards,
-        final_over35Cards: over35Cards,
-      });
     }
 
     return {

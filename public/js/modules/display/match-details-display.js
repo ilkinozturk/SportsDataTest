@@ -2827,26 +2827,24 @@ export class MatchDetailsDisplay {
 
     const { homeTeam, awayTeam, averages } = comparison;
 
-    // Debug: Log the values being displayed
-    console.log('[MatchDetailsDisplay] Offside comparison data:', {
-      homeTeam: {
-        name: homeTeam.name,
-        offsidePerMatch: homeTeam.stats.offsidePerMatch,
-        over25Offsides: homeTeam.stats.over25Offsides,
-        over35Offsides: homeTeam.stats.over35Offsides,
-      },
-      awayTeam: {
-        name: awayTeam.name,
-        offsidePerMatch: awayTeam.stats.offsidePerMatch,
-        over25Offsides: awayTeam.stats.over25Offsides,
-        over35Offsides: awayTeam.stats.over35Offsides,
-      },
-      averages,
-    });
-
     container.innerHTML = `
       <!-- Offside Modern Design -->
       <div class="over-btts-modern">
+        <!-- Info Box -->
+        <div class="offside-info-box">
+          <div class="info-content">
+            <i class="fas fa-info-circle info-icon"></i>
+            <div class="info-text">
+              <p class="info-title">Bu istatistikler nedir?</p>
+              <ul>
+                <li><strong>Offsides / Match:</strong> Takımın bu sezonda ev sahibi/deplasman olarak oynadığı maçlardaki <em>sadece kendi yaptığı</em> ortalama offside sayısı</li>
+                <li><strong>Over 2.5/3.5 Offsides:</strong> Takımın bu sezonda oynadığı maçlarda <em>toplam offside sayısının</em> (her iki takım dahil) 2.5/3.5 üzerinde olma yüzdesi</li>
+                <li><strong>Ortalama:</strong> Bu maç için her iki takımın değerlerinin ortalaması</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         <!-- Statistics Table -->
         <div class="stats-table-container">
           <table class="stats-table">

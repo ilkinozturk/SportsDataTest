@@ -2334,7 +2334,6 @@
   font-size: 16px;
 }
 
-
 /* Form Badges */
 .form-badges {
   display: flex;
@@ -2393,7 +2392,6 @@
   .vs-divider {
     order: -1;
   }
-
 }
 
 @media (max-width: 768px) {
@@ -3146,6 +3144,84 @@
   font-size: 16px;
 }
 
+/* Offside Info Box Styles */
+.offside-info-box {
+  background: rgba(52, 152, 219, 0.05);
+  border: 1px solid rgba(52, 152, 219, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+}
+
+.offside-info-box:hover {
+  background: rgba(52, 152, 219, 0.08);
+  border-color: rgba(52, 152, 219, 0.3);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
+}
+
+.offside-info-box .info-content {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.offside-info-box .info-icon {
+  color: #3498db;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.offside-info-box .info-text {
+  flex: 1;
+  color: #ccc;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.offside-info-box .info-text strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.offside-info-box .info-text em {
+  color: #3498db;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.offside-info-box .info-title {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.offside-info-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.offside-info-box li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 8px;
+}
+
+.offside-info-box li:before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #3498db;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
 /* Responsive adjustments for Over/BTTS module */
 @media (max-width: 768px) {
   .over-btts-grid {
@@ -3430,7 +3506,6 @@
   border: none;
 }
 
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .over-btts-modern .stats-table {
@@ -3463,7 +3538,6 @@
   .over-btts-modern .value-bar {
     display: none;
   }
-
 }
 
 /* Corners Comparison Section */

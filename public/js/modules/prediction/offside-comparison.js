@@ -55,32 +55,6 @@ class OffsideComparison {
   extractOffsideStats(team, venue) {
     const stats = team.stats || {};
 
-    // Debug: Check what fields are available
-    console.log(`[OffsideComparison] ${team.name} (${venue} in this match) available fields:`, {
-      venue: venue,
-      critical_fields: {
-        'stats.over25OffsidesPercentage_home': stats.over25OffsidesPercentage_home,
-        'stats.over25OffsidesPercentage_away': stats.over25OffsidesPercentage_away,
-        'stats.over35OffsidesPercentage_home': stats.over35OffsidesPercentage_home,
-        'stats.over35OffsidesPercentage_away': stats.over35OffsidesPercentage_away,
-        'stats.homeOffsideOver25': stats.homeOffsideOver25,
-        'stats.awayOffsideOver25': stats.awayOffsideOver25,
-        'stats.homeOffsideOver35': stats.homeOffsideOver35,
-        'stats.awayOffsideOver35': stats.awayOffsideOver35,
-      },
-      average_fields: {
-        homeOffsidePerMatch: stats.homeOffsidePerMatch,
-        awayOffsidePerMatch: stats.awayOffsidePerMatch,
-        homeOffsidesAvg: stats.homeOffsidesAvg,
-        awayOffsidesAvg: stats.awayOffsidesAvg,
-        offsidesAvg: stats.offsidesAvg,
-        matchOffsidesAvg: stats.matchOffsidesAvg,
-      },
-      'ALL OFFSIDE FIELDS': Object.keys(stats)
-        .filter(k => k.toLowerCase().includes('offside'))
-        .sort(),
-    });
-
     // Get offside values based on team's role in THIS match
     let offsidePerMatch = 0;
     let over25Offsides = 0;
@@ -90,13 +64,13 @@ class OffsideComparison {
     if (venue === 'home') {
       // This team is playing at home in THIS match, so use their HOME venue statistics
       offsidePerMatch = parseFloat(
-        stats.offsidesTeamAVG_home || // Primary field - Team's own offsides only
+        stats.homeOffsidesAvg || // Team's own offsides (from backend)
+          stats.offsidesTeamAVG_home || // API field if available
           stats.homeOffsidePerMatch ||
-          stats.homeOffsidesAvg ||
-          stats.homeMatchOffsidesAvg ||
-          stats.offsidesAVG_home || // This is match total, not team only
           stats.homeOffsidesPerMatch ||
           stats.homeOffsideAVG ||
+          stats.homeMatchOffsidesAvg || // Match total - fallback only
+          stats.offsidesAVG_home || // Match total - fallback only
           0
       );
 
@@ -119,13 +93,13 @@ class OffsideComparison {
     } else if (venue === 'away') {
       // This team is playing away in THIS match, so use their AWAY venue statistics
       offsidePerMatch = parseFloat(
-        stats.offsidesTeamAVG_away || // Primary field - Team's own offsides only
+        stats.awayOffsidesAvg || // Team's own offsides (from backend)
+          stats.offsidesTeamAVG_away || // API field if available
           stats.awayOffsidePerMatch ||
-          stats.awayOffsidesAvg ||
-          stats.awayMatchOffsidesAvg ||
-          stats.offsidesAVG_away || // This is match total, not team only
           stats.awayOffsidesPerMatch ||
           stats.awayOffsideAVG ||
+          stats.awayMatchOffsidesAvg || // Match total - fallback only
+          stats.offsidesAVG_away || // Match total - fallback only
           0
       );
 
@@ -146,45 +120,6 @@ class OffsideComparison {
           0
       );
     }
-
-    // Validate logic: Over 3.5 cannot be higher than Over 2.5
-    if (over35Offsides > over25Offsides) {
-      console.warn(`[OffsideComparison] DATA LOGIC ERROR for ${team.name}:`, {
-        over25Offsides,
-        over35Offsides,
-        error: 'Over 3.5 percentage cannot be higher than Over 2.5 percentage!',
-        possibleCause: 'API data might be incorrect or fields might be swapped',
-      });
-
-      // Swap values if they appear to be reversed
-      // const temp = over25Offsides;
-      // over25Offsides = over35Offsides;
-      // over35Offsides = temp;
-    }
-
-    // Debug: Log selected values
-    console.log(`[OffsideComparison] ${team.name} (${venue}) FINAL selected values:`, {
-      venue_role: venue,
-      selected_values: {
-        offsidePerMatch,
-        over25Offsides,
-        over35Offsides,
-      },
-      logic_check: {
-        if_home_should_use: {
-          over25OffsidesPercentage_home: stats.over25OffsidesPercentage_home,
-          over35OffsidesPercentage_home: stats.over35OffsidesPercentage_home,
-        },
-        if_away_should_use: {
-          over25OffsidesPercentage_away: stats.over25OffsidesPercentage_away,
-          over35OffsidesPercentage_away: stats.over35OffsidesPercentage_away,
-        },
-        what_was_selected: {
-          over25: venue === 'home' ? 'home percentages' : 'away percentages',
-          over35: venue === 'home' ? 'home percentages' : 'away percentages',
-        },
-      },
-    });
 
     return {
       // Offside per match statistics

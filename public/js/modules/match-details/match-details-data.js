@@ -385,20 +385,6 @@ export class MatchDetailsData {
         const homeData = homeResponse.data;
 
         // Debug API response
-        console.log('[MatchDetailsData] Home team raw API offside fields:', {
-          teamName: homeData.teamInfo?.name,
-          statistics: homeData.statistics
-            ? Object.keys(homeData.statistics)
-                .filter(k => k.toLowerCase().includes('offside'))
-                .sort()
-            : [],
-          sampleValues: {
-            offsidesAVG_overall: homeData.statistics?.offsidesAVG_overall,
-            offsidesAVG_home: homeData.statistics?.offsidesAVG_home,
-            over25OffsidesPercentage_home: homeData.statistics?.over25OffsidesPercentage_home,
-            over35OffsidesPercentage_home: homeData.statistics?.over35OffsidesPercentage_home,
-          },
-        });
 
         // Unused variables removed to fix ESLint errors
         // const stats = homeData.statistics || {};
@@ -462,20 +448,6 @@ export class MatchDetailsData {
         const awayData = awayResponse.data;
 
         // Debug API response
-        console.log('[MatchDetailsData] Away team raw API offside fields:', {
-          teamName: awayData.teamInfo?.name,
-          statistics: awayData.statistics
-            ? Object.keys(awayData.statistics)
-                .filter(k => k.toLowerCase().includes('offside'))
-                .sort()
-            : [],
-          sampleValues: {
-            offsidesAVG_overall: awayData.statistics?.offsidesAVG_overall,
-            offsidesAVG_away: awayData.statistics?.offsidesAVG_away,
-            over25OffsidesPercentage_away: awayData.statistics?.over25OffsidesPercentage_away,
-            over35OffsidesPercentage_away: awayData.statistics?.over35OffsidesPercentage_away,
-          },
-        });
 
         // Process away team statistics
 
@@ -533,24 +505,6 @@ export class MatchDetailsData {
       }
 
       // Debug: Log team data before emitting
-      console.log('[MatchDetailsData] Team data to emit:', {
-        homeTeam: teamData.homeTeam
-          ? {
-              name: teamData.homeTeam.name,
-              statsKeys: Object.keys(teamData.homeTeam.stats || {})
-                .filter(k => k.includes('Card') || k.includes('card'))
-                .slice(0, 20),
-            }
-          : null,
-        awayTeam: teamData.awayTeam
-          ? {
-              name: teamData.awayTeam.name,
-              statsKeys: Object.keys(teamData.awayTeam.stats || {})
-                .filter(k => k.includes('Card') || k.includes('card'))
-                .slice(0, 20),
-            }
-          : null,
-      });
 
       // Emit team statistics data
       this.eventBus.emit('team-stats-loaded', teamData);
@@ -574,58 +528,6 @@ export class MatchDetailsData {
     // Use stats directly as it already contains the statistics
     const actualStats = stats;
     const additionalInfo = teamData?.additional_info || {};
-
-    // Debug team stats extraction
-    console.log(
-      '[MatchDetailsData] Extracting stats for:',
-      teamData?.teamInfo?.name || 'Unknown Team'
-    );
-
-    // Debug: Log raw offside data
-    console.log('[MatchDetailsData] Raw offside fields in stats:', {
-      teamName: teamData?.teamInfo?.name || 'Unknown Team',
-      all_fields: Object.keys(actualStats)
-        .filter(k => k.toLowerCase().includes('offside'))
-        .sort(),
-      offsidesTeamAVG_home: actualStats.offsidesTeamAVG_home,
-      offsidesTeamAVG_away: actualStats.offsidesTeamAVG_away,
-      offsidesTeamAVG_overall: actualStats.offsidesTeamAVG_overall,
-      over25OffsidesPercentage_home: actualStats.over25OffsidesPercentage_home,
-      over25OffsidesPercentage_away: actualStats.over25OffsidesPercentage_away,
-      over35OffsidesPercentage_home: actualStats.over35OffsidesPercentage_home,
-      over35OffsidesPercentage_away: actualStats.over35OffsidesPercentage_away,
-      offsidesAvg: actualStats.offsidesAvg,
-      homeOffsidesAvg: actualStats.homeOffsidesAvg,
-      awayOffsidesAvg: actualStats.awayOffsidesAvg,
-      matchOffsidesAvg: actualStats.matchOffsidesAvg,
-      offsidesMatchTeamAVG_home: actualStats.offsidesMatchTeamAVG_home,
-      offsidesMatchTeamAVG_away: actualStats.offsidesMatchTeamAVG_away,
-    });
-
-    // Debug card data
-    console.log('[MatchDetailsData] Card data check:', {
-      cardsOver25: actualStats.cardsOver25,
-      cardsOver25_overall: actualStats.cardsOver25_overall,
-      cardsOver25_home: actualStats.cardsOver25_home,
-      cardsOver25_away: actualStats.cardsOver25_away,
-      homeCardsOver25: actualStats.homeCardsOver25,
-      awayCardsOver25: actualStats.awayCardsOver25,
-    });
-
-    // Debug offside data
-    console.log('[MatchDetailsData] Offside data check:', {
-      offsideAVG_overall: actualStats.offsideAVG_overall,
-      offsidesAVG_overall: actualStats.offsidesAVG_overall,
-      offsidesAVG_home: actualStats.offsidesAVG_home,
-      offsidesAVG_away: actualStats.offsidesAVG_away,
-      over25OffsidesPercentage_home: actualStats.over25OffsidesPercentage_home,
-      over25OffsidesPercentage_away: actualStats.over25OffsidesPercentage_away,
-      over35OffsidesPercentage_home: actualStats.over35OffsidesPercentage_home,
-      over35OffsidesPercentage_away: actualStats.over35OffsidesPercentage_away,
-      'ALL OFFSIDE FIELDS': Object.keys(actualStats)
-        .filter(k => k.toLowerCase().includes('offside'))
-        .sort(),
-    });
 
     // Debug logging for all fields (removed to clean up code)
 
@@ -2069,29 +1971,29 @@ export class MatchDetailsData {
           : 0) ||
         0,
       homeOffsidePerMatch:
-        actualStats.offsidesTeamAVG_home || // Primary field - Team's own offsides when playing at home
-        actualStats.offsidesAVG_home || // This is match total when team plays at home
-        actualStats.homeMatchOffsidesAvg ||
-        actualStats.homeOffsidesAvg ||
+        actualStats.homeOffsidesAvg || // Team's own offsides when playing at home (from backend)
+        actualStats.offsidesTeamAVG_home || // API field name (if available)
         actualStats.homeOffsidePerMatch ||
-        actualStats.offsideAVG_home ||
         actualStats.homeOffsidesPerMatch ||
         actualStats.homeOffsideAVG ||
         actualStats.offside_avg_home ||
+        actualStats.homeMatchOffsidesAvg || // This is match total - use as fallback only
+        actualStats.offsidesAVG_home || // This is match total - use as fallback only
+        actualStats.offsideAVG_home ||
         (actualStats.homeTotalOffsides && actualStats.homeMatches
           ? (actualStats.homeTotalOffsides / actualStats.homeMatches).toFixed(2)
           : actualStats.offsidePerMatch) ||
         0,
       awayOffsidePerMatch:
-        actualStats.offsidesTeamAVG_away || // Primary field - Team's own offsides when playing away
-        actualStats.offsidesAVG_away || // This is match total when team plays away
-        actualStats.awayMatchOffsidesAvg ||
-        actualStats.awayOffsidesAvg ||
+        actualStats.awayOffsidesAvg || // Team's own offsides when playing away (from backend)
+        actualStats.offsidesTeamAVG_away || // API field name (if available)
         actualStats.awayOffsidePerMatch ||
-        actualStats.offsideAVG_away ||
         actualStats.awayOffsidesPerMatch ||
         actualStats.awayOffsideAVG ||
         actualStats.offside_avg_away ||
+        actualStats.awayMatchOffsidesAvg || // This is match total - use as fallback only
+        actualStats.offsidesAVG_away || // This is match total - use as fallback only
+        actualStats.offsideAVG_away ||
         (actualStats.awayTotalOffsides && actualStats.awayMatches
           ? (actualStats.awayTotalOffsides / actualStats.awayMatches).toFixed(2)
           : actualStats.offsidePerMatch) ||
@@ -2168,46 +2070,6 @@ export class MatchDetailsData {
         actualStats.awayOffsides ||
         0,
     };
-
-    // Debug before return
-    console.log('[MatchDetailsData] extractedStats card fields:', {
-      cardsOver25: extractedStats.cardsOver25,
-      cardsOver25_home: extractedStats.cardsOver25_home,
-      cardsOver25_away: extractedStats.cardsOver25_away,
-    });
-
-    console.log(
-      '[MatchDetailsData] extractedStats offside fields for',
-      teamData?.teamInfo?.name,
-      ':',
-      {
-        offsidePerMatch: extractedStats.offsidePerMatch,
-        homeOffsidePerMatch: extractedStats.homeOffsidePerMatch,
-        awayOffsidePerMatch: extractedStats.awayOffsidePerMatch,
-        venue_specific_percentages: {
-          over25OffsidesPercentage_home: extractedStats.over25OffsidesPercentage_home,
-          over25OffsidesPercentage_away: extractedStats.over25OffsidesPercentage_away,
-          over35OffsidesPercentage_home: extractedStats.over35OffsidesPercentage_home,
-          over35OffsidesPercentage_away: extractedStats.over35OffsidesPercentage_away,
-        },
-        deprecated_fields: {
-          homeOffsideOver25: extractedStats.homeOffsideOver25,
-          awayOffsideOver25: extractedStats.awayOffsideOver25,
-          homeOffsideOver35: extractedStats.homeOffsideOver35,
-          awayOffsideOver35: extractedStats.awayOffsideOver35,
-        },
-        raw_values: {
-          awayOffsidePerMatch: actualStats.awayOffsidePerMatch,
-          homeOffsidePerMatch: actualStats.homeOffsidePerMatch,
-          offsidesAvg: actualStats.offsidesAvg,
-          matchOffsidesAvg: actualStats.matchOffsidesAvg,
-          awayOffsidesAvg: actualStats.awayOffsidesAvg,
-          homeOffsidesAvg: actualStats.homeOffsidesAvg,
-          homeOffsidesOver2_5: actualStats.homeOffsidesOver2_5,
-          awayOffsidesOver2_5: actualStats.awayOffsidesOver2_5,
-        },
-      }
-    );
 
     return extractedStats;
   }
