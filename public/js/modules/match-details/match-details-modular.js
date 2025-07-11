@@ -21,17 +21,15 @@ import { GoalsConcededH2HComparison } from '../h2h/goals-conceded-h2h-comparison
 import { OverBTTSH2HComparison } from '../h2h/over-btts-h2h-comparison.js';
 import { FirstGoalH2HComparison } from '../h2h/first-goal-h2h-comparison.js';
 import CornersH2HComparison from '../h2h/corners-h2h-comparison.js';
-import getLineupPredictions from '../lineups/lineup-predictions.js';
+import CardsH2HComparison from '../h2h/cards-h2h-comparison.js';
 
 class MatchDetailsApp {
   constructor() {
     // Use global TeamStatsEventBus
     this.eventBus = window.TeamStatsEventBus;
     if (!this.eventBus) {
-      console.error('[MatchDetailsApp] TeamStatsEventBus not found!');
       return;
     }
-    console.log('[MatchDetailsApp] Using TeamStatsEventBus');
     this.modules = {};
 
     // Create API client for modules
@@ -75,9 +73,8 @@ class MatchDetailsApp {
     this.modules.overBTTSH2HComparison = new OverBTTSH2HComparison(this.eventBus);
     this.modules.firstGoalH2HComparison = new FirstGoalH2HComparison(this.eventBus);
     this.modules.cornersH2HComparison = new CornersH2HComparison(this.eventBus);
+    this.modules.cardsH2HComparison = new CardsH2HComparison(this.eventBus);
     
-    // Initialize Lineup module using singleton
-    this.modules.lineupPredictions = getLineupPredictions(this.eventBus);
   }
 
   setupGlobalHandlers() {
@@ -87,7 +84,8 @@ class MatchDetailsApp {
     };
 
     // Handle display errors
-    this.eventBus.on('display-error', error => {
+    this.eventBus.on('display-error', _error => {
+      // Error handling can be implemented here if needed
     });
   }
 }

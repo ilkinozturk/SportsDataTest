@@ -453,6 +453,177 @@ export class TeamStatisticsExtractor {
       failedToScorePercentage: parseFloat(failedToScorePercentage).toFixed(0),
     };
   }
+
+  /**
+   * Extract cards over percentages from raw API data
+   * @param {Object} rawData - Raw API response data for a team
+   * @param {string} venue - 'home', 'away', or 'overall'
+   * @returns {Object} Cards over percentages
+   */
+  static extractCardsOverPercentages(rawData, venue) {
+    const stats = rawData.stats || {};
+    const statistics = rawData.statistics || {};
+    const additionalInfo = rawData.additional_info || {};
+
+
+    const result = {
+      over05: 0,
+      over15: 0,
+      over25: 0,
+      over35: 0,
+      over45: 0,
+      over55: 0,
+      over65: 0
+    };
+
+    if (venue === 'home') {
+      result.over05 = statistics.homeCardsOver05 ||
+                      statistics.over05CardsPercentage_home ||
+                      stats.homeCardsOver05 ||
+                      stats.over05CardsPercentage_home ||
+                      additionalInfo.homeCardsOver05 ||
+                      additionalInfo.over05CardsPercentage_home ||
+                      0;
+      result.over15 = statistics.homeCardsOver15 ||
+                      statistics.over15CardsPercentage_home ||
+                      stats.homeCardsOver15 ||
+                      stats.over15CardsPercentage_home ||
+                      additionalInfo.homeCardsOver15 ||
+                      additionalInfo.over15CardsPercentage_home ||
+                      0;
+      result.over25 = statistics.homeCardsOver25 ||
+                      statistics.over25CardsPercentage_home ||
+                      stats.homeCardsOver25 ||
+                      stats.over25CardsPercentage_home ||
+                      additionalInfo.homeCardsOver25 ||
+                      additionalInfo.over25CardsPercentage_home ||
+                      0;
+      result.over35 = statistics.homeCardsOver35 ||
+                      statistics.over35CardsPercentage_home ||
+                      stats.homeCardsOver35 ||
+                      stats.over35CardsPercentage_home ||
+                      additionalInfo.homeCardsOver35 ||
+                      additionalInfo.over35CardsPercentage_home ||
+                      0;
+      result.over45 = statistics.homeCardsOver45 ||
+                      statistics.over45CardsPercentage_home ||
+                      stats.homeCardsOver45 ||
+                      stats.over45CardsPercentage_home ||
+                      additionalInfo.homeCardsOver45 ||
+                      additionalInfo.over45CardsPercentage_home ||
+                      0;
+      result.over55 = statistics.homeCardsOver55 ||
+                      statistics.over55CardsPercentage_home ||
+                      stats.homeCardsOver55 ||
+                      stats.over55CardsPercentage_home ||
+                      additionalInfo.homeCardsOver55 ||
+                      additionalInfo.over55CardsPercentage_home ||
+                      0;
+      result.over65 = statistics.homeCardsOver65 ||
+                      statistics.over65CardsPercentage_home ||
+                      stats.homeCardsOver65 ||
+                      stats.over65CardsPercentage_home ||
+                      additionalInfo.homeCardsOver65 ||
+                      additionalInfo.over65CardsPercentage_home ||
+                      0;
+    } else if (venue === 'away') {
+      result.over05 = statistics.awayCardsOver05 ||
+                      statistics.over05CardsPercentage_away ||
+                      stats.awayCardsOver05 ||
+                      stats.over05CardsPercentage_away ||
+                      additionalInfo.awayCardsOver05 ||
+                      additionalInfo.over05CardsPercentage_away ||
+                      0;
+      result.over15 = statistics.awayCardsOver15 ||
+                      statistics.over15CardsPercentage_away ||
+                      stats.awayCardsOver15 ||
+                      stats.over15CardsPercentage_away ||
+                      additionalInfo.awayCardsOver15 ||
+                      additionalInfo.over15CardsPercentage_away ||
+                      0;
+      result.over25 = statistics.awayCardsOver25 ||
+                      statistics.over25CardsPercentage_away ||
+                      stats.awayCardsOver25 ||
+                      stats.over25CardsPercentage_away ||
+                      additionalInfo.awayCardsOver25 ||
+                      additionalInfo.over25CardsPercentage_away ||
+                      0;
+      result.over35 = statistics.awayCardsOver35 ||
+                      statistics.over35CardsPercentage_away ||
+                      stats.awayCardsOver35 ||
+                      stats.over35CardsPercentage_away ||
+                      additionalInfo.awayCardsOver35 ||
+                      additionalInfo.over35CardsPercentage_away ||
+                      0;
+      result.over45 = statistics.awayCardsOver45 ||
+                      statistics.over45CardsPercentage_away ||
+                      stats.awayCardsOver45 ||
+                      stats.over45CardsPercentage_away ||
+                      additionalInfo.awayCardsOver45 ||
+                      additionalInfo.over45CardsPercentage_away ||
+                      0;
+      result.over55 = statistics.awayCardsOver55 ||
+                      statistics.over55CardsPercentage_away ||
+                      stats.awayCardsOver55 ||
+                      stats.over55CardsPercentage_away ||
+                      additionalInfo.awayCardsOver55 ||
+                      additionalInfo.over55CardsPercentage_away ||
+                      0;
+      result.over65 = statistics.awayCardsOver65 ||
+                      statistics.over65CardsPercentage_away ||
+                      stats.awayCardsOver65 ||
+                      stats.over65CardsPercentage_away ||
+                      additionalInfo.awayCardsOver65 ||
+                      additionalInfo.over65CardsPercentage_away ||
+                      0;
+    } else {
+      // Overall
+      result.over05 = statistics.cardsOver05 ||
+                      statistics.over05CardsPercentage_overall ||
+                      statistics.over05CardsPercentage_home ||
+                      stats.cardsOver05 ||
+                      stats.over05CardsPercentage_overall ||
+                      0;
+      result.over15 = statistics.cardsOver15 ||
+                      statistics.over15CardsPercentage_overall ||
+                      statistics.over15CardsPercentage_home ||
+                      stats.cardsOver15 ||
+                      stats.over15CardsPercentage_overall ||
+                      0;
+      result.over25 = statistics.cardsOver25 ||
+                      statistics.over25CardsPercentage_overall ||
+                      statistics.over25CardsPercentage_home ||
+                      stats.cardsOver25 ||
+                      stats.over25CardsPercentage_overall ||
+                      0;
+      result.over35 = statistics.cardsOver35 ||
+                      statistics.over35CardsPercentage_overall ||
+                      statistics.over35CardsPercentage_home ||
+                      stats.cardsOver35 ||
+                      stats.over35CardsPercentage_overall ||
+                      0;
+      result.over45 = statistics.cardsOver45 ||
+                      statistics.over45CardsPercentage_overall ||
+                      statistics.over45CardsPercentage_home ||
+                      stats.cardsOver45 ||
+                      stats.over45CardsPercentage_overall ||
+                      0;
+      result.over55 = statistics.cardsOver55 ||
+                      statistics.over55CardsPercentage_overall ||
+                      statistics.over55CardsPercentage_home ||
+                      stats.cardsOver55 ||
+                      stats.over55CardsPercentage_overall ||
+                      0;
+      result.over65 = statistics.cardsOver65 ||
+                      statistics.over65CardsPercentage_overall ||
+                      statistics.over65CardsPercentage_home ||
+                      stats.cardsOver65 ||
+                      stats.over65CardsPercentage_overall ||
+                      0;
+    }
+
+    return result;
+  }
 }
 
 export default TeamStatisticsExtractor;

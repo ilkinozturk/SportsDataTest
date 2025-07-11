@@ -65,12 +65,9 @@ export class FirstGoalH2HComparison {
       const stats = teamData.stats || teamData.statistics || {};
       const additionalInfo = teamData.additional_info || {};
       
-      // Log all available keys to find the correct field names
-      console.log(`[FirstGoal] ${venue} - All stats keys:`, Object.keys(stats));
-      
       // Check additional_info
       if (Array.isArray(additionalInfo) && additionalInfo.length > 0) {
-        console.log(`[FirstGoal] ${venue} - Additional info sample:`, additionalInfo[0]);
+        // Additional info is available as an array
       }
       
       // Extract first goal statistics

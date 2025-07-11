@@ -112,7 +112,6 @@ export class MatchDetailsData {
 
       // Emit data loaded event
       this.eventBus.emit('match-data-loaded', this.matchData);
-      console.log('[MatchDetailsData] Emitted match-data-loaded event with data:', this.matchData);
 
       // Load initial tab data
       this.loadTabData('overview');
@@ -223,8 +222,8 @@ export class MatchDetailsData {
       case 'lineups':
         this.emitLineupsData();
         break;
-      case 'events':
-        this.emitEventsData();
+      case 'h2h-cards':
+        this.emitCardsData();
         break;
       case 'odds':
         this.emitOddsData();
@@ -326,9 +325,9 @@ export class MatchDetailsData {
     this.eventBus.emit('lineups-data', lineupsData);
   }
 
-  emitEventsData() {
-    const { events } = this.matchData;
-    this.eventBus.emit('match-events', events || []);
+  emitCardsData() {
+    // Since this is now h2h-cards, we'll emit it for the H2H cards module to handle
+    this.eventBus.emit('h2h-cards-requested', this.matchData);
   }
 
   emitOddsData() {
@@ -354,7 +353,6 @@ export class MatchDetailsData {
         homeResponse = cachedHomeData;
       } else {
         homeResponse = await this.apiClient.get(`/api/teams/data?teamId=${homeTeamId}`);
-        console.log('Home team API response:', homeResponse);
         if (homeResponse.success) {
           this.teamDataCache.set(homeTeamId, homeResponse);
         }
@@ -372,7 +370,6 @@ export class MatchDetailsData {
         awayResponse = homeResponse;
       } else {
         awayResponse = await this.apiClient.get(`/api/teams/data?teamId=${awayTeamId}`);
-        console.log('Away team API response:', awayResponse);
         if (awayResponse.success) {
           this.teamDataCache.set(awayTeamId, awayResponse);
         }
@@ -387,7 +384,6 @@ export class MatchDetailsData {
       if (homeResponse.success && homeResponse.data) {
         const homeData = homeResponse.data;
 
-        // Debug API response
 
         // Unused variables removed to fix ESLint errors
         // const stats = homeData.statistics || {};
@@ -451,7 +447,6 @@ export class MatchDetailsData {
       if (awayResponse.success && awayResponse.data) {
         const awayData = awayResponse.data;
 
-        // Debug API response
 
         // Process away team statistics
 
@@ -532,6 +527,7 @@ export class MatchDetailsData {
     // Use stats directly as it already contains the statistics
     const actualStats = stats;
     const additionalInfo = teamData?.additional_info || {};
+    
 
     // Debug logging for all fields (removed to clean up code)
 
@@ -1925,39 +1921,52 @@ export class MatchDetailsData {
       over35CardsAgainstPercentage_away:
         actualStats.over35CardsAgainstPercentage_away || actualStats.awayOver35CardsAgainst || 0,
 
-      // Over cards percentages - total match cards
+      // Over cards percentages - total match cards (maç toplamı)
+      // API sadece home ve away alanları sağlıyor, overall hesaplanması gerekiyor
+      over05CardsPercentage_overall:
+        actualStats.over05CardsPercentage_home || actualStats.over05CardsPercentage_away || 0,
       over15CardsPercentage_overall:
-        actualStats.over15CardsPercentage_overall || actualStats.over15Cards || 0,
+        actualStats.over15CardsPercentage_home || actualStats.over15CardsPercentage_away || 0,
       over25CardsPercentage_overall:
-        actualStats.over25CardsPercentage_overall || actualStats.over25Cards || 0,
+        actualStats.over25CardsPercentage_home || actualStats.over25CardsPercentage_away || 0,
       over35CardsPercentage_overall:
-        actualStats.over35CardsPercentage_overall || actualStats.over35Cards || 0,
+        actualStats.over35CardsPercentage_home || actualStats.over35CardsPercentage_away || 0,
       over45CardsPercentage_overall:
-        actualStats.over45CardsPercentage_overall || actualStats.over45Cards || 0,
+        actualStats.over45CardsPercentage_home || actualStats.over45CardsPercentage_away || 0,
       over55CardsPercentage_overall:
-        actualStats.over55CardsPercentage_overall || actualStats.over55Cards || 0,
+        actualStats.over55CardsPercentage_home || actualStats.over55CardsPercentage_away || 0,
+      over65CardsPercentage_overall:
+        actualStats.over65CardsPercentage_home || actualStats.over65CardsPercentage_away || 0,
 
+      over05CardsPercentage_home:
+        actualStats.over05CardsPercentage_home || 0,
       over15CardsPercentage_home:
-        actualStats.over15CardsPercentage_home || actualStats.homeOver15Cards || 0,
+        actualStats.over15CardsPercentage_home || 0,
       over25CardsPercentage_home:
-        actualStats.over25CardsPercentage_home || actualStats.homeOver25Cards || 0,
+        actualStats.over25CardsPercentage_home || 0,
       over35CardsPercentage_home:
-        actualStats.over35CardsPercentage_home || actualStats.homeOver35Cards || 0,
+        actualStats.over35CardsPercentage_home || 0,
       over45CardsPercentage_home:
-        actualStats.over45CardsPercentage_home || actualStats.homeOver45Cards || 0,
+        actualStats.over45CardsPercentage_home || 0,
       over55CardsPercentage_home:
-        actualStats.over55CardsPercentage_home || actualStats.homeOver55Cards || 0,
+        actualStats.over55CardsPercentage_home || 0,
+      over65CardsPercentage_home:
+        actualStats.over65CardsPercentage_home || 0,
 
+      over05CardsPercentage_away:
+        actualStats.over05CardsPercentage_away || 0,
       over15CardsPercentage_away:
-        actualStats.over15CardsPercentage_away || actualStats.awayOver15Cards || 0,
+        actualStats.over15CardsPercentage_away || 0,
       over25CardsPercentage_away:
-        actualStats.over25CardsPercentage_away || actualStats.awayOver25Cards || 0,
+        actualStats.over25CardsPercentage_away || 0,
       over35CardsPercentage_away:
-        actualStats.over35CardsPercentage_away || actualStats.awayOver35Cards || 0,
+        actualStats.over35CardsPercentage_away || 0,
       over45CardsPercentage_away:
-        actualStats.over45CardsPercentage_away || actualStats.awayOver45Cards || 0,
+        actualStats.over45CardsPercentage_away || 0,
       over55CardsPercentage_away:
-        actualStats.over55CardsPercentage_away || actualStats.awayOver55Cards || 0,
+        actualStats.over55CardsPercentage_away || 0,
+      over65CardsPercentage_away:
+        actualStats.over65CardsPercentage_away || 0,
 
       // Offside statistics - Use correct API field names
       offsidePerMatch:

@@ -114,13 +114,9 @@
             <i class="fas fa-chart-bar"></i>
             <span>Corners</span>
           </button>
-          <button type="button" class="nav-tab" data-tab="lineups" onclick="switchTab('lineups')">
-            <i class="fas fa-users"></i>
-            <span>Lineups</span>
-          </button>
-          <button type="button" class="nav-tab" data-tab="events" onclick="switchTab('events')">
-            <i class="fas fa-list"></i>
-            <span>Events</span>
+          <button type="button" class="nav-tab" data-tab="h2h-cards" onclick="switchTab('h2h-cards')">
+            <i class="fas fa-calendar-check"></i>
+            <span>Cards</span>
           </button>
           <button type="button" class="nav-tab" data-tab="odds" onclick="switchTab('odds')">
             <i class="fas fa-percentage"></i>
@@ -618,20 +614,10 @@
           </div>
         </div>
 
-        <!-- Lineups Tab -->
-        <div id="lineupsTab" class="tab-pane" data-tab="lineups">
-          <div class="lineups-container">
-            <!-- Lineup predictions will be populated by lineup modules -->
-          </div>
-        </div>
-
-        <!-- Events Tab -->
-        <div id="eventsTab" class="tab-pane" data-tab="events">
-          <div class="events-container">
-            <div class="stat-card">
-              <h3 class="card-title">Match Events</h3>
-              <div id="matchEvents" class="events-timeline"></div>
-            </div>
+        <!-- H2H Cards Tab -->
+        <div id="h2hCardsTab" class="tab-pane" data-tab="h2h-cards">
+          <div id="cardsContent" class="h2h-container">
+            <!-- Cards tab content will be populated by H2H modules -->
           </div>
         </div>
 
@@ -651,7 +637,5 @@
     <script src="public/js/config/env.js"></script>
     <script src="public/js/modules/core/event-bus.js"></script>
     <script type="module" src="public/js/modules/match-details/match-details-modular.js"></script>
-    <script src="public/js/modules/display/lineup-display.js"></script>
-    <script type="module" src="public/js/modules/lineups/lineup-predictions.js"></script>
   </body>
 </html>

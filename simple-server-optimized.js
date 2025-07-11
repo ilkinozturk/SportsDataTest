@@ -849,12 +849,14 @@ app.get('/api/teams/data', asyncHandler(async (req, res, next) => {
   }
 }));
 
-// Get player stats
-app.get('/api/player-stats', asyncHandler(async (req, res, next) => {
+// Get player stats - DISABLED to reduce API calls
+// Lineup feature has been removed from the application
+/*
+app.get('/api/player-stats', asyncHandler(async (req, res) => {
   const { player_id } = req.query;
   
   if (!player_id) {
-    throw new BadRequestError('Player ID is required');
+    throw new ValidationError('Player ID is required');
   }
 
   logger.info(`[Player Stats] Fetching details for player: ${player_id}`);
@@ -889,6 +891,7 @@ app.get('/api/player-stats', asyncHandler(async (req, res, next) => {
     });
   }
 }));
+*/
 
 // Get live matches
 app.get('/api/matches/live', async (req, res) => {

@@ -17,7 +17,6 @@ class CornersH2HComparison {
     // Listen for match data
     this.eventBus.on('match-data-loaded', matchData => {
       this.matchData = matchData;
-      console.log('Corners H2H - Match Data:', matchData);
       if (this.teamStatsData) {
         this.calculateCornersComparison();
       }
@@ -26,28 +25,6 @@ class CornersH2HComparison {
     // Listen for team stats data
     this.eventBus.on('team-stats-loaded', teamData => {
       this.teamStatsData = teamData;
-      console.log('FULL TEAM DATA:', teamData);
-      // Check for cornersTotalAVG fields
-      if (teamData.homeTeam) {
-        console.log('Home team cornersTotalAVG_home:', teamData.homeTeam.cornersTotalAVG_home);
-        console.log('Home team keys:', Object.keys(teamData.homeTeam));
-        if (teamData.homeTeam.additional_info) {
-          console.log('Home team additional_info:', teamData.homeTeam.additional_info);
-          console.log('Home team additional_info cornersTotalAVG fields:', 
-            Object.keys(teamData.homeTeam.additional_info).filter(k => k.includes('cornersTotalAVG'))
-          );
-        }
-      }
-      if (teamData.awayTeam) {
-        console.log('Away team cornersTotalAVG_away:', teamData.awayTeam.cornersTotalAVG_away);
-        console.log('Away team keys:', Object.keys(teamData.awayTeam));
-        if (teamData.awayTeam.additional_info) {
-          console.log('Away team additional_info:', teamData.awayTeam.additional_info);
-          console.log('Away team additional_info cornersTotalAVG fields:', 
-            Object.keys(teamData.awayTeam.additional_info).filter(k => k.includes('cornersTotalAVG'))
-          );
-        }
-      }
       if (this.matchData) {
         this.calculateCornersComparison();
       }
@@ -70,22 +47,12 @@ class CornersH2HComparison {
     
     const { homeTeam, awayTeam } = this.teamStatsData;
     
-    // Debug: API'den gelen veriyi kontrol et
-    console.log('Corners H2H - Full Home Team Data:', homeTeam);
-    console.log('Corners H2H - Home Team Stats:', homeTeam.stats || homeTeam.statistics);
-    console.log('Corners H2H - Away Team Stats:', awayTeam.stats || awayTeam.statistics);
-    console.log('Corners H2H - Full Away Team Data:', awayTeam);
     
-    // Deep search for cornersTotalAVG fields
-    console.log('=== DEEP SEARCH FOR cornersTotalAVG ===');
-    this.deepSearchForField(homeTeam, 'cornersTotalAVG', 'Home Team');
-    this.deepSearchForField(awayTeam, 'cornersTotalAVG', 'Away Team');
     
     // Extract match corner statistics from match data
     let matchCornerStats = null;
     if (this.matchData) {
       matchCornerStats = this.extractMatchCornerStats(this.matchData);
-      console.log('Match Corner Stats:', matchCornerStats);
     }
     
     // Extract home team's home stats
@@ -133,8 +100,6 @@ class CornersH2HComparison {
       
       // Primary fields for corners per match - check for Total AVG fields first
       if (venue === 'home') {
-        // API returns cornersTotalAVG (not cornersTotalAVG_home)
-        console.log('Checking statistics.cornersTotalAVG for home team:', statistics.cornersTotalAVG);
         
         cornersPerMatch = statistics.cornersTotalAVG ||
                          stats.cornersTotalAVG ||
@@ -144,8 +109,6 @@ class CornersH2HComparison {
                          stats.homeCornersPerMatch || '0.00';
         totalCorners = stats.homeCornersFor || 0;
       } else if (venue === 'away') {
-        // API returns cornersTotalAVG (not cornersTotalAVG_away)
-        console.log('Checking statistics.cornersTotalAVG for away team:', statistics.cornersTotalAVG);
         
         cornersPerMatch = statistics.cornersTotalAVG ||
                          stats.cornersTotalAVG ||
@@ -200,12 +163,6 @@ class CornersH2HComparison {
       let cornersForPerMatch = '0.00';
       let cornersAgainstPerMatch = '0.00';
       
-      // Debug: Check for corners for/against fields
-      console.log(`${venue} team - Checking corners for/against fields:`);
-      console.log('Stats fields with "for":', Object.keys(stats).filter(k => k.toLowerCase().includes('corner') && k.toLowerCase().includes('for')));
-      console.log('Statistics fields with "for":', Object.keys(statistics).filter(k => k.toLowerCase().includes('corner') && k.toLowerCase().includes('for')));
-      console.log('Stats fields with "against":', Object.keys(stats).filter(k => k.toLowerCase().includes('corner') && k.toLowerCase().includes('against')));
-      console.log('Statistics fields with "against":', Object.keys(statistics).filter(k => k.toLowerCase().includes('corner') && k.toLowerCase().includes('against')));
       
       if (venue === 'home') {
         // Use the same field as cornersPerMatch since API might not separate for/against
@@ -239,17 +196,6 @@ class CornersH2HComparison {
       const cornersForOverStats = this.calculateCornersForOverPercentages(teamData, venue);
       const cornersAgainstOverStats = this.calculateCornersAgainstOverPercentages(teamData, venue);
       
-      console.log(`${venue} team extracted stats:`, {
-        cornersPerMatch,
-        cornersForPerMatch,
-        cornersAgainstPerMatch,
-        'statistics.cornersTotalAVG': statistics.cornersTotalAVG,
-        'stats.cornersTotalAVG': stats.cornersTotalAVG,
-        'parsed cornersPerMatch': parseFloat(cornersPerMatch).toFixed(2),
-        overPercentages,
-        cornersForOverStats,
-        cornersAgainstOverStats
-      });
       
       return {
         cornersPerMatch,
@@ -277,7 +223,6 @@ class CornersH2HComparison {
       };
       
     } catch (error) {
-      console.error('Error extracting corners stats:', error);
       return this.getDefaultStats();
     }
   }
@@ -287,10 +232,6 @@ class CornersH2HComparison {
     const statistics = teamData.statistics || {};
     const additionalInfo = teamData.additional_info || {};
     
-    // Debug: Hangi corner field'ları var?
-    console.log(`${venue} team corner fields in stats:`, Object.keys(stats).filter(key => key.toLowerCase().includes('corner')));
-    console.log(`${venue} team corner fields in statistics:`, Object.keys(statistics).filter(key => key.toLowerCase().includes('corner')));
-    console.log(`${venue} team over fields in statistics:`, Object.keys(statistics).filter(key => key.toLowerCase().includes('over')));
     
     // Default percentages - ALL API DATA
     const overStats = {
@@ -377,12 +318,6 @@ class CornersH2HComparison {
     const statistics = teamData.statistics || {};
     const additionalInfo = teamData.additional_info || {};
     
-    // Debug: Log all corner-related fields
-    console.log(`${venue} team - Searching for corners against fields:`);
-    console.log('Stats corner against fields:', Object.keys(stats).filter(k => k.toLowerCase().includes('against') && k.toLowerCase().includes('corner')));
-    console.log('Statistics corner against fields:', Object.keys(statistics).filter(k => k.toLowerCase().includes('against') && k.toLowerCase().includes('corner')));
-    console.log('Stats conceded corner fields:', Object.keys(stats).filter(k => k.toLowerCase().includes('conceded') && k.toLowerCase().includes('corner')));
-    console.log('Statistics conceded corner fields:', Object.keys(statistics).filter(k => k.toLowerCase().includes('conceded') && k.toLowerCase().includes('corner')));
     
     const overStats = {
       over25: 0,
@@ -468,7 +403,6 @@ class CornersH2HComparison {
       );
     }
     
-    console.log(`${venue} corners against over stats:`, overStats);
     
     return overStats;
   }
@@ -477,15 +411,7 @@ class CornersH2HComparison {
     const stats = matchData.stats || matchData.statistics || {};
     const cornerStats = {};
     
-    // Debug: Check all available fields
-    console.log('Match data:', matchData);
-    console.log('Match data fields:', Object.keys(matchData));
-    console.log('Match stats fields:', Object.keys(stats));
     
-    // Check if totalCorners is an object
-    if (matchData.totalCorners && typeof matchData.totalCorners === 'object') {
-      console.log('totalCorners object:', matchData.totalCorners);
-    }
     
     // Common corner field patterns to check
     const cornerPatterns = [
@@ -502,8 +428,6 @@ class CornersH2HComparison {
       cornerPatterns.some(pattern => key.toLowerCase().includes(pattern.toLowerCase()))
     );
     
-    console.log('Found corner fields in match data root:', matchDataCornerFields);
-    console.log('Found corner fields in stats:', statsCornerFields);
     
     // Extract corner statistics - check both root and stats
     // If totalCorners is an object with home/away properties
@@ -544,7 +468,6 @@ class CornersH2HComparison {
         
         // Check if key contains our search term
         if (key.includes(searchTerm)) {
-          console.log(`Found in ${label} at ${currentPath}:`, obj[key]);
         }
         
         // Recursively search nested objects (but avoid circular references)
