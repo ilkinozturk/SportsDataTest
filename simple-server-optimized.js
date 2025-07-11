@@ -849,6 +849,47 @@ app.get('/api/teams/data', asyncHandler(async (req, res, next) => {
   }
 }));
 
+// Get player stats
+app.get('/api/player-stats', asyncHandler(async (req, res, next) => {
+  const { player_id } = req.query;
+  
+  if (!player_id) {
+    throw new BadRequestError('Player ID is required');
+  }
+
+  logger.info(`[Player Stats] Fetching details for player: ${player_id}`);
+  
+  try {
+    const response = await axios.get('https://api.football-data-api.com/player-stats', {
+      params: {
+        key: config.API?.FOOTBALL_API_KEY || config.API_KEY,
+        player_id: player_id
+      },
+      timeout: 10000
+    });
+
+    if (response.data.success) {
+      logger.info(`[Player Stats] Successfully fetched data for player ${player_id}`);
+      res.json(response.data);
+    } else {
+      logger.warn(`[Player Stats] No data found for player ${player_id}`);
+      res.json({
+        success: false,
+        data: []
+      });
+    }
+  } catch (error) {
+    logger.error(`[Player Stats] Error fetching player ${player_id}:`, error.message);
+    
+    // Return empty data instead of error to not break lineup display
+    res.json({
+      success: false,
+      data: [],
+      error: error.message
+    });
+  }
+}));
+
 // Get live matches
 app.get('/api/matches/live', async (req, res) => {
   try {

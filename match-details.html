@@ -621,23 +621,7 @@
         <!-- Lineups Tab -->
         <div id="lineupsTab" class="tab-pane" data-tab="lineups">
           <div class="lineups-container">
-            <!-- Formation -->
-            <div class="stat-card">
-              <h3 class="card-title">Team Formations</h3>
-              <div id="formations" class="formations-display"></div>
-            </div>
-
-            <!-- Starting XI -->
-            <div class="stat-card">
-              <h3 class="card-title">Starting Lineups</h3>
-              <div id="startingLineups" class="lineups-grid"></div>
-            </div>
-
-            <!-- Substitutes -->
-            <div class="stat-card">
-              <h3 class="card-title">Substitutes</h3>
-              <div id="substitutes" class="substitutes-grid"></div>
-            </div>
+            <!-- Lineup predictions will be populated by lineup modules -->
           </div>
         </div>
 
@@ -665,6 +649,9 @@
 
     <!-- Scripts -->
     <script src="public/js/config/env.js"></script>
+    <script src="public/js/modules/core/event-bus.js"></script>
     <script type="module" src="public/js/modules/match-details/match-details-modular.js"></script>
+    <script src="public/js/modules/display/lineup-display.js"></script>
+    <script type="module" src="public/js/modules/lineups/lineup-predictions.js"></script>
   </body>
 </html>

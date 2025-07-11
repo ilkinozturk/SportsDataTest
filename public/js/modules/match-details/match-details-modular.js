@@ -3,7 +3,7 @@
  * Coordinates between data and display modules
  */
 
-import EventBus from '../events/EventBus.js';
+// EventBus will be loaded from global TeamStatsEventBus
 import { MatchDetailsData } from './match-details-data.js';
 import { MatchDetailsDisplay } from '../display/match-details-display.js';
 import { MatchTabsDisplay } from '../display/match-tabs-display.js';
@@ -21,10 +21,17 @@ import { GoalsConcededH2HComparison } from '../h2h/goals-conceded-h2h-comparison
 import { OverBTTSH2HComparison } from '../h2h/over-btts-h2h-comparison.js';
 import { FirstGoalH2HComparison } from '../h2h/first-goal-h2h-comparison.js';
 import CornersH2HComparison from '../h2h/corners-h2h-comparison.js';
+import getLineupPredictions from '../lineups/lineup-predictions.js';
 
 class MatchDetailsApp {
   constructor() {
-    this.eventBus = new EventBus();
+    // Use global TeamStatsEventBus
+    this.eventBus = window.TeamStatsEventBus;
+    if (!this.eventBus) {
+      console.error('[MatchDetailsApp] TeamStatsEventBus not found!');
+      return;
+    }
+    console.log('[MatchDetailsApp] Using TeamStatsEventBus');
     this.modules = {};
 
     // Create API client for modules
@@ -68,6 +75,9 @@ class MatchDetailsApp {
     this.modules.overBTTSH2HComparison = new OverBTTSH2HComparison(this.eventBus);
     this.modules.firstGoalH2HComparison = new FirstGoalH2HComparison(this.eventBus);
     this.modules.cornersH2HComparison = new CornersH2HComparison(this.eventBus);
+    
+    // Initialize Lineup module using singleton
+    this.modules.lineupPredictions = getLineupPredictions(this.eventBus);
   }
 
   setupGlobalHandlers() {

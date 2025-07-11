@@ -137,6 +137,8 @@ class MatchDetailsService {
           },
           h2h: match.h2h || null,
           trends: match.trends || null,
+          lineups: match.lineups || null,
+          bench: match.bench || null,
         };
 
         // Cache the result

@@ -45,7 +45,7 @@ export class MatchDetailsData {
   init() {
     // Get match ID from URL
     const urlParams = new URLSearchParams(window.location.search);
-    this.matchId = urlParams.get('matchId');
+    this.matchId = urlParams.get('matchId') || urlParams.get('id');
 
     if (!this.matchId) {
       this.eventBus.emit('data-error', { message: 'No match ID provided' });
@@ -112,6 +112,7 @@ export class MatchDetailsData {
 
       // Emit data loaded event
       this.eventBus.emit('match-data-loaded', this.matchData);
+      console.log('[MatchDetailsData] Emitted match-data-loaded event with data:', this.matchData);
 
       // Load initial tab data
       this.loadTabData('overview');

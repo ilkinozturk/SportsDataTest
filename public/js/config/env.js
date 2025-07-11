@@ -30,12 +30,13 @@ const getEnvironment = () => {
 // Environment configurations
 const ENV_CONFIGS = {
   development: {
-    // API Configuration
+    // API Configuration for high-traffic system (10,000 concurrent users)
     API_URL: 'http://localhost:3005/api',
     API_TIMEOUT: 30000, // 30 seconds
     API_RETRY_ATTEMPTS: 3,
     API_RETRY_DELAY: 1000, // 1 second
-    API_RATE_LIMIT_DELAY: 1500, // 1.5 seconds between calls to avoid 429
+    API_RATE_LIMIT_DELAY: 50, // 50ms between calls for high-traffic system
+    PLAYER_BATCH_SIZE: 10, // Process 10 players at a time
 
     // Feature Flags
     ENABLE_DEBUG: true,
@@ -72,12 +73,13 @@ const ENV_CONFIGS = {
   },
 
   staging: {
-    // API Configuration
+    // API Configuration for high-traffic system (10,000 concurrent users)
     API_URL: 'https://staging-api.yourdomain.com',
     API_TIMEOUT: 20000, // 20 seconds
     API_RETRY_ATTEMPTS: 2,
     API_RETRY_DELAY: 2000, // 2 seconds
-    API_RATE_LIMIT_DELAY: 2000, // 2 seconds for staging
+    API_RATE_LIMIT_DELAY: 50, // 50ms for high-traffic system
+    PLAYER_BATCH_SIZE: 10, // Process 10 players at a time
 
     // Feature Flags
     ENABLE_DEBUG: true,
@@ -114,12 +116,13 @@ const ENV_CONFIGS = {
   },
 
   production: {
-    // API Configuration
+    // API Configuration for high-traffic system (10,000 concurrent users)
     API_URL: 'https://api.yourdomain.com',
     API_TIMEOUT: 15000, // 15 seconds
     API_RETRY_ATTEMPTS: 1,
     API_RETRY_DELAY: 3000, // 3 seconds
-    API_RATE_LIMIT_DELAY: 2500, // 2.5 seconds for production
+    API_RATE_LIMIT_DELAY: 50, // 50ms for high-traffic system
+    PLAYER_BATCH_SIZE: 10, // Process 10 players at a time
 
     // Feature Flags
     ENABLE_DEBUG: false,

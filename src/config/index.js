@@ -56,10 +56,10 @@ const configSchema = Joi.object({
       .max(50)
       .default(10),
     MIN_REQUEST_DELAY: Joi.number()
-      .min(50)
+      .min(10)
       .max(2000)
-      .default(200)
-      .description('Minimum delay between API requests in milliseconds'),
+      .default(50)
+      .description('Minimum delay between API requests in milliseconds for high-traffic system'),
     DEFAULT_MATCH_LIMIT: Joi.number()
       .min(1)
       .max(100)
@@ -73,7 +73,7 @@ const configSchema = Joi.object({
     MIN_REQUEST_DELAY: Joi.number()
       .min(0)
       .max(1000)
-      .default(200)
+      .default(50)
       .description('Minimum delay between API requests in milliseconds')
   }),
   
@@ -81,12 +81,12 @@ const configSchema = Joi.object({
   RATE_LIMIT: Joi.object({
     WINDOW_MS: Joi.number()
       .min(1000)
-      .default(15 * 60 * 1000) // 15 minutes
+      .default(60 * 1000) // 1 minute
       .description('Rate limit window in milliseconds'),
     MAX_REQUESTS: Joi.number()
       .min(1)
-      .default(100)
-      .description('Maximum requests per window'),
+      .default(1000)
+      .description('Maximum requests per window for high-traffic system'),
     SKIP_SUCCESSFUL_REQUESTS: Joi.boolean()
       .default(false),
     SKIP_FAILED_REQUESTS: Joi.boolean()

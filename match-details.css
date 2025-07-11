@@ -4889,3 +4889,224 @@
     justify-content: space-between;
   }
 }
+
+/* Lineup Predictions Section */
+.lineup-predictions-card {
+  margin-top: 0;
+}
+
+.lineup-info {
+  font-size: 14px;
+  color: #999;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.lineup-teams-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.team-lineup-section {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.team-lineup-section .team-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.team-lineup-section .team-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.team-lineup-section .team-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.lineup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.lineup-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.group-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin: 0 0 10px 0;
+}
+
+.position-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.position-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ccc;
+  margin: 0 0 5px 0;
+}
+
+.players-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.player-row {
+  display: grid;
+  grid-template-columns: 35px 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.player-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.player-row.injured {
+  opacity: 0.6;
+  background: rgba(255, 59, 48, 0.1);
+}
+
+.player-row.suspended {
+  opacity: 0.6;
+  background: rgba(255, 204, 0, 0.1);
+}
+
+.player-number {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-align: center;
+  min-width: 35px;
+}
+
+.player-flag {
+  width: 20px;
+  height: 14px;
+  object-fit: cover;
+  border-radius: 2px;
+  margin: 0 5px;
+  vertical-align: middle;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.player-name {
+  font-size: 13px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.player-status {
+  font-size: 12px;
+  color: #999;
+  text-align: right;
+}
+
+/* Injuries and Suspensions */
+.injuries-suspensions {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.injury-list,
+.suspension-list {
+  margin-bottom: 15px;
+}
+
+.injury-title,
+.suspension-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff3b30;
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.suspension-title {
+  color: #ffcc00;
+}
+
+.injury-item,
+.suspension-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.injury-type,
+.suspension-reason {
+  font-size: 12px;
+  color: #999;
+}
+
+/* Responsive for Lineup Predictions */
+@media (max-width: 768px) {
+  .lineup-teams-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .team-lineup-section {
+    padding: 15px;
+  }
+  
+  .player-row {
+    grid-template-columns: 35px 1fr;
+    padding: 6px 10px;
+  }
+  
+  .player-number {
+    font-size: 13px;
+  }
+  
+  .player-name {
+    font-size: 13px;
+  }
+  
+  .player-status {
+    font-size: 11px;
+  }
+}
