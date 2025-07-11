@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "node simple-server-optimized.js",
     "start": "node simple-server-optimized.js",
+    "check-api": "node check-card-fields-in-api.js",
+    "analyze-fields": "node analyze-card-api.js",
+    "test-fields": "node test-card-fields.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

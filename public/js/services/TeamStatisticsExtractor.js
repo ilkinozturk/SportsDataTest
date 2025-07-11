@@ -624,6 +624,295 @@ export class TeamStatisticsExtractor {
 
     return result;
   }
+
+  /**
+   * Extract cards for statistics (team's own cards)
+   * @param {Object} rawData - Raw API response data for a team
+   * @param {string} venue - 'home', 'away', or 'overall'
+   * @returns {Object} Cards for statistics
+   */
+  static extractCardsForStatistics(rawData, venue) {
+    const stats = rawData.stats || {};
+    const statistics = rawData.statistics || {};
+    const additionalInfo = rawData.additional_info || {};
+
+    const result = {
+      cardsForAverage: 0,
+      over05For: 0,
+      over15For: 0,
+      over25For: 0,
+      over35For: 0
+    };
+
+    if (venue === 'home') {
+      // Try to get cards average - same as main cards per match
+      result.cardsForAverage = 
+        rawData.homeCardsPerMatch ||
+        rawData.cardsAVG_home ||
+        rawData.homeCardsAVG ||
+        stats.cardsTotalAVG_home || 
+        stats.cardsAVG_home ||
+        stats.homeCardsPerMatch ||
+        stats.homeCardsAVG ||
+        statistics.cardsAVG_home ||
+        statistics.homeCardsAVG ||
+        additionalInfo.cardsTotalAVG_home ||
+        additionalInfo.cardsAVG_home ||
+        additionalInfo.homeCardsPerMatch ||
+        0;
+      
+      // Get Cards For over percentages from API
+      result.over05For = 
+        rawData.over05CardsForPercentage_home ||
+        statistics.over05CardsForPercentage_home ||
+        stats.over05CardsForPercentage_home ||
+        additionalInfo.over05CardsForPercentage_home ||
+        0;
+      
+      result.over15For = 
+        rawData.over15CardsForPercentage_home ||
+        statistics.over15CardsForPercentage_home ||
+        stats.over15CardsForPercentage_home ||
+        additionalInfo.over15CardsForPercentage_home ||
+        0;
+      
+      result.over25For = 
+        rawData.over25CardsForPercentage_home ||
+        statistics.over25CardsForPercentage_home ||
+        stats.over25CardsForPercentage_home ||
+        additionalInfo.over25CardsForPercentage_home ||
+        0;
+      
+      result.over35For = 
+        rawData.over35CardsForPercentage_home ||
+        statistics.over35CardsForPercentage_home ||
+        stats.over35CardsForPercentage_home ||
+        additionalInfo.over35CardsForPercentage_home ||
+        0;
+    } else if (venue === 'away') {
+      // Try to get cards average - same as main cards per match
+      result.cardsForAverage = 
+        rawData.awayCardsPerMatch ||
+        rawData.cardsAVG_away ||
+        rawData.awayCardsAVG ||
+        stats.cardsTotalAVG_away ||
+        stats.cardsAVG_away ||
+        stats.awayCardsPerMatch ||
+        stats.awayCardsAVG ||
+        statistics.cardsAVG_away ||
+        statistics.awayCardsAVG ||
+        additionalInfo.cardsTotalAVG_away ||
+        additionalInfo.cardsAVG_away ||
+        additionalInfo.awayCardsPerMatch ||
+        0;
+      
+      // Get Cards For over percentages from API
+      result.over05For = 
+        rawData.over05CardsForPercentage_away ||
+        statistics.over05CardsForPercentage_away ||
+        stats.over05CardsForPercentage_away ||
+        additionalInfo.over05CardsForPercentage_away ||
+        0;
+      
+      result.over15For = 
+        rawData.over15CardsForPercentage_away ||
+        statistics.over15CardsForPercentage_away ||
+        stats.over15CardsForPercentage_away ||
+        additionalInfo.over15CardsForPercentage_away ||
+        0;
+      
+      result.over25For = 
+        rawData.over25CardsForPercentage_away ||
+        statistics.over25CardsForPercentage_away ||
+        stats.over25CardsForPercentage_away ||
+        additionalInfo.over25CardsForPercentage_away ||
+        0;
+      
+      result.over35For = 
+        rawData.over35CardsForPercentage_away ||
+        statistics.over35CardsForPercentage_away ||
+        stats.over35CardsForPercentage_away ||
+        additionalInfo.over35CardsForPercentage_away ||
+        0;
+    } else {
+      // Overall
+      result.cardsForAverage = 
+        rawData.cardsAVG_overall ||
+        rawData.cardsAVG ||
+        statistics.cardsAVG_overall ||
+        statistics.cardsAVG ||
+        stats.cardsAVG_overall ||
+        stats.cardsAVG ||
+        additionalInfo.cardsAVG_overall ||
+        additionalInfo.cardsAVG ||
+        0;
+      
+      result.over05For = 
+        rawData.over05CardsForPercentage_overall ||
+        statistics.over05CardsForPercentage_overall ||
+        stats.over05CardsForPercentage_overall ||
+        additionalInfo.over05CardsForPercentage_overall ||
+        0;
+      
+      result.over15For = 
+        rawData.over15CardsForPercentage_overall ||
+        statistics.over15CardsForPercentage_overall ||
+        stats.over15CardsForPercentage_overall ||
+        additionalInfo.over15CardsForPercentage_overall ||
+        0;
+      
+      result.over25For = 
+        rawData.over25CardsForPercentage_overall ||
+        statistics.over25CardsForPercentage_overall ||
+        stats.over25CardsForPercentage_overall ||
+        additionalInfo.over25CardsForPercentage_overall ||
+        0;
+      
+      result.over35For = 
+        rawData.over35CardsForPercentage_overall ||
+        statistics.over35CardsForPercentage_overall ||
+        stats.over35CardsForPercentage_overall ||
+        additionalInfo.over35CardsForPercentage_overall ||
+        0;
+    }
+
+    return result;
+  }
+
+  /**
+   * Extract cards against statistics (opponent's cards)
+   * @param {Object} rawData - Raw API response data for a team
+   * @param {string} venue - 'home', 'away', or 'overall'
+   * @returns {Object} Cards against statistics
+   */
+  static extractCardsAgainstStatistics(rawData, venue) {
+    const stats = rawData.stats || {};
+    const statistics = rawData.statistics || {};
+    const additionalInfo = rawData.additional_info || {};
+
+    const result = {
+      cardsAgainstAverage: 0,
+      over05Against: 0,
+      over15Against: 0,
+      over25Against: 0,
+      over35Against: 0
+    };
+
+    if (venue === 'home') {
+      // Cards Against average - try to find in API, otherwise use a default
+      result.cardsAgainstAverage = 
+        rawData.cardsAgainstPerMatch_home ||
+        rawData.homeCardsAgainstPerMatch ||
+        statistics.cardsAgainstPerMatch_home ||
+        stats.cardsAgainstPerMatch_home ||
+        additionalInfo.cardsAgainstPerMatch_home ||
+        1.5; // Default average if not found
+      
+      // Cards Against over percentages from API
+      result.over05Against = 
+        rawData.over05CardsAgainstPercentage_home ||
+        statistics.over05CardsAgainstPercentage_home ||
+        stats.over05CardsAgainstPercentage_home ||
+        additionalInfo.over05CardsAgainstPercentage_home ||
+        0;
+      
+      result.over15Against = 
+        rawData.over15CardsAgainstPercentage_home ||
+        statistics.over15CardsAgainstPercentage_home ||
+        stats.over15CardsAgainstPercentage_home ||
+        additionalInfo.over15CardsAgainstPercentage_home ||
+        0;
+      
+      result.over25Against = 
+        rawData.over25CardsAgainstPercentage_home ||
+        statistics.over25CardsAgainstPercentage_home ||
+        stats.over25CardsAgainstPercentage_home ||
+        additionalInfo.over25CardsAgainstPercentage_home ||
+        0;
+      
+      result.over35Against = 
+        rawData.over35CardsAgainstPercentage_home ||
+        statistics.over35CardsAgainstPercentage_home ||
+        stats.over35CardsAgainstPercentage_home ||
+        additionalInfo.over35CardsAgainstPercentage_home ||
+        0;
+    } else if (venue === 'away') {
+      result.cardsAgainstAverage = 
+        rawData.cardsAgainstPerMatch_away ||
+        rawData.awayCardsAgainstPerMatch ||
+        statistics.cardsAgainstPerMatch_away ||
+        stats.cardsAgainstPerMatch_away ||
+        additionalInfo.cardsAgainstPerMatch_away ||
+        1.5; // Default average if not found
+      
+      result.over05Against = 
+        rawData.over05CardsAgainstPercentage_away ||
+        statistics.over05CardsAgainstPercentage_away ||
+        stats.over05CardsAgainstPercentage_away ||
+        additionalInfo.over05CardsAgainstPercentage_away ||
+        0;
+      
+      result.over15Against = 
+        rawData.over15CardsAgainstPercentage_away ||
+        statistics.over15CardsAgainstPercentage_away ||
+        stats.over15CardsAgainstPercentage_away ||
+        additionalInfo.over15CardsAgainstPercentage_away ||
+        0;
+      
+      result.over25Against = 
+        rawData.over25CardsAgainstPercentage_away ||
+        statistics.over25CardsAgainstPercentage_away ||
+        stats.over25CardsAgainstPercentage_away ||
+        additionalInfo.over25CardsAgainstPercentage_away ||
+        0;
+      
+      result.over35Against = 
+        rawData.over35CardsAgainstPercentage_away ||
+        statistics.over35CardsAgainstPercentage_away ||
+        stats.over35CardsAgainstPercentage_away ||
+        additionalInfo.over35CardsAgainstPercentage_away ||
+        0;
+    } else {
+      // Overall
+      result.cardsAgainstAverage = 
+        rawData.cardsAgainstPerMatch_overall ||
+        rawData.cardsAgainstPerMatch ||
+        statistics.cardsAgainstPerMatch_overall ||
+        stats.cardsAgainstPerMatch_overall ||
+        additionalInfo.cardsAgainstPerMatch_overall ||
+        1.5; // Default if not found
+      
+      result.over05Against = 
+        rawData.over05CardsAgainstPercentage_overall ||
+        statistics.over05CardsAgainstPercentage_overall ||
+        stats.over05CardsAgainstPercentage_overall ||
+        additionalInfo.over05CardsAgainstPercentage_overall ||
+        0;
+      
+      result.over15Against = 
+        rawData.over15CardsAgainstPercentage_overall ||
+        statistics.over15CardsAgainstPercentage_overall ||
+        stats.over15CardsAgainstPercentage_overall ||
+        additionalInfo.over15CardsAgainstPercentage_overall ||
+        0;
+      
+      result.over25Against = 
+        rawData.over25CardsAgainstPercentage_overall ||
+        statistics.over25CardsAgainstPercentage_overall ||
+        stats.over25CardsAgainstPercentage_overall ||
+        additionalInfo.over25CardsAgainstPercentage_overall ||
+        0;
+      
+      result.over35Against = 
+        rawData.over35CardsAgainstPercentage_overall ||
+        statistics.over35CardsAgainstPercentage_overall ||
+        stats.over35CardsAgainstPercentage_overall ||
+        additionalInfo.over35CardsAgainstPercentage_overall ||
+        0;
+    }
+
+    return result;
+  }
 }
 
 export default TeamStatisticsExtractor;

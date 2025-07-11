@@ -158,12 +158,17 @@ class CardsH2HComparison {
     // Extract over statistics
     const overStats = this.extractCardsOverStats(teamData, venue);
     
+    // Extract team cards For/Against statistics
+    const cardsForStats = TeamStatisticsExtractor.extractCardsForStatistics(teamData, venue);
+    const cardsAgainstStats = TeamStatisticsExtractor.extractCardsAgainstStatistics(teamData, venue);
     
     return {
       cardsPerMatch: parseFloat(cardsPerMatch).toFixed(2),
       totalCards: totalCards,
       matchesPlayed: matchesPlayed,
-      ...overStats
+      ...overStats,
+      ...cardsForStats,
+      ...cardsAgainstStats
     };
   }
   

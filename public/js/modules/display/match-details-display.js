@@ -4515,6 +4515,201 @@ export class MatchDetailsDisplay {
           </div>
         </div>
       </div>
+      
+      <!-- Team Cards Section -->
+      <div class="stat-card cards-h2h-card" style="margin-top: 20px;">
+        <h3 class="card-title">
+          <i class="fas fa-square"></i>
+          Team Cards
+        </h3>
+        <div class="cards-comparison-modern">
+          <!-- Main Stats Header -->
+          <div class="cards-main-stats">
+            <div class="main-stat-block home">
+              <img src="${this.getTeamLogoUrl(homeTeam.logo)}" alt="${homeTeam.name}" class="team-logo">
+              <div class="team-name">${homeTeam.name}</div>
+              <div class="venue-label">Ev Sahibi</div>
+              <div class="big-stat">
+                <div class="stat-number">${homeTeam.stats.cardsForAverage ? parseFloat(homeTeam.stats.cardsForAverage).toFixed(2) : '0.00'}</div>
+                <div class="stat-text">Kart Ortalaması (For)</div>
+              </div>
+            </div>
+            <div class="main-stat-block away">
+              <img src="${this.getTeamLogoUrl(awayTeam.logo)}" alt="${awayTeam.name}" class="team-logo">
+              <div class="team-name">${awayTeam.name}</div>
+              <div class="venue-label">Deplasman</div>
+              <div class="big-stat">
+                <div class="stat-number">${awayTeam.stats.cardsForAverage ? parseFloat(awayTeam.stats.cardsForAverage).toFixed(2) : '0.00'}</div>
+                <div class="stat-text">Kart Ortalaması (For)</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Team Cards For Stats -->
+          <div class="cards-over-stats-section">
+            <h4 class="section-subtitle">Takım Kart İstatistikleri (For)</h4>
+            <p class="stats-info">
+              <i class="fas fa-info-circle"></i> Takımın kendisinin aldığı kart istatistikleri. Ev sahibi takım için ev maçları, deplasman takımı için deplasman maçları verileri gösterilmektedir.
+            </p>
+            
+            <div class="over-stats-grid">
+              <div class="over-stat-row">
+                <div class="stat-label">0.5+ Kart (For)</div>
+                <div class="stat-bars">
+                  <div class="bar-container">
+                    <div class="team-value home">${homeTeam.stats.over05For || 0}%</div>
+                    <div class="progress-bar">
+                      <div class="progress home" style="width: ${homeTeam.stats.over05For || 0}%"></div>
+                    </div>
+                  </div>
+                  <div class="bar-container">
+                    <div class="progress-bar">
+                      <div class="progress away" style="width: ${awayTeam.stats.over05For || 0}%"></div>
+                    </div>
+                    <div class="team-value away">${awayTeam.stats.over05For || 0}%</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="over-stat-row">
+                <div class="stat-label">1.5+ Kart (For)</div>
+                <div class="stat-bars">
+                  <div class="bar-container">
+                    <div class="team-value home">${homeTeam.stats.over15For || 0}%</div>
+                    <div class="progress-bar">
+                      <div class="progress home" style="width: ${homeTeam.stats.over15For || 0}%"></div>
+                    </div>
+                  </div>
+                  <div class="bar-container">
+                    <div class="progress-bar">
+                      <div class="progress away" style="width: ${awayTeam.stats.over15For || 0}%"></div>
+                    </div>
+                    <div class="team-value away">${awayTeam.stats.over15For || 0}%</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="over-stat-row">
+                <div class="stat-label">2.5+ Kart (For)</div>
+                <div class="stat-bars">
+                  <div class="bar-container">
+                    <div class="team-value home">${homeTeam.stats.over25For || 0}%</div>
+                    <div class="progress-bar">
+                      <div class="progress home" style="width: ${homeTeam.stats.over25For || 0}%"></div>
+                    </div>
+                  </div>
+                  <div class="bar-container">
+                    <div class="progress-bar">
+                      <div class="progress away" style="width: ${awayTeam.stats.over25For || 0}%"></div>
+                    </div>
+                    <div class="team-value away">${awayTeam.stats.over25For || 0}%</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="over-stat-row">
+                <div class="stat-label">3.5+ Kart (For)</div>
+                <div class="stat-bars">
+                  <div class="bar-container">
+                    <div class="team-value home">${homeTeam.stats.over35For || 0}%</div>
+                    <div class="progress-bar">
+                      <div class="progress home" style="width: ${homeTeam.stats.over35For || 0}%"></div>
+                    </div>
+                  </div>
+                  <div class="bar-container">
+                    <div class="progress-bar">
+                      <div class="progress away" style="width: ${awayTeam.stats.over35For || 0}%"></div>
+                    </div>
+                    <div class="team-value away">${awayTeam.stats.over35For || 0}%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Team Cards Against Stats -->
+          <div class="cards-over-stats-section">
+            <h4 class="section-subtitle">Rakip Kart İstatistikleri (Against)</h4>
+            <p class="stats-info">
+              <i class="fas fa-info-circle"></i> Takımın rakiplerinin aldığı kart istatistikleri. Ev sahibi takım için ev maçları, deplasman takımı için deplasman maçları verileri gösterilmektedir.
+            </p>
+            
+            <div class="over-stats-grid">
+              <div class="over-stat-row">
+                <div class="stat-label">0.5+ Kart (Against)</div>
+                <div class="stat-bars">
+                  <div class="bar-container">
+                    <div class="team-value home">${homeTeam.stats.over05Against || 0}%</div>
+                    <div class="progress-bar">
+                      <div class="progress home" style="width: ${homeTeam.stats.over05Against || 0}%"></div>
+                    </div>
+                  </div>
+                  <div class="bar-container">
+                    <div class="progress-bar">
+                      <div class="progress away" style="width: ${awayTeam.stats.over05Against || 0}%"></div>
+                    </div>
+                    <div class="team-value away">${awayTeam.stats.over05Against || 0}%</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="over-stat-row">
+                <div class="stat-label">1.5+ Kart (Against)</div>
+                <div class="stat-bars">
+                  <div class="bar-container">
+                    <div class="team-value home">${homeTeam.stats.over15Against || 0}%</div>
+                    <div class="progress-bar">
+                      <div class="progress home" style="width: ${homeTeam.stats.over15Against || 0}%"></div>
+                    </div>
+                  </div>
+                  <div class="bar-container">
+                    <div class="progress-bar">
+                      <div class="progress away" style="width: ${awayTeam.stats.over15Against || 0}%"></div>
+                    </div>
+                    <div class="team-value away">${awayTeam.stats.over15Against || 0}%</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="over-stat-row">
+                <div class="stat-label">2.5+ Kart (Against)</div>
+                <div class="stat-bars">
+                  <div class="bar-container">
+                    <div class="team-value home">${homeTeam.stats.over25Against || 0}%</div>
+                    <div class="progress-bar">
+                      <div class="progress home" style="width: ${homeTeam.stats.over25Against || 0}%"></div>
+                    </div>
+                  </div>
+                  <div class="bar-container">
+                    <div class="progress-bar">
+                      <div class="progress away" style="width: ${awayTeam.stats.over25Against || 0}%"></div>
+                    </div>
+                    <div class="team-value away">${awayTeam.stats.over25Against || 0}%</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="over-stat-row">
+                <div class="stat-label">3.5+ Kart (Against)</div>
+                <div class="stat-bars">
+                  <div class="bar-container">
+                    <div class="team-value home">${homeTeam.stats.over35Against || 0}%</div>
+                    <div class="progress-bar">
+                      <div class="progress home" style="width: ${homeTeam.stats.over35Against || 0}%"></div>
+                    </div>
+                  </div>
+                  <div class="bar-container">
+                    <div class="progress-bar">
+                      <div class="progress away" style="width: ${awayTeam.stats.over35Against || 0}%"></div>
+                    </div>
+                    <div class="team-value away">${awayTeam.stats.over35Against || 0}%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     `;
     
     h2hContainer.innerHTML = html;
