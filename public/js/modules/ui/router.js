@@ -19,7 +19,6 @@
       this.handleInitialRoute();
 
       this.initialized = true;
-      console.log('[Router] Initialized');
     },
 
     setupRoutes() {
@@ -57,7 +56,6 @@
     },
 
     handleRoute(path) {
-      console.log('[Router] Handling route:', path);
 
       // Extract route parameters
       const { handler, params } = this.matchRoute(path);
@@ -105,28 +103,23 @@
     },
 
     handleHome() {
-      console.log('[Router] Handling home route');
       this.showView('home');
     },
 
     handleTeam(params) {
-      console.log('[Router] Handling team route:', params);
       const teamId = params.id;
       this.showView('team', { teamId });
     },
 
     handleLeagues() {
-      console.log('[Router] Handling leagues route');
       this.showView('leagues');
     },
 
     handleStats() {
-      console.log('[Router] Handling stats route');
       this.showView('stats');
     },
 
     handleNotFound(path) {
-      console.warn('[Router] Route not found:', path);
       this.showView('404');
     },
 

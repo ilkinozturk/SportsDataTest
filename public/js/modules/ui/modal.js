@@ -18,7 +18,6 @@
       this.bindEvents();
 
       this.initialized = true;
-      console.log('[ModalManager] Initialized');
     },
 
     setupModals() {
@@ -67,7 +66,6 @@
 
     openModal(modalId, data = {}) {
       if (!this.modals.has(modalId)) {
-        console.warn('[ModalManager] Modal not found:', modalId);
         return;
       }
 
@@ -91,7 +89,6 @@
         firstFocusable.focus();
       }
 
-      console.log('[ModalManager] Opened modal:', modalId);
 
       // Emit modal open event
       if (global.TeamStatsEventBus) {
@@ -101,7 +98,6 @@
 
     closeModal(modalId) {
       if (!this.modals.has(modalId)) {
-        console.warn('[ModalManager] Modal not found:', modalId);
         return;
       }
 
@@ -117,7 +113,6 @@
         document.body.classList.remove('modal-open');
       }
 
-      console.log('[ModalManager] Closed modal:', modalId);
 
       // Emit modal close event
       if (global.TeamStatsEventBus) {

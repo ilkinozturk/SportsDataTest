@@ -9,7 +9,6 @@
 
   // Debug mode - set to false for production
   const DEBUG = false;
-  const log = DEBUG ? console.log.bind(console) : () => {};
 
   class TabManager {
     constructor() {
@@ -189,7 +188,6 @@
       this.contentContainer = document.querySelector(this.config.contentContainerSelector);
 
       if (!this.tabContainer) {
-        console.error('TabManager: Tab container not found');
         return;
       }
 
@@ -263,7 +261,6 @@
     async switchTab(tabId, options = {}) {
       // Validate tab
       if (!this.tabs[tabId]) {
-        console.error(`TabManager: Invalid tab ID: ${tabId}`);
         return false;
       }
 
@@ -346,7 +343,6 @@
 
         return true;
       } catch (error) {
-        console.error('TabManager: Error switching tab', error);
         this.emit('tabError', { tabId, error });
         this.hideLoadingState(tabId);
         return false;

@@ -17,7 +17,6 @@
       this.setupDefaultTemplates();
 
       this.initialized = true;
-      console.log('[Renderer] Initialized');
     },
 
     setupDefaultTemplates() {
@@ -62,14 +61,12 @@
 
     registerTemplate(name, template) {
       this.templates.set(name, template);
-      console.log(`[Renderer] Registered template: ${name}`);
     },
 
     render(templateName, data = {}, options = {}) {
       const template = this.templates.get(templateName);
 
       if (!template) {
-        console.warn('[Renderer] Template not found:', templateName);
         return '';
       }
 
@@ -117,7 +114,6 @@
     renderToContainer(containerSelector, templateName, data = {}, options = {}) {
       const container = document.querySelector(containerSelector);
       if (!container) {
-        console.warn('[Renderer] Container not found:', containerSelector);
         return false;
       }
 
@@ -135,7 +131,6 @@
     renderList(containerSelector, templateName, items = [], options = {}) {
       const container = document.querySelector(containerSelector);
       if (!container) {
-        console.warn('[Renderer] Container not found:', containerSelector);
         return false;
       }
 
@@ -277,7 +272,6 @@
     // Clear cache
     clearCache() {
       this.cache.clear();
-      console.log('[Renderer] Cache cleared');
     },
 
     // Get cache stats

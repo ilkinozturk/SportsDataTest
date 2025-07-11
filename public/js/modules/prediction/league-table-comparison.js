@@ -4,7 +4,6 @@
  */
 class LeagueTableComparison {
   constructor(eventBus) {
-    console.log('[LeagueTableComparison] Module initializing');
     this.eventBus = eventBus;
     this.leagueTableCache = new Map();
     this.cacheTTL = 300000; // 5 minutes
@@ -14,10 +13,8 @@ class LeagueTableComparison {
   }
 
   initialize() {
-    console.log('[LeagueTableComparison] Initializing module');
     
     this.eventBus.on('team-stats-loaded', teamData => {
-      console.log('[LeagueTableComparison] Team stats loaded event received', teamData);
       
       if (teamData && !this.seasonId) {
         // Check for direct season ID from team data
@@ -40,7 +37,6 @@ class LeagueTableComparison {
           this.seasonId = possibleSeasonIds.find(id => id !== undefined && id !== null);
           
           if (this.seasonId) {
-            console.log('[LeagueTableComparison] Direct season ID found:', this.seasonId);
             this.fetchLeagueTable();
           }
         }
@@ -51,19 +47,16 @@ class LeagueTableComparison {
 
     // Listen for match data to get competition ID (which is actually season ID)
     this.eventBus.on('match-data-loaded', matchData => {
-      console.log('[LeagueTableComparison] Match data loaded event received', matchData);
       
       if (!this.seasonId && matchData) {
         // Server logs show that competition_id is the season ID
         if (matchData.league?.id) {
           this.seasonId = matchData.league.id;
-          console.log('[LeagueTableComparison] Using competition/season ID from match data:', this.seasonId);
           this.fetchLeagueTable();
         }
       }
     });
     
-    console.log('[LeagueTableComparison] Module initialized, waiting for events');
   }
 
   /**
@@ -71,12 +64,9 @@ class LeagueTableComparison {
    */
   async fetchLeagueTable() {
     if (window.DEBUG_MODE) {
-      console.log('[LeagueTableComparison] fetchLeagueTable called');
-      console.log('[LeagueTableComparison] Season ID:', this.seasonId);
     }
     
     if (!this.seasonId) {
-      console.error('[LeagueTableComparison] No season ID available');
       return;
     }
 
@@ -97,25 +87,21 @@ class LeagueTableComparison {
       // Use backend proxy to avoid CORS
       const url = `/api/league-tables?season_id=${this.seasonId}&include=stats`;
       if (window.DEBUG_MODE) {
-        console.log('[LeagueTableComparison] Fetching URL:', url);
       }
       
       const response = await fetch(url);
       
       if (!response.ok) {
-        console.error('[LeagueTableComparison] HTTP error:', response.status, response.statusText);
         throw new Error('HTTP error! status: ' + response.status);
       }
       
       const data = await response.json();
       if (window.DEBUG_MODE) {
-        console.log('[LeagueTableComparison] API Response:', data);
       }
       
       if (data.success && data.data) {
         this.leagueTableData = data.data;
         if (window.DEBUG_MODE) {
-          console.log('[LeagueTableComparison] League table data stored');
         }
         
         // Cache the data
@@ -127,15 +113,12 @@ class LeagueTableComparison {
         // Re-emit if we already have team data
         if (this.currentTeamData) {
           if (window.DEBUG_MODE) {
-            console.log('[LeagueTableComparison] Re-calculating with existing team data');
           }
           this.calculateLeagueTableComparison(this.currentTeamData);
         }
       } else {
-        console.error('[LeagueTableComparison] API returned unsuccessful response:', data);
       }
     } catch (error) {
-      console.error('[LeagueTableComparison] Error fetching league table:', error);
     }
   }
 
@@ -145,12 +128,10 @@ class LeagueTableComparison {
    */
   calculateLeagueTableComparison(teamData) {
     if (window.DEBUG_MODE) {
-      console.log('[LeagueTableComparison] calculateLeagueTableComparison called');
     }
     
     if (!teamData.homeTeam || !teamData.awayTeam) {
       if (window.DEBUG_MODE) {
-        console.log('[LeagueTableComparison] Missing team data');
       }
       return;
     }
@@ -161,20 +142,17 @@ class LeagueTableComparison {
     // Extract league table from API data
     let leagueTable = this.extractLeagueTableFromAPI();
     if (window.DEBUG_MODE) {
-      console.log('[LeagueTableComparison] Extracted league table:', leagueTable);
     }
 
     // If no league table data and in demo mode, use sample data
     if ((!leagueTable || leagueTable.length === 0) && window.DEMO_MODE) {
       if (window.DEBUG_MODE) {
-        console.log('[LeagueTableComparison] Using demo league table data');
       }
       leagueTable = this.getDemoLeagueTable(teamData);
     }
 
     if (!leagueTable || leagueTable.length === 0) {
       if (window.DEBUG_MODE) {
-        console.log('[LeagueTableComparison] No league table data available');
       }
       return;
     }
@@ -194,7 +172,6 @@ class LeagueTableComparison {
     };
 
     // Emit the calculated comparison
-    console.log('[LeagueTableComparison] Emitting league-table-comparison-calculated event with data:', comparison);
     this.eventBus.emit('league-table-comparison-calculated', comparison);
   }
 

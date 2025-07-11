@@ -41,7 +41,6 @@
           this.config = { ...this.config, ...config };
         }
       } catch (error) {
-        console.warn('[Logger] Failed to load config:', error);
       }
     },
 
@@ -54,7 +53,6 @@
           this.logs = JSON.parse(stored);
         }
       } catch (error) {
-        console.warn('[Logger] Failed to load stored logs:', error);
         this.logs = [];
       }
     },
@@ -122,16 +120,12 @@
 
       switch (level) {
         case 'debug':
-          console.debug(prefix, message, data);
           break;
         case 'info':
-          console.info(prefix, message, data);
           break;
         case 'warn':
-          console.warn(prefix, message, data);
           break;
         case 'error':
-          console.error(prefix, message, data);
           break;
       }
     },
@@ -141,7 +135,6 @@
         const logsToStore = this.logs.slice(-this.config.maxLogs);
         localStorage.setItem(this.config.storageKey, JSON.stringify(logsToStore));
       } catch (error) {
-        console.warn('[Logger] Failed to store logs:', error);
       }
     },
 
@@ -249,7 +242,6 @@
       try {
         localStorage.setItem('teamstats_logger_config', JSON.stringify(this.config));
       } catch (error) {
-        console.warn('[Logger] Failed to save config:', error);
       }
     },
 

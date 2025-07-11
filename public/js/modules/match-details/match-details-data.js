@@ -353,6 +353,7 @@ export class MatchDetailsData {
         homeResponse = cachedHomeData;
       } else {
         homeResponse = await this.apiClient.get(`/api/teams/data?teamId=${homeTeamId}`);
+        console.log('Home team API response:', homeResponse);
         if (homeResponse.success) {
           this.teamDataCache.set(homeTeamId, homeResponse);
         }
@@ -370,6 +371,7 @@ export class MatchDetailsData {
         awayResponse = homeResponse;
       } else {
         awayResponse = await this.apiClient.get(`/api/teams/data?teamId=${awayTeamId}`);
+        console.log('Away team API response:', awayResponse);
         if (awayResponse.success) {
           this.teamDataCache.set(awayTeamId, awayResponse);
         }
@@ -440,6 +442,7 @@ export class MatchDetailsData {
             0,
           stats: this.extractTeamStatistics(homeData.statistics || {}, homeData),
           additional_info: homeData.additional_info,
+          statistics: homeData.statistics, // Pass raw statistics
         };
       }
 
@@ -501,6 +504,7 @@ export class MatchDetailsData {
             0,
           stats: this.extractTeamStatistics(awayData.statistics || {}, awayData),
           additional_info: awayData.additional_info,
+          statistics: awayData.statistics, // Pass raw statistics
         };
       }
 
@@ -509,7 +513,6 @@ export class MatchDetailsData {
       // Emit team statistics data
       this.eventBus.emit('team-stats-loaded', teamData);
     } catch (error) {
-      console.error('Error in fetchTeamStatistics:', error);
       // If there's an error, emit empty team data
       this.eventBus.emit('team-stats-loaded', {
         homeTeam: null,

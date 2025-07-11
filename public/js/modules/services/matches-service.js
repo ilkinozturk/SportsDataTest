@@ -25,14 +25,12 @@
      * Initialize the service
      */
     initialize() {
-      console.log('[MatchesService] Initializing...');
 
       // Subscribe to events if EventBus is available
       if (global.TeamStatsEventBus) {
         global.TeamStatsEventBus.on('team:loaded', data => this.handleTeamLoaded(data));
       }
 
-      console.log('[MatchesService] ✓ Initialized successfully');
     }
 
     /**
@@ -56,13 +54,11 @@
       // Check cache first
       const cached = this.getCachedData(cacheKey);
       if (cached && !options.forceRefresh) {
-        console.log('[MatchesService] Returning cached matches');
         this.publishMatches(cached);
         return cached;
       }
 
       try {
-        console.log(`[MatchesService] Fetching matches for team ${teamId}`);
 
         // Build API URL
         const apiUrl = this.apiEndpoint.replace(':teamId', teamId);
@@ -95,7 +91,6 @@
           throw new Error('Invalid API response format');
         }
       } catch (error) {
-        console.error('[MatchesService] Error fetching matches:', error);
 
         // Try to get from TeamDataService as fallback
         return this.fetchFromTeamData(teamId);
@@ -130,7 +125,6 @@
           return processedMatches;
         }
       } catch (error) {
-        console.error('[MatchesService] Error fetching from team data:', error);
         return [];
       }
     }
@@ -140,7 +134,6 @@
      */
     processMatches(matches) {
       if (!Array.isArray(matches)) {
-        console.warn('[MatchesService] Invalid matches format');
         return [];
       }
 
@@ -216,7 +209,6 @@
      */
     clearCache() {
       this.cache.clear();
-      console.log('[MatchesService] Cache cleared');
     }
 
     /**
@@ -329,5 +321,4 @@
   // Export to global scope
   global.TeamStatsMatchesService = matchesService;
 
-  console.log('[MatchesService] Module loaded successfully');
 })(window);

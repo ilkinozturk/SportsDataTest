@@ -29,7 +29,7 @@ class GoalsH2HComparison {
     
     // Listen for tab switches to Goals tab
     this.eventBus.on('tab-switched', tabName => {
-      if (tabName === 'h2h') {
+      if (tabName === 'h2h-goals') {
         if (this.teamStatsData) {
           this.calculateGoalsComparison();
         }
@@ -50,16 +50,20 @@ class GoalsH2HComparison {
     // Extract away team's away stats
     const awayStats = this.extractGoalsStats(awayTeam, 'away');
     
+    // Get team info with logo URLs
+    const homeTeamInfo = homeTeam.teamInfo || {};
+    const awayTeamInfo = awayTeam.teamInfo || {};
+    
     const comparison = {
       homeTeam: {
-        name: homeTeam.name,
-        logo: homeTeam.logo,
+        name: homeTeamInfo.name || homeTeam.name || 'Home Team',
+        logo: this.getTeamLogoUrl(homeTeamInfo.logo || homeTeam.logo),
         stats: homeStats,
         venue: 'home'
       },
       awayTeam: {
-        name: awayTeam.name,
-        logo: awayTeam.logo,
+        name: awayTeamInfo.name || awayTeam.name || 'Away Team',
+        logo: this.getTeamLogoUrl(awayTeamInfo.logo || awayTeam.logo),
         stats: awayStats,
         venue: 'away'
       },
@@ -213,8 +217,8 @@ class GoalsH2HComparison {
     });
     
     const avgGoals = (totalGoals / matches.length).toFixed(2);
-    const over25Percentage = ((over25Count / matches.length) * 100).toFixed(0);
-    const bttsPercentage = ((bttsCount / matches.length) * 100).toFixed(0);
+    const over25Percentage = Math.round((over25Count / matches.length) * 100).toString();
+    const bttsPercentage = Math.round((bttsCount / matches.length) * 100).toString();
     
     return {
       totalMatches: matches.length,
@@ -222,6 +226,23 @@ class GoalsH2HComparison {
       over25Percentage,
       bttsPercentage
     };
+  }
+  
+  getTeamLogoUrl(logo) {
+    if (!logo) return '';
+    
+    // If it's already a full URL, return as is
+    if (logo.startsWith('http://') || logo.startsWith('https://')) {
+      return logo;
+    }
+    
+    // Build FootyStats CDN URL
+    let logoUrl = logo;
+    if (!logoUrl.startsWith('teams/')) {
+      logoUrl = `teams/${logoUrl}`;
+    }
+    
+    return `https://cdn.footystats.org/img/${logoUrl}`;
   }
 }
 

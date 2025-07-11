@@ -16,7 +16,6 @@
       this.baseStats = global.TeamStatsBaseStatistics;
 
       if (!this.baseStats) {
-        console.error('[FormAnalyzer] BaseStatistics module is required');
       }
 
       // Form periods

@@ -13,7 +13,6 @@
       if (this.initialized) return;
 
       this.initialized = true;
-      console.log('[CoreUtils] Initialized');
     },
 
     // String utilities
@@ -214,7 +213,6 @@
         storage.setItem(key, JSON.stringify(value));
         return true;
       } catch (error) {
-        console.warn('[CoreUtils] Storage failed:', error);
         return false;
       }
     },
@@ -225,7 +223,6 @@
         const value = storage.getItem(key);
         return value ? JSON.parse(value) : defaultValue;
       } catch (error) {
-        console.warn('[CoreUtils] Storage retrieval failed:', error);
         return defaultValue;
       }
     },
@@ -236,7 +233,6 @@
         storage.removeItem(key);
         return true;
       } catch (error) {
-        console.warn('[CoreUtils] Storage removal failed:', error);
         return false;
       }
     },

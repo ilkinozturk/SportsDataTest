@@ -18,7 +18,6 @@
       this.setupPredictionModels();
 
       this.initialized = true;
-      console.log('[PredictionsStatistics] Initialized');
     },
 
     setupPredictionModels() {
@@ -33,7 +32,6 @@
 
     generatePredictions(teamData, opponentData = null, venue = 'home') {
       if (!teamData || !teamData.statistics) {
-        console.warn('[PredictionsStatistics] Invalid team data provided');
         return null;
       }
 
@@ -44,7 +42,6 @@
         try {
           predictions[type] = predictor(teamData, opponentData, venue);
         } catch (error) {
-          console.error(`[PredictionsStatistics] Failed to generate ${type} prediction:`, error);
           predictions[type] = null;
         }
       });
@@ -365,7 +362,6 @@
     getPrediction(type, teamData, opponentData, venue) {
       const predictor = this.predictionModels.get(type);
       if (!predictor) {
-        console.warn('[PredictionsStatistics] Unknown prediction type:', type);
         return null;
       }
 

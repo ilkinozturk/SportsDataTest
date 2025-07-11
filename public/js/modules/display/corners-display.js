@@ -470,7 +470,6 @@
      */
     renderCornersSection(container, statistics, options = {}) {
       if (!container) {
-        console.error('[CornersDisplay] Container is required');
         return null;
       }
 

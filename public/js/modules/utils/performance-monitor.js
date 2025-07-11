@@ -37,7 +37,6 @@
           this.metrics = new Map(data);
         }
       } catch (error) {
-        console.warn('[PerformanceMonitor] Failed to load stored metrics:', error);
       }
     },
 
@@ -94,7 +93,6 @@
       this.recordMetric('navigation-timing', metrics);
 
       if (this.config.enableLogging) {
-        console.log('[PerformanceMonitor] Navigation timing:', metrics);
       }
     },
 
@@ -145,7 +143,6 @@
         this.metrics.delete(`${name}-start`);
 
         if (this.config.enableLogging) {
-          console.log(`[PerformanceMonitor] ${name}: ${duration.toFixed(2)}ms`);
         }
 
         return duration;
@@ -169,7 +166,6 @@
       });
 
       if (this.config.enableLogging) {
-        console.log(`[PerformanceMonitor] Function ${name}: ${duration.toFixed(2)}ms`);
       }
 
       return result;
@@ -190,7 +186,6 @@
       });
 
       if (this.config.enableLogging) {
-        console.log(`[PerformanceMonitor] Async function ${name}: ${duration.toFixed(2)}ms`);
       }
 
       return result;
@@ -235,7 +230,6 @@
           });
 
           if (fps < 30) {
-            console.warn('[PerformanceMonitor] Low FPS detected:', fps);
           }
         }
 
@@ -274,7 +268,6 @@
         const data = Array.from(this.metrics.entries());
         localStorage.setItem(this.config.storageKey, JSON.stringify(data));
       } catch (error) {
-        console.warn('[PerformanceMonitor] Failed to store metrics:', error);
       }
     },
 
@@ -322,12 +315,10 @@
       if (this.config.enableStorage) {
         localStorage.removeItem(this.config.storageKey);
       }
-      console.log('[PerformanceMonitor] Metrics cleared');
     },
 
     info(message) {
       if (this.config.enableLogging) {
-        console.log(message);
       }
     },
   };

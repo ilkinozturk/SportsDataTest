@@ -16,7 +16,6 @@
       this.baseStats = global.TeamStatsBaseStatistics;
 
       if (!this.baseStats) {
-        console.error('[CardsStatistics] BaseStatistics module is required');
       }
 
       // Card thresholds for over/under calculations

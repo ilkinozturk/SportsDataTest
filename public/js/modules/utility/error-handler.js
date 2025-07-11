@@ -23,7 +23,6 @@
       this.loadConfig();
 
       this.initialized = true;
-      console.log('[ErrorHandler] Initialized');
     },
 
     setupGlobalHandlers() {
@@ -75,7 +74,6 @@
           this.config = { ...this.config, ...config };
         }
       } catch (error) {
-        console.warn('[ErrorHandler] Failed to load config:', error);
       }
     },
 
@@ -127,25 +125,16 @@
     },
 
     logError(error) {
-      console.group(`🚨 Error [${error.id}]`);
-      console.error('Type:', error.type);
-      console.error('Message:', error.message);
-      console.error('Time:', error.timestamp);
 
       if (error.filename) {
-        console.error('File:', error.filename);
-        console.error('Line:', error.lineno, 'Column:', error.colno);
       }
 
       if (error.stack) {
-        console.error('Stack:', error.stack);
       }
 
       if (error.reason) {
-        console.error('Reason:', error.reason);
       }
 
-      console.groupEnd();
     },
 
     showUserNotification(error) {
@@ -186,7 +175,6 @@
 
     reportError(error) {
       // This would send error reports to a logging service
-      console.log('[ErrorHandler] Reporting error:', error.id);
 
       // Example: Send to analytics or error tracking service
       // fetch('/api/errors', {
@@ -259,7 +247,6 @@
 
     clearErrors() {
       this.errors = [];
-      console.log('[ErrorHandler] Errors cleared');
     },
 
     getErrorStats() {
@@ -290,7 +277,6 @@
       try {
         localStorage.setItem('teamstats_error_config', JSON.stringify(this.config));
       } catch (error) {
-        console.warn('[ErrorHandler] Failed to save config:', error);
       }
     },
   };

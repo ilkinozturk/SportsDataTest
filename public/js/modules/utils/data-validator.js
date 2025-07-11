@@ -13,7 +13,6 @@
       if (this.initialized) return;
 
       this.initialized = true;
-      console.log('[DataValidator] Initialized');
     },
 
     validateTeamData(data) {
@@ -196,7 +195,6 @@
     },
 
     logValidationError(context, errors) {
-      console.error(`[DataValidator] Validation failed in ${context}:`, errors);
 
       // Emit validation error event
       if (global.TeamStatsEventBus) {
@@ -208,7 +206,6 @@
     },
 
     logValidationSuccess(context) {
-      console.log(`[DataValidator] Validation passed for ${context}`);
     },
   };
 

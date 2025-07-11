@@ -560,7 +560,6 @@
 
         throw new Error('Invalid response format from team data API');
       } catch (error) {
-        console.error('Error fetching team data:', error);
         throw error;
       }
     }
@@ -579,7 +578,6 @@
 
         return data;
       } catch (error) {
-        console.error('Error fetching match details:', error);
         throw error;
       }
     }
@@ -750,5 +748,4 @@
     clearCache: () => apiClient.clearCache(),
   };
 
-  console.log('Team Stats API Client initialized');
 })(window);

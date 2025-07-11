@@ -17,7 +17,6 @@
       this.teamService = global.TeamStatsTeamService;
 
       if (!this.baseStats) {
-        console.error('[GoalsStatistics] BaseStatistics module is required');
       }
 
       // Goal thresholds for over/under calculations

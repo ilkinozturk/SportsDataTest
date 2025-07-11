@@ -184,5 +184,4 @@
     });
   }
 
-  console.log('[CardsData] Module loaded successfully');
 })(window);

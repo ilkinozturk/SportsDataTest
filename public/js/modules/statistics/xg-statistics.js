@@ -16,7 +16,6 @@
       this.baseStats = global.TeamStatsBaseStatistics;
 
       if (!this.baseStats) {
-        console.error('[XGStatistics] BaseStatistics module is required');
       }
 
       // xG thresholds for analysis

@@ -20,7 +20,6 @@
       this.handleInitialRoute();
 
       this.initialized = true;
-      console.log('[CoreRouter] Initialized');
     },
 
     setupDefaultRoutes() {
@@ -49,7 +48,6 @@
 
     addRoute(pattern, handler) {
       this.routes.set(pattern, handler);
-      console.log(`[CoreRouter] Route added: ${pattern}`);
     },
 
     navigate(path) {
@@ -69,7 +67,6 @@
     },
 
     handleRoute(path) {
-      console.log('[CoreRouter] Handling route:', path);
 
       // Extract query parameters
       const [pathname, search] = path.split('?');
@@ -137,12 +134,10 @@
 
     // Default route handlers
     handleHome(params) {
-      console.log('[CoreRouter] Home route', params);
       this.showView('home');
     },
 
     handleTeam(params) {
-      console.log('[CoreRouter] Team route', params);
       this.showView('team', params);
 
       // Emit team change event
@@ -152,7 +147,6 @@
     },
 
     handleTeamStatsHtml(params) {
-      console.log('[CoreRouter] Team Stats HTML route', params);
 
       // Extract teamId from query parameters
       if (params.teamId) {
@@ -163,12 +157,10 @@
     },
 
     handleStats(params) {
-      console.log('[CoreRouter] Stats route', params);
       this.showView('stats');
     },
 
     handleNotFound(path) {
-      console.warn('[CoreRouter] Route not found:', path);
       this.showView('404');
     },
 

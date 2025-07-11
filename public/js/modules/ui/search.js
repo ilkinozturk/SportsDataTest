@@ -22,7 +22,6 @@
       }
 
       this.initialized = true;
-      console.log('[SearchManager] Initialized');
     },
 
     bindEvents() {
@@ -51,13 +50,11 @@
     },
 
     performSearch(query) {
-      console.log('[SearchManager] Performing search:', query);
       // Search implementation would go here
       this.displayResults([]);
     },
 
     executeSearch(query) {
-      console.log('[SearchManager] Executing search:', query);
       // Execute search implementation
     },
 

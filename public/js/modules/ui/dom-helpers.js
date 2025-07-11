@@ -94,7 +94,6 @@
 
         return element;
       } catch (error) {
-        console.error('Invalid selector:', selector, error);
         return null;
       }
     }
@@ -106,7 +105,6 @@
       try {
         return Array.from(parent.querySelectorAll(selector));
       } catch (error) {
-        console.error('Invalid selector:', selector, error);
         return [];
       }
     }
@@ -212,7 +210,6 @@
         try {
           callback();
         } catch (error) {
-          console.error('RAF callback error:', error);
         }
       });
 

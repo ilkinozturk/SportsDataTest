@@ -16,7 +16,6 @@
       this.setupPredictionModels();
 
       this.initialized = true;
-      console.log('[PredictionsEngine] Initialized');
     },
 
     setupPredictionModels() {
@@ -30,21 +29,18 @@
 
     registerModel(name, modelFunction) {
       this.models.set(name, modelFunction);
-      console.log(`[PredictionsEngine] Registered model: ${name}`);
     },
 
     predict(modelName, teamData, opponentData = null) {
       const model = this.models.get(modelName);
 
       if (!model) {
-        console.warn('[PredictionsEngine] Model not found:', modelName);
         return null;
       }
 
       try {
         return model.call(this, teamData, opponentData);
       } catch (error) {
-        console.error('[PredictionsEngine] Prediction failed:', error);
         return null;
       }
     },
@@ -293,14 +289,12 @@
           })
         );
       } catch (error) {
-        console.warn('[PredictionsEngine] Failed to record result:', error);
       }
     },
 
     // Model validation
     validateModel(modelName) {
       // This would compare predictions vs actual results
-      console.log(`[PredictionsEngine] Validating model: ${modelName}`);
       // Implementation would depend on stored prediction results
       return { accuracy: 0, sampleSize: 0 };
     },

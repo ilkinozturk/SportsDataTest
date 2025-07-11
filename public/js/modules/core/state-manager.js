@@ -9,7 +9,6 @@
 
   // Debug mode - set to false for production
   const DEBUG = false;
-  const log = DEBUG ? console.log.bind(console) : () => {};
 
   // State Manager Class
   class StateManager {
@@ -240,7 +239,6 @@
           try {
             callback(newValue, oldValue, key);
           } catch (error) {
-            console.error('Error in state observer:', error);
           }
         });
       }
@@ -271,7 +269,6 @@
      */
     setState(newState, skipGlobalSync = false) {
       if (typeof newState !== 'object' || newState === null) {
-        console.error('setState expects an object');
         return;
       }
 

@@ -17,6 +17,10 @@ import { CardsComparison } from '../prediction/cards-comparison.js';
 import { OffsideComparison } from '../prediction/offside-comparison.js';
 import { LeagueTableComparison } from '../prediction/league-table-comparison.js';
 import { GoalsH2HComparison } from '../h2h/goals-h2h-comparison.js';
+import { GoalsConcededH2HComparison } from '../h2h/goals-conceded-h2h-comparison.js';
+import { OverBTTSH2HComparison } from '../h2h/over-btts-h2h-comparison.js';
+import { FirstGoalH2HComparison } from '../h2h/first-goal-h2h-comparison.js';
+import CornersH2HComparison from '../h2h/corners-h2h-comparison.js';
 
 class MatchDetailsApp {
   constructor() {
@@ -60,6 +64,10 @@ class MatchDetailsApp {
     
     // Initialize H2H modules
     this.modules.goalsH2HComparison = new GoalsH2HComparison(this.eventBus);
+    this.modules.goalsConcededH2HComparison = new GoalsConcededH2HComparison(this.eventBus);
+    this.modules.overBTTSH2HComparison = new OverBTTSH2HComparison(this.eventBus);
+    this.modules.firstGoalH2HComparison = new FirstGoalH2HComparison(this.eventBus);
+    this.modules.cornersH2HComparison = new CornersH2HComparison(this.eventBus);
   }
 
   setupGlobalHandlers() {
@@ -70,7 +78,6 @@ class MatchDetailsApp {
 
     // Handle display errors
     this.eventBus.on('display-error', error => {
-      console.error('Display error:', error);
     });
   }
 }
@@ -78,10 +85,10 @@ class MatchDetailsApp {
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    new MatchDetailsApp();
+    window.matchDetailsApp = new MatchDetailsApp();
   });
 } else {
-  new MatchDetailsApp();
+  window.matchDetailsApp = new MatchDetailsApp();
 }
 
 // Export for potential external use

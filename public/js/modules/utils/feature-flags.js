@@ -42,7 +42,6 @@
       }
 
       this.initialized = true;
-      console.log('[FeatureFlags] Initialized');
     },
 
     loadDefaultFlags() {
@@ -63,7 +62,6 @@
           });
         }
       } catch (error) {
-        console.warn('[FeatureFlags] Failed to load stored flags:', error);
       }
     },
 
@@ -79,14 +77,12 @@
         // Save updated flags
         this.storeFlags();
 
-        console.log('[FeatureFlags] Remote flags loaded');
 
         // Emit flags updated event
         if (global.TeamStatsEventBus) {
           global.TeamStatsEventBus.emit('feature-flags:updated', this.getAllFlags());
         }
       } catch (error) {
-        console.warn('[FeatureFlags] Failed to load remote flags:', error);
       }
     },
 
@@ -111,7 +107,6 @@
         this.storeFlags();
       }
 
-      console.log(`[FeatureFlags] Flag '${flagName}' set to: ${value}`);
 
       // Emit flag changed event
       if (global.TeamStatsEventBus) {
@@ -142,7 +137,6 @@
         const flags = this.getAllFlags();
         localStorage.setItem(this.config.storageKey, JSON.stringify(flags));
       } catch (error) {
-        console.warn('[FeatureFlags] Failed to store flags:', error);
       }
     },
 
@@ -180,7 +174,6 @@
 
         return eval(safeExpression);
       } catch (error) {
-        console.warn('[FeatureFlags] Failed to evaluate condition:', condition, error);
         return false;
       }
     },
@@ -217,7 +210,6 @@
         this.flags.set(key, true);
       });
       this.storeFlags();
-      console.log('[FeatureFlags] All flags enabled');
     },
 
     disableAllFlags() {
@@ -225,14 +217,12 @@
         this.flags.set(key, false);
       });
       this.storeFlags();
-      console.log('[FeatureFlags] All flags disabled');
     },
 
     resetToDefaults() {
       this.flags.clear();
       this.loadDefaultFlags();
       this.storeFlags();
-      console.log('[FeatureFlags] Reset to defaults');
     },
 
     // Configuration management
@@ -255,9 +245,7 @@
         Object.entries(flags).forEach(([key, value]) => {
           this.setFlag(key, value);
         });
-        console.log('[FeatureFlags] Flags imported successfully');
       } catch (error) {
-        console.error('[FeatureFlags] Failed to import flags:', error);
       }
     },
   };

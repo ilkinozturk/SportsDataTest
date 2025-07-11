@@ -18,7 +18,6 @@
       this.bindEvents();
 
       this.initialized = true;
-      console.log('[DropdownManager] Initialized');
     },
 
     setupDropdowns() {
@@ -94,7 +93,6 @@
 
     openDropdown(dropdownId) {
       if (!this.dropdowns.has(dropdownId)) {
-        console.warn('[DropdownManager] Dropdown not found:', dropdownId);
         return;
       }
 
@@ -117,7 +115,6 @@
         firstItem.focus();
       }
 
-      console.log('[DropdownManager] Opened dropdown:', dropdownId);
 
       // Emit dropdown open event
       if (global.TeamStatsEventBus) {
@@ -138,7 +135,6 @@
         this.activeDropdown = null;
       }
 
-      console.log('[DropdownManager] Closed dropdown:', dropdownId);
 
       // Emit dropdown close event
       if (global.TeamStatsEventBus) {

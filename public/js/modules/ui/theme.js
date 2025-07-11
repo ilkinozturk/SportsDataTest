@@ -32,7 +32,6 @@
       this.applyTheme();
 
       this.initialized = true;
-      console.log('[ThemeManager] Initialized');
     },
 
     bindEvents() {
@@ -65,7 +64,6 @@
 
     setTheme(theme) {
       if (!this.themes[theme]) {
-        console.warn('[ThemeManager] Unknown theme:', theme);
         return;
       }
 
@@ -122,14 +120,12 @@
         select.value = this.currentTheme;
       });
 
-      console.log('[ThemeManager] Applied theme:', this.currentTheme);
     },
 
     saveTheme() {
       try {
         localStorage.setItem('teamstats_theme', this.currentTheme);
       } catch (error) {
-        console.warn('[ThemeManager] Failed to save theme:', error);
       }
     },
 
@@ -140,7 +136,6 @@
           this.currentTheme = saved;
         }
       } catch (error) {
-        console.warn('[ThemeManager] Failed to load saved theme:', error);
       }
     },
 

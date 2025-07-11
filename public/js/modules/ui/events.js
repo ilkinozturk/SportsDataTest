@@ -9,7 +9,6 @@
 
   // Check dependencies
   if (!global.TeamStatsEventBus) {
-    console.warn('UI Events works better with Event Bus module');
   }
 
   /**
@@ -853,7 +852,6 @@
   uiEvents.shortcut(
     'alt+h',
     () => {
-      console.log('UI Events shortcuts:', uiEvents.getShortcuts());
     },
     { description: 'Show shortcuts help' }
   );
@@ -872,5 +870,4 @@
     debounce: uiEvents.debounce.bind(uiEvents),
   };
 
-  console.log('Team Stats UI Events Module initialized');
 })(window);

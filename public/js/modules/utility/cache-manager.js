@@ -22,7 +22,6 @@
       this.setupCleanup();
 
       this.initialized = true;
-      console.log('[CacheManager] Initialized');
     },
 
     set(key, value, ttl = this.config.defaultTTL) {
@@ -40,7 +39,6 @@
       }
 
       this.saveToStorage();
-      console.log(`[CacheManager] Cached item: ${key}`);
     },
 
     get(key) {
@@ -69,7 +67,6 @@
       const deleted = this.cache.delete(key);
       if (deleted) {
         this.saveToStorage();
-        console.log(`[CacheManager] Deleted item: ${key}`);
       }
       return deleted;
     },
@@ -77,7 +74,6 @@
     clear() {
       this.cache.clear();
       this.saveToStorage();
-      console.log('[CacheManager] Cache cleared');
     },
 
     isExpired(item) {
@@ -98,7 +94,6 @@
 
       if (oldestKey) {
         this.cache.delete(oldestKey);
-        console.log(`[CacheManager] Evicted oldest item: ${oldestKey}`);
       }
     },
 
@@ -116,7 +111,6 @@
 
       if (expired.length > 0) {
         this.saveToStorage();
-        console.log(`[CacheManager] Cleaned up ${expired.length} expired items`);
       }
     },
 
@@ -132,7 +126,6 @@
         const serialized = JSON.stringify(Array.from(this.cache.entries()));
         localStorage.setItem(this.config.storageKey, serialized);
       } catch (error) {
-        console.warn('[CacheManager] Failed to save to storage:', error);
       }
     },
 
@@ -147,7 +140,6 @@
           this.cleanup();
         }
       } catch (error) {
-        console.warn('[CacheManager] Failed to load from storage:', error);
         this.cache = new Map();
       }
     },

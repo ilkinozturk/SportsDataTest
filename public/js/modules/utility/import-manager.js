@@ -16,7 +16,6 @@
       this.bindEvents();
 
       this.initialized = true;
-      console.log('[ImportManager] Initialized');
     },
 
     bindEvents() {
@@ -59,7 +58,6 @@
     },
 
     handleFileImport(file, importType) {
-      console.log('[ImportManager] Importing file:', file.name, 'Type:', importType);
 
       if (!this.validateFile(file)) {
         this.showError(
@@ -79,7 +77,6 @@
             this.processImportedData(data, importType);
           }
         } catch (error) {
-          console.error('[ImportManager] Failed to parse file:', error);
           this.showError('Failed to parse file: ' + error.message);
         }
       };
@@ -179,7 +176,6 @@
     },
 
     processImportedData(data, importType) {
-      console.log('[ImportManager] Processing imported data:', importType, data);
 
       switch (importType) {
         case 'team-stats':
@@ -192,7 +188,6 @@
           this.importConfiguration(data);
           break;
         default:
-          console.warn('[ImportManager] Unknown import type:', importType);
       }
 
       // Emit import event
@@ -233,12 +228,10 @@
           localStorage.setItem(`teamstats_${key}`, JSON.stringify(data[key]));
         });
       } catch (error) {
-        console.error('[ImportManager] Failed to import configuration:', error);
       }
     },
 
     showError(message) {
-      console.error('[ImportManager] Error:', message);
 
       // Show error to user
       if (global.TeamStatsModalManager) {
@@ -259,7 +252,6 @@
     },
 
     showSuccess(message) {
-      console.log('[ImportManager] Success:', message);
 
       // Show success to user
       if (global.TeamStatsEventBus) {

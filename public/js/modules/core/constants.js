@@ -277,7 +277,6 @@
      */
     get(key, path) {
       if (!this._constants.has(key)) {
-        console.warn(`Constant "${key}" not found`);
         return undefined;
       }
 
@@ -364,7 +363,6 @@
      */
     freeze() {
       this._frozen = true;
-      console.log('Constants frozen - no further modifications allowed');
     }
 
     /**
@@ -505,5 +503,4 @@
     },
   };
 
-  console.log('Team Stats Constants Module initialized');
 })(window);

@@ -9,7 +9,6 @@
 
   // Check dependencies
   if (!global.TeamStatsConstants) {
-    console.warn('UI Components works better with Constants module');
   }
 
   /**
@@ -30,7 +29,6 @@
      */
     register(name, config) {
       if (this.components.has(name)) {
-        console.warn(`Component "${name}" is already registered`);
         return;
       }
 
@@ -167,7 +165,6 @@
      */
     mount(target) {
       if (this.mounted) {
-        console.warn(`Component ${this.name} is already mounted`);
         return;
       }
 
@@ -837,5 +834,4 @@
     DataTable: props => Components.create('data-table', props),
   };
 
-  console.log('Team Stats UI Components Module initialized');
 })(window);

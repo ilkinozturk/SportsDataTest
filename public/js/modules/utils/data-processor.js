@@ -13,7 +13,6 @@
       if (this.initialized) return;
 
       this.initialized = true;
-      console.log('[DataProcessor] Initialized');
     },
 
     processTeamData(rawData) {
@@ -38,7 +37,6 @@
 
         return processedData;
       } catch (error) {
-        console.error('[DataProcessor] Failed to process team data:', error);
         return rawData;
       }
     },

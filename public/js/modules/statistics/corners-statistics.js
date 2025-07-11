@@ -16,7 +16,6 @@
       this.baseStats = global.TeamStatsBaseStatistics;
 
       if (!this.baseStats) {
-        console.error('[CornersStatistics] BaseStatistics module is required');
       }
 
       // Corner thresholds for over/under calculations

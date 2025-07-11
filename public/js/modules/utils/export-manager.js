@@ -15,7 +15,6 @@
       this.bindEvents();
 
       this.initialized = true;
-      console.log('[ExportManager] Initialized');
     },
 
     bindEvents() {
@@ -31,7 +30,6 @@
     },
 
     exportData(format, dataSource) {
-      console.log('[ExportManager] Exporting data:', format, dataSource);
 
       let data;
       if (dataSource === 'current-stats') {
@@ -56,7 +54,6 @@
           this.exportToPDF(data);
           break;
         default:
-          console.warn('[ExportManager] Unknown export format:', format);
       }
     },
 
@@ -93,7 +90,6 @@
       try {
         return JSON.parse(dataSource);
       } catch (error) {
-        console.warn('[ExportManager] Failed to parse custom data:', error);
         return this.getCurrentStats();
       }
     },
@@ -112,12 +108,10 @@
 
     exportToExcel(data) {
       // For now, export as CSV which can be opened in Excel
-      console.log('[ExportManager] Excel export not implemented, using CSV');
       this.exportToCSV(data);
     },
 
     exportToPDF(data) {
-      console.log('[ExportManager] PDF export not implemented');
       // PDF export would require a library like jsPDF
     },
 
@@ -164,18 +158,15 @@
 
       URL.revokeObjectURL(url);
 
-      console.log('[ExportManager] Downloaded file:', filename);
     },
 
     exportChart(chartId, format = 'png') {
       const chartElement = document.getElementById(chartId);
       if (!chartElement) {
-        console.warn('[ExportManager] Chart not found:', chartId);
         return;
       }
 
       // This would require canvas conversion for charts
-      console.log('[ExportManager] Chart export not implemented');
     },
   };
 

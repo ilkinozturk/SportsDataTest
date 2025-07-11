@@ -246,7 +246,6 @@
     initializeDependencies() {
       // Check for StateManager
       if (typeof TeamStatsStateManager === 'undefined') {
-        console.warn('FilterManager: StateManager not found, running in standalone mode');
         this.stateManager = null;
       } else {
         this.stateManager = TeamStatsStateManager;
@@ -254,7 +253,6 @@
 
       // Check for EventBus
       if (typeof TeamStatsEventBus === 'undefined') {
-        console.warn('FilterManager: EventBus not found, running in standalone mode');
         this.eventBus = null;
       } else {
         this.eventBus = TeamStatsEventBus;
@@ -329,14 +327,12 @@
 
       // Validate filter type
       if (!this.filterTypes[filterType]) {
-        console.error(`FilterManager: Invalid filter type: ${filterType}`);
         return false;
       }
 
       // Validate filter value
       const validOptions = this.filterTypes[filterType].options.map(opt => opt.value);
       if (!validOptions.includes(value)) {
-        console.error(`FilterManager: Invalid value '${value}' for filter '${filterType}'`);
         return false;
       }
 
@@ -406,7 +402,6 @@
       // Validate all filters first
       for (const [filterType, value] of Object.entries(filters)) {
         if (!this.filterTypes[filterType]) {
-          console.error(`FilterManager: Invalid filter type: ${filterType}`);
           return false;
         }
       }
@@ -456,7 +451,6 @@
     applyPreset(presetName, options = {}) {
       const preset = this.presets[presetName];
       if (!preset) {
-        console.error(`FilterManager: Invalid preset: ${presetName}`);
         return false;
       }
 
@@ -604,7 +598,6 @@
     render() {
       const container = document.querySelector(this.config.containerSelector);
       if (!container) {
-        console.warn('FilterManager: Container not found');
         return;
       }
 
@@ -699,7 +692,6 @@
           try {
             handler(data);
           } catch (error) {
-            console.error(`FilterManager: Error in ${event} handler:`, error);
           }
         });
       }
@@ -762,7 +754,6 @@
 
     importFilters(data) {
       if (data.version !== '1.0') {
-        console.warn('FilterManager: Incompatible filter version');
         return false;
       }
 

@@ -13,7 +13,6 @@
       const config = window.TeamStatsAPIClient.config;
       if (config.baseURL === '/api' || !config.baseURL.includes('http')) {
         config.baseURL = 'http://localhost:3005/api';
-        console.log('[API Config Fix] Updated APIClient baseURL to:', config.baseURL);
       }
     }
 

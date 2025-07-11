@@ -19,7 +19,6 @@
       this.createTooltipContainer();
 
       this.initialized = true;
-      console.log('[TooltipManager] Initialized');
     },
 
     // Polyfill for closest() method

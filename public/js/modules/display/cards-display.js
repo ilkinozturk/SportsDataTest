@@ -24,7 +24,6 @@
   const missingModules = requiredModules.filter(module => !global[module]);
 
   if (missingModules.length > 0) {
-    console.warn('[CardsDisplay] Missing optional modules:', missingModules);
   }
 
   class CardsDisplay {

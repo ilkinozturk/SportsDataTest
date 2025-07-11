@@ -314,9 +314,7 @@
      * @private
      */
     _defaultErrorHandler(error, eventName, listener) {
-      console.error(`Error in event listener for "${eventName}":`, error);
       if (this._config.debugMode) {
-        console.error('Listener:', listener);
       }
     }
 
@@ -326,7 +324,6 @@
      */
     _log(...args) {
       if (this._config.debugMode) {
-        console.log('[EventBus]', ...args);
       }
     }
 

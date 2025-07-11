@@ -8,7 +8,6 @@
 
   // Debug mode
   const DEBUG = false;
-  const log = DEBUG ? console.log.bind(console) : () => {};
 
   class ShotsDisplay {
     constructor() {
@@ -295,5 +294,5 @@
   const shotsDisplay = new ShotsDisplay();
   global.TeamStatsShotsDisplay = shotsDisplay;
 
-  log('[ShotsDisplay] Module loaded');
+  console.log('[ShotsDisplay] Module loaded');
 })(window);

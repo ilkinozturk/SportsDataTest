@@ -18,7 +18,6 @@
       this.createTooltipContainer();
 
       this.initialized = true;
-      console.log('[TooltipManager] Initialized');
     },
 
     bindEvents() {

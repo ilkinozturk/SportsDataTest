@@ -3940,6 +3940,52 @@
   padding: 20px 0;
 }
 
+/* Match Average Section */
+.match-average-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.match-average-section .section-subtitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.match-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 15px;
+}
+
+.match-stat-item {
+  text-align: center;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.match-stat-item .stat-label {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.match-stat-item .stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #4ecdc4;
+}
+
 /* Main Stats Section */
 .goals-main-stats {
   display: flex;
@@ -3954,6 +4000,34 @@
 .main-stat-block {
   flex: 1;
   text-align: center;
+}
+
+.main-stat-block.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.total-corners-display {
+  text-align: center;
+  padding: 20px;
+  background: rgba(78, 205, 196, 0.1);
+  border: 2px solid rgba(78, 205, 196, 0.3);
+  border-radius: 12px;
+}
+
+.total-corners-display .total-label {
+  font-size: 14px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.total-corners-display .total-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: #4ecdc4;
 }
 
 .main-stat-block .team-logo {
@@ -4017,8 +4091,27 @@
   font-size: 16px;
   font-weight: 600;
   color: #fff;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   text-align: center;
+}
+
+.stats-info {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.stats-info i {
+  color: #4a90e2;
+}
+
+.stats-info strong {
+  color: #ccc;
 }
 
 .over-stats-grid {
@@ -4093,6 +4186,362 @@
 
 .progress.failed {
   background: linear-gradient(90deg, #f44336 0%, #ef5350 100%);
+}
+
+.progress.clean-sheet {
+  background: linear-gradient(90deg, #00bcd4 0%, #26c6da 100%);
+}
+
+.team-value.clean-sheet {
+  color: #00bcd4;
+  font-weight: 600;
+}
+
+.progress.btts {
+  background: linear-gradient(90deg, #ff9800 0%, #ffa726 100%);
+}
+
+/* First Goal H2H Comparison Styles */
+.first-goal-h2h-card {
+  margin-top: 30px;
+}
+
+.first-goal-h2h-card .h2h-comparison-content {
+  padding: 0;
+}
+
+/* First Goal Team Headers */
+.first-goal-h2h-card .teams-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  gap: 30px;
+}
+
+.first-goal-h2h-card .team-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  text-align: center;
+}
+
+.first-goal-h2h-card .team-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.first-goal-h2h-card .team-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.first-goal-h2h-card .venue-badge {
+  font-size: 13px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.first-goal-stats {
+  margin: 25px 0;
+  padding: 0 10px;
+}
+
+.first-goal-stats .stat-row {
+  margin-bottom: 20px;
+}
+
+.first-goal-stats .stat-row:last-child {
+  margin-bottom: 0;
+}
+
+.first-goal-stats .stat-label {
+  font-size: 14px;
+  color: #999;
+  text-align: center;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.first-goal-stats .stat-bars {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.first-goal-stats .bar-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.first-goal-stats .bar-container:first-child {
+  justify-content: flex-end;
+}
+
+.first-goal-stats .team-value {
+  font-size: 16px;
+  font-weight: 600;
+  min-width: 45px;
+  text-align: center;
+}
+
+.first-goal-stats .progress-bar {
+  flex: 1;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.first-goal-stats .progress {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50 0%, #66BB6A 100%);
+  transition: width 0.5s ease;
+  border-radius: 12px;
+}
+
+.first-goal-stats .progress.home {
+  background: linear-gradient(90deg, #4CAF50 0%, #66BB6A 100%);
+}
+
+.first-goal-stats .progress.away {
+  background: linear-gradient(90deg, #2196F3 0%, #42A5F5 100%);
+}
+
+/* First Goal Prediction Section */
+.first-goal-prediction {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 25px;
+  margin: 25px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.first-goal-prediction .section-subtitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 20px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.prediction-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.prediction-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.prediction-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+}
+
+.prediction-label {
+  flex: 0 0 180px;
+  font-size: 15px;
+  color: #fff;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.prediction-label img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.prediction-bar-container {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 25px;
+  height: 35px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.prediction-bar {
+  height: 100%;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.prediction-bar.home {
+  background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+}
+
+.prediction-bar.away {
+  background: linear-gradient(135deg, #2196F3 0%, #42A5F5 100%);
+}
+
+.prediction-bar.no-goals {
+  background: linear-gradient(135deg, #757575 0%, #9E9E9E 100%);
+}
+
+.prediction-value {
+  color: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  position: absolute;
+  right: 15px;
+}
+
+/* Match Count Info */
+.match-count-info {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 25px;
+  padding: 20px 10px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.home-matches,
+.away-matches {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.home-matches:hover,
+.away-matches:hover {
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-2px);
+}
+
+.home-matches i,
+.away-matches i {
+  font-size: 24px;
+  color: #4CAF50;
+  margin-bottom: 5px;
+}
+
+.away-matches i {
+  color: #2196F3;
+}
+
+.match-count-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.match-count-label {
+  font-size: 13px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .first-goal-h2h-card .teams-header {
+    padding: 15px;
+    gap: 20px;
+  }
+  
+  .first-goal-h2h-card .team-logo {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .first-goal-h2h-card .team-name {
+    font-size: 14px;
+  }
+  
+  .first-goal-h2h-card .venue-badge {
+    font-size: 12px;
+    padding: 3px 10px;
+  }
+  
+  .first-goal-stats .stat-bars {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .first-goal-stats .bar-container {
+    width: 100%;
+    justify-content: space-between !important;
+  }
+  
+  .first-goal-stats .team-value {
+    order: -1;
+  }
+  
+  .prediction-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .prediction-label {
+    flex: none;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .prediction-bar-container {
+    width: 100%;
+  }
+  
+  .match-count-info {
+    gap: 10px;
+  }
+}
+
+.team-value.btts {
+  color: #ff9800;
+  font-weight: 600;
+}
+
+.progress.btts-over {
+  background: linear-gradient(90deg, #9c27b0 0%, #ab47bc 100%);
+}
+
+.team-value.btts-over {
+  color: #9c27b0;
+  font-weight: 600;
 }
 
 /* Old grid styles - keeping for backwards compatibility */
@@ -4356,5 +4805,87 @@
   
   .over-under-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Team Corners Earned / Against Section */
+.team-corners-section {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
+  padding: 25px;
+  margin-top: 36px;
+}
+
+.team-corners-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.team-stat-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 8px 0;
+}
+
+.team-stat-row .stat-label {
+  flex: 0 0 180px;
+  font-size: 13px;
+  color: #ccc;
+  font-weight: 500;
+}
+
+.team-stat-row .stat-bars {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.team-stat-row .bar-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.team-stat-row .team-value {
+  flex: 0 0 60px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+}
+
+.team-stat-row .team-value.home {
+  text-align: right;
+}
+
+.team-stat-row .team-value.away {
+  text-align: left;
+}
+
+/* Responsive for Team Corners Section */
+@media (max-width: 768px) {
+  .team-stat-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  
+  .team-stat-row .stat-label {
+    flex: none;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  
+  .team-stat-row .stat-bars {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .team-stat-row .bar-container {
+    justify-content: space-between;
   }
 }

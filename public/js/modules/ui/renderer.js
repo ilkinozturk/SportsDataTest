@@ -9,7 +9,6 @@
 
   // Check dependencies
   if (!global.TeamStatsComponents) {
-    console.warn('UI Renderer works better with Components module');
   }
 
   /**
@@ -375,7 +374,6 @@
         try {
           task();
         } catch (error) {
-          console.error('Render error:', error);
         }
       });
 
@@ -714,5 +712,4 @@
   global.render = renderer.render.bind(renderer);
   global.renderTemplate = renderer.renderTemplate.bind(renderer);
 
-  console.log('Team Stats UI Renderer Module initialized');
 })(window);

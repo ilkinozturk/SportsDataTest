@@ -19,7 +19,6 @@
       this.loadSavedFilters();
 
       this.initialized = true;
-      console.log('[FiltersManager] Initialized');
     },
 
     setupFilterGroups() {
@@ -111,7 +110,6 @@
         this.activeFilters.set(group, currentFilters);
       }
 
-      console.log('[FiltersManager] Filter set:', group, value);
 
       // Emit filter change event
       if (global.TeamStatsEventBus) {
@@ -175,7 +173,6 @@
         const filters = this.getActiveFilters();
         localStorage.setItem('teamstats_filters', JSON.stringify(filters));
       } catch (error) {
-        console.warn('[FiltersManager] Failed to save filters:', error);
       }
     },
 
@@ -190,7 +187,6 @@
           }
         }
       } catch (error) {
-        console.warn('[FiltersManager] Failed to load saved filters:', error);
       }
     },
   };

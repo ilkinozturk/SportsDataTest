@@ -19,7 +19,6 @@
       this.activateDefaultTab();
 
       this.initialized = true;
-      console.log('[TabsManager] Initialized');
     },
 
     setupTabs() {
@@ -37,7 +36,6 @@
         }
       });
 
-      console.log('[TabsManager] Setup tabs:', Array.from(this.tabs.keys()));
     },
 
     bindEvents() {
@@ -64,7 +62,6 @@
 
     activateTab(tabId) {
       if (!this.tabs.has(tabId)) {
-        console.warn('[TabsManager] Tab not found:', tabId);
         return;
       }
 
@@ -89,7 +86,6 @@
 
       this.activeTab = tabId;
 
-      console.log('[TabsManager] Activated tab:', tabId);
 
       // Emit tab change event
       if (global.TeamStatsEventBus) {
@@ -163,7 +159,6 @@
       try {
         localStorage.setItem('teamstats_active_tab', this.activeTab);
       } catch (error) {
-        console.warn('[TabsManager] Failed to save active tab:', error);
       }
     },
 
@@ -171,7 +166,6 @@
       try {
         return localStorage.getItem('teamstats_active_tab');
       } catch (error) {
-        console.warn('[TabsManager] Failed to load saved tab:', error);
         return null;
       }
     },

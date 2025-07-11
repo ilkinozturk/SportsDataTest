@@ -34,12 +34,10 @@
       const cacheKey = `team_${teamId}`;
       const cached = this.getFromCache(cacheKey);
       if (cached) {
-        console.log(`[TeamService] Returning cached data for team ${teamId}`);
         return cached;
       }
 
       try {
-        console.log(`[TeamService] Fetching data for team ${teamId}`);
 
         // Use APIClient if available
         if (this.apiClient && this.apiClient.getTeamData) {
@@ -85,7 +83,6 @@
           return data;
         }
       } catch (error) {
-        console.error('[TeamService] Error fetching team data:', error);
         throw error;
       }
     }
@@ -154,7 +151,6 @@
      */
     clearCache() {
       this.cache.clear();
-      console.log('[TeamService] Cache cleared');
     }
 
     /**
@@ -163,7 +159,6 @@
     clearTeamCache(teamId) {
       const cacheKey = `team_${teamId}`;
       this.cache.delete(cacheKey);
-      console.log(`[TeamService] Cache cleared for team ${teamId}`);
     }
 
     /**
@@ -227,7 +222,6 @@
       }
 
       // Otherwise throw error
-      console.error('Invalid API response format. Got:', rawData);
       throw new Error('Invalid API response format');
     }
   }

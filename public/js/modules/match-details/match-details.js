@@ -82,7 +82,6 @@
         this.matchData = response.data;
         this.renderMatchData();
       } catch (error) {
-        console.error('Error loading match data:', error);
         this.showError('Failed to load match details. Please try again.');
       } finally {
         this.showLoading(false);
@@ -265,10 +264,10 @@
         case 'overview':
           this.renderOverview();
           break;
-        case 'h2h':
+        case 'h2h-goals':
           this.renderH2H();
           break;
-        case 'statistics':
+        case 'h2h-corners':
           this.renderStatistics();
           break;
         case 'lineups':

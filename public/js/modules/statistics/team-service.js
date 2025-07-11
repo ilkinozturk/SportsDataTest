@@ -58,7 +58,6 @@
         window.addEventListener('offline', () => this.handleOffline());
       }
 
-      console.log('[TeamService] Initialized');
     }
 
     /**
@@ -87,7 +86,6 @@
         this.setCache(cacheKey, data);
         return data;
       } catch (error) {
-        console.error('[TeamService] Error fetching team data:', error);
         throw error;
       }
     }
@@ -125,7 +123,6 @@
         this.setCache(cacheKey, stats);
         return stats;
       } catch (error) {
-        console.error('[TeamService] Error fetching team stats:', error);
         throw error;
       }
     }
@@ -166,7 +163,6 @@
         this.setCache(cacheKey, matches, 60000); // 1 minute cache for matches
         return matches;
       } catch (error) {
-        console.error('[TeamService] Error fetching team matches:', error);
         throw error;
       }
     }
@@ -198,7 +194,6 @@
         this.setCache(cacheKey, h2h);
         return h2h;
       } catch (error) {
-        console.error('[TeamService] Error fetching H2H data:', error);
         throw error;
       }
     }
@@ -222,10 +217,8 @@
       try {
         // Since there's no search endpoint, return empty array
         // In real implementation, you could use league-teams endpoint
-        console.warn('[TeamService] Search endpoint not available');
         return [];
       } catch (error) {
-        console.error('[TeamService] Error searching teams:', error);
         return [];
       }
     }
@@ -256,7 +249,6 @@
         this.setCache(cacheKey, response);
         return response;
       } catch (error) {
-        console.error('[TeamService] Batch request failed, falling back to individual requests');
 
         // Fallback to individual requests
         const results = await Promise.allSettled(teamIds.map(id => this.getTeamData(id, options)));
@@ -390,7 +382,6 @@
       }
 
       if (cleaned > 0) {
-        console.log(`[TeamService] Cleaned ${cleaned} expired cache entries`);
       }
     }
 
@@ -418,12 +409,10 @@
      * Network status handlers
      */
     handleOnline() {
-      console.log('[TeamService] Network connection restored');
       // Could trigger refresh of failed requests
     }
 
     handleOffline() {
-      console.log('[TeamService] Network connection lost');
       // Could show offline notification
     }
 

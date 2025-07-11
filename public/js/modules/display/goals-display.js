@@ -17,7 +17,6 @@
 
   // Debug mode - set to false for production
   const DEBUG = window.GOALS_DISPLAY_DEBUG || false;
-  const log = DEBUG ? console.log.bind(console) : () => {};
 
   // Module dependencies check
   const requiredModules = ['TeamStatsEventBus', 'TeamStatsStateManager'];
@@ -175,21 +174,18 @@
 
         // Listen for timing filter changes
         global.TeamStatsEventBus.on('filters:timing:change', filter => {
-          log('[GoalsDisplay] Timing filter changed:', filter);
-          console.log('[GoalsDisplay] Timing filter change event received:', filter);
+          console.log('[GoalsDisplay] Timing filter changed:', filter);
           if (this.lastStatistics) {
-            console.log('[GoalsDisplay] DEBUG - lastStatistics check:', {
+            console.log('[GoalsDisplay] Reprocessing statistics with timing filter', {
               hasLastStatistics: true,
               sampleKeys: Object.keys(this.lastStatistics).slice(0, 10),
               homeGoals0_15: this.lastStatistics.homeGoals0_15,
               awayGoals0_15: this.lastStatistics.awayGoals0_15,
               goals0_15: this.lastStatistics.goals0_15,
             });
-            console.log('[GoalsDisplay] Updating timing analytics with lastStatistics');
             this.updateTimingAnalytics(this.lastStatistics, filter);
           } else {
-            console.log('[GoalsDisplay] ERROR - No lastStatistics available');
-            console.log('[GoalsDisplay] DEBUG - Checking globalStatistics:', {
+            console.log('[GoalsDisplay] No lastStatistics, checking global', {
               hasGlobalStatistics: !!window.globalStatistics,
               globalSampleKeys: window.globalStatistics
                 ? Object.keys(window.globalStatistics).slice(0, 10)
@@ -201,8 +197,6 @@
         // Listen for initial team data load
         global.TeamStatsEventBus.on('data:team:loaded', data => {
           log('[GoalsDisplay] Team data loaded:', data);
-          console.log('[GoalsDisplay] data:team:loaded event received');
-          console.log('[GoalsDisplay] Data structure:', {
             hasData: !!data,
             hasDataData: !!(data && data.data),
             hasStatistics: !!(data && data.data && data.data.statistics),
@@ -212,7 +206,6 @@
 
           if (data.data && data.data.statistics) {
             this.lastStatistics = data.data.statistics;
-            console.log('[GoalsDisplay] lastStatistics set, sample data:', {
               homeGoals0_15: this.lastStatistics.homeGoals0_15,
               awayGoals0_15: this.lastStatistics.awayGoals0_15,
               goals0_15: this.lastStatistics.goals0_15,
@@ -221,7 +214,6 @@
             const currentFilter = global.TeamStatsStateManager?.get('filters.current') || 'overall';
             this.updateGoalsStatistics(data.data.statistics, currentFilter);
           } else {
-            console.error('[GoalsDisplay] Invalid data structure in data:team:loaded event');
           }
         });
 
@@ -242,7 +234,6 @@
      */
     renderGoalsSection(container, statistics, options = {}) {
       if (!container || !statistics) {
-        console.error('[GoalsDisplay] Invalid parameters for renderGoalsSection');
         return;
       }
 
@@ -1097,7 +1088,6 @@
 
       // Update timing analytics with the timing-specific filter
       const timingFilter = global.TeamStatsStateManager?.get('filters.timing') || 'overall';
-      console.log('[GoalsDisplay] DEBUG - Updating timing analytics in updateGoalsStatistics:', {
         currentFilter: filter,
         timingFilter: timingFilter,
       });
@@ -1176,7 +1166,6 @@
             statistics[`seasonConcededAVG_${filter}`] ||
             0;
 
-      console.log('[GoalsDisplay] Updating concededPerMatch:', {
         filter,
         averageGoalsAgainst: statistics.averageGoalsAgainst,
         goalsAgainstPerMatch: statistics.goalsAgainstPerMatch,
@@ -2595,7 +2584,6 @@
 
         // Debug first period only
         if (index === 0 && filter !== 'overall') {
-          console.log(`[GoalsDisplay] Updating ${periodIds[index]} for filter ${filter}:`, {
             scoredGoals,
             concededGoals,
             scoredPerc,
@@ -2647,7 +2635,6 @@
 
           // Debug DOM update for first period
           if (index === 0 && filter !== 'overall') {
-            console.log(`[GoalsDisplay] After DOM update for ${filter}:`, {
               scoredBarWidth: scoredBarElement?.style.width,
               scoredText: scoredValueElement?.textContent,
               concededBarWidth: concededBarElement?.style.width,
